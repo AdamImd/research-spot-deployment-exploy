@@ -1,0 +1,18 @@
+{
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "max_joint_target_error_rad": 9.5367431640625e-07,
+  "max_observation_error": 1.6391277313232422e-07,
+  "max_raw_action_error": 4.76837158203125e-06,
+  "recorded_samples": 0,
+  "samples": 128,
+  "seed": 101,
+  "stateless_history": true,
+  "synthetic_samples": 128,
+  "tolerances": [
+    1e-05,
+    0.0001,
+    3e-05
+  ],
+  "zero_history_after_warmup": true
+}

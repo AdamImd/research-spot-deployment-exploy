@@ -1,0 +1,32 @@
+{
+  "tested_commit": "7e0dd4d0c6a07f41f2540a07855547abd313597c",
+  "fresh_clone": true,
+  "clone_method": "git clone --no-local --single-branch --branch main",
+  "environment": "uv sync --locked --group simulation, Python 3.12.3, UV 0.10.0",
+  "tests_passed": 303,
+  "stages": {
+    "01-clone": 0,
+    "02-environment": 0,
+    "03-tests": 0,
+    "04-lint": 0,
+    "05-demo": 0,
+    "06-inspect": 0,
+    "07-reference": 0,
+    "08-parity": 0,
+    "09-mujoco": 0
+  },
+  "hardware_access": false,
+  "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+  "logs_sha256": {
+    "01-clone.log": "1570ab78e54a709d9ad221ec404197551727d38af2c9b7019114e71ed8459a1e",
+    "02-environment.log": "c972737d1239a416fa05eaeaa5fd9623623422c5a32cc2bde75b7c72ec68c9a1",
+    "03-tests.log": "46ad2007e0513c589f77601f0433d04ecae94d847e2ff0e242790c83a9414bee",
+    "04-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "05-demo.log": "a9dda501e9e9aa696459329f9c43d8179cce34a821210cec7d82f9f7a8840a21",
+    "06-inspect.log": "e27aae58c8c86f994c19f3488f0cc44dba7ab2ed891bf2c77b9769de69296642",
+    "07-reference.log": "37afaf2024d21177c1c0cabc3a78f01dce643dddf2e3bde5b5d2ef2ffabd521c",
+    "08-parity.log": "4fca7326712490ca8e1b82dd88d2c2be9ff1a27353f738b74e720b392a89ea15",
+    "09-mujoco.log": "f807a24a4f7a698edf68814ba8d35d3e518fef1f99cd901e4932f4c795436b49"
+  },
+  "scope": "Public-package offline acceptance. No new Isaac run or physical timing qualification."
+}

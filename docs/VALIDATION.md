@@ -55,3 +55,18 @@ results and a built support rig do not automatically satisfy those gates.
 Reproduce software and graph checks via [AGENT_QUICKSTART](AGENT_QUICKSTART.md).
 Reproduce the simulation protocol via [SIMULATION](SIMULATION.md).
 Read [OPERATIONS](OPERATIONS.md) before any expressly requested physical work.
+
+## Fresh-clone publication check
+
+Public source commit `7e0dd4d0c6a07f41f2540a07855547abd313597c` was cloned with
+`--no-local --single-branch --branch main` into an empty checkout. The locked UV
+environment installed successfully. All nine stages passed: clone, environment,
+303 tests, Ruff, bundled graph demo, policy inspection, independent actor import,
+128-case parity and a 60-second MuJoCo rollout. The final standing window passed;
+mean height 0.476536 m and maximum tilt 0.956 degrees. This check used only files
+in the public tree. It did not rerun Isaac or qualify hardware timing.
+
+[Machine-readable acceptance](../records/public-checkout-validation/result.json),
+[parity](../records/public-checkout-validation/parity.json),
+[MuJoCo](../records/public-checkout-validation/mujoco.json). Documentation and
+acceptance-record additions after this commit do not change the executed runtime.
