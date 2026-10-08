@@ -145,13 +145,14 @@ def main():
     schema_dir.mkdir(exist_ok=True)
     from spot_deploy.contracts import Envelope, Manifest, RobotConfig, State, WatchRobotConfig
     from spot_deploy.readiness import EvidenceIndex
+    from spot_deploy.deployment import DeploymentBundle
     from spot_deploy.estop_protocol import EstopProfile
     from spot_deploy.joystick_estop import JoystickProfile
     from spot_deploy.relic_contract import ReLICManifest
     from spot_deploy.exploy_policy import ExployReLICManifest
 
     for cls in (Manifest, Envelope, RobotConfig, WatchRobotConfig, State, EvidenceIndex,
-                EstopProfile, JoystickProfile, ReLICManifest, ExployReLICManifest):
+                EstopProfile, JoystickProfile, ReLICManifest, ExployReLICManifest, DeploymentBundle):
         (schema_dir / f"{cls.__name__}.json").write_text(
             json.dumps(cls.model_json_schema(), indent=2) + "\n"
         )

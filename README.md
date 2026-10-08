@@ -13,6 +13,10 @@ controller is outside this implementation.
 **Start here:** [agent guide](docs/AGENT_QUICKSTART.md), [Exploy graph and export](docs/EXPLOY.md),
 [simulator instructions](docs/SIMULATION.md), [validation and limitations](docs/VALIDATION.md).
 
+For a supervised hardware trial, start with [deployment preparation](docs/DEPLOYMENT.md).
+`prepare-deployment` creates a local candidate bundle and hardware-limit review template;
+`deployment-check` reports unresolved inputs without contacting Spot.
+
 ## Fresh clone: offline first
 
 Requires Git, [UV](https://docs.astral.sh/uv/), Linux and Python 3.12. UV can obtain

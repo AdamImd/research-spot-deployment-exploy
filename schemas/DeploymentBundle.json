@@ -1,0 +1,69 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "manifest_file": {
+      "const": "policy/manifest.json",
+      "title": "Manifest File",
+      "type": "string"
+    },
+    "source_commit": {
+      "maxLength": 40,
+      "minLength": 40,
+      "title": "Source Commit",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "python_version": {
+      "title": "Python Version",
+      "type": "string"
+    },
+    "packages": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Packages",
+      "type": "object"
+    },
+    "frozen_files": {
+      "additionalProperties": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Frozen Files",
+      "type": "object"
+    },
+    "hardware_qualified": {
+      "const": false,
+      "title": "Hardware Qualified",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "manifest_file",
+    "source_commit",
+    "source_sha256",
+    "python_version",
+    "packages",
+    "frozen_files",
+    "hardware_qualified"
+  ],
+  "title": "DeploymentBundle",
+  "type": "object"
+}

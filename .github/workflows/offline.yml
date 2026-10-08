@@ -34,3 +34,8 @@ jobs:
           --reference-manifest local/relic-reference/manifest.json
           --height-record fixtures/standing-capture/initial-height.json
           --output runs/parity-ci
+      - name: Prepare offline deployment review bundle
+        run: >-
+          uv run --no-sync spot-deploy prepare-deployment
+          --manifest policies/relic-exploy-standing/manifest.json
+          --output local/deployment-ci
