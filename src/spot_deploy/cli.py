@@ -19,6 +19,18 @@ from .relic_contract import ReLICManifest, load_manifest, make_policy
 def parser():
     result = argparse.ArgumentParser(description=__doc__)
     commands = result.add_subparsers(dest="mode", required=True)
+    prepare = commands.add_parser("prepare-deployment", help="Create an offline deployment review bundle")
+    prepare.add_argument("--manifest", type=Path, required=True)
+    prepare.add_argument("--robot", type=Path)
+    prepare.add_argument("--envelope", type=Path, help="Reviewed hardware envelope, never simulation limits")
+    prepare.add_argument("--output", type=Path, required=True)
+    check = commands.add_parser("deployment-check", help="Check a bundle without contacting Spot")
+    check.add_argument("--bundle", type=Path, required=True)
+    check.add_argument("--preflight-run", type=Path)
+    check.add_argument("--max-preflight-age-s", type=float, default=300)
+    check.add_argument("--check-estop", action="store_true",
+                       help="Read the local bridge status only; no setup, rearm or robot RPC")
+    check.add_argument("--output", type=Path, required=True)
     for name in ("inspect-policy", "replay", "readiness", "preflight", "watch", "shadow", "stand"):
         cmd = commands.add_parser(name)
         cmd.add_argument(
@@ -56,6 +68,21 @@ def parser():
 
 
 def execute(args, record):
+    if args.mode == "prepare-deployment":
+        from .deployment import prepare
+
+        return prepare(args.manifest, args.robot, args.envelope, record)
+    if args.mode == "deployment-check":
+        from .deployment import check
+
+        result = check(args.bundle, args.preflight_run, args.max_preflight_age_s, args.check_estop)
+        lines = ["# Deployment preparation check", "", result["note"], "",
+                 "| Check | Status | Detail |", "| --- | --- | --- |"]
+        for row in result["checks"]:
+            reason = row["reason"].replace("|", "\\|").replace("\n", " ")
+            lines.append(f"| {row['check']} | {row['status']} | {reason} |")
+        (record.directory / "deployment-check.md").write_text("\n".join(lines) + "\n")
+        return result
     manifest = load_manifest(args.manifest) if args.manifest else None
     envelope = load(args.envelope, Envelope) if args.envelope else None
     config_type = WatchRobotConfig if args.mode == "watch" else RobotConfig
@@ -213,6 +240,10 @@ def main(argv=None):
             getattr(args, key, None)
             for key in ("manifest", "envelope", "robot", "states", "evidence", "height_record")
         ]
+        if args.mode == "deployment-check":
+            inputs.append(args.bundle / "bundle.json")
+            if args.preflight_run:
+                inputs.append(args.preflight_run / "COMPLETE.json")
         record = RunRecord(args.output, args.mode, inputs)
         result = execute(args, record)
         status = "failed" if result.get("passed") is False else "passed"

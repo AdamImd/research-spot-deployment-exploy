@@ -1,5 +1,9 @@
 # Operator runbook
 
+Start with [deployment preparation](DEPLOYMENT.md) to assemble the local candidate,
+review template and command arguments. The Exploy graph uses manifest v3; the
+original actor uses v2. Both share the standing gates described here.
+
 For the RPM Logitech joystick, follow [JOYSTICK_ESTOP.md](JOYSTICK_ESTOP.md):
 index 1 (button 2) is CUT, index 3 (button 4) is separate rearm. Identify/bench do not connect to Spot;
 configuration/registration require motors off. This input does not bypass the

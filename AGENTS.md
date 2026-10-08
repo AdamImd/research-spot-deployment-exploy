@@ -3,6 +3,8 @@
 This file is self-contained. No maintainer home directory, private Slack channel,
 private repository or hidden memory is required. Read README.md,
 docs/AGENT_QUICKSTART.md, docs/EXPLOY.md, docs/ARCHITECTURE.md and docs/VALIDATION.md.
+For deployment preparation read docs/DEPLOYMENT.md. Keep editable review inputs
+separate from frozen candidate artifacts. Null hardware limits are intentional.
 
 ## Scope and default actions
 

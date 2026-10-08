@@ -47,6 +47,10 @@ reason and final-standing criterion. Failed runs retain their evidence.
 
 ## Current limits and useful next work
 
+Use [DEPLOYMENT.md](DEPLOYMENT.md) to prepare a local hardware review bundle.
+`prepare-deployment` and `deployment-check` are offline; they never register an
+E-stop, contact Spot or issue commands. Missing physical limits remain explicit.
+
 The graph is CPU-only at deployment. Export/Isaac require a separate Python 3.11
 Isaac Lab environment; no re-export is needed to use the included graph. Exploy's
 C++ host has not been ported. Automatic memory/decimation from Exploy is intentionally

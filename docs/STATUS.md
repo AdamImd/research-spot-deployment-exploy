@@ -12,3 +12,8 @@ standing state. The arm is held stowed. Exploy C++ transport is not integrated.
 No robot endpoint, credential, live E-stop state or current physical qualification
 record is distributed. Operators must supply their own local configuration and
 complete the existing evidence gates. Default activity is offline.
+
+Deployment preparation now has two offline commands: `prepare-deployment` bundles
+the candidate, runtime identity and editable review templates; `deployment-check`
+checks the frozen artifacts, reviewed hardware inputs, evidence, supplied fresh
+preflight and optional local stop status. See [DEPLOYMENT](DEPLOYMENT.md).
