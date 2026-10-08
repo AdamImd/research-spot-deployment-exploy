@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "scope": "offline-repackaged-pose-fixture",
+  "artifacts": {
+    "README.md": "eac3c57b52a1c4a3011cd0a3d2e298954b81445152abf74da55d547849c3907f",
+    "initial-height.json": "9f2cb558e5c2bae9a14fbcbe8038ba50bf737572d4a369f24a312b09004191fa",
+    "initial-state.json": "a2514bb0293127c85cab7e0a306eb6ca3d138322a9972a21fbc3c44a6403ace2",
+    "robot-snapshot.json": "8288ec6d46bd4f80bc8454f3de3b3c970fa4a7aab83a643d44d1b97cca7354a6"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "action_joint_names": [
+    "fl_hx",
+    "fr_hx",
+    "hl_hx",
+    "hr_hx",
+    "fl_hy",
+    "fr_hy",
+    "hl_hy",
+    "hr_hy",
+    "fl_kn",
+    "fr_kn",
+    "hl_kn",
+    "hr_kn"
+  ],
+  "contract": "relic-exploy-v1",
+  "exploy_commit": "05f9dc3b2e589abdae8de942e8c6749e7a123c88",
+  "gains": {
+    "arm0_el0": {
+      "damping": 2.0,
+      "stiffness": 120.0
+    },
+    "arm0_el1": {
+      "damping": 2.0,
+      "stiffness": 100.0
+    },
+    "arm0_f1x": {
+      "damping": 0.32,
+      "stiffness": 16.0
+    },
+    "arm0_sh0": {
+      "damping": 2.0,
+      "stiffness": 120.0
+    },
+    "arm0_sh1": {
+      "damping": 2.0,
+      "stiffness": 120.0
+    },
+    "arm0_wr0": {
+      "damping": 2.0,
+      "stiffness": 100.0
+    },
+    "arm0_wr1": {
+      "damping": 2.0,
+      "stiffness": 100.0
+    },
+    "fl_hx": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "fl_hy": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "fl_kn": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "fr_hx": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "fr_hy": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "fr_kn": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "hl_hx": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "hl_hy": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "hl_kn": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "hr_hx": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "hr_hy": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    },
+    "hr_kn": {
+      "damping": 1.5,
+      "stiffness": 60.0
+    }
+  },
+  "graph": "policy-step",
+  "history": "external-acknowledged-raw-actions; zero at activation",
+  "joint_names": [
+    "arm0_sh0",
+    "fl_hx",
+    "fr_hx",
+    "hl_hx",
+    "hr_hx",
+    "arm0_sh1",
+    "fl_hy",
+    "fr_hy",
+    "hl_hy",
+    "hr_hy",
+    "arm0_el0",
+    "fl_kn",
+    "fr_kn",
+    "hl_kn",
+    "hr_kn",
+    "arm0_el1",
+    "arm0_wr0",
+    "arm0_wr1",
+    "arm0_f1x"
+  ],
+  "mode": "four-foot-standing",
+  "policy_hz": 50,
+  "root_com_b": [
+    0.0,
+    0.0,
+    -0.004961720202118158
+  ],
+  "source_onnx_sha256": "039b542d7e833961b7602b4f933c10415589aa1ff1fa1a8295979f6a20c2f000",
+  "source_torchscript_sha256": "14ed0614f507e1330a5c66af1615f27558b58b6c999443b42d1bb6c3d45ae3b4",
+  "stream_hz": 200,
+  "target_output": "output.joint_targets.robot.all.pos"
+}

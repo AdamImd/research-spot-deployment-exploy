@@ -1,0 +1,35 @@
+{
+  "height_source": "initial",
+  "body_height_m": null,
+  "initial_height_min_m": 0.3,
+  "initial_height_max_m": 0.7,
+  "preparation": {
+    "kind": "four-foot-static-support",
+    "duration_s": 5.0,
+    "foot_radius_m": 0.036,
+    "friction_coefficient": 0.8,
+    "handover_pose_error_rad": 0.025,
+    "handover_joint_speed_rad_s": 0.5,
+    "handover_torque_step_max": [
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0
+    ]
+  }
+}

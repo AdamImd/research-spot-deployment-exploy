@@ -1,0 +1,89 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "serial_device": {
+      "pattern": "^/dev/serial/by-id/[^/]+$",
+      "title": "Serial Device",
+      "type": "string"
+    },
+    "device_id": {
+      "pattern": "^[0-9a-f]{12}$",
+      "title": "Device Id",
+      "type": "string"
+    },
+    "baud": {
+      "const": 115200,
+      "title": "Baud",
+      "type": "integer"
+    },
+    "endpoint_name": {
+      "pattern": "^[A-Za-z0-9_-]{1,40}$",
+      "title": "Endpoint Name",
+      "type": "string"
+    },
+    "endpoint_role": {
+      "pattern": "^spot_esp32_[A-Za-z0-9_-]{1,32}$",
+      "title": "Endpoint Role",
+      "type": "string"
+    },
+    "poll_interval_s": {
+      "maximum": 0.08,
+      "minimum": 0.02,
+      "title": "Poll Interval S",
+      "type": "number"
+    },
+    "response_timeout_s": {
+      "maximum": 0.08,
+      "minimum": 0.01,
+      "title": "Response Timeout S",
+      "type": "number"
+    },
+    "rpc_timeout_s": {
+      "maximum": 0.1,
+      "minimum": 0.02,
+      "title": "Rpc Timeout S",
+      "type": "number"
+    },
+    "endpoint_timeout_s": {
+      "maximum": 1,
+      "minimum": 0.2,
+      "title": "Endpoint Timeout S",
+      "type": "number"
+    },
+    "cut_power_timeout_s": {
+      "maximum": 2,
+      "minimum": 0.2,
+      "title": "Cut Power Timeout S",
+      "type": "number"
+    },
+    "stop_level": {
+      "enum": [
+        "cut",
+        "settle_then_cut"
+      ],
+      "title": "Stop Level",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "serial_device",
+    "device_id",
+    "baud",
+    "endpoint_name",
+    "endpoint_role",
+    "poll_interval_s",
+    "response_timeout_s",
+    "rpc_timeout_s",
+    "endpoint_timeout_s",
+    "cut_power_timeout_s",
+    "stop_level"
+  ],
+  "title": "EstopProfile",
+  "type": "object"
+}

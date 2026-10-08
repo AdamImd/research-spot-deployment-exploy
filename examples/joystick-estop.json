@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "input_type": "linux_joystick",
+  "joystick_device": "/dev/input/by-id/usb-Logitech_Logitech_Extreme_3D-joystick",
+  "expected_name": "Logitech Logitech Extreme 3D",
+  "vendor_id": "046d",
+  "product_id": "c215",
+  "stop_button": 1,
+  "rearm_button": 3,
+  "release_hold_s": 0.5,
+  "poll_interval_s": 0.02,
+  "max_input_gap_s": 0.15,
+  "status_interval_s": 0.1,
+  "rpc_timeout_s": 0.08,
+  "endpoint_name": "rpm-joystick-stop",
+  "endpoint_role": "PDB_rooted",
+  "endpoint_timeout_s": 1.0,
+  "cut_power_timeout_s": 1.0,
+  "stop_level": "cut"
+}

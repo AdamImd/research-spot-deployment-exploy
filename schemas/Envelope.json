@@ -1,0 +1,202 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "scope": {
+      "default": "hardware",
+      "enum": [
+        "hardware",
+        "simulation"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "joint_order": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Joint Order",
+      "type": "array"
+    },
+    "position_min": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Position Min",
+      "type": "array"
+    },
+    "position_max": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Position Max",
+      "type": "array"
+    },
+    "velocity_max": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Velocity Max",
+      "type": "array"
+    },
+    "load_max": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Load Max",
+      "type": "array"
+    },
+    "tracking_error_max": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Tracking Error Max",
+      "type": "array"
+    },
+    "command_rate_max": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Command Rate Max",
+      "type": "array"
+    },
+    "max_roll_rad": {
+      "exclusiveMinimum": 0,
+      "title": "Max Roll Rad",
+      "type": "number"
+    },
+    "max_pitch_rad": {
+      "exclusiveMinimum": 0,
+      "title": "Max Pitch Rad",
+      "type": "number"
+    },
+    "max_linear_speed": {
+      "exclusiveMinimum": 0,
+      "title": "Max Linear Speed",
+      "type": "number"
+    },
+    "max_angular_speed": {
+      "exclusiveMinimum": 0,
+      "title": "Max Angular Speed",
+      "type": "number"
+    },
+    "max_arm_pose_error": {
+      "exclusiveMinimum": 0,
+      "title": "Max Arm Pose Error",
+      "type": "number"
+    },
+    "max_state_age_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max State Age S",
+      "type": "number"
+    },
+    "max_state_gap_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max State Gap S",
+      "type": "number"
+    },
+    "max_future_skew_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max Future Skew S",
+      "type": "number"
+    },
+    "max_inference_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max Inference S",
+      "type": "number"
+    },
+    "max_policy_age_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max Policy Age S",
+      "type": "number"
+    },
+    "max_command_gap_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max Command Gap S",
+      "type": "number"
+    },
+    "max_command_ack_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max Command Ack S",
+      "type": "number"
+    },
+    "max_full_state_age_s": {
+      "exclusiveMinimum": 0,
+      "title": "Max Full State Age S",
+      "type": "number"
+    },
+    "command_ttl_s": {
+      "exclusiveMinimum": 0,
+      "title": "Command Ttl S",
+      "type": "number"
+    },
+    "shutdown_timeout_s": {
+      "exclusiveMinimum": 0,
+      "title": "Shutdown Timeout S",
+      "type": "number"
+    },
+    "transition_s": {
+      "minimum": 0,
+      "title": "Transition S",
+      "type": "number"
+    },
+    "max_duration_s": {
+      "exclusiveMinimum": 0,
+      "maximum": 60,
+      "title": "Max Duration S",
+      "type": "number"
+    },
+    "min_battery_percent": {
+      "exclusiveMinimum": 0,
+      "maximum": 100,
+      "title": "Min Battery Percent",
+      "type": "number"
+    }
+  },
+  "required": [
+    "schema_version",
+    "joint_order",
+    "position_min",
+    "position_max",
+    "velocity_max",
+    "load_max",
+    "tracking_error_max",
+    "command_rate_max",
+    "max_roll_rad",
+    "max_pitch_rad",
+    "max_linear_speed",
+    "max_angular_speed",
+    "max_arm_pose_error",
+    "max_state_age_s",
+    "max_state_gap_s",
+    "max_future_skew_s",
+    "max_inference_s",
+    "max_policy_age_s",
+    "max_command_gap_s",
+    "max_command_ack_s",
+    "max_full_state_age_s",
+    "command_ttl_s",
+    "shutdown_timeout_s",
+    "transition_s",
+    "max_duration_s",
+    "min_battery_percent"
+  ],
+  "title": "Envelope",
+  "type": "object"
+}

@@ -1,0 +1,456 @@
+{
+  "$defs": {
+    "Actions": {
+      "additionalProperties": false,
+      "properties": {
+        "joint_order": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Joint Order",
+          "type": "array"
+        },
+        "default_positions": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Default Positions",
+          "type": "array"
+        },
+        "scale": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Scale",
+          "type": "array"
+        },
+        "clip_min": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 12,
+              "minItems": 12,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clip Min"
+        },
+        "clip_max": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 12,
+              "minItems": 12,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clip Max"
+        },
+        "previous_action": {
+          "enum": [
+            "raw",
+            "clipped"
+          ],
+          "title": "Previous Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "joint_order",
+        "default_positions",
+        "scale",
+        "clip_min",
+        "clip_max",
+        "previous_action"
+      ],
+      "title": "Actions",
+      "type": "object"
+    },
+    "ExploySettings": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "relic-exploy-v1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "exporter_commit": {
+          "const": "05f9dc3b2e589abdae8de942e8c6749e7a123c88",
+          "title": "Exporter Commit",
+          "type": "string"
+        },
+        "source_policy_sha256": {
+          "const": "039b542d7e833961b7602b4f933c10415589aa1ff1fa1a8295979f6a20c2f000",
+          "title": "Source Policy Sha256",
+          "type": "string"
+        },
+        "source_script_sha256": {
+          "const": "14ed0614f507e1330a5c66af1615f27558b58b6c999443b42d1bb6c3d45ae3b4",
+          "title": "Source Script Sha256",
+          "type": "string"
+        },
+        "export_record_file": {
+          "title": "Export Record File",
+          "type": "string"
+        },
+        "export_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Export Record Sha256",
+          "type": "string"
+        },
+        "configuration_file": {
+          "title": "Configuration File",
+          "type": "string"
+        },
+        "configuration_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract",
+        "exporter_commit",
+        "source_policy_sha256",
+        "source_script_sha256",
+        "export_record_file",
+        "export_record_sha256",
+        "configuration_file",
+        "configuration_sha256"
+      ],
+      "title": "ExploySettings",
+      "type": "object"
+    },
+    "Gains": {
+      "additionalProperties": false,
+      "properties": {
+        "kp": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Kp",
+          "type": "array"
+        },
+        "kd": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Kd",
+          "type": "array"
+        },
+        "feedforward": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Feedforward",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kp",
+        "kd",
+        "feedforward"
+      ],
+      "title": "Gains",
+      "type": "object"
+    },
+    "Preparation": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "four-foot-static-support",
+            "direct"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "model_file": {
+          "title": "Model File",
+          "type": "string"
+        },
+        "model_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Model Sha256",
+          "type": "string"
+        },
+        "duration_s": {
+          "maximum": 30,
+          "minimum": 0,
+          "title": "Duration S",
+          "type": "number"
+        },
+        "foot_radius_m": {
+          "exclusiveMinimum": 0,
+          "maximum": 0.1,
+          "title": "Foot Radius M",
+          "type": "number"
+        },
+        "friction_coefficient": {
+          "exclusiveMinimum": 0,
+          "maximum": 2,
+          "title": "Friction Coefficient",
+          "type": "number"
+        },
+        "handover_pose_error_rad": {
+          "exclusiveMinimum": 0,
+          "title": "Handover Pose Error Rad",
+          "type": "number"
+        },
+        "handover_joint_speed_rad_s": {
+          "exclusiveMinimum": 0,
+          "title": "Handover Joint Speed Rad S",
+          "type": "number"
+        },
+        "handover_torque_step_max": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Handover Torque Step Max",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "model_file",
+        "model_sha256",
+        "duration_s",
+        "foot_radius_m",
+        "friction_coefficient",
+        "handover_pose_error_rad",
+        "handover_joint_speed_rad_s",
+        "handover_torque_step_max"
+      ],
+      "title": "Preparation",
+      "type": "object"
+    },
+    "ReLICObservations": {
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "relic84-v1",
+          "title": "Contract",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract"
+      ],
+      "title": "ReLICObservations",
+      "type": "object"
+    },
+    "ReLICSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "height_source": {
+          "enum": [
+            "initial",
+            "fixed"
+          ],
+          "title": "Height Source",
+          "type": "string"
+        },
+        "body_height_m": {
+          "anyOf": [
+            {
+              "maximum": 0.8,
+              "minimum": 0.25,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Body Height M"
+        },
+        "initial_height_min_m": {
+          "maximum": 0.8,
+          "minimum": 0.25,
+          "title": "Initial Height Min M",
+          "type": "number"
+        },
+        "initial_height_max_m": {
+          "maximum": 0.8,
+          "minimum": 0.25,
+          "title": "Initial Height Max M",
+          "type": "number"
+        },
+        "preparation": {
+          "$ref": "#/$defs/Preparation"
+        }
+      },
+      "required": [
+        "height_source",
+        "body_height_m",
+        "initial_height_min_m",
+        "initial_height_max_m",
+        "preparation"
+      ],
+      "title": "ReLICSettings",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 3,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "purpose": {
+      "enum": [
+        "fixture",
+        "candidate"
+      ],
+      "title": "Purpose",
+      "type": "string"
+    },
+    "task": {
+      "const": "standing",
+      "title": "Task",
+      "type": "string"
+    },
+    "morphology": {
+      "const": "spot-arm-stowed",
+      "title": "Morphology",
+      "type": "string"
+    },
+    "policy_file": {
+      "title": "Policy File",
+      "type": "string"
+    },
+    "policy_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Sha256",
+      "type": "string"
+    },
+    "training_config_file": {
+      "title": "Training Config File",
+      "type": "string"
+    },
+    "training_config_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Training Config Sha256",
+      "type": "string"
+    },
+    "training_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Training Commit",
+      "type": "string"
+    },
+    "input_name": {
+      "minLength": 1,
+      "title": "Input Name",
+      "type": "string"
+    },
+    "output_name": {
+      "minLength": 1,
+      "title": "Output Name",
+      "type": "string"
+    },
+    "policy_hz": {
+      "exclusiveMinimum": 0,
+      "title": "Policy Hz",
+      "type": "number"
+    },
+    "stream_hz": {
+      "maximum": 333,
+      "minimum": 100,
+      "title": "Stream Hz",
+      "type": "number"
+    },
+    "observations": {
+      "$ref": "#/$defs/ReLICObservations"
+    },
+    "actions": {
+      "$ref": "#/$defs/Actions"
+    },
+    "gains": {
+      "$ref": "#/$defs/Gains"
+    },
+    "arm_stowed_positions": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 7,
+      "minItems": 7,
+      "title": "Arm Stowed Positions",
+      "type": "array"
+    },
+    "robot_model_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Robot Model Sha256",
+      "type": "string"
+    },
+    "payload_config_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Config Sha256",
+      "type": "string"
+    },
+    "payload_description": {
+      "minLength": 1,
+      "title": "Payload Description",
+      "type": "string"
+    },
+    "adapter": {
+      "const": "relic-exploy",
+      "title": "Adapter",
+      "type": "string"
+    },
+    "relic": {
+      "$ref": "#/$defs/ReLICSettings"
+    },
+    "exploy": {
+      "$ref": "#/$defs/ExploySettings"
+    }
+  },
+  "required": [
+    "schema_version",
+    "purpose",
+    "task",
+    "morphology",
+    "policy_file",
+    "policy_sha256",
+    "training_config_file",
+    "training_config_sha256",
+    "training_commit",
+    "input_name",
+    "output_name",
+    "policy_hz",
+    "stream_hz",
+    "observations",
+    "actions",
+    "gains",
+    "arm_stowed_positions",
+    "robot_model_sha256",
+    "payload_config_sha256",
+    "payload_description",
+    "adapter",
+    "relic",
+    "exploy"
+  ],
+  "title": "ExployReLICManifest",
+  "type": "object"
+}

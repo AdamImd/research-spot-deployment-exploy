@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spot-deployment"
+version = "0.1.0"
+description = "Fail-closed readiness tools for Spot standing with a stowed arm"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "numpy==2.2.6",
+  "onnxruntime==1.23.2",
+  "pydantic==2.12.3",
+  "bosdyn-api==5.1.1",
+  "bosdyn-client==5.1.1",
+  "bosdyn-core==5.1.1",
+  "pyserial==3.5",
+]
+
+[project.scripts]
+spot-deploy = "spot_deploy.cli:main"
+spot-view = "spot_deploy.viewer:main"
+spot-estop = "spot_deploy.estop_cli:main"
+
+[dependency-groups]
+dev = ["pytest==8.4.2", "onnx==1.19.1", "ruff==0.14.3"]
+firmware = ["platformio==6.1.18"]
+audit = ["spatialmath-python==1.1.15"]
+simulation = [
+    "mujoco==3.3.7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spot_deploy"]

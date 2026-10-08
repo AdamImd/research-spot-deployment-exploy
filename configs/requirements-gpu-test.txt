@@ -1,0 +1,10 @@
+# Offline tests only. Python 3.11 venv inherits the existing Isaac Lab runtime.
+# This does not change the Python 3.12 live CLI's locked CPU environment.
+onnxruntime-gpu==1.23.2
+numpy==1.26.4
+pydantic==2.11.10
+mujoco==3.3.7
+onnx==1.19.1
+bosdyn-api==5.1.1
+bosdyn-client==5.1.1
+bosdyn-core==5.1.1

@@ -1,0 +1,68 @@
+{
+  "compute_max_s": 0.000734040979295969,
+  "compute_p99_s": 0.0005014210473746061,
+  "failure": null,
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "late_window_metrics": {
+    "angular_speed_p95_rad_s": 9.421128695540918e-07,
+    "height_span_m": 4.172325134277344e-07,
+    "joint_speed_p95_rad_s": 1.3074884464003844e-06,
+    "linear_speed_p95_m_s": 3.048803645414287e-07,
+    "max_tilt_deg": 0.9563395020882077,
+    "mean_height_m": 0.4765356028455308,
+    "min_height_m": 0.476535439491272,
+    "planar_speed_p95_m_s": 2.9214331147027255e-07,
+    "samples": 2001,
+    "span_s": 10.0,
+    "tilt_span_deg": 0.0
+  },
+  "loop_wall_s": 8.489599799038842,
+  "max_observation_error": 5.960464477539063e-08,
+  "max_raw_action_error": 9.5367431640625e-07,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "policy_duration_s": 60.0,
+  "policy_samples": 3001,
+  "real_time_factor": 7.067470955084709,
+  "reason": "completed",
+  "stable_final_window": true,
+  "timing": {
+    "core_s": {
+      "max_s": 0.000734441913664341,
+      "over_5ms": 0,
+      "p50_s": 0.00019392604008316994,
+      "p99_s": 0.0005016508512198925
+    },
+    "parity_s": {
+      "max_s": 0.0001747780479490757,
+      "over_5ms": 0,
+      "p50_s": 1.41095370054245e-07,
+      "p99_s": 0.00010992283932864666
+    },
+    "physics_s": {
+      "max_s": 0.00041470304131507874,
+      "over_5ms": 0,
+      "p50_s": 0.00014161388389766216,
+      "p99_s": 0.0001691170036792755
+    },
+    "recording_s": {
+      "max_s": 0.04269317793659866,
+      "over_5ms": 2,
+      "p50_s": 0.00015706405974924564,
+      "p99_s": 0.00021221092902123928
+    },
+    "state_s": {
+      "max_s": 0.0010703930165618658,
+      "over_5ms": 0,
+      "p50_s": 0.00011672591790556908,
+      "p99_s": 0.00014253705739974976
+    },
+    "total_s": {
+      "max_s": 0.04333034297451377,
+      "over_5ms": 2,
+      "p50_s": 0.0006078579463064671,
+      "p99_s": 0.001041406998410821
+    }
+  },
+  "trial_duration_s": 60.0
+}

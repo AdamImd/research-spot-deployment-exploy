@@ -1,0 +1,2076 @@
+{
+  "actions": {
+    "joint_pos": {
+      "arm_joint_names": [
+        "arm_sh0",
+        "arm_sh1",
+        "arm_el0",
+        "arm_el1",
+        "arm_wr0",
+        "arm_wr1",
+        "arm_f1x"
+      ],
+      "asset_name": "robot",
+      "class_type": "relic.tasks.loco_manipulation.mdp.actions.spot_joint_actions:MixedPDArmMultiLegJointPositionAction",
+      "clip": null,
+      "command_name": "arm_leg_joint_base_pose",
+      "debug_vis": false,
+      "joint_names": [
+        "[fh].*"
+      ],
+      "leg_joint_names": {
+        "fl": [
+          "fl_hx",
+          "fl_hy",
+          "fl_kn"
+        ],
+        "fr": [
+          "fr_hx",
+          "fr_hy",
+          "fr_kn"
+        ],
+        "hl": [
+          "hl_hx",
+          "hl_hy",
+          "hl_kn"
+        ],
+        "hr": [
+          "hr_hx",
+          "hr_hy",
+          "hr_kn"
+        ]
+      },
+      "offset": 0.0,
+      "preserve_order": false,
+      "scale": 0.2,
+      "use_default_offset": true
+    }
+  },
+  "commands": {
+    "arm_leg_joint_base_pose": {
+      "arm_joint_names": [
+        "arm_sh0",
+        "arm_sh1",
+        "arm_el0",
+        "arm_el1",
+        "arm_wr0",
+        "arm_wr1",
+        "arm_f1x"
+      ],
+      "asset_name": "robot",
+      "class_type": "relic.tasks.loco_manipulation.mdp.commands.arm_command:ArmLegJointBasePoseCommand",
+      "command_range_arm_joint": [
+        [
+          0.0,
+          -0.8999999761581421,
+          1.7999999523162842,
+          0.0,
+          -0.8999999761581421,
+          0.0,
+          -1.5399999618530273
+        ],
+        [
+          0.0,
+          -0.8999999761581421,
+          1.7999999523162842,
+          0.0,
+          -0.8999999761581421,
+          0.0,
+          -1.5399999618530273
+        ]
+      ],
+      "command_range_height": [
+        0.55,
+        0.55
+      ],
+      "command_range_leg_joint": [
+        [
+          -0.7854,
+          -0.89884,
+          -2.7929
+        ],
+        [
+          0.78539,
+          2.29511,
+          0.0
+        ]
+      ],
+      "command_range_pitch": [
+        0.0,
+        0.0
+      ],
+      "command_range_roll": [
+        0.0,
+        0.0
+      ],
+      "command_which_leg": -1,
+      "debug_vis": false,
+      "hold_time": [
+        0.5,
+        2.0
+      ],
+      "leg_joint_names": {
+        "fl": [
+          "fl_hx",
+          "fl_hy",
+          "fl_kn"
+        ],
+        "fr": [
+          "fr_hx",
+          "fr_hy",
+          "fr_kn"
+        ],
+        "hl": [
+          "hl_hx",
+          "hl_hy",
+          "hl_kn"
+        ],
+        "hr": [
+          "hr_hx",
+          "hr_hy",
+          "hr_kn"
+        ]
+      },
+      "resampling_time_range": [
+        1000000.0,
+        1000000.0
+      ],
+      "trajectory_time": [
+        1.0,
+        3.0
+      ]
+    },
+    "base_velocity": {
+      "asset_name": "robot",
+      "class_type": "isaaclab.envs.mdp.commands.velocity_command:UniformVelocityCommand",
+      "current_vel_visualizer_cfg": {
+        "markers": {
+          "arrow": {
+            "activate_contact_sensors": false,
+            "articulation_props": null,
+            "collision_props": null,
+            "copy_from_source": true,
+            "deformable_props": null,
+            "fixed_tendons_props": null,
+            "func": "isaaclab.sim.spawners.from_files.from_files:spawn_from_usd",
+            "joint_drive_props": null,
+            "mass_props": null,
+            "rigid_props": null,
+            "scale": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "semantic_tags": null,
+            "spatial_tendons_props": null,
+            "usd_path": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Props/UIElements/arrow_x.usd",
+            "variants": null,
+            "visible": true,
+            "visual_material": {
+              "diffuse_color": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "emissive_color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+              "metallic": 0.0,
+              "opacity": 1.0,
+              "roughness": 0.5
+            },
+            "visual_material_path": "material"
+          }
+        },
+        "prim_path": "/Visuals/Command/velocity_current"
+      },
+      "debug_vis": false,
+      "goal_vel_visualizer_cfg": {
+        "markers": {
+          "arrow": {
+            "activate_contact_sensors": false,
+            "articulation_props": null,
+            "collision_props": null,
+            "copy_from_source": true,
+            "deformable_props": null,
+            "fixed_tendons_props": null,
+            "func": "isaaclab.sim.spawners.from_files.from_files:spawn_from_usd",
+            "joint_drive_props": null,
+            "mass_props": null,
+            "rigid_props": null,
+            "scale": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "semantic_tags": null,
+            "spatial_tendons_props": null,
+            "usd_path": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Props/UIElements/arrow_x.usd",
+            "variants": null,
+            "visible": true,
+            "visual_material": {
+              "diffuse_color": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "emissive_color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+              "metallic": 0.0,
+              "opacity": 1.0,
+              "roughness": 0.5
+            },
+            "visual_material_path": "material"
+          }
+        },
+        "prim_path": "/Visuals/Command/velocity_goal"
+      },
+      "heading_command": false,
+      "heading_control_stiffness": 0.5,
+      "ranges": {
+        "ang_vel_z": [
+          0.0,
+          0.0
+        ],
+        "heading": [
+          -3.141592653589793,
+          3.141592653589793
+        ],
+        "lin_vel_x": [
+          0.0,
+          0.0
+        ],
+        "lin_vel_y": [
+          0.0,
+          0.0
+        ]
+      },
+      "rel_heading_envs": 1.0,
+      "rel_standing_envs": 1.0,
+      "resampling_time_range": [
+        10.0,
+        10.0
+      ]
+    }
+  },
+  "curriculum": {
+    "terrain_levels": null
+  },
+  "decimation": 4,
+  "episode_length_s": 20.0,
+  "events": {
+    "add_arm_mass": null,
+    "add_base_mass": null,
+    "external_force_torque": null,
+    "physics_material": {
+      "func": "isaaclab.envs.mdp.events:randomize_rigid_body_material",
+      "interval_range_s": null,
+      "is_global_time": false,
+      "min_step_count_between_reset": 0,
+      "mode": "startup",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "dynamic_friction_range": [
+          0.3,
+          0.8
+        ],
+        "num_buckets": 64,
+        "restitution_range": [
+          0.0,
+          0.0
+        ],
+        "static_friction_range": [
+          0.3,
+          1.0
+        ]
+      }
+    },
+    "push_robot": null,
+    "reset_base": {
+      "func": "isaaclab.envs.mdp.events:reset_root_state_uniform",
+      "interval_range_s": null,
+      "is_global_time": false,
+      "min_step_count_between_reset": 0,
+      "mode": "reset",
+      "params": {
+        "pose_range": {},
+        "velocity_range": {}
+      }
+    },
+    "reset_robot_joints": {
+      "func": "relic.tasks.loco_manipulation.mdp.event:reset_joints_around_default",
+      "interval_range_s": null,
+      "is_global_time": false,
+      "min_step_count_between_reset": 0,
+      "mode": "reset",
+      "params": {
+        "position_range": [
+          0.0,
+          0.0
+        ],
+        "velocity_range": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "export_io_descriptors": false,
+  "is_finite_horizon": false,
+  "log_dir": null,
+  "num_rerenders_on_reset": 0,
+  "observations": {
+    "policy": {
+      "actions": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:last_action",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {},
+        "scale": null
+      },
+      "base_ang_vel": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:base_ang_vel",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {},
+        "scale": null
+      },
+      "base_lin_vel": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:base_lin_vel",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {},
+        "scale": null
+      },
+      "commands": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:generated_commands",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {
+          "command_name": "arm_leg_joint_base_pose"
+        },
+        "scale": null
+      },
+      "concatenate_dim": -1,
+      "concatenate_terms": true,
+      "enable_corruption": false,
+      "flatten_history_dim": true,
+      "history_length": null,
+      "joint_pos": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:joint_pos_rel",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {},
+        "scale": null
+      },
+      "joint_vel": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:joint_vel_rel",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {},
+        "scale": null
+      },
+      "projected_gravity": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:projected_gravity",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {},
+        "scale": null
+      },
+      "velocity_commands": {
+        "clip": null,
+        "flatten_history_dim": true,
+        "func": "isaaclab.envs.mdp.observations:generated_commands",
+        "history_length": 0,
+        "modifiers": null,
+        "noise": null,
+        "params": {
+          "command_name": "base_velocity"
+        },
+        "scale": null
+      }
+    }
+  },
+  "recorders": {
+    "dataset_export_dir_path": "/tmp/isaaclab/logs",
+    "dataset_export_mode": {
+      "_name_": "EXPORT_ALL",
+      "_sort_order_": 1,
+      "_value_": 1
+    },
+    "dataset_file_handler_class_type": "isaaclab.utils.datasets.hdf5_dataset_file_handler:HDF5DatasetFileHandler",
+    "dataset_filename": "dataset",
+    "export_in_close": false,
+    "export_in_record_pre_reset": true
+  },
+  "rerender_on_reset": false,
+  "rewards": {
+    "action_rate_l2": {
+      "func": "isaaclab.envs.mdp.rewards:action_rate_l2",
+      "params": {},
+      "weight": -0.01
+    },
+    "air_time_variance": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:air_time_variance_penalty",
+      "params": {
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        }
+      },
+      "weight": -10.0
+    },
+    "dof_acc_l2": {
+      "func": "isaaclab.envs.mdp.rewards:joint_acc_l2",
+      "params": {},
+      "weight": -2.5e-07
+    },
+    "dof_torque_limits_l2": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:dof_torque_limits_l2",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": "[fh].*",
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        }
+      },
+      "weight": 0.0
+    },
+    "dof_torques_l2": {
+      "func": "isaaclab.envs.mdp.rewards:joint_torques_l2",
+      "params": {},
+      "weight": -1e-05
+    },
+    "feet_air_time": {
+      "func": "isaaclab_tasks.manager_based.locomotion.velocity.mdp.rewards:feet_air_time",
+      "params": {
+        "command_name": "base_velocity",
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "threshold": 0.5
+      },
+      "weight": 0.01
+    },
+    "feet_air_time_target": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:adaptive_air_time_reward",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "four_leg_cycle_time": 0.6,
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "three_leg_cycle_time": 0.5,
+        "velocity_threshold": 0.5
+      },
+      "weight": 0.0
+    },
+    "flight_penalty": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:three_leg_flight_phase",
+      "params": {
+        "command_name": "arm_leg_joint_base_pose",
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": [
+            "fl_foot",
+            "fr_foot",
+            "hl_foot",
+            "hr_foot"
+          ],
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "threshold": 1.0
+      },
+      "weight": -5.0
+    },
+    "foot_clearance": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:foot_clearance_reward",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "std": 0.22360679774997896,
+        "tanh_mult": 2.0,
+        "target_height": 0.1
+      },
+      "weight": 0.0
+    },
+    "foot_impact": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:foot_impact_penalty_2",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        }
+      },
+      "weight": -1.0
+    },
+    "foot_slip": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:foot_slip_penalty",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": ".*_foot",
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "threshold": 1.0
+      },
+      "weight": -0.5
+    },
+    "gait": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:GaitReward",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "max_err": 0.2,
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "std": 0.1,
+        "synced_feet_pair_names": [
+          [
+            "fl_foot",
+            "hr_foot"
+          ],
+          [
+            "fr_foot",
+            "hl_foot"
+          ]
+        ],
+        "velocity_threshold": 0.5
+      },
+      "weight": 0.0
+    },
+    "joint_energy": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:joint_energy_exp",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": "[fh].*",
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "std": 8.366600265340756
+      },
+      "weight": 2.0
+    },
+    "three_leg_gait": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:ThreeLegGaitReward",
+      "params": {
+        "asset_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "feet_names": [
+          "fl_foot",
+          "fr_foot",
+          "hl_foot",
+          "hr_foot"
+        ],
+        "gait_assignment": [
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            1
+          ]
+        ],
+        "gait_cycle_time": 0.4,
+        "max_err": 0.2,
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": null,
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "std": 0.1,
+        "velocity_threshold": 0.5
+      },
+      "weight": 0.0
+    },
+    "track_ang_vel_z_exp": {
+      "func": "isaaclab.envs.mdp.rewards:track_ang_vel_z_exp",
+      "params": {
+        "command_name": "base_velocity",
+        "std": 0.5
+      },
+      "weight": 3.5
+    },
+    "track_base_height_l2": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:track_base_height_l2",
+      "params": {
+        "command_name": "arm_leg_joint_base_pose"
+      },
+      "weight": -3.5
+    },
+    "track_base_orientation_l2": {
+      "func": "relic.tasks.loco_manipulation.mdp.rewards:track_base_orientation_l2",
+      "params": {
+        "command_name": "arm_leg_joint_base_pose"
+      },
+      "weight": -7.0
+    },
+    "track_lin_vel_xy_exp": {
+      "func": "isaaclab.envs.mdp.rewards:track_lin_vel_xy_exp",
+      "params": {
+        "command_name": "base_velocity",
+        "std": 0.5
+      },
+      "weight": 7.0
+    }
+  },
+  "scene": {
+    "clone_in_fabric": false,
+    "contact_forces": {
+      "class_type": "isaaclab.sensors.contact_sensor.contact_sensor:ContactSensor",
+      "debug_vis": false,
+      "filter_prim_paths_expr": [],
+      "force_threshold": 1.0,
+      "history_length": 3,
+      "max_contact_data_count_per_prim": 4,
+      "prim_path": "{ENV_REGEX_NS}/Robot/.*",
+      "track_air_time": true,
+      "track_contact_points": false,
+      "track_friction_forces": false,
+      "track_pose": false,
+      "update_period": 0.005,
+      "visualizer_cfg": {
+        "markers": {
+          "contact": {
+            "activate_contact_sensors": false,
+            "collision_props": null,
+            "copy_from_source": true,
+            "func": "isaaclab.sim.spawners.shapes.shapes:spawn_sphere",
+            "mass_props": null,
+            "physics_material": null,
+            "physics_material_path": "material",
+            "radius": 0.02,
+            "rigid_props": null,
+            "semantic_tags": null,
+            "visible": true,
+            "visual_material": {
+              "diffuse_color": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "emissive_color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+              "metallic": 0.0,
+              "opacity": 1.0,
+              "roughness": 0.5
+            },
+            "visual_material_path": "material"
+          },
+          "no_contact": {
+            "activate_contact_sensors": false,
+            "collision_props": null,
+            "copy_from_source": true,
+            "func": "isaaclab.sim.spawners.shapes.shapes:spawn_sphere",
+            "mass_props": null,
+            "physics_material": null,
+            "physics_material_path": "material",
+            "radius": 0.02,
+            "rigid_props": null,
+            "semantic_tags": null,
+            "visible": false,
+            "visual_material": {
+              "diffuse_color": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "emissive_color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+              "metallic": 0.0,
+              "opacity": 1.0,
+              "roughness": 0.5
+            },
+            "visual_material_path": "material"
+          }
+        },
+        "prim_path": "/Visuals/ContactSensor"
+      }
+    },
+    "env_spacing": 2.5,
+    "filter_collisions": true,
+    "lazy_sensor_update": true,
+    "light": {
+      "class_type": null,
+      "collision_group": 0,
+      "debug_vis": false,
+      "init_state": {
+        "pos": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rot": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "prim_path": "/World/light",
+      "spawn": {
+        "angle": 0.53,
+        "color": [
+          0.75,
+          0.75,
+          0.75
+        ],
+        "color_temperature": 6500.0,
+        "copy_from_source": true,
+        "enable_color_temperature": false,
+        "exposure": 0.0,
+        "func": "isaaclab.sim.spawners.lights.lights:spawn_light",
+        "intensity": 3000.0,
+        "normalize": false,
+        "prim_type": "DistantLight",
+        "semantic_tags": null,
+        "visible": true
+      }
+    },
+    "num_envs": 1,
+    "replicate_physics": true,
+    "robot": {
+      "actuator_value_resolution_debug_print": false,
+      "actuators": {
+        "spot_arm_el0": {
+          "armature": 0.01,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 2.0,
+          "dynamic_friction": null,
+          "effort_limit": 90.9,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_el0"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 120.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_arm_el1": {
+          "armature": 0.01,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 2.0,
+          "dynamic_friction": null,
+          "effort_limit": 30.3,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_el1"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 100.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_arm_f1x": {
+          "armature": 0.001,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 0.32,
+          "dynamic_friction": null,
+          "effort_limit": 15.32,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_f1x"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 16.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_arm_sh0": {
+          "armature": 0.01,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 2.0,
+          "dynamic_friction": null,
+          "effort_limit": 90.9,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_sh0"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 120.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_arm_sh1": {
+          "armature": 0.01,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 2.0,
+          "dynamic_friction": null,
+          "effort_limit": 181.8,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_sh1"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 120.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_arm_wr0": {
+          "armature": 0.01,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 2.0,
+          "dynamic_friction": null,
+          "effort_limit": 30.3,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_wr0"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 100.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_arm_wr1": {
+          "armature": 0.01,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 2.0,
+          "dynamic_friction": null,
+          "effort_limit": 30.3,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            "arm_wr1"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 100.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_hip": {
+          "armature": null,
+          "class_type": "isaaclab.actuators.actuator_pd:DelayedPDActuator",
+          "damping": 1.5,
+          "dynamic_friction": null,
+          "effort_limit": 45.0,
+          "effort_limit_sim": null,
+          "friction": null,
+          "joint_names_expr": [
+            ".*_h[xy]"
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "stiffness": 60.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        },
+        "spot_knee": {
+          "armature": null,
+          "class_type": "relic.actuators.actuator_spot:SpotKneeActuator",
+          "damping": 1.5,
+          "dynamic_friction": null,
+          "effort_limit": null,
+          "effort_limit_sim": null,
+          "enable_torque_speed_limit": true,
+          "friction": null,
+          "joint_names_expr": [
+            ".*_kn"
+          ],
+          "joint_parameter_lookup": [
+            [
+              -2.7929,
+              -24.776718,
+              37.165077
+            ],
+            [
+              -2.767442,
+              -26.290108,
+              39.435162
+            ],
+            [
+              -2.741984,
+              -27.793369,
+              41.690054
+            ],
+            [
+              -2.716526,
+              -29.285997,
+              43.928996
+            ],
+            [
+              -2.691068,
+              -30.767536,
+              46.151304
+            ],
+            [
+              -2.66561,
+              -32.237423,
+              48.356134
+            ],
+            [
+              -2.640152,
+              -33.695168,
+              50.542751
+            ],
+            [
+              -2.614694,
+              -35.140221,
+              52.710331
+            ],
+            [
+              -2.589236,
+              -36.572052,
+              54.858078
+            ],
+            [
+              -2.563778,
+              -37.990086,
+              56.985128
+            ],
+            [
+              -2.53832,
+              -39.39373,
+              59.090595
+            ],
+            [
+              -2.512862,
+              -40.782406,
+              61.173609
+            ],
+            [
+              -2.487404,
+              -42.155487,
+              63.233231
+            ],
+            [
+              -2.461946,
+              -43.512371,
+              65.268557
+            ],
+            [
+              -2.436488,
+              -44.852371,
+              67.278557
+            ],
+            [
+              -2.41103,
+              -46.174873,
+              69.26231
+            ],
+            [
+              -2.385572,
+              -47.479156,
+              71.218735
+            ],
+            [
+              -2.360114,
+              -48.764549,
+              73.146824
+            ],
+            [
+              -2.334656,
+              -50.030334,
+              75.045502
+            ],
+            [
+              -2.309198,
+              -51.275761,
+              76.913641
+            ],
+            [
+              -2.28374,
+              -52.500103,
+              78.750154
+            ],
+            [
+              -2.258282,
+              -53.702587,
+              80.553881
+            ],
+            [
+              -2.232824,
+              -54.882442,
+              82.323664
+            ],
+            [
+              -2.207366,
+              -56.03886,
+              84.05829
+            ],
+            [
+              -2.181908,
+              -57.171028,
+              85.756542
+            ],
+            [
+              -2.15645,
+              -58.278133,
+              87.4172
+            ],
+            [
+              -2.130992,
+              -59.359314,
+              89.038971
+            ],
+            [
+              -2.105534,
+              -60.413738,
+              90.620607
+            ],
+            [
+              -2.080076,
+              -61.440529,
+              92.160793
+            ],
+            [
+              -2.054618,
+              -62.438812,
+              93.658218
+            ],
+            [
+              -2.02916,
+              -63.407692,
+              95.111538
+            ],
+            [
+              -2.003702,
+              -64.346268,
+              96.519402
+            ],
+            [
+              -1.978244,
+              -65.25367,
+              97.880505
+            ],
+            [
+              -1.952786,
+              -66.128944,
+              99.193417
+            ],
+            [
+              -1.927328,
+              -66.971176,
+              100.456764
+            ],
+            [
+              -1.90187,
+              -67.779457,
+              101.669186
+            ],
+            [
+              -1.876412,
+              -68.552864,
+              102.829296
+            ],
+            [
+              -1.850954,
+              -69.290451,
+              103.935677
+            ],
+            [
+              -1.825496,
+              -69.991325,
+              104.986988
+            ],
+            [
+              -1.800038,
+              -70.654541,
+              105.981812
+            ],
+            [
+              -1.77458,
+              -71.27919,
+              106.918785
+            ],
+            [
+              -1.749122,
+              -71.864319,
+              107.796478
+            ],
+            [
+              -1.723664,
+              -72.409088,
+              108.613632
+            ],
+            [
+              -1.698206,
+              -72.912567,
+              109.368851
+            ],
+            [
+              -1.672748,
+              -73.373871,
+              110.060806
+            ],
+            [
+              -1.64729,
+              -73.79213,
+              110.688194
+            ],
+            [
+              -1.621832,
+              -74.166512,
+              111.249767
+            ],
+            [
+              -1.596374,
+              -74.496147,
+              111.744221
+            ],
+            [
+              -1.570916,
+              -74.780251,
+              112.170376
+            ],
+            [
+              -1.545458,
+              -75.017998,
+              112.526997
+            ],
+            [
+              -1.52,
+              -75.208656,
+              112.812984
+            ],
+            [
+              -1.494542,
+              -75.351448,
+              113.027172
+            ],
+            [
+              -1.469084,
+              -75.445686,
+              113.16853
+            ],
+            [
+              -1.443626,
+              -75.490677,
+              113.236015
+            ],
+            [
+              -1.418168,
+              -75.485771,
+              113.228657
+            ],
+            [
+              -1.39271,
+              -75.430344,
+              113.145515
+            ],
+            [
+              -1.367252,
+              -75.32383,
+              112.985744
+            ],
+            [
+              -1.341794,
+              -75.165688,
+              112.748531
+            ],
+            [
+              -1.316336,
+              -74.955406,
+              112.433109
+            ],
+            [
+              -1.290878,
+              -74.692551,
+              112.038826
+            ],
+            [
+              -1.26542,
+              -74.376694,
+              111.565041
+            ],
+            [
+              -1.239962,
+              -74.007477,
+              111.011215
+            ],
+            [
+              -1.214504,
+              -73.584579,
+              110.376869
+            ],
+            [
+              -1.189046,
+              -73.107742,
+              109.661613
+            ],
+            [
+              -1.163588,
+              -72.576752,
+              108.865128
+            ],
+            [
+              -1.13813,
+              -71.991455,
+              107.987183
+            ],
+            [
+              -1.112672,
+              -71.351707,
+              107.027561
+            ],
+            [
+              -1.087214,
+              -70.657486,
+              105.986229
+            ],
+            [
+              -1.061756,
+              -69.908813,
+              104.86322
+            ],
+            [
+              -1.036298,
+              -69.105721,
+              103.658581
+            ],
+            [
+              -1.01084,
+              -68.248337,
+              102.372505
+            ],
+            [
+              -0.985382,
+              -67.336861,
+              101.005291
+            ],
+            [
+              -0.959924,
+              -66.371513,
+              99.55727
+            ],
+            [
+              -0.934466,
+              -65.352615,
+              98.028923
+            ],
+            [
+              -0.909008,
+              -64.280533,
+              96.420799
+            ],
+            [
+              -0.88355,
+              -63.155693,
+              94.73354
+            ],
+            [
+              -0.858092,
+              -61.978588,
+              92.967882
+            ],
+            [
+              -0.832634,
+              -60.749775,
+              91.124662
+            ],
+            [
+              -0.807176,
+              -59.469845,
+              89.204767
+            ],
+            [
+              -0.781718,
+              -58.139503,
+              87.209255
+            ],
+            [
+              -0.75626,
+              -56.759487,
+              85.139231
+            ],
+            [
+              -0.730802,
+              -55.330616,
+              82.995924
+            ],
+            [
+              -0.705344,
+              -53.853729,
+              80.780594
+            ],
+            [
+              -0.679886,
+              -52.329796,
+              78.494694
+            ],
+            [
+              -0.654428,
+              -50.759762,
+              76.139643
+            ],
+            [
+              -0.62897,
+              -49.144699,
+              73.717049
+            ],
+            [
+              -0.603512,
+              -47.485737,
+              71.228605
+            ],
+            [
+              -0.578054,
+              -45.784004,
+              68.676006
+            ],
+            [
+              -0.552596,
+              -44.040764,
+              66.061146
+            ],
+            [
+              -0.527138,
+              -42.257267,
+              63.3859
+            ],
+            [
+              -0.50168,
+              -40.434883,
+              60.652325
+            ],
+            [
+              -0.476222,
+              -38.574947,
+              57.862421
+            ],
+            [
+              -0.450764,
+              -36.678982,
+              55.018473
+            ],
+            [
+              -0.425306,
+              -34.748432,
+              52.122648
+            ],
+            [
+              -0.399848,
+              -32.784836,
+              49.177254
+            ],
+            [
+              -0.37439,
+              -30.78981,
+              46.184715
+            ],
+            [
+              -0.348932,
+              -28.764952,
+              43.147428
+            ],
+            [
+              -0.323474,
+              -26.711969,
+              40.067954
+            ],
+            [
+              -0.298016,
+              -24.632576,
+              36.948864
+            ],
+            [
+              -0.272558,
+              -22.528547,
+              33.792821
+            ],
+            [
+              -0.2471,
+              -20.401667,
+              30.6025
+            ]
+          ],
+          "max_delay": 0,
+          "min_delay": 0,
+          "neg_torque_speed_limit": [
+            [
+              -15.0,
+              0.0
+            ],
+            [
+              0.0,
+              -96.9972
+            ],
+            [
+              30.0,
+              -96.9972
+            ]
+          ],
+          "pos_torque_speed_limit": [
+            [
+              -30.0,
+              96.9972
+            ],
+            [
+              0.0,
+              96.9972
+            ],
+            [
+              14.0,
+              0.0
+            ]
+          ],
+          "stiffness": 60.0,
+          "velocity_limit": null,
+          "velocity_limit_sim": null,
+          "viscous_friction": null
+        }
+      },
+      "articulation_root_prim_path": null,
+      "class_type": "isaaclab.assets.articulation.articulation:Articulation",
+      "collision_group": 0,
+      "debug_vis": false,
+      "init_state": {
+        "ang_vel": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "joint_pos": {
+          "arm_el0": 1.8,
+          "arm_el1": 0.0,
+          "arm_f1x": -1.54,
+          "arm_sh0": 0.0,
+          "arm_sh1": -0.9,
+          "arm_wr0": -0.9,
+          "arm_wr1": 0.0,
+          "fl_hx": 0.12,
+          "fl_hy": 0.5,
+          "fl_kn": -1.0,
+          "fr_hx": -0.12,
+          "fr_hy": 0.5,
+          "fr_kn": -1.0,
+          "hl_hx": 0.12,
+          "hl_hy": 0.5,
+          "hl_kn": -1.0,
+          "hr_hx": -0.12,
+          "hr_hy": 0.5,
+          "hr_kn": -1.0
+        },
+        "joint_vel": {
+          ".*": 0.0
+        },
+        "lin_vel": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pos": [
+          0.0,
+          0.0,
+          0.65
+        ],
+        "rot": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "prim_path": "{ENV_REGEX_NS}/Robot",
+      "soft_joint_pos_limit_factor": 1.0,
+      "spawn": {
+        "activate_contact_sensors": true,
+        "articulation_props": {
+          "articulation_enabled": null,
+          "enabled_self_collisions": true,
+          "fix_root_link": null,
+          "sleep_threshold": null,
+          "solver_position_iteration_count": 4,
+          "solver_velocity_iteration_count": 0,
+          "stabilization_threshold": null
+        },
+        "asset_path": "/home/adam/repos/research/research-spot-relic-sim/source/relic/relic/assets/spot/spot_with_arm.urdf",
+        "collider_type": "convex_hull",
+        "collision_from_visuals": false,
+        "collision_props": null,
+        "convert_mimic_joints_to_normal_joints": false,
+        "copy_from_source": true,
+        "deformable_props": null,
+        "fix_base": false,
+        "fixed_tendons_props": null,
+        "force_usd_conversion": true,
+        "func": "isaaclab.sim.spawners.from_files.from_files:spawn_from_urdf",
+        "joint_drive": {
+          "drive_type": "force",
+          "gains": {
+            "damping": 0.0,
+            "stiffness": 0.0
+          },
+          "target_type": "none"
+        },
+        "joint_drive_props": null,
+        "link_density": 1e-08,
+        "make_instanceable": false,
+        "mass_props": null,
+        "merge_fixed_joints": false,
+        "replace_cylinders_with_capsules": false,
+        "rigid_props": {
+          "angular_damping": 0.0,
+          "disable_gravity": false,
+          "enable_gyroscopic_forces": null,
+          "kinematic_enabled": null,
+          "linear_damping": 0.0,
+          "max_angular_velocity": 1000.0,
+          "max_contact_impulse": null,
+          "max_depenetration_velocity": 1.0,
+          "max_linear_velocity": 1000.0,
+          "retain_accelerations": false,
+          "rigid_body_enabled": null,
+          "sleep_threshold": null,
+          "solver_position_iteration_count": null,
+          "solver_velocity_iteration_count": null,
+          "stabilization_threshold": null
+        },
+        "root_link_name": null,
+        "scale": null,
+        "self_collision": false,
+        "semantic_tags": null,
+        "spatial_tendons_props": null,
+        "usd_dir": "/home/adam/repos/research/research-spot-deployment-exploy/runs/exploy-export-attempt-003/export/model",
+        "usd_file_name": null,
+        "visible": true,
+        "visual_material": null,
+        "visual_material_path": "material"
+      }
+    },
+    "robot_to_ground_contact_forces": {
+      "class_type": "isaaclab.sensors.contact_sensor.contact_sensor:ContactSensor",
+      "debug_vis": false,
+      "filter_prim_paths_expr": [
+        "/World/ground/terrain/mesh"
+      ],
+      "force_threshold": 1.0,
+      "history_length": 3,
+      "max_contact_data_count_per_prim": 4,
+      "prim_path": "{ENV_REGEX_NS}/Robot/.*",
+      "track_air_time": true,
+      "track_contact_points": false,
+      "track_friction_forces": false,
+      "track_pose": false,
+      "update_period": 0.005,
+      "visualizer_cfg": {
+        "markers": {
+          "contact": {
+            "activate_contact_sensors": false,
+            "collision_props": null,
+            "copy_from_source": true,
+            "func": "isaaclab.sim.spawners.shapes.shapes:spawn_sphere",
+            "mass_props": null,
+            "physics_material": null,
+            "physics_material_path": "material",
+            "radius": 0.02,
+            "rigid_props": null,
+            "semantic_tags": null,
+            "visible": true,
+            "visual_material": {
+              "diffuse_color": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "emissive_color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+              "metallic": 0.0,
+              "opacity": 1.0,
+              "roughness": 0.5
+            },
+            "visual_material_path": "material"
+          },
+          "no_contact": {
+            "activate_contact_sensors": false,
+            "collision_props": null,
+            "copy_from_source": true,
+            "func": "isaaclab.sim.spawners.shapes.shapes:spawn_sphere",
+            "mass_props": null,
+            "physics_material": null,
+            "physics_material_path": "material",
+            "radius": 0.02,
+            "rigid_props": null,
+            "semantic_tags": null,
+            "visible": false,
+            "visual_material": {
+              "diffuse_color": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "emissive_color": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+              "metallic": 0.0,
+              "opacity": 1.0,
+              "roughness": 0.5
+            },
+            "visual_material_path": "material"
+          }
+        },
+        "prim_path": "/Visuals/ContactSensor"
+      }
+    },
+    "sky_light": {
+      "class_type": null,
+      "collision_group": 0,
+      "debug_vis": false,
+      "init_state": {
+        "pos": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rot": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "prim_path": "/World/skyLight",
+      "spawn": {
+        "color": [
+          0.13,
+          0.13,
+          0.13
+        ],
+        "color_temperature": 6500.0,
+        "copy_from_source": true,
+        "enable_color_temperature": false,
+        "exposure": 0.0,
+        "func": "isaaclab.sim.spawners.lights.lights:spawn_light",
+        "intensity": 1000.0,
+        "normalize": false,
+        "prim_type": "DomeLight",
+        "semantic_tags": null,
+        "texture_file": null,
+        "texture_format": "automatic",
+        "visible": true,
+        "visible_in_primary_ray": true
+      }
+    },
+    "terrain": {
+      "class_type": "isaaclab.terrains.terrain_importer:TerrainImporter",
+      "collision_group": -1,
+      "debug_vis": false,
+      "env_spacing": null,
+      "max_init_terrain_level": null,
+      "num_envs": 1,
+      "physics_material": {
+        "compliant_contact_damping": 0.0,
+        "compliant_contact_stiffness": 0.0,
+        "dynamic_friction": 1.0,
+        "friction_combine_mode": "multiply",
+        "func": "isaaclab.sim.spawners.materials.physics_materials:spawn_rigid_body_material",
+        "restitution": 0.0,
+        "restitution_combine_mode": "multiply",
+        "static_friction": 1.0
+      },
+      "prim_path": "/World/ground",
+      "terrain_generator": {
+        "border_height": 1.0,
+        "border_width": 20.0,
+        "cache_dir": "/tmp/isaaclab/terrains",
+        "class_type": "isaaclab.terrains.terrain_generator:TerrainGenerator",
+        "color_scheme": "none",
+        "curriculum": false,
+        "difficulty_range": [
+          0.0,
+          1.0
+        ],
+        "horizontal_scale": 0.1,
+        "num_cols": 1,
+        "num_rows": 1,
+        "seed": null,
+        "size": [
+          8.0,
+          8.0
+        ],
+        "slope_threshold": 0.75,
+        "sub_terrains": {
+          "flat": {
+            "flat_patch_sampling": null,
+            "function": "isaaclab.terrains.trimesh.mesh_terrains:flat_terrain",
+            "proportion": 1.0,
+            "size": [
+              10.0,
+              10.0
+            ]
+          }
+        },
+        "use_cache": false,
+        "vertical_scale": 0.005
+      },
+      "terrain_type": "generator",
+      "usd_path": null,
+      "use_terrain_origins": true,
+      "visual_material": {
+        "diffuse_color": [
+          0.2,
+          0.2,
+          0.2
+        ],
+        "emissive_color": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "func": "isaaclab.sim.spawners.materials.visual_materials:spawn_preview_surface",
+        "metallic": 0.0,
+        "opacity": 1.0,
+        "roughness": 0.5
+      }
+    }
+  },
+  "seed": 101,
+  "sim": {
+    "create_stage_in_memory": false,
+    "device": "cpu",
+    "disable_contact_processing": true,
+    "dt": 0.005,
+    "enable_scene_query_support": false,
+    "gravity": [
+      0.0,
+      0.0,
+      -9.81
+    ],
+    "log_dir": null,
+    "logging_level": "WARNING",
+    "physics_material": {
+      "compliant_contact_damping": 0.0,
+      "compliant_contact_stiffness": 0.0,
+      "dynamic_friction": 1.0,
+      "friction_combine_mode": "multiply",
+      "func": "isaaclab.sim.spawners.materials.physics_materials:spawn_rigid_body_material",
+      "restitution": 0.0,
+      "restitution_combine_mode": "multiply",
+      "static_friction": 1.0
+    },
+    "physics_prim_path": "/physicsScene",
+    "physx": {
+      "bounce_threshold_velocity": 0.5,
+      "enable_ccd": false,
+      "enable_enhanced_determinism": false,
+      "enable_external_forces_every_iteration": false,
+      "enable_stabilization": false,
+      "friction_correlation_distance": 0.025,
+      "friction_offset_threshold": 0.04,
+      "gpu_collision_stack_size": 67108864,
+      "gpu_found_lost_aggregate_pairs_capacity": 33554432,
+      "gpu_found_lost_pairs_capacity": 2097152,
+      "gpu_heap_capacity": 67108864,
+      "gpu_max_num_partitions": 8,
+      "gpu_max_particle_contacts": 1048576,
+      "gpu_max_rigid_contact_count": 8388608,
+      "gpu_max_rigid_patch_count": 163840,
+      "gpu_max_soft_body_contacts": 1048576,
+      "gpu_temp_buffer_capacity": 16777216,
+      "gpu_total_aggregate_pairs_capacity": 2097152,
+      "max_position_iteration_count": 255,
+      "max_velocity_iteration_count": 255,
+      "min_position_iteration_count": 1,
+      "min_velocity_iteration_count": 0,
+      "solve_articulation_contact_last": false,
+      "solver_type": 1
+    },
+    "render": {
+      "antialiasing_mode": null,
+      "carb_settings": null,
+      "dlss_mode": null,
+      "dome_light_upper_lower_strategy": null,
+      "enable_ambient_occlusion": null,
+      "enable_direct_lighting": null,
+      "enable_dl_denoiser": null,
+      "enable_dlssg": null,
+      "enable_global_illumination": null,
+      "enable_reflections": null,
+      "enable_shadows": null,
+      "enable_translucency": null,
+      "rendering_mode": null,
+      "samples_per_pixel": null
+    },
+    "render_interval": 1,
+    "save_logs_to_file": true,
+    "use_fabric": true
+  },
+  "teleop_devices": {
+    "devices": {}
+  },
+  "terminations": {
+    "base_contact": null,
+    "time_out": {
+      "func": "isaaclab.envs.mdp.terminations:time_out",
+      "params": {},
+      "time_out": true
+    },
+    "undesired_ground_contact": {
+      "func": "relic.tasks.loco_manipulation.mdp.terminations:illegal_ground_contact",
+      "params": {
+        "sensor_cfg": {
+          "body_ids": "slice(None, None, None)",
+          "body_names": [
+            ".*uleg"
+          ],
+          "fixed_tendon_ids": "slice(None, None, None)",
+          "fixed_tendon_names": null,
+          "joint_ids": "slice(None, None, None)",
+          "joint_names": null,
+          "name": "robot_to_ground_contact_forces",
+          "object_collection_ids": "slice(None, None, None)",
+          "object_collection_names": null,
+          "preserve_order": false
+        },
+        "threshold": 1.0
+      },
+      "time_out": false
+    }
+  },
+  "ui_window_class_type": "isaaclab.envs.ui.manager_based_rl_env_window:ManagerBasedRLEnvWindow",
+  "viewer": {
+    "asset_name": null,
+    "body_name": null,
+    "cam_prim_path": "/OmniverseKit_Persp",
+    "env_index": 0,
+    "eye": [
+      7.5,
+      7.5,
+      7.5
+    ],
+    "lookat": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "origin_type": "world",
+    "resolution": [
+      1280,
+      720
+    ]
+  },
+  "wait_for_textures": true,
+  "xr": null
+}

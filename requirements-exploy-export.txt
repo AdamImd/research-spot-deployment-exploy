@@ -1,0 +1,9 @@
+# Isolated exporter overlay on the existing Isaac Lab Python 3.11 environment.
+# tools/setup_exploy_export.sh checks the inherited Torch version before installation.
+exploy @ git+https://github.com/rai-opensource/exploy.git@05f9dc3b2e589abdae8de942e8c6749e7a123c88
+numpy==1.26.4
+onnx==1.21.0
+onnxruntime==1.23.2
+onnxscript==0.6.2
+onnx_ir==0.2.0
+pydantic==2.11.10

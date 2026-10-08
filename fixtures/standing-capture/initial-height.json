@@ -1,0 +1,28 @@
+{
+  "body_position_odom": [
+    -0.006104428225262096,
+    0.17900194798720492,
+    0.7586215309839195
+  ],
+  "foot_contacts": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "formula": "dot(ground_normal, body_position - ground_point) / ground_normal.z",
+  "ground_normal_odom": [
+    0.00759376633310344,
+    -0.00413582912368305,
+    0.9999626141243255
+  ],
+  "ground_point_odom": [
+    -0.006104410413624586,
+    0.17900191865559906,
+    0.2377524059884326
+  ],
+  "height_m": 0.5208691247389095,
+  "robot_time_s": 1791263428.006604,
+  "source": "initial SDK ground-plane estimate",
+  "state_age_s": 0.006330251693725586
+}

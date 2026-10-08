@@ -1,0 +1,132 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "cut_power_timeout_s": {
+      "maximum": 2,
+      "minimum": 0.2,
+      "title": "Cut Power Timeout S",
+      "type": "number"
+    },
+    "endpoint_name": {
+      "pattern": "^[A-Za-z0-9_-]{1,40}$",
+      "title": "Endpoint Name",
+      "type": "string"
+    },
+    "endpoint_role": {
+      "pattern": "^(PDB_rooted|spot_joystick_[A-Za-z0-9_-]{1,32})$",
+      "title": "Endpoint Role",
+      "type": "string"
+    },
+    "endpoint_timeout_s": {
+      "maximum": 1,
+      "minimum": 0.2,
+      "title": "Endpoint Timeout S",
+      "type": "number"
+    },
+    "expected_name": {
+      "maxLength": 127,
+      "minLength": 1,
+      "title": "Expected Name",
+      "type": "string"
+    },
+    "input_type": {
+      "const": "linux_joystick",
+      "title": "Input Type",
+      "type": "string"
+    },
+    "joystick_device": {
+      "pattern": "^/dev/input/by-id/[^/]+-joystick$",
+      "title": "Joystick Device",
+      "type": "string"
+    },
+    "max_input_gap_s": {
+      "maximum": 0.25,
+      "minimum": 0.1,
+      "title": "Max Input Gap S",
+      "type": "number"
+    },
+    "poll_interval_s": {
+      "maximum": 0.05,
+      "minimum": 0.01,
+      "title": "Poll Interval S",
+      "type": "number"
+    },
+    "product_id": {
+      "pattern": "^[0-9a-f]{4}$",
+      "title": "Product Id",
+      "type": "string"
+    },
+    "rearm_button": {
+      "maximum": 31,
+      "minimum": 1,
+      "title": "Rearm Button",
+      "type": "integer"
+    },
+    "release_hold_s": {
+      "maximum": 2,
+      "minimum": 0.5,
+      "title": "Release Hold S",
+      "type": "number"
+    },
+    "rpc_timeout_s": {
+      "maximum": 0.1,
+      "minimum": 0.02,
+      "title": "Rpc Timeout S",
+      "type": "number"
+    },
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "status_interval_s": {
+      "maximum": 0.1,
+      "minimum": 0.02,
+      "title": "Status Interval S",
+      "type": "number"
+    },
+    "stop_button": {
+      "enum": [
+        0,
+        1
+      ],
+      "title": "Stop Button",
+      "type": "integer"
+    },
+    "stop_level": {
+      "enum": [
+        "cut",
+        "settle_then_cut"
+      ],
+      "title": "Stop Level",
+      "type": "string"
+    },
+    "vendor_id": {
+      "pattern": "^[0-9a-f]{4}$",
+      "title": "Vendor Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "input_type",
+    "joystick_device",
+    "expected_name",
+    "vendor_id",
+    "product_id",
+    "stop_button",
+    "rearm_button",
+    "release_hold_s",
+    "poll_interval_s",
+    "max_input_gap_s",
+    "status_interval_s",
+    "rpc_timeout_s",
+    "endpoint_name",
+    "endpoint_role",
+    "endpoint_timeout_s",
+    "cut_power_timeout_s",
+    "stop_level"
+  ],
+  "title": "JoystickProfile",
+  "type": "object"
+}

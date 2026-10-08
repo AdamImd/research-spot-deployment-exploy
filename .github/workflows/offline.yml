@@ -1,0 +1,36 @@
+name: Offline checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          version: '0.10.0'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked --group simulation
+      - run: uv run --no-sync pytest -q
+      - run: uv run --no-sync ruff check src tests tools
+      - run: uv run --no-sync python tools/demo_exploy.py
+      - name: Import independent original actor
+        run: >-
+          uv run --no-sync python tools/import_relic.py
+          --simulation-source simulation --capture fixtures/standing-capture
+          --settings fixtures/relic-direct-simulation/settings.json
+          --output local/relic-reference
+      - name: Compare graph with independent original adapter
+        run: >-
+          uv run --no-sync python tools/audit_exploy_relic.py
+          --manifest policies/relic-exploy-standing/manifest.json
+          --reference-manifest local/relic-reference/manifest.json
+          --height-record fixtures/standing-capture/initial-height.json
+          --output runs/parity-ci

@@ -1,0 +1,93 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "robot_time_s": {
+      "minimum": 0,
+      "title": "Robot Time S",
+      "type": "number"
+    },
+    "received_monotonic_s": {
+      "minimum": 0,
+      "title": "Received Monotonic S",
+      "type": "number"
+    },
+    "positions": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Positions",
+      "type": "array"
+    },
+    "velocities": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Velocities",
+      "type": "array"
+    },
+    "loads": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "title": "Loads",
+      "type": "array"
+    },
+    "odom_quaternion_wxyz": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Odom Quaternion Wxyz",
+      "type": "array"
+    },
+    "linear_velocity_odom": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "title": "Linear Velocity Odom",
+      "type": "array"
+    },
+    "angular_velocity_odom": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "title": "Angular Velocity Odom",
+      "type": "array"
+    },
+    "last_command_key": {
+      "minimum": 0,
+      "title": "Last Command Key",
+      "type": "integer"
+    },
+    "last_command_received_robot_s": {
+      "minimum": 0,
+      "title": "Last Command Received Robot S",
+      "type": "number"
+    }
+  },
+  "required": [
+    "robot_time_s",
+    "received_monotonic_s",
+    "positions",
+    "velocities",
+    "loads",
+    "odom_quaternion_wxyz",
+    "linear_velocity_odom",
+    "angular_velocity_odom",
+    "last_command_key",
+    "last_command_received_robot_s"
+  ],
+  "title": "State",
+  "type": "object"
+}

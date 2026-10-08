@@ -1,0 +1,96 @@
+{
+  "$defs": {
+    "HardwareEstopRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Profile Sha256",
+          "type": "string"
+        },
+        "status_file": {
+          "pattern": "^/[^\\x00]+$",
+          "title": "Status File",
+          "type": "string"
+        },
+        "max_status_age_s": {
+          "exclusiveMinimum": 0,
+          "maximum": 0.3,
+          "title": "Max Status Age S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "profile_sha256",
+        "status_file",
+        "max_status_age_s"
+      ],
+      "title": "HardwareEstopRequirement",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "endpoint": {
+      "title": "Endpoint",
+      "type": "string"
+    },
+    "expected_serial": {
+      "minLength": 1,
+      "title": "Expected Serial",
+      "type": "string"
+    },
+    "expected_firmware": {
+      "pattern": "^(?:5\\.0\\.1|5\\.1\\.\\d+)$",
+      "title": "Expected Firmware",
+      "type": "string"
+    },
+    "expected_host": {
+      "title": "Expected Host",
+      "type": "string"
+    },
+    "wired_interface": {
+      "title": "Wired Interface",
+      "type": "string"
+    },
+    "rpc_timeout_s": {
+      "exclusiveMinimum": 0,
+      "maximum": 10,
+      "title": "Rpc Timeout S",
+      "type": "number"
+    },
+    "joint_control_feature": {
+      "const": "joint_level_control",
+      "title": "Joint Control Feature",
+      "type": "string"
+    },
+    "hardware_estop": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HardwareEstopRequirement"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "schema_version",
+    "endpoint",
+    "expected_serial",
+    "expected_firmware",
+    "expected_host",
+    "wired_interface",
+    "rpc_timeout_s",
+    "joint_control_feature"
+  ],
+  "title": "RobotConfig",
+  "type": "object"
+}

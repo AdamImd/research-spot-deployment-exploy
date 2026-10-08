@@ -1,0 +1,68 @@
+{
+  "compute_max_s": 0.0015562039334326982,
+  "compute_p99_s": 0.000788266072049737,
+  "failure": null,
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "late_window_metrics": {
+    "angular_speed_p95_rad_s": 0.0007402920486744093,
+    "height_span_m": 1.6391277313232422e-06,
+    "joint_speed_p95_rad_s": 0.06530264765024185,
+    "linear_speed_p95_m_s": 0.00012782694756912567,
+    "max_tilt_deg": 0.6211811475979176,
+    "mean_height_m": 0.4817968006136416,
+    "min_height_m": 0.4817960262298584,
+    "planar_speed_p95_m_s": 4.561382813880923e-05,
+    "samples": 2001,
+    "span_s": 10.0,
+    "tilt_span_deg": 0.0006303271262711989
+  },
+  "loop_wall_s": 46.03232732694596,
+  "max_observation_error": 5.960464477539063e-08,
+  "max_raw_action_error": 9.5367431640625e-07,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "policy_duration_s": 60.0,
+  "policy_samples": 3001,
+  "real_time_factor": 1.3034318159463942,
+  "reason": "completed",
+  "stable_final_window": true,
+  "timing": {
+    "core_s": {
+      "max_s": 0.0015567450318485498,
+      "over_5ms": 0,
+      "p50_s": 0.00027869013138115406,
+      "p99_s": 0.0007887070532888174
+    },
+    "parity_s": {
+      "max_s": 0.0003821090795099735,
+      "over_5ms": 0,
+      "p50_s": 3.1082890927791595e-07,
+      "p99_s": 0.00017576105892658234
+    },
+    "physics_s": {
+      "max_s": 0.21873796009458601,
+      "over_5ms": 79,
+      "p50_s": 0.0027573900297284126,
+      "p99_s": 0.004249679856002331
+    },
+    "recording_s": {
+      "max_s": 0.004442302975803614,
+      "over_5ms": 0,
+      "p50_s": 0.0001633460633456707,
+      "p99_s": 0.0002453550696372986
+    },
+    "state_s": {
+      "max_s": 0.0012081600725650787,
+      "over_5ms": 0,
+      "p50_s": 0.0003676519263535738,
+      "p99_s": 0.0005461981054395437
+    },
+    "total_s": {
+      "max_s": 0.21958022098988295,
+      "over_5ms": 183,
+      "p50_s": 0.00367248198017478,
+      "p99_s": 0.005424325121566653
+    }
+  },
+  "trial_duration_s": 60.0
+}

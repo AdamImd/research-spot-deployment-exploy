@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spot · State viewer</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" type="module"></script>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/" aria-label="Spot viewer home"
+        ><span class="logo">S<span>•</span></span
+        ><span>SPOT <small>STATE VIEWER</small></span></a
+      >
+      <div class="header-right">
+        <span id="source-badge" class="badge">CONNECTING</span
+        ><span class="read-only">◉ &nbsp; Read only</span>
+      </div>
+    </header>
+    <main>
+      <div class="page-title">
+        <div>
+          <p class="eyebrow">DEPLOYMENT / OBSERVABILITY</p>
+          <h1>Robot state<span class="dot">.</span></h1>
+          <p id="source-label">Waiting for telemetry…</p>
+        </div>
+        <div class="source-status">
+          <span class="signal" id="signal"></span>
+          <div>
+            <strong id="stream-status">Connecting</strong
+            ><small id="stream-detail">Local telemetry service</small>
+          </div>
+        </div>
+      </div>
+      <div id="notice" role="status">
+        This viewer does not issue robot commands.
+      </div>
+      <div class="workspace">
+        <section class="panel scene-panel" aria-label="3D robot state">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">01 / KINEMATICS</span>
+              <h2>Pose &amp; policy intent</h2>
+            </div>
+            <button id="reset-view" title="Reset camera">Reset view ↺</button>
+          </div>
+          <div class="scene">
+            <canvas
+              id="robot"
+              aria-label="3D robot visual meshes. Drag to orbit and scroll to zoom."
+            ></canvas>
+            <div class="view-pills">
+              <button id="view-iso" class="active">Orbit</button
+              ><button id="view-side">Side</button
+              ><button id="view-top">Top</button>
+            </div>
+            <div class="axis-key">
+              <b>X</b> forward <b>Y</b> left <b>Z</b> up
+            </div>
+            <div class="scene-caption">
+              <span id="model-label">Kinematic schematic</span
+              ><small
+                >Body-centred · no world translation · drag to orbit / scroll to
+                zoom</small
+              >
+            </div>
+            <div class="empty" id="empty-scene">
+              Waiting for a measured state
+            </div>
+          </div>
+          <div class="legend">
+            <label
+              ><input id="show-measured" type="checkbox" checked /><i
+                class="measured"
+              ></i
+              >Measured</label
+            ><label
+              ><input id="show-target" type="checkbox" checked /><i
+                class="target"
+              ></i
+              >RL target <span id="target-age">—</span></label
+            ><label
+              ><input id="show-command" type="checkbox" checked /><i
+                class="command"
+              ></i
+              >Sent command <span id="command-age">—</span></label
+            >
+          </div>
+          <div class="model-controls">
+            <label><input id="show-meshes" type="checkbox" checked /> Visual meshes</label>
+            <label><input id="show-frames" type="checkbox" /> Link frames</label>
+            <span id="mesh-status" role="status">Loading local model…</span>
+          </div>
+          <details class="link-panel">
+            <summary>Links <span id="link-count"></span></summary>
+            <div class="link-heading"><span>Fixed and moving links · all visible by default</span>
+              <button id="show-all-links">Show all links</button></div>
+            <div id="link-list" aria-label="Robot link visibility"></div>
+          </details>
+          <div class="playback">
+            <button id="play" aria-label="Play or pause">▶</button
+            ><span id="time-label">0.00 s</span
+            ><input
+              id="timeline"
+              type="range"
+              min="0"
+              max="0"
+              value="0"
+              step="1"
+              aria-label="Timeline"
+            /><select id="speed" aria-label="Playback speed">
+              <option value=".5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option></select
+            ><button id="follow" title="Follow incoming telemetry">
+              Latest ↗
+            </button>
+          </div>
+        </section>
+        <aside class="side-panels">
+          <section class="panel health-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">02 / HEALTH</span>
+                <h2>Robot &amp; interlock</h2>
+              </div>
+              <span class="mini-label" id="health-origin">NO DATA</span>
+            </div>
+            <div class="health-grid">
+              <div><span>Battery</span><strong id="battery">—</strong></div>
+              <div>
+                <span>Active faults</span><strong id="faults">—</strong>
+              </div>
+              <div>
+                <span>Roll / pitch</span><strong id="attitude">—</strong>
+              </div>
+              <div><span>Body speed</span><strong id="velocity">—</strong></div>
+            </div>
+            <div class="estop-box">
+              <span class="stop-icon">!</span>
+              <div>
+                <strong id="estop-label">E-stop state unknown</strong
+                ><small id="estop-detail">No bridge status selected</small>
+              </div>
+            </div>
+            <p class="footnote">
+              Status display only. Arm and reset at the physical button.
+            </p>
+          </section>
+          <section class="panel policy-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">03 / POLICY</span>
+                <h2>Predicted actions</h2>
+              </div>
+              <strong id="latency">—</strong>
+            </div>
+            <p class="subtle">Raw network output · policy index order</p>
+            <p class="subtle" id="policy-rates"></p>
+            <div id="action-bars" aria-label="Raw policy actions"></div>
+            <p class="footnote" id="policy-note">
+              Predicted joint targets are shown in amber. Prediction does not
+              imply execution.
+            </p>
+          </section>
+        </aside>
+        <section class="panel chart-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">04 / TRACKING</span>
+              <h2 id="chart-title">Front left · hip X</h2>
+            </div>
+            <span class="mini-label">POSITION / RAD</span>
+          </div>
+          <canvas id="plot" aria-label="Joint position history"></canvas>
+          <div class="chart-values">
+            <span>Measured <b id="q-value">—</b></span
+            ><span><span id="prediction-caption">Predicted</span> <b id="target-value">—</b></span
+            ><span>Sent <b id="cmd-value">—</b></span
+            ><span>Δ target <b id="error-value">—</b></span>
+          </div>
+        </section>
+        <section class="panel joints-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">05 / JOINTS</span>
+              <h2>Measured telemetry</h2>
+            </div>
+            <span class="mini-label">19 JOINTS</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Joint</th>
+                  <th>q <small>rad</small></th>
+                  <th>dq <small>rad/s</small></th>
+                  <th>τ <small>N·m</small></th>
+                  <th>Target <small>rad</small></th>
+                </tr>
+              </thead>
+              <tbody id="joint-rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+      <footer>
+        <span>SPOT / Local observability</span
+        ><span>No lease · no motion · no remote assets</span>
+      </footer>
+    </main>
+  </body>
+</html>

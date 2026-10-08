@@ -1,0 +1,8 @@
+{
+  "adapter": "relic-exploy",
+  "export_complete_sha256": "c5074f160d43e8ff336890c05da2309c975ddf3d23f58994917248e9f40792ad",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "note": "New graph/hash requires new evidence. No physical qualification is inherited.",
+  "reference_manifest_sha256": "3c9dd43a506486ef3aadd10ba4e0086a46640be733d5741b2f1bb4c7fe25a715"
+}

@@ -1,0 +1,359 @@
+{
+  "$defs": {
+    "Actions": {
+      "additionalProperties": false,
+      "properties": {
+        "joint_order": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Joint Order",
+          "type": "array"
+        },
+        "default_positions": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Default Positions",
+          "type": "array"
+        },
+        "scale": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Scale",
+          "type": "array"
+        },
+        "clip_min": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 12,
+              "minItems": 12,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clip Min"
+        },
+        "clip_max": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 12,
+              "minItems": 12,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clip Max"
+        },
+        "previous_action": {
+          "enum": [
+            "raw",
+            "clipped"
+          ],
+          "title": "Previous Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "joint_order",
+        "default_positions",
+        "scale",
+        "clip_min",
+        "clip_max",
+        "previous_action"
+      ],
+      "title": "Actions",
+      "type": "object"
+    },
+    "Gains": {
+      "additionalProperties": false,
+      "properties": {
+        "kp": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Kp",
+          "type": "array"
+        },
+        "kd": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Kd",
+          "type": "array"
+        },
+        "feedforward": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "title": "Feedforward",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kp",
+        "kd",
+        "feedforward"
+      ],
+      "title": "Gains",
+      "type": "object"
+    },
+    "Observations": {
+      "additionalProperties": false,
+      "properties": {
+        "terms": {
+          "items": {
+            "$ref": "#/$defs/Term"
+          },
+          "title": "Terms",
+          "type": "array"
+        },
+        "joint_order": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Joint Order",
+          "type": "array"
+        },
+        "history_length": {
+          "maximum": 64,
+          "minimum": 1,
+          "title": "History Length",
+          "type": "integer"
+        },
+        "history_initialization": {
+          "enum": [
+            "zeros",
+            "repeat_first"
+          ],
+          "title": "History Initialization",
+          "type": "string"
+        },
+        "mean": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Mean",
+          "type": "array"
+        },
+        "std": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Std",
+          "type": "array"
+        },
+        "clip": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clip"
+        }
+      },
+      "required": [
+        "terms",
+        "joint_order",
+        "history_length",
+        "history_initialization",
+        "mean",
+        "std",
+        "clip"
+      ],
+      "title": "Observations",
+      "type": "object"
+    },
+    "Term": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "body_linear_velocity",
+            "body_angular_velocity",
+            "projected_gravity",
+            "joint_positions",
+            "joint_velocities",
+            "previous_action",
+            "velocity_command"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "scale": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Scale",
+          "type": "array"
+        },
+        "offset": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Offset",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "scale",
+        "offset"
+      ],
+      "title": "Term",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "purpose": {
+      "enum": [
+        "fixture",
+        "candidate"
+      ],
+      "title": "Purpose",
+      "type": "string"
+    },
+    "task": {
+      "const": "standing",
+      "title": "Task",
+      "type": "string"
+    },
+    "morphology": {
+      "const": "spot-arm-stowed",
+      "title": "Morphology",
+      "type": "string"
+    },
+    "policy_file": {
+      "title": "Policy File",
+      "type": "string"
+    },
+    "policy_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Sha256",
+      "type": "string"
+    },
+    "training_config_file": {
+      "title": "Training Config File",
+      "type": "string"
+    },
+    "training_config_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Training Config Sha256",
+      "type": "string"
+    },
+    "training_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Training Commit",
+      "type": "string"
+    },
+    "input_name": {
+      "minLength": 1,
+      "title": "Input Name",
+      "type": "string"
+    },
+    "output_name": {
+      "minLength": 1,
+      "title": "Output Name",
+      "type": "string"
+    },
+    "policy_hz": {
+      "exclusiveMinimum": 0,
+      "title": "Policy Hz",
+      "type": "number"
+    },
+    "stream_hz": {
+      "maximum": 333,
+      "minimum": 100,
+      "title": "Stream Hz",
+      "type": "number"
+    },
+    "observations": {
+      "$ref": "#/$defs/Observations"
+    },
+    "actions": {
+      "$ref": "#/$defs/Actions"
+    },
+    "gains": {
+      "$ref": "#/$defs/Gains"
+    },
+    "arm_stowed_positions": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 7,
+      "minItems": 7,
+      "title": "Arm Stowed Positions",
+      "type": "array"
+    },
+    "robot_model_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Robot Model Sha256",
+      "type": "string"
+    },
+    "payload_config_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Config Sha256",
+      "type": "string"
+    },
+    "payload_description": {
+      "minLength": 1,
+      "title": "Payload Description",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "purpose",
+    "task",
+    "morphology",
+    "policy_file",
+    "policy_sha256",
+    "training_config_file",
+    "training_config_sha256",
+    "training_commit",
+    "input_name",
+    "output_name",
+    "policy_hz",
+    "stream_hz",
+    "observations",
+    "actions",
+    "gains",
+    "arm_stowed_positions",
+    "robot_model_sha256",
+    "payload_config_sha256",
+    "payload_description"
+  ],
+  "title": "Manifest",
+  "type": "object"
+}
