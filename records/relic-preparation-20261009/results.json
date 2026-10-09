@@ -1,0 +1,61 @@
+{
+  "runtime_commit": "35e20271e190804ae1065e161a54e1ec6e399cb7",
+  "tests_passed": 405,
+  "startup_samples": 197,
+  "startup_guards_passed": 197,
+  "max_abs_leg_handover_torque_step_Nm": 9.195648423998662,
+  "max_abs_all_joint_handover_torque_step_Nm": 10.961517028179212,
+  "policy_leg_torque_range_Nm": [
+    -9.093513389350846,
+    23.28187613748014
+  ],
+  "simulator_completed": true,
+  "simulator_stable_final_window": true,
+  "timing": {
+    "reason": "completed",
+    "command_samples": 12001,
+    "policy_samples": 3000,
+    "observed_5ms_gate": true,
+    "missed_releases": 0,
+    "max_raw_action_error": 0.0
+  },
+  "timing_metrics": {
+    "production_s": {
+      "budget_s": 0.005,
+      "max_s": 0.004022500943392515,
+      "over_budget": 0,
+      "p50_s": 0.00047531910240650177,
+      "p95_s": 0.0008612340316176414,
+      "p999_s": 0.001777944853529334,
+      "p99_s": 0.0009485119953751564,
+      "samples": 12001
+    },
+    "deadline_response_s": {
+      "budget_s": 0.005,
+      "max_s": 0.004424439510330558,
+      "over_budget": 0,
+      "p50_s": 0.000536399194970727,
+      "p95_s": 0.0009233856108039618,
+      "p999_s": 0.0024159708991646767,
+      "p99_s": 0.001021703938022256,
+      "samples": 12001
+    },
+    "inference_s": {
+      "budget_s": 0.02,
+      "max_s": 0.0004830930847674608,
+      "over_budget": 0,
+      "p50_s": 0.00021931412629783154,
+      "p95_s": 0.00029853117885068057,
+      "p999_s": 0.0003982683278154599,
+      "p99_s": 0.00036714380839839565,
+      "samples": 3000
+    }
+  },
+  "hardware_activated": false,
+  "hardware_qualified": false,
+  "artifact_sha256": {
+    "startup-audit/COMPLETE.json": "e3904590079fde6b81e0bc18549bbc5943c477ac6e5456f1a7a561e18dad684a",
+    "mujoco/COMPLETE.json": "2928ea41ec524b7e670a6d0984326c61c5915b4a2f311945f2fc1805e3e149cf",
+    "timing/COMPLETE.json": "089ee0bbf45dd4fb05a39ef2d0ca0b76e748537b01ed54fdf6f95587af104250"
+  }
+}
