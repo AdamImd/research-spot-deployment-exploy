@@ -134,6 +134,15 @@ controller and network loss cannot guarantee completion of a sit command.
 
 ## Viewer and physical stop bridge
 
+`RobotConfig.estop_authority=tablet` selects the provided manufacturer tablet and
+rejects a simultaneous local `hardware_estop` binding. Snapshot and health checks
+then accept an empty SDK endpoint list only when the aggregate service level is
+NONE and full-state hardware/software stop entries are present and all clear.
+They do not prove tablet connectivity. The existing stop evidence gate applies to
+the tablet; local bridge status is not applicable. Local bridge configuration and
+registration commands reject this profile before I/O. Legacy profiles default to
+`sdk_endpoint` and retain their endpoint requirement. See [tablet operation](TABLET_ESTOP.md).
+
 `spot-estop --input joystick` supports RPM's identified Logitech USB joystick
 without Pygame or window-focus dependence. STOP index 1 is validated as BTN_THUMB;
 STOP is latched in the host process, with separate physical button 4 (index 3) rearm after

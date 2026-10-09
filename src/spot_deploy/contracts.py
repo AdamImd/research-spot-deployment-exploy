@@ -223,6 +223,7 @@ class RobotConfig(StrictModel):
     wired_interface: str
     rpc_timeout_s: float = Field(gt=0, le=10)
     joint_control_feature: Literal["joint_level_control"]
+    estop_authority: Literal["sdk_endpoint", "tablet"] = "sdk_endpoint"
     hardware_estop: HardwareEstopRequirement | None = None
 
     @field_validator("joint_control_feature", mode="before")
@@ -233,6 +234,8 @@ class RobotConfig(StrictModel):
 
     @model_validator(mode="after")
     def check(self):
+        if self.estop_authority == "tablet" and self.hardware_estop is not None:
+            raise ValueError("tablet authority cannot also require a local E-stop bridge")
         for value in (self.endpoint, self.expected_host, self.wired_interface):
             if not re.fullmatch(r"[A-Za-z0-9_.-]+", value) or value.startswith("-"):
                 raise ValueError(

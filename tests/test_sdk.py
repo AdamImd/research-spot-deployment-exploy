@@ -293,6 +293,7 @@ def test_snapshot_with_actual_sdk_messages():
     config = SimpleNamespace(
         rpc_timeout_s=1,
         joint_control_feature="joint_level_control",
+        estop_authority="sdk_endpoint",
         expected_serial="test-serial",
         expected_firmware="5.1.1",
     )
@@ -318,6 +319,14 @@ def test_snapshot_with_actual_sdk_messages():
     assert len(result["robot_model_sha256"]) == len(result["payload_config_sha256"]) == 64
     payload.mass_volume_properties.com_pos_rt_payload.x = 0.1
     assert reader.snapshot()["payload_config_sha256"] != result["payload_config_sha256"]
+    config.estop_authority = "tablet"
+    del estop.endpoints[:]
+    for kind in (robot_state_pb2.EStopState.TYPE_HARDWARE,
+                 robot_state_pb2.EStopState.TYPE_SOFTWARE):
+        state.estop_states.add(type=kind, state=robot_state_pb2.EStopState.STATE_NOT_ESTOPPED)
+    assert reader.snapshot()["estop_ready"] and reader.health()["estop_ready"]
+    state.estop_states[1].state = robot_state_pb2.EStopState.STATE_ESTOPPED
+    assert not reader.snapshot()["estop_ready"] and not reader.health()["estop_ready"]
 
 
 def test_read_only_shadow_never_imports_control(

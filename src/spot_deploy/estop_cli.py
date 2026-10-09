@@ -50,6 +50,8 @@ def execute(args, record):
     profile_hash = sha256(args.profile)
     if args.mode in ("configure", "bridge") and not args.execute:
         raise ContractError("E-stop writes require explicit --execute")
+    if args.mode in ("configure", "bridge") and config.estop_authority == "tablet":
+        raise ContractError("local E-stop writes are disabled for tablet authority")
     if (
         args.mode in ("bench", "bridge")
         and args.duration is not None

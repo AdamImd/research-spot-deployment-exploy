@@ -104,6 +104,29 @@ def body_height_from_state(message):
             "foot_contacts": [int(foot.contact) for foot in message.foot_state]}
 
 
+def estop_observation(config, state, status):
+    """Observe stop state; never register, allow or check in to an endpoint.
+
+    Modern Spot permits an empty SDK endpoint configuration. Tablet mode uses
+    aggregate service status AND the full robot hardware/software stop states.
+    This does not prove tablet connectivity or physical button functionality.
+    """
+    from bosdyn.api import estop_pb2, robot_state_pb2
+
+    cls = robot_state_pb2.EStopState
+    states = list(state.estop_states)
+    complete = {cls.TYPE_HARDWARE, cls.TYPE_SOFTWARE} <= {s.type for s in states}
+    robot_clear = complete and all(s.state == cls.STATE_NOT_ESTOPPED for s in states)
+    required = robot_clear if config.estop_authority == "tablet" else bool(status.endpoints)
+    return {
+        "estop_ready": bool(required and status.stop_level == estop_pb2.ESTOP_LEVEL_NONE),
+        "estop_authority": config.estop_authority,
+        "estop_endpoint_count": len(status.endpoints),
+        "estop_states": [{"name": s.name, "type": cls.Type.Name(s.type),
+                          "state": cls.State.Name(s.state)} for s in states],
+    }
+
+
 class ReadOnlySpot:
     def __init__(self, config):
         self.config = config
@@ -162,7 +185,7 @@ class ReadOnlySpot:
 
     def snapshot(self):
         from google.protobuf.json_format import MessageToDict
-        from bosdyn.api import estop_pb2, robot_state_pb2
+        from bosdyn.api import robot_state_pb2
         from bosdyn.client.estop import EstopClient
         from bosdyn.client.license import LicenseClient
         from bosdyn.client.payload import PayloadClient
@@ -205,7 +228,7 @@ class ReadOnlySpot:
             == robot_state_pb2.ManipulatorState.STOWSTATE_STOWED,
             "joint_control_licensed": bool(features.get(self.config.joint_control_feature, False)),
             "joint_control_feature_code": self.config.joint_control_feature,
-            "estop_ready": bool(estop.endpoints) and estop.stop_level == estop_pb2.ESTOP_LEVEL_NONE,
+            **estop_observation(self.config, state, estop),
             "active_fault_count": fault_count,
             "battery_percent": min(
                 (b.charge_percentage.value for b in state.battery_states), default=0
@@ -248,7 +271,7 @@ class ReadOnlySpot:
         )
         return {
             "time": time.monotonic(),
-            "estop_ready": bool(estop.endpoints) and estop.stop_level == estop_pb2.ESTOP_LEVEL_NONE,
+            **estop_observation(self.config, state, estop),
             "fault_count": len(state.system_fault_state.faults)
             + len(state.behavior_fault_state.faults)
             + len(state.service_fault_state.faults),

@@ -114,6 +114,10 @@ def review_text(manifest):
     for name, description in {**GATES, HARDWARE_GATE: HARDWARE_DESCRIPTION}.items():
         lines.append(f"- `{name}`: {description}. Status: UNVERIFIED; reviewer/artifact: pending.")
     lines += [
+        "", "For estop_authority=tablet, the hardware_estop evidence gate covers the",
+        "manufacturer tablet's stop control, connection loss and stop response. No local",
+        "joystick/ESP32 bridge is required. A clear robot stop status does not verify",
+        "the tablet connection or button. See docs/TABLET_ESTOP.md.",
         "", "## Final operator entries", "",
         "Robot operator: ______; independent E-stop operator: ______.",
         "Rig inspection/artifact: ______; registered trial duration: ______.",
@@ -272,7 +276,10 @@ def check(directory, preflight_path=None, max_age_s=300, check_estop=False):
     else:
         checks.append({"check": "fresh_preflight", "status": "unverified",
                        "reason": "Supply a fresh passed preflight for this candidate and robot"})
-    if robot and robot.hardware_estop:
+    if robot and robot.estop_authority == "tablet":
+        checks.append({"check": "local_estop_status", "status": "passed",
+                       "reason": "Not applicable: tablet authority; fresh preflight and tablet stop evidence remain required"})
+    elif robot and robot.hardware_estop:
         if check_estop:
             from .estop_interlock import HardwareInterlock
 

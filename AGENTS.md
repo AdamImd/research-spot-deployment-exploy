@@ -32,6 +32,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
 - Direct startup means zero interpolation duration. Capture initial body height.
 - Preserve pinned weights, graph/manifest hashes, gains and the held arm contract.
 - Read-only and command SDK adapters remain separate. Viewer stays loopback/read-only.
+- The operator selected the manufacturer tablet as E-stop authority. Use an explicit
+  tablet profile (`estop_authority=tablet`, `hardware_estop=null`); do not start the
+  local joystick/ESP32 bridge unless the operator changes that selection. Continue
+  monitoring robot stop state and retaining the stop evidence gate. See docs/TABLET_ESTOP.md.
 - Joystick STOP is index 1 (button 2), separate rearm index 3 (button 4); these are
   this profile's mappings. Do not infer trigger mappings on a different device.
 
