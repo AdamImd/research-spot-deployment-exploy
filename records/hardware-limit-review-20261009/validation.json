@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "commit": "4f2a3ea3bb649f5e14fdf89aa34e387c995939d1",
+  "duration_seconds": 8,
+  "stages": [
+    {
+      "index": 1,
+      "name": "pytest",
+      "exit_code": 0,
+      "started": "2026-10-09T11:56:55-05:00",
+      "ended": "2026-10-09T11:57:03-05:00",
+      "summary": "332 passed in 6.96s"
+    },
+    {
+      "index": 2,
+      "name": "ruff",
+      "exit_code": 0,
+      "started": "2026-10-09T11:57:03-05:00",
+      "ended": "2026-10-09T11:57:03-05:00",
+      "summary": "All checks passed!"
+    },
+    {
+      "index": 3,
+      "name": "demo",
+      "exit_code": 0,
+      "started": "2026-10-09T11:57:03-05:00",
+      "ended": "2026-10-09T11:57:03-05:00",
+      "summary": "Completed successfully; output captured in 3-demo.log"
+    }
+  ],
+  "wrapper_note": "Stage runner completed all commands; its optional final writer required an unavailable bare python executable. This completion record was collected afterward from the recorded zero exit codes and bounded logs; no validation command was rerun.",
+  "artifacts_sha256": {
+    "3-demo.log": "a072b6713146ce579c167af0490153dedb63935ded0f6ae66fe5d0a2bb2ae429",
+    "stages.tsv": "2c99b7b233e4a6b9532a8e0e30cd13c86ad8a9e8727994837198187e1b20b779",
+    "run.sh": "8fcd94dec7a64fcd3829d59205ac41073beba10e96b656757fe815f1436f86e5",
+    "COMPLETE.json": "f40dd98ae013452aa65a9f9d1f1163334e9039c806b9861ce1290b9e0ee3cb3d",
+    "2-ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "RUN.md": "814d8e34806d0548b4a6c060132a138a2914ce81e4017283762c2b23ba84d63f",
+    "1-pytest.log": "57e8e94b5b82cf20ff6d727dc8eb053e0dc677599e74a6a9d449232d40aa177c"
+  }
+}

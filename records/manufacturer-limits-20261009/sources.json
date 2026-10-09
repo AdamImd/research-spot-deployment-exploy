@@ -1,0 +1,8 @@
+{
+  "knee_table_url": "https://raw.githubusercontent.com/boston-dynamics/spot-sdk/v5.0.1/docs/concepts/joint_control/knee_torque_limits.md",
+  "knee_table_source_sha256": "22544ce86dd7bee8ae1558bbbbeb71d016b376710a80f7f5a158e7f204998774",
+  "rows": 101,
+  "matches_bundled_relic_table": true,
+  "bundled_constants_sha256": "46675c1144eea656a0115e6e28be418c6a5d0e9a0307263e6ea2e4af92df883d",
+  "transmission_url": "https://raw.githubusercontent.com/boston-dynamics/spot-sdk/v5.0.1/docs/concepts/joint_control/supplemental_data.md"
+}

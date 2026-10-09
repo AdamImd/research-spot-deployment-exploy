@@ -82,7 +82,10 @@ def review_text(manifest):
         "Order is canonical SDK order. Positions/tracking are rad; rates are rad/s;",
         "load_max bounds measured and predicted PD-plus-feedforward loads in SDK joint",
         "units. Verify the gripper's coordinate/load convention separately. Gains below",
-        "are policy contract values, not approved hardware limits.", "",
+        "are policy contract values, not approved hardware limits.",
+        "actuator_limit_profile=spot-sdk-5.0.1 adds measured-position knee and coupled-arm limits.",
+        "sdk_velocity_safety_limit is the shared robot backstop; host speed limits remain per-joint.",
+        "",
         "| Joint | Policy kp | Policy kd | Handover torque-step cap | Min/max position | Speed | Load | Tracking | Target rate |",
         "| --- | ---: | ---: | ---: | --- | --- | --- | --- | --- |",
     ]

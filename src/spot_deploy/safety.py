@@ -84,6 +84,15 @@ class Guard:
         if np.any(arm < envelope.position_min[12:]) or np.any(arm > envelope.position_max[12:]):
             raise ContractError("arm stow target exceeds position envelope")
 
+    def check_actuator_load(self, positions, loads, context):
+        if self.envelope.actuator_limit_profile:
+            from .actuator_limits import check_torque
+
+            try:
+                check_torque(positions, loads)
+            except ValueError as exc:
+                raise ContractError(f"{context}: {exc}") from exc
+
     def check_state(self, state: State, now: float, robot_now: float):
         env = self.envelope
         if (
@@ -108,6 +117,7 @@ class Guard:
             raise ContractError("measured joint position limit")
         if np.any(np.abs(v) > env.velocity_max) or np.any(np.abs(load) > env.load_max):
             raise ContractError("measured joint velocity or load limit")
+        self.check_actuator_load(q, load, "measured load")
         r = rotation(state)
         roll = np.arctan2(r[2, 1], r[2, 2])
         pitch = np.arcsin(np.clip(-r[2, 0], -1, 1))
@@ -150,6 +160,8 @@ class Guard:
         )
         if np.any(np.abs(torque) > env.load_max):
             raise ContractError("predicted PD-plus-feedforward load limit")
+        self.check_actuator_load(state.positions, feedforward, "feedforward")
+        self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load")
         if not np.allclose(target[12:], self.manifest.arm_stowed_positions, rtol=0, atol=1e-9):
             raise ContractError("leg-only policy attempted arm movement")
         if self.last_sent is not None:

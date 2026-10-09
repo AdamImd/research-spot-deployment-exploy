@@ -47,6 +47,12 @@ checks use `bundle.json` for immutable artifacts and readiness for review inputs
 
 ## 2. Review the physical envelope
 
+The [selected manufacturer limits](MANUFACTURER_LIMITS.md) implement the operator's
+higher torque selection and retain the ten-second trial. The original
+[hardware-limit draft](HARDWARE_LIMIT_REVIEW.md) remains a historical record.
+Use `configs/spot-manufacturer-standing-envelope.json` with `--envelope` when
+preparing this selected configuration; keep the operator review with the bundle.
+
 Fill every null in `envelope.review.json` and save the reviewed result as
 `envelope.json`. Document the reviewer, source of limits and relevant model/rig
 assumptions in a review artifact. The template lists all 19 joints in SDK order.

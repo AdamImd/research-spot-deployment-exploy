@@ -1,5 +1,10 @@
 # Architecture and contracts
 
+The optional [manufacturer torque profile](MANUFACTURER_LIMITS.md) checks
+position-dependent knee and coupled SH1/EL0 torque on measured and requested
+loads. An explicit shared SDK speed backstop coexists with host per-joint guards.
+Both fields are envelope-bound; omitted fields preserve older behavior.
+
 ## Capability boundaries
 
 The CLI resolves and validates local inputs before constructing any SDK client.

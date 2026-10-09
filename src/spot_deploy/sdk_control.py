@@ -28,7 +28,9 @@ def command_proto(command, manifest, envelope):
     joint.extrapolation_duration.nanos = 0
     joint.user_command_key = command.key
     # The server supports one shared velocity threshold; the host enforces per-joint bounds.
-    joint.velocity_safety_limit.value = min(envelope.velocity_max)
+    joint.velocity_safety_limit.value = (envelope.sdk_velocity_safety_limit
+                                        if envelope.sdk_velocity_safety_limit is not None
+                                        else min(envelope.velocity_max))
     return result
 
 

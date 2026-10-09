@@ -58,6 +58,32 @@
       "title": "Load Max",
       "type": "array"
     },
+    "actuator_limit_profile": {
+      "anyOf": [
+        {
+          "const": "spot-sdk-5.0.1",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Actuator Limit Profile"
+    },
+    "sdk_velocity_safety_limit": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sdk Velocity Safety Limit"
+    },
     "tracking_error_max": {
       "items": {
         "type": "number"
