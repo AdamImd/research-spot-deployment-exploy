@@ -53,6 +53,7 @@ class ControlSpot:
         self.future = None
         self.command_id = None
         self.power_owned = False
+        self.shutdown_result = None
 
     def acquire(self):
         self.lease = self.lease_client.acquire(timeout=self.timeout)
@@ -121,24 +122,52 @@ class ControlSpot:
         )
 
     def close(self):
+        from bosdyn.api.robot_state_pb2 import PowerState
+
+        started = time.monotonic()
+        self.shutdown_result = dict(motors_off_confirmed=False, lease_returned=False,
+                                    power_owned=self.power_owned, errors=[])
+        status = self.shutdown_result
         failures = []
         if self.future:
-            self.future.cancel()
+            try:
+                self.future.cancel()
+            except BaseException as exc:
+                status['errors'].append(dict(stage='cancel_stream', error_type=type(exc).__name__))
+                failures.append('Command stream cancellation unconfirmed')
+        status['stream_cancel_elapsed_s'] = time.monotonic() - started
         if self.power_owned:
+            power_started = time.monotonic()
             try:
                 self.robot.power_off(
                     cut_immediately=False,
                     timeout_sec=self.envelope.shutdown_timeout_s,
                     timeout=self.timeout,
                 )
-                if self.robot.is_powered_on(timeout=self.timeout):
-                    raise ContractError("motors remain powered after shutdown")
-            except BaseException:
+                state = self.reader.state_client.get_robot_state(timeout=self.timeout)
+                status['motor_power_state'] = int(state.power_state.motor_power_state)
+                # is_powered_on() is also false for UNKNOWN/transition states.
+                # Only an explicit OFF readback is affirmative shutdown evidence.
+                if state.power_state.motor_power_state != PowerState.STATE_OFF:
+                    raise ContractError("motor-OFF state not confirmed after shutdown")
+                status['motors_off_confirmed'] = True
+            except BaseException as exc:
+                status['errors'].append(dict(stage='safe_power_off', error_type=type(exc).__name__))
                 failures.append("Safe power-off unconfirmed; independent E-stop operator must act")
+            status['safe_power_off_elapsed_s'] = time.monotonic() - power_started
         if self.lease:
+            lease_started = time.monotonic()
             try:
                 self.lease_client.return_lease(self.lease, timeout=self.timeout)
-            except BaseException:
+                status['lease_returned'] = True
+            except BaseException as exc:
+                status['errors'].append(dict(stage='return_lease', error_type=type(exc).__name__))
                 failures.append("Lease return unconfirmed")
+            status['lease_return_elapsed_s'] = time.monotonic() - lease_started
+        status['elapsed_s'] = time.monotonic() - started
+        status['within_shutdown_budget'] = bool(
+            status['motors_off_confirmed'] and status['lease_returned']
+            and status['elapsed_s'] <= self.envelope.shutdown_timeout_s)
         if failures:
             raise ContractError("; ".join(failures))
+        return status
