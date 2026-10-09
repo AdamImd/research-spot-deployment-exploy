@@ -230,6 +230,7 @@ def live(args, config, samples, events):
                     if now-shared['health_at'] > envelope.max_full_state_age_s:
                         raise ContractError('health watchdog expired')
                     state = reader.mailbox.get()
+                    now = time.monotonic()  # A receiver can publish while the mailbox is read.
                     if state.last_command_key > last_ack:
                         if state.last_command_key not in sent:
                             raise ContractError('unknown acknowledgement')
@@ -273,6 +274,7 @@ def live(args, config, samples, events):
 
         control.start(commands(), 20)
         if not emitted.wait(robot.rpc_timeout_s):
+            check()
             raise ContractError('command producer did not start')
         check()
         control.activate()
