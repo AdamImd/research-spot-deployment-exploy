@@ -36,8 +36,9 @@ stock rehearsal [#4](https://github.com/AdamImd/research-spot-deployment-exploy/
 compact recorder [#5](https://github.com/AdamImd/research-spot-deployment-exploy/pull/5),
 then `feature/joint-api-crouch`. Source implementation began at `ad43c8f`; repaired
 clock ordering at `7078024` passed 388 offline tests, Ruff, the offline demo and
-the isolated-environment plan. Later cleanup reporting refinements require their
-own validation; consult the current result record, not this historical count alone.
+the isolated-environment plan. Final cleanup-reporting commit `e16ca14771fbf0b066cfafe384b3f82d4315b670` also
+passed all 388 tests, Ruff, demo and isolated plan. See
+[validation](../records/joint-api-crouch-20261009/VALIDATION.md).
 
 The first mocked lifecycle validation failed because host time was sampled before
 reading the mailbox. A newly arriving state appeared newer than the tick. The
