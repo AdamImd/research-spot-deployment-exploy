@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "review_status": "draft for next supervised session; not physically executed",
+  "duration_s": 10.0,
+  "stream_hz": 200.0,
+  "hip_pitch_delta_deg": 5.0,
+  "knee_delta_deg": -10.0,
+  "native_baseline_s": 1.0,
+  "max_baseline_speed_rad_s": 0.1,
+  "feedforward": "median_native_load",
+  "shutdown_measurement_timeout_s": 10.0,
+  "kp": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 120, 100, 100, 100, 16],
+  "kd": [1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2, 2, 0.32]
+}
