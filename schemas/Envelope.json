@@ -127,6 +127,27 @@
       "title": "Max Arm Pose Error",
       "type": "number"
     },
+    "arm_motion_guard": {
+      "default": "enforce",
+      "enum": [
+        "enforce",
+        "observe"
+      ],
+      "title": "Arm Motion Guard",
+      "type": "string"
+    },
+    "arm_motion_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Arm Motion Reason"
+    },
     "max_state_age_s": {
       "exclusiveMinimum": 0,
       "title": "Max State Age S",

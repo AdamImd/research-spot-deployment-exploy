@@ -130,6 +130,11 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     stop.wait(schedule.advance(time.monotonic()))
             except BaseException as exc:
                 if not isinstance(exc, GeneratorExit):
+                    if isinstance(exc, ContractError) and 'state' in locals():
+                        try:
+                            record.event('guard_failure', reason=str(exc), state=state.model_dump())
+                        except BaseException:
+                            pass  # Preserve the first error; cleanup still runs.
                     fail(exc)
 
         control.start(commands(), duration + 2 * reader.config.rpc_timeout_s)

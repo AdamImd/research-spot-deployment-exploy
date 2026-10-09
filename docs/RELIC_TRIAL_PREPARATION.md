@@ -5,6 +5,10 @@ stowed arm, direct startup, zero initial previous actions, 50 Hz policy and
 200 Hz joint commands. Preparation does not power motors or send joint commands.
 The tablet remains the stop authority. Adam and Minghao are the recorded operators.
 
+For the operator-reported harness pushing the arm, see [arm harness mode](ARM_HARNESS.md).
+This is an explicit per-envelope observation mode, while default arm guards remain
+enforced. It requires a new source/configuration binding before the requested repeat.
+
 The smaller diagnostic established partial-run wired timing and useful PD/load
 agreement; it did not exercise ReLIC inference or complete ten seconds. See
 `records/joint-api-crouch-20261009/SMALL_PHYSICAL_RESULT.md`.

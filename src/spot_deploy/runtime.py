@@ -75,7 +75,8 @@ def shadow(reader, policy, envelope, duration, record):
             raise ContractError("shadow inference deadline exceeded")
         if np.any(targets < envelope.position_min) or np.any(targets > envelope.position_max):
             raise ContractError("shadow target exceeds position bounds")
-        if np.any(np.abs(targets - state.positions) > envelope.tracking_error_max):
+        n = guard.motion_joint_count
+        if np.any(np.abs(targets[:n] - state.positions[:n]) > envelope.tracking_error_max[:n]):
             raise ContractError("shadow target tracking bound exceeded")
         latency.append(elapsed)
         ages.append(reader.robot_now() - state.robot_time_s)
