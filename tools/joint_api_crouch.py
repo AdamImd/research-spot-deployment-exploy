@@ -267,8 +267,9 @@ def live(args, config, samples, events):
                     yield wire
                     stop.wait(schedule.advance(time.monotonic()))
             except Exception as exc:
-                shared['error'] = str(exc) if isinstance(exc, ContractError) else type(exc).__name__
-                stop.set()
+                if not stop.is_set():
+                    shared['error'] = str(exc) if isinstance(exc, ContractError) else type(exc).__name__
+                    stop.set()
             finally:
                 producer_done.set()
 
@@ -309,7 +310,8 @@ def live(args, config, samples, events):
                 result.update(completed=False, cleanup_error=type(exc).__name__,
                               motors_off_confirmed=False)
             result['shutdown_s'] = time.monotonic()-start
-            result['within_rl_shutdown_budget'] = result['shutdown_s'] <= envelope.shutdown_timeout_s
+            result['within_rl_shutdown_budget'] = bool(result.get('motors_off_confirmed')
+                and result.get('lease_returned') and result['shutdown_s'] <= envelope.shutdown_timeout_s)
         if worker:
             worker.join(robot.rpc_timeout_s+1)
             if worker.is_alive():

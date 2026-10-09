@@ -20,6 +20,9 @@ For a supervised hardware trial, start with [deployment preparation](docs/DEPLOY
 Use the [lightweight rollout recorder](docs/RECORDING.md) to save compressed joint
 state, actions, command targets and timing from a live or completed run.
 
+The next supervised test is the [standalone joint-API hold/crouch diagnostic](docs/JOINT_API_CROUCH.md).
+[Saved progress and resume instructions](docs/HANDOFF_JOINT_API.md) describe its draft settings and remaining checks.
+
 ## Fresh clone: offline first
 
 Requires Git, [UV](https://docs.astral.sh/uv/), Linux and Python 3.12. UV can obtain
