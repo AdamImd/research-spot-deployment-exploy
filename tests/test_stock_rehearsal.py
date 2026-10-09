@@ -44,7 +44,7 @@ def test_only_exact_informational_warning_is_accepted(change):
         stock.require_stock_faults({"system_fault_state": [fault | change]}, True)
 
 
-@pytest.mark.parametrize("power", [0, 2, 3, 4])
+@pytest.mark.parametrize("power", [0, 1, 2, 3, 4])
 def test_only_explicit_off_confirms_shutdown(power):
     from bosdyn.api.robot_state_pb2 import PowerState
 
