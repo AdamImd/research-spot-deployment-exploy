@@ -379,6 +379,12 @@ def validate_snapshot(snapshot, config, manifest=None, envelope=None, for_contro
         )
     if envelope:
         checks["battery"] = snapshot["battery_percent"] >= envelope.min_battery_percent
+        if envelope.arm_motion_guard == 'observe':
+            # Keep the raw stow observation in snapshot; this is an explicit
+            # alternative prerequisite, not a claim that a displaced arm is stowed.
+            checks.pop('arm_stowed')
+            checks['arm_harness_observation'] = (
+                getattr(manifest, 'adapter', None) in ('relic84', 'relic-exploy'))
     if for_control:
         checks["motors_initially_off"] = snapshot["motors_off"]
     return checks

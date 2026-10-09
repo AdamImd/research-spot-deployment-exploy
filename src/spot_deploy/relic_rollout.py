@@ -28,6 +28,7 @@ class ReLICRollout:
         self.inference_s = 0.
         self.phase = "uninitialized"
         self.policy_samples = 0
+        self.last_arm_motion_observation = None
 
     def initialize(self, state, height, now, robot_now):
         if self.initial is not None:
@@ -45,6 +46,10 @@ class ReLICRollout:
         self.record.event("relic_initialized", state=state.model_dump(), height=height,
                           requested_height_m=self.policy.body_height,
                           previous_actions=self.previous.tolist(), endpoint=self.endpoint.tolist())
+        if self.guard.observe_arm_motion:
+            self.record.event('arm_motion_mode', mode='observe',
+                              reason=self.envelope.arm_motion_reason,
+                              torque_limits_enforced=True, arm_targets_held=True)
 
     def activate(self, now):
         if self.initial is None or self.active_at is not None or not np.isfinite(now):
@@ -57,6 +62,12 @@ class ReLICRollout:
         if self.initial is None:
             raise ContractError("rollout was not initialized")
         self.guard.check_state(state, now, robot_now)
+        observation = self.guard.arm_motion_observation
+        if observation is not None and observation != self.last_arm_motion_observation:
+            self.record.event('arm_motion_observation', **observation,
+                              positions=state.positions[12:], velocities=state.velocities[12:],
+                              monotonic_s=now)
+            self.last_arm_motion_observation = observation.copy()
         if state.last_command_key > self.guard.key:
             raise ContractError("acknowledgement belongs to an unknown command")
         # Receiving an earlier tick from this action confirms that it reached the
@@ -87,7 +98,8 @@ class ReLICRollout:
                 if (np.max(np.abs(np.asarray(state.positions)[:12] - self.endpoint[:12]))
                         > self.spec.handover_pose_error_rad):
                     raise ContractError("ReLIC handover pose gate failed")
-                if np.max(np.abs(state.velocities)) > self.spec.handover_joint_speed_rad_s:
+                if (np.max(np.abs(state.velocities[:self.guard.motion_joint_count]))
+                        > self.spec.handover_joint_speed_rad_s):
                     raise ContractError("ReLIC handover velocity gate failed")
                 self.next_policy_at = now
             new_action = None

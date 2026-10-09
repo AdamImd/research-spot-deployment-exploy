@@ -31,6 +31,9 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
 - Policy rate is 50 Hz; command rate is 200 Hz. No catch-up bursts after a missed tick.
 - Direct startup means zero interpolation duration. Capture initial body height.
 - Preserve pinned weights, graph/manifest hashes, gains and the held arm contract.
+- The operator-requested harness exception is explicit `arm_motion_guard=observe`
+  with a reason in the envelope. See docs/ARM_HARNESS.md. Arm motion is logged;
+  all torque limits and held arm commands remain enforced. Never enable it by default.
 - Read-only and command SDK adapters remain separate. Viewer stays loopback/read-only.
 - The operator selected the manufacturer tablet as E-stop authority. Use an explicit
   tablet profile (`estop_authority=tablet`, `hardware_estop=null`); do not start the

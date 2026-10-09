@@ -100,6 +100,113 @@ def sample(state, t, key=0):
     )
 
 
+def harness_configuration(manifest, envelope):
+    manifest = manifest.model_copy(deep=True)
+    manifest.relic.preparation = manifest.relic.preparation.model_copy(
+        update=dict(kind='direct', duration_s=0))
+    envelope = envelope.model_copy(deep=True)
+    envelope.transition_s = 0
+    envelope.arm_motion_reason = None
+    data = envelope.model_dump()
+    data.update(arm_motion_guard='observe', arm_motion_reason='Operator: harness pushes the arm')
+    envelope = Envelope.model_validate(data)
+    return manifest, envelope
+
+
+def test_harness_arm_motion_is_observed_and_handover_continues(
+        state, relic_manifest, relic_envelope):
+    manifest, envelope = harness_configuration(relic_manifest, relic_envelope)
+    # Same kind of small shoulder displacement as the physical limit stop,
+    # with a deliberately narrow arm-only pose/velocity/tracking envelope.
+    arm = np.array(manifest.arm_stowed_positions)
+    envelope.position_min[12:] = (arm-.03).tolist()
+    envelope.position_max[12:] = (arm+.03).tolist()
+    envelope.velocity_max[12:] = [.1]*7
+    envelope.tracking_error_max[12:] = [.02]*7
+    envelope.max_arm_pose_error = .05
+    current = sample(state, 0)
+    current.positions[13] -= .08
+    current.velocities[13] = .6  # Above the ordinary handover .5 rad/s check.
+    log = Log()
+    core = ReLICRollout(FakeReLIC(manifest), envelope, log)
+    core.initialize(current, dict(height_m=.52, foot_contacts=[1]*4), 10, 1000)
+    hold = core.command(current, 10, 1000)
+    core.activate(10.005)
+    current = current.model_copy(update=dict(robot_time_s=1000.005,
+        received_monotonic_s=10.005, last_command_key=hold.key))
+    command = core.command(current, 10.005, 1000.005)
+    assert core.phase == 'policy'
+    np.testing.assert_array_equal(command.positions[12:], manifest.arm_stowed_positions)
+    events = [v for kind, v in log.events if kind == 'arm_motion_observation']
+    assert events[0]['position_indices'] == [1]  # Arm-local index; SDK index 13.
+    assert events[0]['velocity_indices'] == [1]
+    assert events[0]['stow_displaced']
+    assert events[-1]['tracking_indices'] == [1]
+    # Identical measured arm displacement still stops the default mode.
+    enforced = envelope.model_copy(update=dict(arm_motion_guard='enforce', arm_motion_reason=None))
+    with pytest.raises(ContractError, match='measured joint position'):
+        ReLICRollout(FakeReLIC(manifest), enforced, Log()).initialize(
+            current, dict(height_m=.52, foot_contacts=[1]*4), 10.005, 1000.005)
+
+
+@pytest.mark.parametrize('kind', ['leg_position', 'leg_velocity', 'arm_load', 'arm_predicted_load'])
+def test_harness_retains_leg_and_arm_load_stops(state, relic_manifest, relic_envelope, kind):
+    from spot_deploy.safety import Guard
+
+    manifest, envelope = harness_configuration(relic_manifest, relic_envelope)
+    current = sample(state, 0)
+    guard = Guard(manifest, envelope)
+    if kind == 'leg_position':
+        current.positions[0] = envelope.position_max[0]+.01
+    elif kind == 'leg_velocity':
+        current.velocities[0] = envelope.velocity_max[0]+.01
+    elif kind == 'arm_load':
+        current.loads[13] = envelope.load_max[13]+.01
+    else:
+        current.positions[13] += envelope.load_max[13]/manifest.gains.kp[13]+.1
+    with pytest.raises(ContractError, match='position|velocity or load|predicted'):
+        guard.command(DEFAULT_Q, current, 10, 1000, 10, .001)
+
+
+def test_harness_cannot_change_arm_commands(state, relic_manifest, relic_envelope):
+    from spot_deploy.safety import Guard
+
+    manifest, envelope = harness_configuration(relic_manifest, relic_envelope)
+    target = DEFAULT_Q.astype(float).copy()
+    target[12] += .01
+    with pytest.raises(ContractError, match='arm movement'):
+        Guard(manifest, envelope).command(target, sample(state, 0), 10, 1000, 10, .001)
+
+
+def test_harness_mode_requires_reason_and_relic(manifest, envelope):
+    from spot_deploy.safety import Guard
+
+    data = envelope.model_dump()
+    data['arm_motion_guard'] = 'observe'
+    with pytest.raises(ValidationError, match='operator reason'):
+        Envelope.model_validate(data)
+    data['arm_motion_reason'] = 'Operator: harness'
+    with pytest.raises(ContractError, match='ReLIC leg controller'):
+        Guard(manifest, Envelope.model_validate(data))
+
+
+def test_harness_preflight_retains_raw_stow_and_fault_observations(relic_manifest, relic_envelope):
+    from spot_deploy.sdk_read import validate_snapshot
+
+    manifest, envelope = harness_configuration(relic_manifest, relic_envelope)
+    snapshot = dict(identity_matches=True, joint_layout_matches=True, has_arm=True,
+        joint_control_licensed=True, arm_stowed=False, active_fault_count=1,
+        estop_ready=True, robot_model_sha256=manifest.robot_model_sha256,
+        payload_config_sha256=manifest.payload_config_sha256, battery_percent=90, motors_off=True)
+    checks = validate_snapshot(snapshot, None, manifest, envelope, True)
+    assert checks['arm_harness_observation']
+    assert 'arm_stowed' not in checks
+    assert not checks['no_active_faults']
+    assert snapshot['arm_stowed'] is False
+    enforced = envelope.model_copy(update=dict(arm_motion_guard='enforce', arm_motion_reason=None))
+    assert not validate_snapshot(snapshot, None, manifest, enforced, True)['arm_stowed']
+
+
 def core_fixture(manifest, envelope, state):
     policy = FakeReLIC(manifest)
     core = ReLICRollout(policy, envelope, Log())

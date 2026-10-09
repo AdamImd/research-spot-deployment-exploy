@@ -69,6 +69,12 @@ class Guard:
         self.last_command = None
         self.last_sent = None
         self.key = 0
+        self.observe_arm_motion = envelope.arm_motion_guard == "observe"
+        if (self.observe_arm_motion
+                and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")):
+            raise ContractError("arm observation mode requires a ReLIC leg controller")
+        self.motion_joint_count = 12 if self.observe_arm_motion else 19
+        self.arm_motion_observation = None
         if envelope.transition_s == 0:
             if (getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")
                     or manifest.relic.preparation.kind != "direct"
@@ -113,9 +119,23 @@ class Guard:
         self.last_state_time = state.robot_time_s
         self.last_received = state.received_monotonic_s
         q, v, load = map(np.asarray, (state.positions, state.velocities, state.loads))
-        if np.any(q < env.position_min) or np.any(q > env.position_max):
+        n = self.motion_joint_count
+        if self.observe_arm_motion:
+            observation = dict(
+                position_indices=np.flatnonzero((q[12:] < np.asarray(env.position_min)[12:])
+                    | (q[12:] > np.asarray(env.position_max)[12:])).tolist(),
+                velocity_indices=np.flatnonzero(np.abs(v[12:])
+                    > np.asarray(env.velocity_max)[12:]).tolist(),
+                stow_displaced=bool(np.max(np.abs(q[12:] - self.manifest.arm_stowed_positions))
+                    > env.max_arm_pose_error),
+                tracking_indices=[])
+            if self.last_command is not None:
+                observation['tracking_indices'] = np.flatnonzero(np.abs(q[12:]
+                    - self.last_command[12:]) > np.asarray(env.tracking_error_max)[12:]).tolist()
+            self.arm_motion_observation = observation
+        if np.any(q[:n] < env.position_min[:n]) or np.any(q[:n] > env.position_max[:n]):
             raise ContractError("measured joint position limit")
-        if np.any(np.abs(v) > env.velocity_max) or np.any(np.abs(load) > env.load_max):
+        if np.any(np.abs(v[:n]) > env.velocity_max[:n]) or np.any(np.abs(load) > env.load_max):
             raise ContractError("measured joint velocity or load limit")
         self.check_actuator_load(q, load, "measured load")
         r = rotation(state)
@@ -128,10 +148,11 @@ class Guard:
             or np.linalg.norm(state.angular_velocity_odom) > env.max_angular_speed
         ):
             raise ContractError("body speed limit")
-        if np.max(np.abs(q[12:] - self.manifest.arm_stowed_positions)) > env.max_arm_pose_error:
+        if (not self.observe_arm_motion
+                and np.max(np.abs(q[12:] - self.manifest.arm_stowed_positions)) > env.max_arm_pose_error):
             raise ContractError("arm is outside registered stowed pose")
         if self.last_command is not None:
-            if np.any(np.abs(q - self.last_command) > env.tracking_error_max):
+            if np.any(np.abs(q[:n] - self.last_command[:n]) > env.tracking_error_max[:n]):
                 raise ContractError("measured joint tracking error")
 
     def command(self, targets, state, now, robot_now, policy_at, inference_s, feedforward=None):
@@ -146,7 +167,8 @@ class Guard:
             raise ContractError("command must contain nineteen finite positions")
         if np.any(target < env.position_min) or np.any(target > env.position_max):
             raise ContractError("command position limit")
-        if np.any(np.abs(target - state.positions) > env.tracking_error_max):
+        n = self.motion_joint_count
+        if np.any(np.abs(target[:n] - state.positions[:n]) > env.tracking_error_max[:n]):
             raise ContractError("command tracking error limit")
         feedforward = np.asarray(self.manifest.gains.feedforward if feedforward is None
                                  else feedforward, dtype=float)
