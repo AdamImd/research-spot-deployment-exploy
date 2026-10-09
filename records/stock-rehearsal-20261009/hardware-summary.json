@@ -1,0 +1,211 @@
+{
+  "source_commit": "96a7052e1320e6cde40ac400847c4fa37794e3ea",
+  "source_dirty": false,
+  "raw_complete_sha256": "edf550853899fd400c0c340088c6a0477ee153535c5695c94a979e66670cb7af",
+  "protocol": "One native stand/sit cycle; 10 s standing observation; no RL",
+  "state_sample_count": 2006,
+  "max_sampled_state_age_ms": 7.405281066894531,
+  "health_samples": 223,
+  "health_samples_with_faults": 0,
+  "all_observed_stop_states_ready": true,
+  "native_rpc_duration_ms": {
+    "sit": 3.602118929848075,
+    "stand": 12.878089910373092
+  },
+  "standing": {
+    "foot_contact_codes": [
+      [
+        1,
+        1,
+        1,
+        1
+      ]
+    ],
+    "health_samples": 97,
+    "height_max_m": 0.516284483689735,
+    "height_mean_m": 0.5152589175579024,
+    "height_min_m": 0.5151862339171087,
+    "height_span_mm": 1.0982497726262919,
+    "height_valid_samples": 97,
+    "joints": {
+      "arm0_el0": {
+        "max_abs_load_Nm": 2.3278870582580566,
+        "max_abs_speed_rad_s": 0.030833661556243896,
+        "max_rad": 3.1343321800231934,
+        "mean_position_last_5s_rad": 3.134295526303743,
+        "min_rad": 3.134268283843994
+      },
+      "arm0_el1": {
+        "max_abs_load_Nm": 0.21219246089458466,
+        "max_abs_speed_rad_s": 0.03439858928322792,
+        "max_rad": 1.5702886581420898,
+        "mean_position_last_5s_rad": 1.5702593572079726,
+        "min_rad": 1.5702247619628906
+      },
+      "arm0_f1x": {
+        "max_abs_load_Nm": 0.2878245413303375,
+        "max_abs_speed_rad_s": 0.04425983875989914,
+        "max_rad": -0.0065762996673583984,
+        "mean_position_last_5s_rad": -0.006627711060390866,
+        "min_rad": -0.0067081451416015625
+      },
+      "arm0_sh0": {
+        "max_abs_load_Nm": 0.27464327216148376,
+        "max_abs_speed_rad_s": 0.04579735919833183,
+        "max_rad": -0.00013017654418945312,
+        "mean_position_last_5s_rad": -0.00018559004131116365,
+        "min_rad": -0.0002334117889404297
+      },
+      "arm0_sh1": {
+        "max_abs_load_Nm": 2.9421114921569824,
+        "max_abs_speed_rad_s": 0.015752041712403297,
+        "max_rad": -3.1163017749786377,
+        "mean_position_last_5s_rad": -3.116318644320665,
+        "min_rad": -3.1163313388824463
+      },
+      "arm0_wr0": {
+        "max_abs_load_Nm": 0.08894097805023193,
+        "max_abs_speed_rad_s": 0.03439632058143616,
+        "max_rad": 0.0007904767990112305,
+        "mean_position_last_5s_rad": 0.0007569181564470723,
+        "min_rad": 0.0007175207138061523
+      },
+      "arm0_wr1": {
+        "max_abs_load_Nm": 0.035064540803432465,
+        "max_abs_speed_rad_s": 0.04189521074295044,
+        "max_rad": -1.5699968338012695,
+        "mean_position_last_5s_rad": -1.5700497136236056,
+        "min_rad": -1.5700883865356445
+      },
+      "fl_hx": {
+        "max_abs_load_Nm": 15.621606826782227,
+        "max_abs_speed_rad_s": 0.03163538873195648,
+        "max_rad": 0.12819182872772217,
+        "mean_position_last_5s_rad": 0.12816123811003818,
+        "min_rad": 0.1280956119298935
+      },
+      "fl_hy": {
+        "max_abs_load_Nm": 6.847176551818848,
+        "max_abs_speed_rad_s": 0.03735405206680298,
+        "max_rad": 0.7310269474983215,
+        "mean_position_last_5s_rad": 0.7309977031681576,
+        "min_rad": 0.7306551337242126
+      },
+      "fl_kn": {
+        "max_abs_load_Nm": 22.101490020751953,
+        "max_abs_speed_rad_s": 0.06236862763762474,
+        "max_rad": -1.4907997846603394,
+        "mean_position_last_5s_rad": -1.4924607784306156,
+        "min_rad": -1.4925254583358765
+      },
+      "fr_hx": {
+        "max_abs_load_Nm": 15.7979736328125,
+        "max_abs_speed_rad_s": 0.02153017930686474,
+        "max_rad": -0.12409047782421112,
+        "mean_position_last_5s_rad": -0.12459646368258605,
+        "min_rad": -0.1246265098452568
+      },
+      "fr_hy": {
+        "max_abs_load_Nm": 6.481517314910889,
+        "max_abs_speed_rad_s": 0.03144470602273941,
+        "max_rad": 0.7318658828735352,
+        "mean_position_last_5s_rad": 0.7307927873096423,
+        "min_rad": 0.7307596802711487
+      },
+      "fr_kn": {
+        "max_abs_load_Nm": 22.01404571533203,
+        "max_abs_speed_rad_s": 0.039367642253637314,
+        "max_rad": -1.4826991558074951,
+        "mean_position_last_5s_rad": -1.482739277780738,
+        "min_rad": -1.4841853380203247
+      },
+      "hl_hx": {
+        "max_abs_load_Nm": 14.77202033996582,
+        "max_abs_speed_rad_s": 0.026937849819660187,
+        "max_rad": 0.12894803285598755,
+        "mean_position_last_5s_rad": 0.12889654327448227,
+        "min_rad": 0.12886492908000946
+      },
+      "hl_hy": {
+        "max_abs_load_Nm": 5.505392074584961,
+        "max_abs_speed_rad_s": 0.029006583616137505,
+        "max_rad": 0.7398124933242798,
+        "mean_position_last_5s_rad": 0.739785405263748,
+        "min_rad": 0.7381537556648254
+      },
+      "hl_kn": {
+        "max_abs_load_Nm": 23.725582122802734,
+        "max_abs_speed_rad_s": 0.062091197818517685,
+        "max_rad": -1.4967972040176392,
+        "mean_position_last_5s_rad": -1.500957619680147,
+        "min_rad": -1.501015543937683
+      },
+      "hr_hx": {
+        "max_abs_load_Nm": 14.254776954650879,
+        "max_abs_speed_rad_s": 0.018621139228343964,
+        "max_rad": -0.12248830497264862,
+        "mean_position_last_5s_rad": -0.12320444821561229,
+        "min_rad": -0.12322444468736649
+      },
+      "hr_hy": {
+        "max_abs_load_Nm": 5.129028797149658,
+        "max_abs_speed_rad_s": 0.03269023448228836,
+        "max_rad": 0.7325469851493835,
+        "mean_position_last_5s_rad": 0.732475591606079,
+        "min_rad": 0.7322263121604919
+      },
+      "hr_kn": {
+        "max_abs_load_Nm": 24.568193435668945,
+        "max_abs_speed_rad_s": 0.060524627566337585,
+        "max_rad": -1.4885135889053345,
+        "mean_position_last_5s_rad": -1.489527706150605,
+        "min_rad": -1.4895840883255005
+      }
+    },
+    "max_joint_excursion_rad": 0.004218339920043945,
+    "max_joint_load_Nm": 24.568193435668945,
+    "max_joint_speed_rad_s": 0.06236862763762474,
+    "max_tilt_deg": 0.19792287355244714,
+    "state_samples": 872
+  },
+  "limitations": [
+    "Native RPC acceptance is not joint-stream ACK latency.",
+    "Sampled maxima can miss peaks between recorded mailbox samples.",
+    "No actual E-stop press, outage, policy handover or RL shutdown test.",
+    "Native safe-power-off latency is not a ReLIC shutdown qualification."
+  ],
+  "execution": {
+    "completed": true,
+    "final_motors_off": true,
+    "lease_returned": true,
+    "durations_s": {
+      "power_off": 3.113797605969012,
+      "power_on": 4.285581609932706,
+      "sit": 1.6836372658144683,
+      "stand": 1.8963672281242907
+    },
+    "state_stream": {
+      "acquisition_gap_s": {
+        "count": 7675,
+        "max": 0.0030100345611572266,
+        "min": 0.002999544143676758,
+        "p50": 0.003000020980834961,
+        "p95": 0.0030002593994140625,
+        "p99": 0.0030002593994140625
+      },
+      "receive_gap_s": {
+        "count": 7675,
+        "max": 0.008292210986837745,
+        "min": 6.6008185967803e-05,
+        "p50": 0.0029984128195792437,
+        "p95": 0.0034497614251449687,
+        "p99": 0.004367648544721306
+      },
+      "received_count": 7676
+    },
+    "joint_control_activated": false,
+    "policy_inference": false,
+    "estop_writes": 0,
+    "fault_clear_requests": 0
+  }
+}
