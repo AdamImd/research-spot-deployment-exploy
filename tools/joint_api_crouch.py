@@ -69,7 +69,12 @@ class ReferenceGuard(Guard):
     """Reuse numeric state/command guards without a fictitious RL manifest/handover."""
 
     def __init__(self, initial, config, envelope, feedforward):
+        if envelope.arm_motion_guard != 'enforce':
+            raise ContractError('arm observation mode requires a ReLIC leg controller')
         self.envelope = envelope
+        self.observe_arm_motion = False
+        self.motion_joint_count = 19
+        self.arm_motion_observation = None
         self.manifest = SimpleNamespace(
             gains=SimpleNamespace(kp=config['kp'], kd=config['kd'], feedforward=feedforward),
             arm_stowed_positions=np.asarray(initial)[12:])

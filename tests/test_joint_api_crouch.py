@@ -103,6 +103,17 @@ def test_shared_limits_and_wire_commands_still_apply():
         guard.command(invalid,state,10.005,100.005,10.005,0,np.zeros(19))
 
 
+def test_reference_guard_keeps_all_joint_checks_and_rejects_harness_mode():
+    state,envelope=fixture()
+    guard=crouch.ReferenceGuard(state.positions,config(),envelope,np.zeros(19))
+    assert guard.motion_joint_count == 19
+    assert not guard.observe_arm_motion
+    observed=envelope.model_copy(update={'arm_motion_guard':'observe',
+                                        'arm_motion_reason':'harness displacement'})
+    with pytest.raises(ContractError,match='ReLIC leg controller'):
+        crouch.ReferenceGuard(state.positions,config(),observed,np.zeros(19))
+
+
 @pytest.mark.parametrize('power', [0,1,2,3,4])
 def test_exact_motor_off_confirmation(power):
     from bosdyn.api.robot_state_pb2 import PowerState
