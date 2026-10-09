@@ -5,6 +5,20 @@ deterministic reference trajectory, not a ReLIC rollout. The purpose is to measu
 joint-command transport, timing, tracking and PD behavior before a policy handover.
 The tested stock baseline is recorded in `records/stock-rehearsal-20261009/`.
 
+Update: the first physical crouch aborted on attitude at approximately 4.75 s;
+automatic shutdown was unconfirmed, followed by tablet/operator shutdown and
+read-only confirmation. See `records/joint-api-crouch-20261009/PHYSICAL_RESULT.md`.
+The user explicitly requested a smaller repeat. `configs/joint-api-crouch-small.json`
+reduces the hip/knee offsets to +1/−2 degrees with all other settings unchanged.
+Select it with `--settings configs/joint-api-crouch-small.json`.
+
+The explicitly selected diagnostic flag `--allow-known-payload-info` accepts only
+system `payload.fault` code 9 at INFO severity 1. Original counts/details remain
+recorded; the warning is never cleared. Any other system, behavior or service fault
+still blocks. ReLIC's fault rules are unchanged. This exception was requested in
+the discussion of the informational COM warning and the smaller repeat; it does
+not relax body, joint, timing or tablet-stop checks.
+
 ## Small environment and entry point
 
 Run from this checkout. The standalone CLI uses shared low-level SDK/limit modules

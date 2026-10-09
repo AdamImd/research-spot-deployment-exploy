@@ -19,6 +19,26 @@ def config():
     return crouch.settings(ROOT/'configs/joint-api-crouch.json')
 
 
+def test_small_crouch_is_one_fifth_original():
+    small=crouch.settings(ROOT/'configs/joint-api-crouch-small.json')
+    for t in np.linspace(0,10,201):
+        original=crouch.reference(np.zeros(19),t,config())
+        reduced=crouch.reference(np.zeros(19),t,small)
+        np.testing.assert_allclose(reduced,np.asarray(original)/5,atol=1e-15)
+
+
+@pytest.mark.parametrize('change', [{'severity':0},{'severity':2},{'severity':3},
+                                  {'code':10},{'kind':'service_fault_state'},{'name':'other'}])
+def test_only_exact_explicit_info_exception(change):
+    fault={'kind':'system_fault_state','name':'payload.fault','code':9,'severity':1}
+    assert crouch.accepted_faults(0,[],False)
+    assert crouch.accepted_faults(1,[fault],True)
+    assert not crouch.accepted_faults(1,[fault],False)
+    assert not crouch.accepted_faults(1,[fault|change],True)
+    assert not crouch.accepted_faults(2,[fault],True)
+    assert not crouch.accepted_faults(0,[fault],True)
+
+
 def fixture():
     import json
     m = json.loads((ROOT/'policies/relic-exploy-standing/manifest.json').read_text())
@@ -133,10 +153,13 @@ def test_mocked_stream_lifecycle_and_shutdown(monkeypatch,tmp_path,activation_fa
         return initial.model_copy(update={'robot_time_s':now,'received_monotonic_s':now,
             'positions':list(q),'last_command_key':key[0], 'last_command_received_robot_s':now})
 
-    reader=SimpleNamespace(config=cfg,robot=robot,connect=lambda:None,snapshot=lambda:{},
+    known_fault={'kind':'system_fault_state','name':'payload.fault','code':9,'severity':1}
+    reader=SimpleNamespace(config=cfg,robot=robot,connect=lambda:None,
+        snapshot=lambda:{'active_fault_count':1,'fault_details':[known_fault]},
         read_body_height=lambda:{'height_m':.515},start_stream=lambda _:sample(),
         mailbox=SimpleNamespace(get=sample),robot_now=time.monotonic,
-        health=lambda:{'time':time.monotonic(),'estop_ready':True,'fault_count':0,'battery_percent':96},
+        health=lambda:{'time':time.monotonic(),'estop_ready':True,'fault_count':1,
+                       'fault_details':[known_fault],'battery_percent':96},
         stream_statistics=lambda:{'mock':True},close=lambda:None)
     calls=[]
 
@@ -183,17 +206,20 @@ def test_mocked_stream_lifecycle_and_shutdown(monkeypatch,tmp_path,activation_fa
     monkeypatch.setattr(crouch,'ReadOnlySpot',lambda _:reader)
     monkeypatch.setattr(crouch,'wired_route',lambda _: {})
     monkeypatch.setattr(crouch,'load',lambda _,kind:envelope if kind is Envelope else cfg)
-    monkeypatch.setattr(crouch,'validate_snapshot',lambda *_,**__: {'mock_check':True})
+    monkeypatch.setattr(crouch,'validate_snapshot',lambda *_,**__: {'mock_check':True,'no_active_faults':False})
     monkeypatch.setattr(crouch,'require_off',lambda _:calls.append('confirm_off'))
     monkeypatch.setattr(sdk_control,'ControlSpot',FakeControl)
     binding=tmp_path/'binding.json'
     binding.write_text(json.dumps({'robot_model_sha256':'0'*64,'payload_config_sha256':'0'*64}))
     args=SimpleNamespace(robot=Path('robot'),envelope=Path('limits'),binding=binding,
-                         mode='execute',operator='Adam',safety_operator='Minghao',output=tmp_path)
+                         mode='execute',operator='Adam',safety_operator='Minghao',output=tmp_path,
+                         allow_known_payload_info=True)
     samples=crouch.Samples()
     result=crouch.live(args,config(),samples,[])
     assert result['completed'] is not activation_fails, result
     assert result['motors_off_confirmed'] and result['lease_returned']
+    assert result['preflight_original']['no_active_faults'] is False
+    assert result['preflight']['no_unaccepted_faults'] is True
     assert calls[-2:]==['safe_off_and_return','confirm_off']
     assert samples.count > 0
     if not activation_fails:

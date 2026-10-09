@@ -19,6 +19,14 @@ def seconds(timestamp):
     return timestamp.seconds + timestamp.nanos / 1e9
 
 
+def fault_details(state):
+    """Structured severity data; callers retain their own unchanged fault policy."""
+    return [dict(kind=kind, name=getattr(fault, 'name', ''), code=getattr(fault, 'code', 0),
+                 severity=int(getattr(fault, 'severity', 0)))
+            for kind in ('system_fault_state', 'behavior_fault_state', 'service_fault_state')
+            for fault in getattr(state, kind).faults]
+
+
 def decode_state(message, received=None):
     from bosdyn.api.header_pb2 import CommonError
 
@@ -230,6 +238,7 @@ class ReadOnlySpot:
             "joint_control_feature_code": self.config.joint_control_feature,
             **estop_observation(self.config, state, estop),
             "active_fault_count": fault_count,
+            "fault_details": fault_details(state),
             "battery_percent": min(
                 (b.charge_percentage.value for b in state.battery_states), default=0
             ),
@@ -275,6 +284,7 @@ class ReadOnlySpot:
             "fault_count": len(state.system_fault_state.faults)
             + len(state.behavior_fault_state.faults)
             + len(state.service_fault_state.faults),
+            "fault_details": fault_details(state),
             "battery_percent": min(
                 (b.charge_percentage.value for b in state.battery_states), default=0
             ),

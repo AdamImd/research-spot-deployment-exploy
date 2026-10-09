@@ -123,6 +123,15 @@ def require_off(reader):
         raise ContractError('motor-off not confirmed')
 
 
+def accepted_faults(count, details, allow_known_payload_info):
+    """Explicit diagnostic exception; never alter the original fault count or clear a fault."""
+    if count == 0:
+        return not details
+    return bool(allow_known_payload_info and len(details) == count and all(
+        f.get('kind') == 'system_fault_state' and f.get('name') == 'payload.fault'
+        and f.get('code') == 9 and f.get('severity') == 1 for f in details))
+
+
 def live(args, config, samples, events):
     from spot_deploy.sdk_control import ControlSpot, command_proto
 
@@ -142,6 +151,8 @@ def live(args, config, samples, events):
     stop, emitted, active = threading.Event(), threading.Event(), threading.Event()
     shared = {'error': None, 'health_at': 0., 'active_at': None, 'last_emit': None}
     result = {'completed': False, 'policy_used': False, 'estop_writes': 0}
+    allow_info = getattr(args, 'allow_known_payload_info', False)
+    result['allow_known_payload_info'] = allow_info
     handlers = {sig: signal.signal(sig, lambda *_: stop.set()) for sig in (signal.SIGINT, signal.SIGTERM)}
 
     def check():
@@ -155,7 +166,9 @@ def live(args, config, samples, events):
             while not stop.is_set():
                 control.heartbeat()
                 h = reader.health()
-                if not h['estop_ready'] or h['fault_count'] or h['battery_percent'] < envelope.min_battery_percent:
+                if (not h['estop_ready'] or not accepted_faults(
+                        h['fault_count'], h.get('fault_details', []), allow_info)
+                        or h['battery_percent'] < envelope.min_battery_percent):
                     raise ContractError('robot health/stop check failed')
                 shared['health_at'] = h['time']
                 events.append({'event': 'health', **h})
@@ -174,6 +187,11 @@ def live(args, config, samples, events):
         snapshot = reader.snapshot()
         atomic_json(args.output / 'robot-snapshot.json', snapshot)
         checks = validate_snapshot(snapshot, robot, binding, envelope, for_control=True)
+        result['preflight_original'] = dict(checks)
+        if allow_info:
+            checks.pop('no_active_faults', None)
+            checks['no_unaccepted_faults'] = accepted_faults(
+                snapshot.get('active_fault_count', 0), snapshot.get('fault_details', []), True)
         result['preflight'] = checks
         if not all(checks.values()):
             raise ContractError('fresh preflight failed')
@@ -268,6 +286,8 @@ def live(args, config, samples, events):
                     stop.wait(schedule.advance(time.monotonic()))
             except Exception as exc:
                 if not stop.is_set():
+                    if 'state' in locals():
+                        shared['failure_state'] = state.model_dump()
                     shared['error'] = str(exc) if isinstance(exc, ContractError) else type(exc).__name__
                     stop.set()
             finally:
@@ -297,6 +317,8 @@ def live(args, config, samples, events):
         result.update(completed=True, command_gap_s=percentiles(gaps), ack_delay_s=percentiles(ack_delays))
     except Exception as exc:
         result['error'] = str(exc) if isinstance(exc, ContractError) else type(exc).__name__
+        if shared.get('failure_state'):
+            result['failure_state'] = shared['failure_state']
     finally:
         stop.set()
         if control:
@@ -341,6 +363,8 @@ def main():
     parser.add_argument('--operator')
     parser.add_argument('--safety-operator')
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--allow-known-payload-info', action='store_true',
+                        help='log, but accept only system payload.fault code 9 at INFO severity')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = settings(args.settings)
@@ -353,6 +377,7 @@ def main():
     atomic_json(args.output/'run.json', {'mode': args.mode, 'started_at': utcnow(),
                 'source': source_identity(), 'script_sha256': sha256(Path(__file__)),
                 'settings': config, 'operator': args.operator, 'safety_operator': args.safety_operator,
+                'allow_known_payload_info': args.allow_known_payload_info,
                 'joint_order': list(JOINTS), 'timing_columns': Samples.TIMING,
                 'body_columns': ['qw','qx','qy','qz','vx','vy','vz','wx','wy','wz'],
                 'input_hashes': {str(p):sha256(p) for p in (args.settings,args.robot,args.envelope,args.binding) if p},
