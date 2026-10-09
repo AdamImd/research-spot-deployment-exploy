@@ -1,0 +1,1414 @@
+{
+  "status": "review_only",
+  "hardware_qualified": false,
+  "analysis_script_sha256": "6461ecd339b143baad10c90ce4316d061bb9f15d9e747785ee801d74cc87b8b7",
+  "analysis_commit": "4f2a3ea3bb649f5e14fdf89aa34e387c995939d1",
+  "analysis_tree_dirty": false,
+  "python": "3.12.3",
+  "numpy": "2.2.6",
+  "joint_order": [
+    "fl_hx",
+    "fl_hy",
+    "fl_kn",
+    "fr_hx",
+    "fr_hy",
+    "fr_kn",
+    "hl_hx",
+    "hl_hy",
+    "hl_kn",
+    "hr_hx",
+    "hr_hy",
+    "hr_kn",
+    "arm0_sh0",
+    "arm0_sh1",
+    "arm0_el0",
+    "arm0_el1",
+    "arm0_wr0",
+    "arm0_wr1",
+    "arm0_f1x"
+  ],
+  "urdf_sha256": "63e7f153ea7027ac1b51b1c8e00ae65e6c6bc3eaa5dbd7788a6c6b3cd23b5d12",
+  "model_limits": {
+    "fl_hx": {
+      "lower": -0.797948,
+      "upper": 0.769891,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "fl_hy": {
+      "lower": -0.871695,
+      "upper": 2.27419,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "fl_kn": {
+      "lower": -2.7929,
+      "upper": -0.2967,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "fr_hx": {
+      "lower": -0.783203,
+      "upper": 0.786121,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "fr_hy": {
+      "lower": -0.88639,
+      "upper": 2.26125,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "fr_kn": {
+      "lower": -2.7929,
+      "upper": -0.293936,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "hl_hx": {
+      "lower": -0.785392,
+      "upper": 0.785588,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "hl_hy": {
+      "lower": -0.848617,
+      "upper": 2.29381,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "hl_kn": {
+      "lower": -2.7929,
+      "upper": -0.328626,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "hr_hx": {
+      "lower": -0.792098,
+      "upper": 0.780236,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "hr_hy": {
+      "lower": -0.885645,
+      "upper": 2.25831,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "hr_kn": {
+      "lower": -2.7929,
+      "upper": -0.317505,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_sh0": {
+      "lower": -2.6179938779914944,
+      "upper": 3.141592653589793,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_sh1": {
+      "lower": -3.141592653589793,
+      "upper": 0.5235987755982988,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_el0": {
+      "lower": 0.0,
+      "upper": 3.141592653589793,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_el1": {
+      "lower": -2.792526803190927,
+      "upper": 2.792526803190927,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_wr0": {
+      "lower": -1.8325957145940461,
+      "upper": 1.8325957145940461,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_wr1": {
+      "lower": -2.8797932657906435,
+      "upper": 2.8797932657906435,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    },
+    "arm0_f1x": {
+      "lower": -1.57,
+      "upper": 0.0,
+      "effort": 1000.0,
+      "velocity": 1000.0
+    }
+  },
+  "simulations": {
+    "mujoco": {
+      "backend": "mujoco",
+      "seed": 101,
+      "command_hz": 200.0,
+      "policy_hz": 50.0,
+      "artifacts_sha256": {
+        "configuration.json": "e44fa9e79d5180068af3ca06b6ac4af7eac69079abd1eac0fb51c4a0965858d3",
+        "events.jsonl": "4fee6adb450be0b0586141ade9228e3fcc56caf571e8e05557869e46488d3a72",
+        "result.json": "724ed2c3ee35c263af0c91d0c0706e2e56d5363f67c4cb4666d8d9fb3cf63df4",
+        "rollout.jsonl": "f5f7283d6099badeae5561b1e8d3c919d481cfb87475c510422bcf9a6cc33952",
+        "run.json": "2e499db4f9fdc94b9b12180b7489989e235a6de2b1fa05ef475cd219ee864b3f",
+        "source.json": "a03fd52a57335ab7ef025619493c98b7b16a63da6c93f5e314a185496528f66d",
+        "timing.jsonl": "a2597dcc4d7a8cea17d8cf89a203fa9f047318e42dc7fc4ab10a7c8563c65354"
+      },
+      "complete_sha256": "ada009480eff846fa9f02bc6ba2181ff9600282b8f1733c349a15d401405af62",
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "stable_final_window": true,
+      "handover_torque_step_Nm": [
+        6.062789042067134,
+        -2.7686684783297846,
+        -3.412327314438812,
+        -3.8759083149993856,
+        -3.1936539150197447,
+        0.846255903142346,
+        4.873564666858826,
+        4.290473278683367,
+        0.4565553048885391,
+        -8.69506268271006,
+        2.9600799487126004,
+        -4.543052545721821,
+        0.001070414711286283,
+        -2.814286494971899,
+        10.959924279382353,
+        0.001517258335286526,
+        0.019247796164559353,
+        -0.0009460917310919382,
+        0.07800171169524261
+      ],
+      "supported_hold_feedforward_Nm": [
+        -13.402274031710231,
+        4.49821764787019,
+        21.113934064927093,
+        13.41973772626762,
+        4.895186517329925,
+        21.14571225176488,
+        -13.849385357252274,
+        4.889412108737288,
+        21.593577446576305,
+        13.858805880627997,
+        5.080288608263718,
+        21.57261215799599,
+        -0.001070414711286283,
+        2.814286494971899,
+        -10.959924279382353,
+        -0.001517258335286526,
+        -0.019247796164559353,
+        0.0009460917310919382,
+        -0.07800171169524261
+      ],
+      "handover_target_rate_rad_s": [
+        24.46494996547699,
+        5.765163898468018,
+        59.00535583496094,
+        31.812764704227448,
+        5.6717753410339355,
+        73.30656051635742,
+        29.919402301311493,
+        30.599617958068848,
+        73.50044250488281,
+        17.212477326393127,
+        26.801228523254395,
+        56.765198707580566,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "arm_stowed_positions": [
+        -4.9114227294921875e-05,
+        -3.11574125289917,
+        3.133157730102539,
+        1.5553779602050781,
+        0.0008362531661987305,
+        -1.570042610168457,
+        -0.00648045539855957
+      ],
+      "first_trial": {
+        "duration_s": 10.0,
+        "samples": 2001,
+        "joints": {
+          "fl_hx": {
+            "position_min_rad": 0.1239793598651886,
+            "position_max_rad": 0.2334069013595581,
+            "target_min_rad": -0.012181572616100311,
+            "target_max_rad": 0.1878269612789154,
+            "speed_max_rad_s": 1.5222116708755493,
+            "speed_peak_time_s": 2.545,
+            "requested_load_max_Nm": 9.57361795194447,
+            "preceding_applied_load_max_Nm": 9.573618345235484,
+            "tracking_error_max_rad": 0.15897606313228607,
+            "target_rate_max_rad_s": 24.46494996547699
+          },
+          "fl_hy": {
+            "position_min_rad": 0.7227752804756165,
+            "position_max_rad": 1.0670887231826782,
+            "target_min_rad": 0.7607313394546509,
+            "target_max_rad": 1.0197657346725464,
+            "speed_max_rad_s": 1.4787960052490234,
+            "speed_peak_time_s": 2.545,
+            "requested_load_max_Nm": 8.184343816246837,
+            "preceding_applied_load_max_Nm": 8.184344412987528,
+            "tracking_error_max_rad": 0.13619613647460938,
+            "target_rate_max_rad_s": 6.660151481628418
+          },
+          "fl_kn": {
+            "position_min_rad": -1.8067914247512817,
+            "position_max_rad": -1.423627257347107,
+            "target_min_rad": -1.7659556865692139,
+            "target_max_rad": -1.1835650205612183,
+            "speed_max_rad_s": 6.929027557373047,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 20.760576590895653,
+            "preceding_applied_load_max_Nm": 20.760577581027505,
+            "tracking_error_max_rad": 0.35494744777679443,
+            "target_rate_max_rad_s": 59.00535583496094
+          },
+          "fr_hx": {
+            "position_min_rad": -0.12440229207277298,
+            "position_max_rad": 0.023839693516492844,
+            "target_min_rad": 0.035254113376140594,
+            "target_max_rad": 0.31918248534202576,
+            "speed_max_rad_s": 0.08992862701416016,
+            "speed_peak_time_s": 2.91,
+            "requested_load_max_Nm": 22.04199061403051,
+            "preceding_applied_load_max_Nm": 22.04199071784442,
+            "tracking_error_max_rad": 0.36770149320364,
+            "target_rate_max_rad_s": 31.812764704227448
+          },
+          "fr_hy": {
+            "position_min_rad": 0.7126958966255188,
+            "position_max_rad": 1.1169768571853638,
+            "target_min_rad": 0.7410547733306885,
+            "target_max_rad": 0.9753804206848145,
+            "speed_max_rad_s": 0.47460219264030457,
+            "speed_peak_time_s": 0.13,
+            "requested_load_max_Nm": 14.241026915609837,
+            "preceding_applied_load_max_Nm": 14.241024457920572,
+            "tracking_error_max_rad": 0.23395049571990967,
+            "target_rate_max_rad_s": 16.783642768859863
+          },
+          "fr_kn": {
+            "position_min_rad": -1.853491187095642,
+            "position_max_rad": -1.455849289894104,
+            "target_min_rad": -1.2748385667800903,
+            "target_max_rad": -1.0135774612426758,
+            "speed_max_rad_s": 0.5239283442497253,
+            "speed_peak_time_s": 0.06,
+            "requested_load_max_Nm": 49.00056405365467,
+            "preceding_applied_load_max_Nm": 49.000566486664646,
+            "tracking_error_max_rad": 0.8105387687683105,
+            "target_rate_max_rad_s": 73.30656051635742
+          },
+          "hl_hx": {
+            "position_min_rad": 0.10777714103460312,
+            "position_max_rad": 0.16828998923301697,
+            "target_min_rad": -0.19845983386039734,
+            "target_max_rad": 0.03098095953464508,
+            "speed_max_rad_s": 0.14689971506595612,
+            "speed_peak_time_s": 2.5500000000000003,
+            "requested_load_max_Nm": 21.31063625961542,
+            "preceding_applied_load_max_Nm": 21.310636310625387,
+            "tracking_error_max_rad": 0.3540166914463043,
+            "target_rate_max_rad_s": 29.919402301311493
+          },
+          "hl_hy": {
+            "position_min_rad": 0.7200722694396973,
+            "position_max_rad": 1.130168080329895,
+            "target_min_rad": 0.8730703592300415,
+            "target_max_rad": 1.1798431873321533,
+            "speed_max_rad_s": 0.7037944197654724,
+            "speed_peak_time_s": 0.13,
+            "requested_load_max_Nm": 13.71926625072956,
+            "preceding_applied_load_max_Nm": 13.71926761509256,
+            "tracking_error_max_rad": 0.23981904983520508,
+            "target_rate_max_rad_s": 30.599617958068848
+          },
+          "hl_kn": {
+            "position_min_rad": -1.819571852684021,
+            "position_max_rad": -1.4696091413497925,
+            "target_min_rad": -1.4809000492095947,
+            "target_max_rad": -0.9885932207107544,
+            "speed_max_rad_s": 0.786453127861023,
+            "speed_peak_time_s": 0.13,
+            "requested_load_max_Nm": 38.84395730495453,
+            "preceding_applied_load_max_Nm": 38.84395699381842,
+            "tracking_error_max_rad": 0.6421483755111694,
+            "target_rate_max_rad_s": 73.50044250488281
+          },
+          "hr_hx": {
+            "position_min_rad": -0.15592220425605774,
+            "position_max_rad": -0.0698264092206955,
+            "target_min_rad": -0.1523066908121109,
+            "target_max_rad": 0.026558421552181244,
+            "speed_max_rad_s": 0.8706591725349426,
+            "speed_peak_time_s": 2.535,
+            "requested_load_max_Nm": 7.3658984480425715,
+            "preceding_applied_load_max_Nm": 7.3658980750693805,
+            "tracking_error_max_rad": 0.12241166085004807,
+            "target_rate_max_rad_s": 17.212477326393127
+          },
+          "hr_hy": {
+            "position_min_rad": 0.7081114649772644,
+            "position_max_rad": 1.2217153310775757,
+            "target_min_rad": 0.8421176075935364,
+            "target_max_rad": 1.2565429210662842,
+            "speed_max_rad_s": 1.3519036769866943,
+            "speed_peak_time_s": 0.585,
+            "requested_load_max_Nm": 10.153747782111168,
+            "preceding_applied_load_max_Nm": 10.153746582383794,
+            "tracking_error_max_rad": 0.1807754635810852,
+            "target_rate_max_rad_s": 26.801228523254395
+          },
+          "hr_kn": {
+            "position_min_rad": -1.8887608051300049,
+            "position_max_rad": -1.4539672136306763,
+            "target_min_rad": -1.8964662551879883,
+            "target_max_rad": -1.1428396701812744,
+            "speed_max_rad_s": 1.7057791948318481,
+            "speed_peak_time_s": 0.5750000000000001,
+            "requested_load_max_Nm": 22.702692568302155,
+            "preceding_applied_load_max_Nm": 22.70269075289229,
+            "tracking_error_max_rad": 0.363897442817688,
+            "target_rate_max_rad_s": 56.765198707580566
+          },
+          "arm0_sh0": {
+            "position_min_rad": -0.0012317271903157234,
+            "position_max_rad": 0.0018630583072081208,
+            "target_min_rad": -4.9114227294921875e-05,
+            "target_max_rad": -4.9114227294921875e-05,
+            "speed_max_rad_s": 0.04848736152052879,
+            "speed_peak_time_s": 2.5500000000000003,
+            "requested_load_max_Nm": 0.26372523326426744,
+            "preceding_applied_load_max_Nm": 0.2637252334066924,
+            "tracking_error_max_rad": 0.0019121725345030427,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_sh1": {
+            "position_min_rad": -3.142641067504883,
+            "position_max_rad": -3.11574125289917,
+            "target_min_rad": -3.11574125289917,
+            "target_max_rad": -3.11574125289917,
+            "speed_max_rad_s": 0.4743618667125702,
+            "speed_peak_time_s": 0.025,
+            "requested_load_max_Nm": 3.5127023458480835,
+            "preceding_applied_load_max_Nm": 3.5126987525442996,
+            "tracking_error_max_rad": 0.02689981460571289,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el0": {
+            "position_min_rad": 3.133157730102539,
+            "position_max_rad": 3.1476824283599854,
+            "target_min_rad": 3.133157730102539,
+            "target_max_rad": 3.133157730102539,
+            "speed_max_rad_s": 0.6576221585273743,
+            "speed_peak_time_s": 0.025,
+            "requested_load_max_Nm": 2.613404870033264,
+            "preceding_applied_load_max_Nm": 2.613411532821468,
+            "tracking_error_max_rad": 0.014524698257446289,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el1": {
+            "position_min_rad": 1.555261492729187,
+            "position_max_rad": 1.555538535118103,
+            "target_min_rad": 1.5553779602050781,
+            "target_max_rad": 1.5553779602050781,
+            "speed_max_rad_s": 0.009725530631840229,
+            "speed_peak_time_s": 0.01,
+            "requested_load_max_Nm": 0.02375305723398924,
+            "preceding_applied_load_max_Nm": 0.02375605287356003,
+            "tracking_error_max_rad": 0.00016057491302490234,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr0": {
+            "position_min_rad": 5.1176451961509883e-05,
+            "position_max_rad": 0.0021222466602921486,
+            "target_min_rad": 0.0008362531661987305,
+            "target_max_rad": 0.0008362531661987305,
+            "speed_max_rad_s": 0.07582966983318329,
+            "speed_peak_time_s": 0.05,
+            "requested_load_max_Nm": 0.22239451482892036,
+            "preceding_applied_load_max_Nm": 0.22239450927547008,
+            "tracking_error_max_rad": 0.0012859934940934181,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr1": {
+            "position_min_rad": -1.5701106786727905,
+            "position_max_rad": -1.5699973106384277,
+            "target_min_rad": -1.570042610168457,
+            "target_max_rad": -1.570042610168457,
+            "speed_max_rad_s": 0.0032695333939045668,
+            "speed_peak_time_s": 0.01,
+            "requested_load_max_Nm": 0.008835770655423403,
+            "preceding_applied_load_max_Nm": 0.008831122529836618,
+            "tracking_error_max_rad": 6.80685043334961e-05,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_f1x": {
+            "position_min_rad": -0.006605615373700857,
+            "position_max_rad": 0.00023773823340889066,
+            "target_min_rad": -0.00648045539855957,
+            "target_max_rad": -0.00648045539855957,
+            "speed_max_rad_s": 0.625614583492279,
+            "speed_peak_time_s": 0.03,
+            "requested_load_max_Nm": 0.25530918508768086,
+            "preceding_applied_load_max_Nm": 0.2553091839073033,
+            "tracking_error_max_rad": 0.006718193631968461,
+            "target_rate_max_rad_s": 0.0
+          }
+        },
+        "body_height_drop_max_m": 0.08497163653373718,
+        "tilt_max_deg": 2.649814577188759,
+        "linear_speed_max_m_s": 0.16547323348863088,
+        "angular_speed_max_rad_s": 0.13861260804557773,
+        "coupled_sh1_minus_el0_load_max_Nm": 4.9126839973032475
+      },
+      "full_trace": {
+        "duration_s": 60.0,
+        "samples": 12001,
+        "joints": {
+          "fl_hx": {
+            "position_min_rad": 0.1239793598651886,
+            "position_max_rad": 0.2334069013595581,
+            "target_min_rad": -0.012181572616100311,
+            "target_max_rad": 0.1878269612789154,
+            "speed_max_rad_s": 1.5222116708755493,
+            "speed_peak_time_s": 2.545,
+            "requested_load_max_Nm": 9.57361795194447,
+            "preceding_applied_load_max_Nm": 9.573618345235484,
+            "tracking_error_max_rad": 0.15897606313228607,
+            "target_rate_max_rad_s": 24.46494996547699
+          },
+          "fl_hy": {
+            "position_min_rad": 0.7227752804756165,
+            "position_max_rad": 1.0670887231826782,
+            "target_min_rad": 0.7607313394546509,
+            "target_max_rad": 1.0197657346725464,
+            "speed_max_rad_s": 1.4787960052490234,
+            "speed_peak_time_s": 2.545,
+            "requested_load_max_Nm": 8.184343816246837,
+            "preceding_applied_load_max_Nm": 8.184344412987528,
+            "tracking_error_max_rad": 0.13619613647460938,
+            "target_rate_max_rad_s": 6.660151481628418
+          },
+          "fl_kn": {
+            "position_min_rad": -1.8067914247512817,
+            "position_max_rad": -1.423627257347107,
+            "target_min_rad": -1.7659556865692139,
+            "target_max_rad": -1.1835650205612183,
+            "speed_max_rad_s": 6.929027557373047,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 20.760576590895653,
+            "preceding_applied_load_max_Nm": 20.760577581027505,
+            "tracking_error_max_rad": 0.35494744777679443,
+            "target_rate_max_rad_s": 59.00535583496094
+          },
+          "fr_hx": {
+            "position_min_rad": -0.12440229207277298,
+            "position_max_rad": 0.023839693516492844,
+            "target_min_rad": 0.035254113376140594,
+            "target_max_rad": 0.31918248534202576,
+            "speed_max_rad_s": 0.08992862701416016,
+            "speed_peak_time_s": 2.91,
+            "requested_load_max_Nm": 22.04199061403051,
+            "preceding_applied_load_max_Nm": 22.04199071784442,
+            "tracking_error_max_rad": 0.36770149320364,
+            "target_rate_max_rad_s": 31.812764704227448
+          },
+          "fr_hy": {
+            "position_min_rad": 0.7126958966255188,
+            "position_max_rad": 1.1169768571853638,
+            "target_min_rad": 0.7410547733306885,
+            "target_max_rad": 0.9753804206848145,
+            "speed_max_rad_s": 0.47460219264030457,
+            "speed_peak_time_s": 0.13,
+            "requested_load_max_Nm": 14.241026915609837,
+            "preceding_applied_load_max_Nm": 14.241024457920572,
+            "tracking_error_max_rad": 0.23395049571990967,
+            "target_rate_max_rad_s": 16.783642768859863
+          },
+          "fr_kn": {
+            "position_min_rad": -1.853491187095642,
+            "position_max_rad": -1.455849289894104,
+            "target_min_rad": -1.2748385667800903,
+            "target_max_rad": -1.0135774612426758,
+            "speed_max_rad_s": 0.5239283442497253,
+            "speed_peak_time_s": 0.06,
+            "requested_load_max_Nm": 49.00056405365467,
+            "preceding_applied_load_max_Nm": 49.000566486664646,
+            "tracking_error_max_rad": 0.8105387687683105,
+            "target_rate_max_rad_s": 73.30656051635742
+          },
+          "hl_hx": {
+            "position_min_rad": 0.10777714103460312,
+            "position_max_rad": 0.16828998923301697,
+            "target_min_rad": -0.19845983386039734,
+            "target_max_rad": 0.03098095953464508,
+            "speed_max_rad_s": 0.14689971506595612,
+            "speed_peak_time_s": 2.5500000000000003,
+            "requested_load_max_Nm": 21.31063625961542,
+            "preceding_applied_load_max_Nm": 21.310636310625387,
+            "tracking_error_max_rad": 0.3540166914463043,
+            "target_rate_max_rad_s": 29.919402301311493
+          },
+          "hl_hy": {
+            "position_min_rad": 0.7200722694396973,
+            "position_max_rad": 1.130168080329895,
+            "target_min_rad": 0.8730703592300415,
+            "target_max_rad": 1.1798431873321533,
+            "speed_max_rad_s": 0.7037944197654724,
+            "speed_peak_time_s": 0.13,
+            "requested_load_max_Nm": 13.71926625072956,
+            "preceding_applied_load_max_Nm": 13.71926761509256,
+            "tracking_error_max_rad": 0.23981904983520508,
+            "target_rate_max_rad_s": 30.599617958068848
+          },
+          "hl_kn": {
+            "position_min_rad": -1.819571852684021,
+            "position_max_rad": -1.4696091413497925,
+            "target_min_rad": -1.4809000492095947,
+            "target_max_rad": -0.9885932207107544,
+            "speed_max_rad_s": 0.786453127861023,
+            "speed_peak_time_s": 0.13,
+            "requested_load_max_Nm": 38.84395730495453,
+            "preceding_applied_load_max_Nm": 38.84395699381842,
+            "tracking_error_max_rad": 0.6421483755111694,
+            "target_rate_max_rad_s": 73.50044250488281
+          },
+          "hr_hx": {
+            "position_min_rad": -0.15592220425605774,
+            "position_max_rad": -0.0698264092206955,
+            "target_min_rad": -0.1523066908121109,
+            "target_max_rad": 0.027334801852703094,
+            "speed_max_rad_s": 0.8706591725349426,
+            "speed_peak_time_s": 2.535,
+            "requested_load_max_Nm": 7.3658984480425715,
+            "preceding_applied_load_max_Nm": 7.3658980750693805,
+            "tracking_error_max_rad": 0.12241166085004807,
+            "target_rate_max_rad_s": 17.212477326393127
+          },
+          "hr_hy": {
+            "position_min_rad": 0.7081114649772644,
+            "position_max_rad": 1.2217153310775757,
+            "target_min_rad": 0.8421176075935364,
+            "target_max_rad": 1.2565429210662842,
+            "speed_max_rad_s": 1.3519036769866943,
+            "speed_peak_time_s": 0.585,
+            "requested_load_max_Nm": 10.153747782111168,
+            "preceding_applied_load_max_Nm": 10.153746582383794,
+            "tracking_error_max_rad": 0.1807754635810852,
+            "target_rate_max_rad_s": 26.801228523254395
+          },
+          "hr_kn": {
+            "position_min_rad": -1.8887608051300049,
+            "position_max_rad": -1.4539672136306763,
+            "target_min_rad": -1.8964662551879883,
+            "target_max_rad": -1.1428396701812744,
+            "speed_max_rad_s": 1.7057791948318481,
+            "speed_peak_time_s": 0.5750000000000001,
+            "requested_load_max_Nm": 22.702692568302155,
+            "preceding_applied_load_max_Nm": 22.70269075289229,
+            "tracking_error_max_rad": 0.363897442817688,
+            "target_rate_max_rad_s": 56.765198707580566
+          },
+          "arm0_sh0": {
+            "position_min_rad": -0.0012317271903157234,
+            "position_max_rad": 0.0018630583072081208,
+            "target_min_rad": -4.9114227294921875e-05,
+            "target_max_rad": -4.9114227294921875e-05,
+            "speed_max_rad_s": 0.04848736152052879,
+            "speed_peak_time_s": 2.5500000000000003,
+            "requested_load_max_Nm": 0.26372523326426744,
+            "preceding_applied_load_max_Nm": 0.2637252334066924,
+            "tracking_error_max_rad": 0.0019121725345030427,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_sh1": {
+            "position_min_rad": -3.142641067504883,
+            "position_max_rad": -3.11574125289917,
+            "target_min_rad": -3.11574125289917,
+            "target_max_rad": -3.11574125289917,
+            "speed_max_rad_s": 0.4743618667125702,
+            "speed_peak_time_s": 0.025,
+            "requested_load_max_Nm": 3.5127023458480835,
+            "preceding_applied_load_max_Nm": 3.5126987525442996,
+            "tracking_error_max_rad": 0.02689981460571289,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el0": {
+            "position_min_rad": 3.133157730102539,
+            "position_max_rad": 3.1476824283599854,
+            "target_min_rad": 3.133157730102539,
+            "target_max_rad": 3.133157730102539,
+            "speed_max_rad_s": 0.6576221585273743,
+            "speed_peak_time_s": 0.025,
+            "requested_load_max_Nm": 2.613404870033264,
+            "preceding_applied_load_max_Nm": 2.613411532821468,
+            "tracking_error_max_rad": 0.014524698257446289,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el1": {
+            "position_min_rad": 1.555261492729187,
+            "position_max_rad": 1.555538535118103,
+            "target_min_rad": 1.5553779602050781,
+            "target_max_rad": 1.5553779602050781,
+            "speed_max_rad_s": 0.009725530631840229,
+            "speed_peak_time_s": 0.01,
+            "requested_load_max_Nm": 0.02375305723398924,
+            "preceding_applied_load_max_Nm": 0.02375605287356003,
+            "tracking_error_max_rad": 0.00016057491302490234,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr0": {
+            "position_min_rad": 5.1176451961509883e-05,
+            "position_max_rad": 0.0021222466602921486,
+            "target_min_rad": 0.0008362531661987305,
+            "target_max_rad": 0.0008362531661987305,
+            "speed_max_rad_s": 0.07582966983318329,
+            "speed_peak_time_s": 0.05,
+            "requested_load_max_Nm": 0.22239451482892036,
+            "preceding_applied_load_max_Nm": 0.22239450927547008,
+            "tracking_error_max_rad": 0.0012859934940934181,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr1": {
+            "position_min_rad": -1.5701106786727905,
+            "position_max_rad": -1.5699973106384277,
+            "target_min_rad": -1.570042610168457,
+            "target_max_rad": -1.570042610168457,
+            "speed_max_rad_s": 0.0032695333939045668,
+            "speed_peak_time_s": 0.01,
+            "requested_load_max_Nm": 0.008835770655423403,
+            "preceding_applied_load_max_Nm": 0.008831122529836618,
+            "tracking_error_max_rad": 6.80685043334961e-05,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_f1x": {
+            "position_min_rad": -0.006605615373700857,
+            "position_max_rad": 0.00023773823340889066,
+            "target_min_rad": -0.00648045539855957,
+            "target_max_rad": -0.00648045539855957,
+            "speed_max_rad_s": 0.625614583492279,
+            "speed_peak_time_s": 0.03,
+            "requested_load_max_Nm": 0.25530918508768086,
+            "preceding_applied_load_max_Nm": 0.2553091839073033,
+            "tracking_error_max_rad": 0.006718193631968461,
+            "target_rate_max_rad_s": 0.0
+          }
+        },
+        "body_height_drop_max_m": 0.08497163653373718,
+        "tilt_max_deg": 2.649814577188759,
+        "linear_speed_max_m_s": 0.16547323348863088,
+        "angular_speed_max_rad_s": 0.13861260804557773,
+        "coupled_sh1_minus_el0_load_max_Nm": 4.9126839973032475
+      }
+    },
+    "isaaclab": {
+      "backend": "isaaclab",
+      "seed": 101,
+      "command_hz": 200.0,
+      "policy_hz": 50.0,
+      "artifacts_sha256": {
+        "configuration.json": "254e1b4e9e8cd7dd90d4af1f27a5e176502d7e3825b8c7fd74a8cb978c260336",
+        "events.jsonl": "0848ee5806bd8d15ec9fb91054a73f941726e82fc8198516a3510863e4f9b44c",
+        "result.json": "fb16bd9e2c92054c733e52796c17a31770572765b63b6338cc44a988cc634b76",
+        "rollout.jsonl": "7b60ed2e78cf0197bf348d314cf89589b09c1af3236583930774e5e25c38b498",
+        "run.json": "2e499db4f9fdc94b9b12180b7489989e235a6de2b1fa05ef475cd219ee864b3f",
+        "source.json": "0cb71d25bea950a334201895380618d26a030519132a112f72926c9fef5b7edb",
+        "timing.jsonl": "7fdd25d762442a9e02b2b537913db23478d1202a6d5255630515f0fbc1c9d586"
+      },
+      "complete_sha256": "4f5cd2f2db8cebb21077e3bcb380340f114c618c20d94203ef27d366cb27c767",
+      "packages": {
+        "bosdyn-api": null,
+        "bosdyn-client": null,
+        "numpy": "1.26.0",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.11.7",
+        "spot-deployment": null
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "stable_final_window": true,
+      "handover_torque_step_Nm": [
+        6.062789042067134,
+        -2.7686684783297846,
+        -3.412327314438812,
+        -3.8759083149993856,
+        -3.1936539150197447,
+        0.846255903142346,
+        4.873564666858826,
+        4.290473278683367,
+        0.4565553048885391,
+        -8.69506268271006,
+        2.9600799487126004,
+        -4.543052545721821,
+        0.001070414711286283,
+        -2.814286494971899,
+        10.959924279382353,
+        0.001517258335286526,
+        0.019247796164559353,
+        -0.0009460917310919382,
+        0.07800171169524261
+      ],
+      "supported_hold_feedforward_Nm": [
+        -13.402274031710231,
+        4.49821764787019,
+        21.113934064927093,
+        13.41973772626762,
+        4.895186517329925,
+        21.14571225176488,
+        -13.849385357252274,
+        4.889412108737288,
+        21.593577446576305,
+        13.858805880627997,
+        5.080288608263718,
+        21.57261215799599,
+        -0.001070414711286283,
+        2.814286494971899,
+        -10.959924279382353,
+        -0.001517258335286526,
+        -0.019247796164559353,
+        0.0009460917310919382,
+        -0.07800171169524261
+      ],
+      "handover_target_rate_rad_s": [
+        24.46494996547699,
+        5.765163898468018,
+        59.00535583496094,
+        31.812764704227448,
+        5.6717753410339355,
+        73.30656051635742,
+        29.919402301311493,
+        30.599617958068848,
+        73.50044250488281,
+        17.212477326393127,
+        26.801228523254395,
+        56.765198707580566,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "arm_stowed_positions": [
+        -4.9114227294921875e-05,
+        -3.11574125289917,
+        3.133157730102539,
+        1.5553779602050781,
+        0.0008362531661987305,
+        -1.570042610168457,
+        -0.00648045539855957
+      ],
+      "first_trial": {
+        "duration_s": 10.0,
+        "samples": 2001,
+        "joints": {
+          "fl_hx": {
+            "position_min_rad": 0.1240386888384819,
+            "position_max_rad": 0.24682463705539703,
+            "target_min_rad": -0.006231255829334259,
+            "target_max_rad": 0.19005128741264343,
+            "speed_max_rad_s": 1.5756646394729614,
+            "speed_peak_time_s": 3.79,
+            "requested_load_max_Nm": 10.429901149123907,
+            "preceding_applied_load_max_Nm": 10.429901123046875,
+            "tracking_error_max_rad": 0.1730884090065956,
+            "target_rate_max_rad_s": 24.46494996547699
+          },
+          "fl_hy": {
+            "position_min_rad": 0.7294232845306396,
+            "position_max_rad": 1.0465425252914429,
+            "target_min_rad": 0.7607313394546509,
+            "target_max_rad": 1.018120288848877,
+            "speed_max_rad_s": 1.0130075216293335,
+            "speed_peak_time_s": 3.79,
+            "requested_load_max_Nm": 7.962576661258936,
+            "preceding_applied_load_max_Nm": 7.962576866149902,
+            "tracking_error_max_rad": 0.13100337982177734,
+            "target_rate_max_rad_s": 8.21826457977295
+          },
+          "fl_kn": {
+            "position_min_rad": -1.7801291942596436,
+            "position_max_rad": -1.471755027770996,
+            "target_min_rad": -1.747739553451538,
+            "target_max_rad": -1.1835650205612183,
+            "speed_max_rad_s": 2.046128034591675,
+            "speed_peak_time_s": 3.77,
+            "requested_load_max_Nm": 20.362299397587776,
+            "preceding_applied_load_max_Nm": 20.3622989654541,
+            "tracking_error_max_rad": 0.3462473154067993,
+            "target_rate_max_rad_s": 59.00535583496094
+          },
+          "fr_hx": {
+            "position_min_rad": -0.1249128058552742,
+            "position_max_rad": 0.020988574251532555,
+            "target_min_rad": 0.035254113376140594,
+            "target_max_rad": 0.32595476508140564,
+            "speed_max_rad_s": 0.2176940143108368,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 23.979372086003423,
+            "preceding_applied_load_max_Nm": 23.979372024536133,
+            "tracking_error_max_rad": 0.39861999452114105,
+            "target_rate_max_rad_s": 31.812764704227448
+          },
+          "fr_hy": {
+            "position_min_rad": 0.7126958966255188,
+            "position_max_rad": 1.1196168661117554,
+            "target_min_rad": 0.7386400699615479,
+            "target_max_rad": 0.9846986532211304,
+            "speed_max_rad_s": 1.9097267389297485,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 13.795668795704842,
+            "preceding_applied_load_max_Nm": 13.795668601989746,
+            "tracking_error_max_rad": 0.2222766876220703,
+            "target_rate_max_rad_s": 17.90134906768799
+          },
+          "fr_kn": {
+            "position_min_rad": -1.8683569431304932,
+            "position_max_rad": -1.4579637050628662,
+            "target_min_rad": -1.2719807624816895,
+            "target_max_rad": -1.030012845993042,
+            "speed_max_rad_s": 3.057180643081665,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 49.62642922997475,
+            "preceding_applied_load_max_Nm": 49.62643051147461,
+            "tracking_error_max_rad": 0.8156801462173462,
+            "target_rate_max_rad_s": 73.30656051635742
+          },
+          "hl_hx": {
+            "position_min_rad": 0.09925272315740585,
+            "position_max_rad": 0.15380312502384186,
+            "target_min_rad": -0.2033582627773285,
+            "target_max_rad": 0.02545059472322464,
+            "speed_max_rad_s": 0.1634678691625595,
+            "speed_peak_time_s": 3.8000000000000003,
+            "requested_load_max_Nm": 20.523015405982733,
+            "preceding_applied_load_max_Nm": 20.52301597595215,
+            "tracking_error_max_rad": 0.34118416905403137,
+            "target_rate_max_rad_s": 29.919402301311493
+          },
+          "hl_hy": {
+            "position_min_rad": 0.7200722694396973,
+            "position_max_rad": 1.1541903018951416,
+            "target_min_rad": 0.8730703592300415,
+            "target_max_rad": 1.1857264041900635,
+            "speed_max_rad_s": 0.6830192804336548,
+            "speed_peak_time_s": 0.215,
+            "requested_load_max_Nm": 13.32153457403183,
+            "preceding_applied_load_max_Nm": 13.321534156799316,
+            "tracking_error_max_rad": 0.23296785354614258,
+            "target_rate_max_rad_s": 30.599617958068848
+          },
+          "hl_kn": {
+            "position_min_rad": -1.825999140739441,
+            "position_max_rad": -1.469728946685791,
+            "target_min_rad": -1.4875199794769287,
+            "target_max_rad": -0.9756733179092407,
+            "speed_max_rad_s": 0.6811597943305969,
+            "speed_peak_time_s": 0.125,
+            "requested_load_max_Nm": 42.68114626407623,
+            "preceding_applied_load_max_Nm": 42.68114471435547,
+            "tracking_error_max_rad": 0.7069140672683716,
+            "target_rate_max_rad_s": 73.50044250488281
+          },
+          "hr_hx": {
+            "position_min_rad": -0.15147094428539276,
+            "position_max_rad": -0.06792706251144409,
+            "target_min_rad": -0.14245964586734772,
+            "target_max_rad": 0.022452615201473236,
+            "speed_max_rad_s": 0.8756393194198608,
+            "speed_peak_time_s": 3.795,
+            "requested_load_max_Nm": 7.738349934399594,
+            "preceding_applied_load_max_Nm": 7.738349914550781,
+            "tracking_error_max_rad": 0.12901051342487335,
+            "target_rate_max_rad_s": 17.212477326393127
+          },
+          "hr_hy": {
+            "position_min_rad": 0.7081114649772644,
+            "position_max_rad": 1.2212247848510742,
+            "target_min_rad": 0.8421176075935364,
+            "target_max_rad": 1.2557623386383057,
+            "speed_max_rad_s": 2.457926034927368,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 10.254784137010574,
+            "preceding_applied_load_max_Nm": 10.254783630371094,
+            "tracking_error_max_rad": 0.18533974885940552,
+            "target_rate_max_rad_s": 26.801228523254395
+          },
+          "hr_kn": {
+            "position_min_rad": -1.8851035833358765,
+            "position_max_rad": -1.4539672136306763,
+            "target_min_rad": -1.8920392990112305,
+            "target_max_rad": -1.1497999429702759,
+            "speed_max_rad_s": 4.40385627746582,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 24.7671217918396,
+            "preceding_applied_load_max_Nm": 24.767120361328125,
+            "tracking_error_max_rad": 0.36202573776245117,
+            "target_rate_max_rad_s": 56.765198707580566
+          },
+          "arm0_sh0": {
+            "position_min_rad": -0.0018061817390844226,
+            "position_max_rad": 0.0018507144413888454,
+            "target_min_rad": -4.9114227294921875e-05,
+            "target_max_rad": -4.9114227294921875e-05,
+            "speed_max_rad_s": 0.054376836866140366,
+            "speed_peak_time_s": 0.545,
+            "requested_load_max_Nm": 0.2482310989871621,
+            "preceding_applied_load_max_Nm": 0.24823109805583954,
+            "tracking_error_max_rad": 0.0018998286686837673,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_sh1": {
+            "position_min_rad": -3.141622304916382,
+            "position_max_rad": -3.11574125289917,
+            "target_min_rad": -3.11574125289917,
+            "target_max_rad": -3.11574125289917,
+            "speed_max_rad_s": 0.39734435081481934,
+            "speed_peak_time_s": 0.015,
+            "requested_load_max_Nm": 3.511087656021118,
+            "preceding_applied_load_max_Nm": 3.511087656021118,
+            "tracking_error_max_rad": 0.025881052017211914,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el0": {
+            "position_min_rad": 3.133157730102539,
+            "position_max_rad": 3.141601085662842,
+            "target_min_rad": 3.133157730102539,
+            "target_max_rad": 3.133157730102539,
+            "speed_max_rad_s": 0.5196174383163452,
+            "speed_peak_time_s": 0.015,
+            "requested_load_max_Nm": 1.7278831005096436,
+            "preceding_applied_load_max_Nm": 1.7278831005096436,
+            "tracking_error_max_rad": 0.008443355560302734,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el1": {
+            "position_min_rad": 1.5552599430084229,
+            "position_max_rad": 1.555544376373291,
+            "target_min_rad": 1.5553779602050781,
+            "target_max_rad": 1.5553779602050781,
+            "speed_max_rad_s": 0.007224038243293762,
+            "speed_peak_time_s": 3.805,
+            "requested_load_max_Nm": 0.03027571178972721,
+            "preceding_applied_load_max_Nm": 0.03027571178972721,
+            "tracking_error_max_rad": 0.00016641616821289062,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr0": {
+            "position_min_rad": -0.00033026011078618467,
+            "position_max_rad": 0.002137234667316079,
+            "target_min_rad": 0.0008362531661987305,
+            "target_max_rad": 0.0008362531661987305,
+            "speed_max_rad_s": 0.08945763111114502,
+            "speed_peak_time_s": 3.81,
+            "requested_load_max_Nm": 0.25135279656387866,
+            "preceding_applied_load_max_Nm": 0.25135278701782227,
+            "tracking_error_max_rad": 0.0013009815011173487,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr1": {
+            "position_min_rad": -1.5701044797897339,
+            "position_max_rad": -1.5700021982192993,
+            "target_min_rad": -1.570042610168457,
+            "target_max_rad": -1.570042610168457,
+            "speed_max_rad_s": 0.008530071936547756,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 0.020839078351855278,
+            "preceding_applied_load_max_Nm": 0.020839078351855278,
+            "tracking_error_max_rad": 6.186962127685547e-05,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_f1x": {
+            "position_min_rad": -0.05452701821923256,
+            "position_max_rad": -0.00648045539855957,
+            "target_min_rad": -0.00648045539855957,
+            "target_max_rad": -0.00648045539855957,
+            "speed_max_rad_s": 9.501117706298828,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 3.737146394252777,
+            "preceding_applied_load_max_Nm": 3.7371463775634766,
+            "tracking_error_max_rad": 0.04804656282067299,
+            "target_rate_max_rad_s": 0.0
+          }
+        },
+        "body_height_drop_max_m": 0.08010667562484741,
+        "tilt_max_deg": 3.088891042988764,
+        "linear_speed_max_m_s": 0.16316746140443994,
+        "angular_speed_max_rad_s": 0.1695320030699112,
+        "coupled_sh1_minus_el0_load_max_Nm": 4.5180643543135375
+      },
+      "full_trace": {
+        "duration_s": 60.0,
+        "samples": 12001,
+        "joints": {
+          "fl_hx": {
+            "position_min_rad": 0.1240386888384819,
+            "position_max_rad": 0.24682463705539703,
+            "target_min_rad": -0.006231255829334259,
+            "target_max_rad": 0.19005128741264343,
+            "speed_max_rad_s": 1.5756646394729614,
+            "speed_peak_time_s": 3.79,
+            "requested_load_max_Nm": 10.429901149123907,
+            "preceding_applied_load_max_Nm": 10.429901123046875,
+            "tracking_error_max_rad": 0.1730884090065956,
+            "target_rate_max_rad_s": 24.46494996547699
+          },
+          "fl_hy": {
+            "position_min_rad": 0.7294232845306396,
+            "position_max_rad": 1.0465425252914429,
+            "target_min_rad": 0.7607313394546509,
+            "target_max_rad": 1.018120288848877,
+            "speed_max_rad_s": 1.0130075216293335,
+            "speed_peak_time_s": 3.79,
+            "requested_load_max_Nm": 7.962576661258936,
+            "preceding_applied_load_max_Nm": 7.962576866149902,
+            "tracking_error_max_rad": 0.13100337982177734,
+            "target_rate_max_rad_s": 8.21826457977295
+          },
+          "fl_kn": {
+            "position_min_rad": -1.7801291942596436,
+            "position_max_rad": -1.471755027770996,
+            "target_min_rad": -1.747739553451538,
+            "target_max_rad": -1.1835650205612183,
+            "speed_max_rad_s": 2.046128034591675,
+            "speed_peak_time_s": 3.77,
+            "requested_load_max_Nm": 20.362299397587776,
+            "preceding_applied_load_max_Nm": 20.3622989654541,
+            "tracking_error_max_rad": 0.3462473154067993,
+            "target_rate_max_rad_s": 59.00535583496094
+          },
+          "fr_hx": {
+            "position_min_rad": -0.1249128058552742,
+            "position_max_rad": 0.020988574251532555,
+            "target_min_rad": 0.035254113376140594,
+            "target_max_rad": 0.32595476508140564,
+            "speed_max_rad_s": 0.2176940143108368,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 23.979372086003423,
+            "preceding_applied_load_max_Nm": 23.979372024536133,
+            "tracking_error_max_rad": 0.39861999452114105,
+            "target_rate_max_rad_s": 31.812764704227448
+          },
+          "fr_hy": {
+            "position_min_rad": 0.7126958966255188,
+            "position_max_rad": 1.1196168661117554,
+            "target_min_rad": 0.7386400699615479,
+            "target_max_rad": 0.9846986532211304,
+            "speed_max_rad_s": 1.9097267389297485,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 13.795668795704842,
+            "preceding_applied_load_max_Nm": 13.795668601989746,
+            "tracking_error_max_rad": 0.2222766876220703,
+            "target_rate_max_rad_s": 17.90134906768799
+          },
+          "fr_kn": {
+            "position_min_rad": -1.8683569431304932,
+            "position_max_rad": -1.4579637050628662,
+            "target_min_rad": -1.2719807624816895,
+            "target_max_rad": -1.030012845993042,
+            "speed_max_rad_s": 3.057180643081665,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 49.62642922997475,
+            "preceding_applied_load_max_Nm": 49.62643051147461,
+            "tracking_error_max_rad": 0.8156801462173462,
+            "target_rate_max_rad_s": 73.30656051635742
+          },
+          "hl_hx": {
+            "position_min_rad": 0.09925272315740585,
+            "position_max_rad": 0.15380312502384186,
+            "target_min_rad": -0.2033582627773285,
+            "target_max_rad": 0.02545059472322464,
+            "speed_max_rad_s": 0.1634678691625595,
+            "speed_peak_time_s": 3.8000000000000003,
+            "requested_load_max_Nm": 20.523015405982733,
+            "preceding_applied_load_max_Nm": 20.52301597595215,
+            "tracking_error_max_rad": 0.34118416905403137,
+            "target_rate_max_rad_s": 29.919402301311493
+          },
+          "hl_hy": {
+            "position_min_rad": 0.7200722694396973,
+            "position_max_rad": 1.1541903018951416,
+            "target_min_rad": 0.8730703592300415,
+            "target_max_rad": 1.1857264041900635,
+            "speed_max_rad_s": 0.6830192804336548,
+            "speed_peak_time_s": 0.215,
+            "requested_load_max_Nm": 13.32153457403183,
+            "preceding_applied_load_max_Nm": 13.321534156799316,
+            "tracking_error_max_rad": 0.23296785354614258,
+            "target_rate_max_rad_s": 30.599617958068848
+          },
+          "hl_kn": {
+            "position_min_rad": -1.825999140739441,
+            "position_max_rad": -1.469728946685791,
+            "target_min_rad": -1.4875199794769287,
+            "target_max_rad": -0.9756733179092407,
+            "speed_max_rad_s": 0.6811597943305969,
+            "speed_peak_time_s": 0.125,
+            "requested_load_max_Nm": 42.68114626407623,
+            "preceding_applied_load_max_Nm": 42.68114471435547,
+            "tracking_error_max_rad": 0.7069140672683716,
+            "target_rate_max_rad_s": 73.50044250488281
+          },
+          "hr_hx": {
+            "position_min_rad": -0.15147094428539276,
+            "position_max_rad": -0.06792706251144409,
+            "target_min_rad": -0.14245964586734772,
+            "target_max_rad": 0.023947663605213165,
+            "speed_max_rad_s": 0.8756393194198608,
+            "speed_peak_time_s": 3.795,
+            "requested_load_max_Nm": 7.738349934399594,
+            "preceding_applied_load_max_Nm": 7.738349914550781,
+            "tracking_error_max_rad": 0.12901051342487335,
+            "target_rate_max_rad_s": 17.212477326393127
+          },
+          "hr_hy": {
+            "position_min_rad": 0.7081114649772644,
+            "position_max_rad": 1.2212247848510742,
+            "target_min_rad": 0.8421176075935364,
+            "target_max_rad": 1.2557623386383057,
+            "speed_max_rad_s": 2.457926034927368,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 10.254784137010574,
+            "preceding_applied_load_max_Nm": 10.254783630371094,
+            "tracking_error_max_rad": 0.18533974885940552,
+            "target_rate_max_rad_s": 26.801228523254395
+          },
+          "hr_kn": {
+            "position_min_rad": -1.8851035833358765,
+            "position_max_rad": -1.4539672136306763,
+            "target_min_rad": -1.8920392990112305,
+            "target_max_rad": -1.1497999429702759,
+            "speed_max_rad_s": 4.40385627746582,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 24.7671217918396,
+            "preceding_applied_load_max_Nm": 24.767120361328125,
+            "tracking_error_max_rad": 0.36202573776245117,
+            "target_rate_max_rad_s": 56.765198707580566
+          },
+          "arm0_sh0": {
+            "position_min_rad": -0.0018061817390844226,
+            "position_max_rad": 0.0018507144413888454,
+            "target_min_rad": -4.9114227294921875e-05,
+            "target_max_rad": -4.9114227294921875e-05,
+            "speed_max_rad_s": 0.054376836866140366,
+            "speed_peak_time_s": 0.545,
+            "requested_load_max_Nm": 0.2482310989871621,
+            "preceding_applied_load_max_Nm": 0.24823109805583954,
+            "tracking_error_max_rad": 0.0018998286686837673,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_sh1": {
+            "position_min_rad": -3.141622304916382,
+            "position_max_rad": -3.11574125289917,
+            "target_min_rad": -3.11574125289917,
+            "target_max_rad": -3.11574125289917,
+            "speed_max_rad_s": 0.39734435081481934,
+            "speed_peak_time_s": 0.015,
+            "requested_load_max_Nm": 3.511087656021118,
+            "preceding_applied_load_max_Nm": 3.511087656021118,
+            "tracking_error_max_rad": 0.025881052017211914,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el0": {
+            "position_min_rad": 3.133157730102539,
+            "position_max_rad": 3.141601085662842,
+            "target_min_rad": 3.133157730102539,
+            "target_max_rad": 3.133157730102539,
+            "speed_max_rad_s": 0.5196174383163452,
+            "speed_peak_time_s": 0.015,
+            "requested_load_max_Nm": 1.7278831005096436,
+            "preceding_applied_load_max_Nm": 1.7278831005096436,
+            "tracking_error_max_rad": 0.008443355560302734,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_el1": {
+            "position_min_rad": 1.5552599430084229,
+            "position_max_rad": 1.555544376373291,
+            "target_min_rad": 1.5553779602050781,
+            "target_max_rad": 1.5553779602050781,
+            "speed_max_rad_s": 0.007224038243293762,
+            "speed_peak_time_s": 3.805,
+            "requested_load_max_Nm": 0.03027571178972721,
+            "preceding_applied_load_max_Nm": 0.03027571178972721,
+            "tracking_error_max_rad": 0.00016641616821289062,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr0": {
+            "position_min_rad": -0.00033026011078618467,
+            "position_max_rad": 0.002137234667316079,
+            "target_min_rad": 0.0008362531661987305,
+            "target_max_rad": 0.0008362531661987305,
+            "speed_max_rad_s": 0.08945763111114502,
+            "speed_peak_time_s": 3.81,
+            "requested_load_max_Nm": 0.25135279656387866,
+            "preceding_applied_load_max_Nm": 0.25135278701782227,
+            "tracking_error_max_rad": 0.0013009815011173487,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_wr1": {
+            "position_min_rad": -1.5701044797897339,
+            "position_max_rad": -1.5700021982192993,
+            "target_min_rad": -1.570042610168457,
+            "target_max_rad": -1.570042610168457,
+            "speed_max_rad_s": 0.008530071936547756,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 0.020839078351855278,
+            "preceding_applied_load_max_Nm": 0.020839078351855278,
+            "tracking_error_max_rad": 6.186962127685547e-05,
+            "target_rate_max_rad_s": 0.0
+          },
+          "arm0_f1x": {
+            "position_min_rad": -0.05452701821923256,
+            "position_max_rad": -0.00648045539855957,
+            "target_min_rad": -0.00648045539855957,
+            "target_max_rad": -0.00648045539855957,
+            "speed_max_rad_s": 9.501117706298828,
+            "speed_peak_time_s": 0.005,
+            "requested_load_max_Nm": 3.737146394252777,
+            "preceding_applied_load_max_Nm": 3.7371463775634766,
+            "tracking_error_max_rad": 0.04804656282067299,
+            "target_rate_max_rad_s": 0.0
+          }
+        },
+        "body_height_drop_max_m": 0.08010667562484741,
+        "tilt_max_deg": 3.088891042988764,
+        "linear_speed_max_m_s": 0.16316746140443994,
+        "angular_speed_max_rad_s": 0.1695320030699112,
+        "coupled_sh1_minus_el0_load_max_Nm": 4.5180643543135375
+      }
+    }
+  },
+  "proposal_sha256": "7db3f268854aab34d8545d5aa6a62da88029d1823b70cd0f5fd16bf992c98fd2",
+  "sampled_joint_comparison": {
+    "mujoco": {
+      "first_trial": {
+        "sampled_joint_bounds_pass": false,
+        "violations": [
+          {
+            "joint": "arm0_sh1",
+            "metric": "position_min_rad",
+            "observed": -3.142641067504883,
+            "proposed": -3.141592653589793
+          },
+          {
+            "joint": "arm0_el0",
+            "metric": "position_max_rad",
+            "observed": 3.1476824283599854,
+            "proposed": 3.141592653589793
+          },
+          {
+            "joint": "arm0_f1x",
+            "metric": "position_max_rad",
+            "observed": 0.00023773823340889066,
+            "proposed": 0.0
+          }
+        ]
+      },
+      "full_trace": {
+        "sampled_joint_bounds_pass": false,
+        "violations": [
+          {
+            "joint": "arm0_sh1",
+            "metric": "position_min_rad",
+            "observed": -3.142641067504883,
+            "proposed": -3.141592653589793
+          },
+          {
+            "joint": "arm0_el0",
+            "metric": "position_max_rad",
+            "observed": 3.1476824283599854,
+            "proposed": 3.141592653589793
+          },
+          {
+            "joint": "arm0_f1x",
+            "metric": "position_max_rad",
+            "observed": 0.00023773823340889066,
+            "proposed": 0.0
+          }
+        ]
+      }
+    },
+    "isaaclab": {
+      "first_trial": {
+        "sampled_joint_bounds_pass": false,
+        "violations": [
+          {
+            "joint": "arm0_sh1",
+            "metric": "position_min_rad",
+            "observed": -3.141622304916382,
+            "proposed": -3.141592653589793
+          },
+          {
+            "joint": "arm0_el0",
+            "metric": "position_max_rad",
+            "observed": 3.141601085662842,
+            "proposed": 3.141592653589793
+          },
+          {
+            "joint": "arm0_f1x",
+            "metric": "speed_max_rad_s",
+            "observed": 9.501117706298828,
+            "proposed": 1.0
+          },
+          {
+            "joint": "arm0_f1x",
+            "metric": "load_max_Nm",
+            "observed": 3.737146394252777,
+            "proposed": 2.0
+          }
+        ]
+      },
+      "full_trace": {
+        "sampled_joint_bounds_pass": false,
+        "violations": [
+          {
+            "joint": "arm0_sh1",
+            "metric": "position_min_rad",
+            "observed": -3.141622304916382,
+            "proposed": -3.141592653589793
+          },
+          {
+            "joint": "arm0_el0",
+            "metric": "position_max_rad",
+            "observed": 3.141601085662842,
+            "proposed": 3.141592653589793
+          },
+          {
+            "joint": "arm0_f1x",
+            "metric": "speed_max_rad_s",
+            "observed": 9.501117706298828,
+            "proposed": 1.0
+          },
+          {
+            "joint": "arm0_f1x",
+            "metric": "load_max_Nm",
+            "observed": 3.737146394252777,
+            "proposed": 2.0
+          }
+        ]
+      }
+    }
+  }
+}

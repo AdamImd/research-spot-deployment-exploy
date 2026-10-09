@@ -63,7 +63,12 @@ final-standing criterion using the original broad simulation envelope.
 Tables and interpretation are in the review document. No new plots were necessary
 for this limit comparison. Native order, first-step inclusion, altered-artifact
 rejection and the proposal's rejection as an executable Envelope have targeted
-tests. Validation results are recorded after running the checks below.
+tests. The full offline suite passed: **332 tests**, Ruff and the Exploy demo, at clean
+commit `4f2a3ea3bb649f5e14fdf89aa34e387c995939d1`. See
+[validation.json](validation.json) for stage results and artifact hashes. The
+validation wrapper could not use an unavailable bare `python` for its final
+metadata writer; the executor collected completion from recorded zero exit codes
+without repeating the tests. Analysis and numerical bounds were not changed.
 
 **Decision:** keep this as an unapproved review artifact. Do not create an approved
 hardware envelope or evidence entries. A shared SDK velocity threshold cannot
