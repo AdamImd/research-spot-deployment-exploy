@@ -1,0 +1,45 @@
+{
+  "action_history_acknowledgements": 9,
+  "arm_motion_mode": "observe",
+  "arm_torque_guards": "enforced",
+  "commands": 39,
+  "compact_bytes": 38870,
+  "compact_complete_sha256": "398893bba694dc4d8c80ee1440ca00c4f17ab5cb8e45d6a26fa5e08c9b9b1fba",
+  "completed": false,
+  "first_failure": "command tracking error limit",
+  "initial_body_height_m": 0.5214675505977932,
+  "initial_foot_contacts": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "initial_previous_actions_zero": true,
+  "lease_returned": true,
+  "max_command_gap_ms": 5.465212045237422,
+  "max_inference_ms": 0.5233311094343662,
+  "motors_off_confirmed": true,
+  "policy_first_to_last_s": 0.18000555108301342,
+  "policy_predictions": 10,
+  "policy_qualified": false,
+  "post_complete_sha256": "6b3da547490333415b23c23bf0b47e7457353a56783f3c15858c1c8f76c3b1e1",
+  "post_preflight_all_checks": true,
+  "post_preflight_motor_off": true,
+  "raw_complete_sha256": "92ea42d4d0b09ea6557015e117eed2ffae86bda653822b1c7dfa13119ff38a82",
+  "rejected_target_transmitted": false,
+  "rejected_tracking_deviations": [
+    {
+      "error_rad": 0.5042191743850708,
+      "joint": "fr_hx",
+      "limit_rad": 0.5,
+      "measured_rad": -0.1414092481136322,
+      "target_rad": 0.3628099262714386
+    }
+  ],
+  "requested_duration_s": 10,
+  "retry_policy": "none",
+  "runtime_commit": "541eca743f00602aaca3d8808d5a3ab4c5a9db33",
+  "shutdown_errors": [],
+  "shutdown_s": 6.015799372922629,
+  "within_approved_10s_shutdown_budget": true
+}

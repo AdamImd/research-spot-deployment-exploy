@@ -49,3 +49,8 @@ commands, including observed shoulder-pitch boundary crossings. Arm targets
 remained held; native shutdown and a separate postcheck confirmed motors OFF.
 See the [trial record](../records/relic-standing-harness-20261009/README.md) for
 validation, timings, measurements and limits of this result.
+A subsequent explicitly requested repeat stopped at 0.18 seconds on the
+front-right hip tracking guard; shutdown and recording completed. The
+[repeat record](../records/relic-standing-harness-repeat-20261009/README.md)
+preserves this different startup outcome. The first success does not establish
+repeatable hardware startup.
