@@ -17,6 +17,9 @@ For a supervised hardware trial, start with [deployment preparation](docs/DEPLOY
 `prepare-deployment` creates a local candidate bundle and hardware-limit review template;
 `deployment-check` reports unresolved inputs without contacting Spot.
 
+Use the [lightweight rollout recorder](docs/RECORDING.md) to save compressed joint
+state, actions, command targets and timing from a live or completed run.
+
 ## Fresh clone: offline first
 
 Requires Git, [UV](https://docs.astral.sh/uv/), Linux and Python 3.12. UV can obtain
