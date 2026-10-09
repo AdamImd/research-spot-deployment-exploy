@@ -54,3 +54,8 @@ front-right hip tracking guard; shutdown and recording completed. The
 [repeat record](../records/relic-standing-harness-repeat-20261009/README.md)
 preserves this different startup outcome. The first success does not establish
 repeatable hardware startup.
+After the operator reported adjusting the legs and selected a 0.75 rad front-right
+hip tracking bound, a new requested ten-second run completed successfully. Its
+recorded front-right gap stayed below 0.50 rad. See the
+[new trial record](../records/relic-standing-tracking-075-20261009/README.md);
+the paired results do not establish the cause of the different startup outcomes.
