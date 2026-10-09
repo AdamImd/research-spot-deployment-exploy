@@ -43,3 +43,9 @@ tracking violations through supported hold and direct handover, verify the
 default mode still stops, and verify leg/load/command protections stay active.
 Run the standard suite and bounded 60-second simulation and host timing checks
 before the user-authorized physical repeat. No automatic retries are added.
+
+The first supervised repeat completed ten seconds, 500 predictions and 2,003
+commands, including observed shoulder-pitch boundary crossings. Arm targets
+remained held; native shutdown and a separate postcheck confirmed motors OFF.
+See the [trial record](../records/relic-standing-harness-20261009/README.md) for
+validation, timings, measurements and limits of this result.
