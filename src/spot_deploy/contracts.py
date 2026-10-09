@@ -163,6 +163,10 @@ class Envelope(StrictModel):
     position_max: Vector19
     velocity_max: Vector19
     load_max: Vector19
+    actuator_limit_profile: Literal["spot-sdk-5.0.1"] | None = None
+    # Omission preserves legacy min(per-joint) behavior. An explicit global
+    # backstop does not replace the host's tighter per-joint speed checks.
+    sdk_velocity_safety_limit: Positive | None = None
     tracking_error_max: Vector19
     command_rate_max: Vector19
     max_roll_rad: Positive
@@ -204,6 +208,17 @@ class Envelope(StrictModel):
             raise ValueError("command acknowledgement budget must be less than command TTL")
         if self.transition_s >= self.max_duration_s:
             raise ValueError("transition must finish within the bounded standing trial")
+        if (self.sdk_velocity_safety_limit is not None
+                and self.sdk_velocity_safety_limit < max(self.velocity_max)):
+            raise ValueError("SDK velocity backstop must cover host per-joint speed limits")
+        if self.actuator_limit_profile:
+            from .actuator_limits import KNEE_INDICES, KNEE_TABLE, MAX_LOADS
+
+            if any(x > limit for x, limit in zip(self.load_max, MAX_LOADS)):
+                raise ValueError("load envelope exceeds manufacturer maximum")
+            if any(self.position_min[i] < KNEE_TABLE[0, 0]
+                   or self.position_max[i] > KNEE_TABLE[-1, 0] for i in KNEE_INDICES):
+                raise ValueError("knee envelope outside manufacturer torque table")
         return self
 
 

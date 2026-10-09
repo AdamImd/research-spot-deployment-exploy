@@ -1,5 +1,10 @@
 # First standing trial: hardware-limit draft
 
+**Historical draft:** Adam subsequently selected the higher manufacturer-based
+torque limits and confirmed the other tests. See [the current selection and
+implementation](MANUFACTURER_LIMITS.md). The original proposal and comparisons
+below are preserved as the record of what was reviewed.
+
 **Status: unreviewed proposal, not approved for activation.** This review uses the
 operator's October 9 answers, firmware-matched manufacturer references, the
 motors-off model capture, and two existing simulated rollouts. No motor command

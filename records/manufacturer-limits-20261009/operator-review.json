@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-09",
+  "reviewer": "Adam Imdieke",
+  "source": "Direct user messages in this task",
+  "torque_selection": "Manufacturer-based limits",
+  "operator_statements": [
+    "Use the higher limits, they are acceptable",
+    "The other parts are fine, we tested.",
+    "Manufacturer-based limits"
+  ],
+  "other_checks_status": "operator_reports_tested_and_acceptable",
+  "independent_new_hardware_measurements": false,
+  "profile": "spot-sdk-5.0.1",
+  "selected_envelope": "configs/spot-manufacturer-standing-envelope.json",
+  "notes": [
+    "Non-torque numeric limits are retained from the reviewed draft.",
+    "SDK shared speed backstop is explicitly 8 rad/s, the largest retained per-joint bound; tighter host checks remain active.",
+    "This record documents the operator statements; it does not invent per-test artifacts, measurements or validity dates."
+  ]
+}
