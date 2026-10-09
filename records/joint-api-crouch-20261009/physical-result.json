@@ -1,0 +1,21 @@
+{
+  "automatic_shutdown_confirmed": false,
+  "command_gap_max_ms": 6.7558318842202425,
+  "completed": false,
+  "first_failure": "body attitude limit",
+  "last_recorded_trial_s": 4.752372457180172,
+  "max_leg_error_deg": 22.40328487153795,
+  "max_recorded_abs_pitch_deg": 8.988391034758214,
+  "max_recorded_abs_roll_deg": 9.994860101528788,
+  "max_state_age_ms": 9.080886840820312,
+  "observed_ack_delay_max_ms": 9.738313965499401,
+  "policy_used": false,
+  "recorded_commands": 953,
+  "retry_power_or_motion_commands": 0,
+  "retry_preflight_passed": false,
+  "runtime_commit": "efef691e3adcd286b6f0f60b284aac7032108e6a",
+  "shutdown_attempt_s": 10.00929854507558,
+  "source_complete_sha256": "40a252410c52e9205174849d8433ff86116fbc5f07b4f77b64d1b48f61bdad32",
+  "subsequent_leases_unowned": true,
+  "subsequent_motor_off_readback": true
+}
