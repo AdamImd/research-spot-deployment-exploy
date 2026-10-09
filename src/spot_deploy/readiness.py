@@ -21,6 +21,7 @@ GATES = {
 }
 HARDWARE_GATE = "hardware_estop"
 HARDWARE_DESCRIPTION = "Physical stop input, latch, link loss and Spot stop latency qualified"
+TABLET_DESCRIPTION = "Manufacturer tablet stop control, link loss and stop response verified by operators"
 
 
 class Evidence(StrictModel):
@@ -58,12 +59,12 @@ def report(manifest_path=None, envelope_path=None, robot_path=None, index_path=N
         digest = canonical_hash(values)
     records = {}
     gates = GATES.copy()
-    if (
-        robot_path
-        and Path(robot_path).is_file()
-        and load(Path(robot_path), RobotConfig).hardware_estop
-    ):
-        gates[HARDWARE_GATE] = HARDWARE_DESCRIPTION
+    if robot_path and Path(robot_path).is_file():
+        robot = load(Path(robot_path), RobotConfig)
+        if robot.estop_authority == "tablet":
+            gates[HARDWARE_GATE] = TABLET_DESCRIPTION
+        elif robot.hardware_estop:
+            gates[HARDWARE_GATE] = HARDWARE_DESCRIPTION
     if index_path and Path(index_path).is_file():
         index = EvidenceIndex.model_validate_json(Path(index_path).read_text())
         for entry in index.evidence:

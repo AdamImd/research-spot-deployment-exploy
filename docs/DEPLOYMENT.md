@@ -6,6 +6,12 @@ the robot. The existing `stand` command remains the physical activation interfac
 Scope is four-foot standing, arm attached/stowed, zero base velocity, 50 Hz policy,
 200 Hz commands, direct startup and zero initial previous actions.
 
+The current operator-selected stop authority is the [provided tablet](TABLET_ESTOP.md).
+Use a robot profile with `estop_authority: tablet` and `hardware_estop: null`.
+There is no local bridge/status-file requirement in this mode. The tablet stop
+evidence and fresh robot stop-state checks remain required; neither is fabricated
+by selecting the mode. Prepare a new bundle after changing authority.
+
 ## 1. Prepare the local bundle
 
 Start from a clean committed checkout and the locked environment:

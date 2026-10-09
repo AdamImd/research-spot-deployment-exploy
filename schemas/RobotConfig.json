@@ -69,6 +69,15 @@
       "title": "Joint Control Feature",
       "type": "string"
     },
+    "estop_authority": {
+      "default": "sdk_endpoint",
+      "enum": [
+        "sdk_endpoint",
+        "tablet"
+      ],
+      "title": "Estop Authority",
+      "type": "string"
+    },
     "hardware_estop": {
       "anyOf": [
         {

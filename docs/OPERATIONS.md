@@ -4,6 +4,12 @@ Start with [deployment preparation](DEPLOYMENT.md) to assemble the local candida
 review template and command arguments. The Exploy graph uses manifest v3; the
 original actor uses v2. Both share the standing gates described here.
 
+The selected authority is the [manufacturer tablet](TABLET_ESTOP.md). Use
+`estop_authority: tablet` and `hardware_estop: null`; the local joystick/ESP32
+bridge stays inactive. Robot stop-state monitoring and the independent operator
+remain required. The following local bridge options are for an explicit future
+change of authority, not parallel startup with the tablet profile.
+
 For the RPM Logitech joystick, follow [JOYSTICK_ESTOP.md](JOYSTICK_ESTOP.md):
 index 1 (button 2) is CUT, index 3 (button 4) is separate rearm. Identify/bench do not connect to Spot;
 configuration/registration require motors off. This input does not bypass the
