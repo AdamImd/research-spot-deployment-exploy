@@ -75,6 +75,10 @@ class Projector:
         state = None
         if "state" in event:
             state = State.model_validate(event["state"]).model_dump()
+            # Preserve legacy records without inventing absent optional pose inputs.
+            for field in ("body_position_odom", "body_pose_robot_time_s"):
+                if field not in event["state"]:
+                    state.pop(field)
             # Pydantic allows infinity on some scalar fields; the recording does not.
             json.dumps(state, allow_nan=False)
             stamp = state["robot_time_s"]

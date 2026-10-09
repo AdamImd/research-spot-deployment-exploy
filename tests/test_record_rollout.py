@@ -139,3 +139,15 @@ def test_shutdown_keeps_valid_gzip(tmp_path):
 def test_invalid_rates(hz):
     with pytest.raises(ValueError):
         recorder.Projector(hz)
+
+
+def test_walking_pose_velocity_and_distance_are_preserved():
+    projector = recorder.Projector(50)
+    measured = state() | {'body_position_odom':[1,2,.52], 'body_pose_robot_time_s':100}
+    prediction = projector.project(dict(event='policy', state=measured,
+        targets=[0]*19, raw_actions=[0]*12, velocity_command=[.1,0,0]), 1)[0]
+    assert prediction['state'] == measured
+    assert prediction['velocity_command'] == [.1,0,0]
+    progress = projector.project(dict(event='walk_progress',forward_m=.75,lateral_m=.01,
+        phase='completed',speed_m_s=.01,requested_forward_m_s=0), 2)[0]
+    assert progress['forward_m'] == .75 and progress['phase'] == 'completed'
