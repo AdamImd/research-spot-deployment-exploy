@@ -168,6 +168,12 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             control.close()
         except BaseException as exc:
             errors.append(exc)
+        shutdown = getattr(control, 'shutdown_result', None)
+        if shutdown is not None:
+            try:
+                record.event('shutdown_result', **shutdown)
+            except BaseException as exc:
+                errors.append(exc)
         if worker:
             try:
                 bounded_join(worker, envelope.shutdown_timeout_s)
@@ -182,4 +188,5 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
     return dict(commands=core.guard.key - first.last_command_key,
                 policy_samples=core.policy_samples, command_gap_s=percentiles(gaps),
                 command_ack_s=percentiles(acknowledgements), shutdown_confirmed=True,
+                shutdown=shutdown,
                 phase="stopped", duration_s=duration)
