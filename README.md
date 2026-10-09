@@ -13,6 +13,9 @@ controller is outside this implementation.
 **Start here:** [agent guide](docs/AGENT_QUICKSTART.md), [Exploy graph and export](docs/EXPLOY.md),
 [simulator instructions](docs/SIMULATION.md), [validation and limitations](docs/VALIDATION.md).
 
+Explicitly requested forward travel uses the [distance-based walking protocol](docs/WALKING.md).
+Standing remains the default; walking requires its own manifest, plan and evidence.
+
 For a supervised hardware trial, start with [deployment preparation](docs/DEPLOYMENT.md).
 `prepare-deployment` creates a local candidate bundle and hardware-limit review template;
 `deployment-check` reports unresolved inputs without contacting Spot.

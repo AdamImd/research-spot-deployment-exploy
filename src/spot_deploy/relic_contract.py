@@ -10,6 +10,7 @@ from .contracts import (
     artifact_path, sha256,
 )
 from .relic_policy import ACTION_IDS, ACTION_JOINTS, CHECKPOINT_SHA256, DEFAULT_Q, OBS_JOINTS
+from .walking import WalkingPlan
 
 
 class ReLICObservations(StrictModel):
@@ -61,9 +62,13 @@ class ReLICManifest(Manifest):
     adapter: Literal["relic84"]
     observations: ReLICObservations
     relic: ReLICSettings
+    task: Literal['standing', 'walking']
+    walking: WalkingPlan | None = None
 
     @model_validator(mode="after")
     def released_contract(self):
+        if (self.task == 'walking') != (self.walking is not None):
+            raise ValueError('walking task requires an explicit distance plan; standing has none')
         self.validate_policy_reference()
         if self.policy_hz != 50 or self.stream_hz != 200:
             raise ValueError("this ReLIC rollout uses 50 Hz policy and 200 Hz commands")
@@ -156,7 +161,16 @@ class ReLICDeploymentPolicy:
             raise ContractError("ReLIC preparation requires four reported foot contacts")
         self.body_height = h if spec.height_source == "initial" else spec.body_height_m
 
-    def evaluate(self, state, previous):
+    def velocity_input(self, velocity_command):
+        from .relic_policy import finite
+        command = finite([0., 0., 0.] if velocity_command is None else velocity_command, 3)
+        if np.any(command):
+            if (self.manifest.task != 'walking' or command[1] != 0 or command[2] != 0
+                    or not 0 <= command[0] <= self.manifest.walking.max_speed_m_s + 1e-7):
+                raise ContractError('velocity command outside the explicit forward walking plan')
+        return command
+
+    def evaluate(self, state, previous, velocity_command=None):
         if self.body_height is None:
             raise ContractError("initial ReLIC body height has not been latched")
         from .relic_policy import finite, joint_targets, observation
@@ -164,7 +178,7 @@ class ReLICDeploymentPolicy:
 
         start = monotonic()
         arm = np.asarray(self.manifest.arm_stowed_positions, dtype=np.float32)
-        obs = observation(state, arm, previous, self.body_height)
+        obs = observation(state, arm, previous, self.body_height, self.velocity_input(velocity_command))
         action = finite(self.runner.session.run(["actions"], {"obs": obs[None]})[0][0], 12)
         target = joint_targets(action, arm).astype(float)
         target[12:] = self.manifest.arm_stowed_positions

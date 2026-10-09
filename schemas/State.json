@@ -65,6 +65,36 @@
       "title": "Angular Velocity Odom",
       "type": "array"
     },
+    "body_position_odom": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Body Position Odom"
+    },
+    "body_pose_robot_time_s": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Body Pose Robot Time S"
+    },
     "last_command_key": {
       "minimum": 0,
       "title": "Last Command Key",

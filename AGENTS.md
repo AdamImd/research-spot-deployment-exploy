@@ -17,8 +17,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   simulation envelope or remove a guard to get a test to pass.
 - Physical work needs an explicit operator request and the existing standing gate,
   bound evidence, inspected rig and two distinct named operators. See OPERATIONS.
-- Current scope is four-foot standing, stowed arm, zero base velocity. No automatic
-  retries, fault clearing, walking or manipulation in the hardware path.
+- Default scope is four-foot standing, stowed arm, zero base velocity. Explicit
+  operator-requested walking requires task=walking, a bound WalkingPlan, and the
+  walking_distance/walking_clearance evidence gates. See docs/WALKING.md. No
+  automatic retries, fault clearing or manipulation in the hardware path.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
 

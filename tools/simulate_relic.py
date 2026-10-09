@@ -45,6 +45,7 @@ def sdk_state(backend, t, key):
                   positions=s["q"][ids].tolist(), velocities=s["dq"][ids].tolist(),
                   loads=[0.] * 19, odom_quaternion_wxyz=quat.tolist(),
                   linear_velocity_odom=[0.] * 3, angular_velocity_odom=[0.] * 3,
+                  body_position_odom=s['position'].tolist(), body_pose_robot_time_s=1000+t,
                   last_command_key=key, last_command_received_robot_s=1000 + t)
     r = rotation(state)
     state.linear_velocity_odom = (r @ (s["linear_velocity"]
@@ -159,6 +160,7 @@ def run(args):
                 core_finished = time.monotonic()
                 if core.policy_samples != count:
                     recorded = log.last_policy
+                    ref_command.velocity = np.asarray(recorded['velocity_command'], dtype=np.float32)
                     obs = backend.contract.observation(sim, ref_command,
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
@@ -233,7 +235,9 @@ def run(args):
                                      over_5ms=sum(r[k] > .005 for r in timing_rows))
                               for k in ("state_s", "core_s", "parity_s", "recording_s", "physics_s", "total_s")}
                              if timing_rows else {},
-                      hardware_qualified=False, hardware_access=False)
+                      hardware_qualified=False, hardware_access=False,
+                      walking_completed=core.motion.completed if core.motion else None,
+                      walking=core.motion.progress if core.motion else None)
         atomic_json(args.output / "result.json", result)
         return result
     finally:

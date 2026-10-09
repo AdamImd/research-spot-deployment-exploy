@@ -31,7 +31,7 @@ def parser():
     check.add_argument("--check-estop", action="store_true",
                        help="Read the local bridge status only; no setup, rearm or robot RPC")
     check.add_argument("--output", type=Path, required=True)
-    for name in ("inspect-policy", "replay", "readiness", "preflight", "watch", "shadow", "stand"):
+    for name in ("inspect-policy", "replay", "readiness", "preflight", "watch", "shadow", "stand", "walk"):
         cmd = commands.add_parser(name)
         cmd.add_argument(
             "--output", type=Path, required=True, help="New run directory; never overwritten"
@@ -39,19 +39,19 @@ def parser():
         cmd.add_argument(
             "--manifest",
             type=Path,
-            required=name in ("inspect-policy", "replay", "shadow", "stand"),
+            required=name in ("inspect-policy", "replay", "shadow", "stand", "walk"),
         )
-        cmd.add_argument("--envelope", type=Path, required=name in ("shadow", "stand"))
+        cmd.add_argument("--envelope", type=Path, required=name in ("shadow", "stand", "walk"))
         cmd.add_argument(
-            "--robot", type=Path, required=name in ("preflight", "watch", "shadow", "stand")
+            "--robot", type=Path, required=name in ("preflight", "watch", "shadow", "stand", "walk")
         )
-        if name in ("readiness", "stand"):
+        if name in ("readiness", "stand", "walk"):
             cmd.add_argument("--evidence", type=Path)
         if name == "replay":
             cmd.add_argument("--states", type=Path, required=True)
             cmd.add_argument("--height-record", type=Path,
                              help="Recorded initial height and foot contacts for ReLIC replay")
-        if name in ("watch", "shadow", "stand"):
+        if name in ("watch", "shadow", "stand", "walk"):
             cmd.add_argument(
                 "--duration", type=float, required=True, help="Bounded duration in seconds"
             )
@@ -60,7 +60,7 @@ def parser():
                 "--state-source", choices=("stream", "poll"), default="stream",
                 help="Read-only poll works without streaming entitlement and captures up to one hour",
             )
-        if name == "stand":
+        if name in ('stand', 'walk'):
             cmd.add_argument("--execute", action="store_true")
             cmd.add_argument("--operator", required=True)
             cmd.add_argument("--safety-operator", required=True)
@@ -123,11 +123,18 @@ def execute(args, record):
         (record.directory / "readiness.md").write_text(markdown_report(result))
         return result
 
-    if args.mode in ("watch", "shadow", "stand"):
+    if args.mode in ("watch", "shadow", "stand", "walk"):
         limit = 3600 if args.mode == "watch" and args.state_source == "poll" else 60
         if not 0 < args.duration <= limit:
             raise ContractError(f"duration must be finite and in (0, {limit}] seconds")
-    if args.mode == "stand":
+    if args.mode in ('stand', 'walk'):
+        if args.mode == 'walk':
+            if not isinstance(manifest, ReLICManifest) or manifest.task != 'walking':
+                raise ContractError('walk requires an explicit ReLIC walking candidate and plan')
+            if args.duration != manifest.walking.max_duration_s:
+                raise ContractError('walk duration must equal the reviewed distance timeout')
+        elif manifest.task != 'standing':
+            raise ContractError('stand requires a standing candidate')
         result = require_live(
             manifest,
             envelope,
@@ -158,7 +165,7 @@ def execute(args, record):
         else:
             reader.connect()
         snapshot = reader.snapshot()
-        checks = validate_snapshot(snapshot, config, manifest, envelope, args.mode == "stand")
+        checks = validate_snapshot(snapshot, config, manifest, envelope, args.mode in ('stand', 'walk'))
         atomic_json(record.directory / "robot-snapshot.json", snapshot)
         if getattr(reader, "robot_urdf", None):
             (record.directory / "robot.urdf").write_text(reader.robot_urdf)

@@ -114,7 +114,7 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
         self.graph_metadata = metadata
         return SimpleNamespace(session=session)
 
-    def inputs(self, state, previous):
+    def inputs(self, state, previous, velocity_command=None):
         if self.body_height is None:
             raise ContractError("Initial ReLIC body height has not been latched")
         world_to_body = rotation(state).T
@@ -127,14 +127,15 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
             joint_positions=finite(state.positions, 19)[self.graph_from_sdk],
             joint_velocities=finite(state.velocities, 19)[self.graph_from_sdk],
             arm_command=self.manifest.arm_stowed_positions,
-            torso_command=[0., 0., self.body_height], velocity_command=[0., 0., 0.],
+            torso_command=[0., 0., self.body_height],
+            velocity_command=self.velocity_input(velocity_command),
             previous_actions=previous)
         return {k: finite(v, INPUT_SIZES[k])[None] for k, v in values.items()}
 
-    def evaluate(self, state, previous):
+    def evaluate(self, state, previous, velocity_command=None):
         start = monotonic()
         action, obs, target = self.runner.session.run(["actions", "obs", TARGET],
-                                                     self.inputs(state, previous))
+                                                     self.inputs(state, previous, velocity_command))
         action, obs = finite(action[0], 12), finite(obs[0], 84)
         target = finite(target[0], 19)[self.sdk_from_graph].astype(float)
         # Preserve the exact held-arm values in SDK packets, as the original

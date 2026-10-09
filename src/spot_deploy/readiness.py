@@ -22,6 +22,10 @@ GATES = {
 HARDWARE_GATE = "hardware_estop"
 HARDWARE_DESCRIPTION = "Physical stop input, latch, link loss and Spot stop latency qualified"
 TABLET_DESCRIPTION = "Manufacturer tablet stop control, link loss and stop response verified by operators"
+WALKING_GATES = {
+    'walking_distance': 'Walking plan, robot-frame distance control, nonzero-command parity and simulation reviewed',
+    'walking_clearance': 'Rig can follow the requested forward travel; floor path and held arm clear',
+}
 
 
 class Evidence(StrictModel):
@@ -59,6 +63,10 @@ def report(manifest_path=None, envelope_path=None, robot_path=None, index_path=N
         digest = canonical_hash(values)
     records = {}
     gates = GATES.copy()
+    if manifest_path and Path(manifest_path).is_file():
+        import json
+        if json.loads(Path(manifest_path).read_text()).get('task') == 'walking':
+            gates.update(WALKING_GATES)
     if robot_path and Path(robot_path).is_file():
         robot = load(Path(robot_path), RobotConfig)
         if robot.estop_authority == "tablet":
@@ -68,7 +76,7 @@ def report(manifest_path=None, envelope_path=None, robot_path=None, index_path=N
     if index_path and Path(index_path).is_file():
         index = EvidenceIndex.model_validate_json(Path(index_path).read_text())
         for entry in index.evidence:
-            if entry.gate not in {*GATES, HARDWARE_GATE} or entry.gate in records:
+            if entry.gate not in {*GATES, HARDWARE_GATE, *WALKING_GATES} or entry.gate in records:
                 raise ContractError("unknown or duplicate readiness evidence gate")
             records[entry.gate] = entry
     now = datetime.now(timezone.utc)
@@ -137,6 +145,10 @@ def require_live(
             raise ContractError("ReLIC preparation duration must match the registered transition")
     if duration <= envelope.transition_s or duration > envelope.max_duration_s:
         raise ContractError("duration exceeds registered standing limit")
+    if manifest.task == 'walking':
+        if (duration != manifest.walking.max_duration_s
+                or manifest.walking.max_speed_m_s >= envelope.max_linear_speed):
+            raise ContractError('walking duration or speed exceeds the reviewed envelope')
     if source_identity()["dirty"]:
         raise ContractError("live control requires a clean committed source tree")
     result = report(manifest_path, envelope_path, robot_path, index_path)

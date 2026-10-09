@@ -150,9 +150,10 @@ def main():
     from spot_deploy.joystick_estop import JoystickProfile
     from spot_deploy.relic_contract import ReLICManifest
     from spot_deploy.exploy_policy import ExployReLICManifest
+    from spot_deploy.walking import WalkingPlan
 
     for cls in (Manifest, Envelope, RobotConfig, WatchRobotConfig, State, EvidenceIndex,
-                EstopProfile, JoystickProfile, ReLICManifest, ExployReLICManifest, DeploymentBundle):
+                EstopProfile, JoystickProfile, ReLICManifest, ExployReLICManifest, DeploymentBundle, WalkingPlan):
         (schema_dir / f"{cls.__name__}.json").write_text(
             json.dumps(cls.model_json_schema(), indent=2) + "\n"
         )
