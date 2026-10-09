@@ -1,0 +1,45 @@
+{
+  "relic": {
+    "checked_exact_events": {
+      "command": 12001,
+      "policy": 3001,
+      "policy_ack": 3000
+    },
+    "compressed_bytes": 5458340,
+    "conversion_elapsed_s": 2.0901786740869284,
+    "raw_action_joint_order": [
+      "fl_hx",
+      "fr_hx",
+      "hl_hx",
+      "hr_hx",
+      "fl_hy",
+      "fr_hy",
+      "hl_hy",
+      "hr_hy",
+      "fl_kn",
+      "fr_kn",
+      "hl_kn",
+      "hr_kn"
+    ],
+    "recorder_commit": "974fd1003cadddba81ab99bd089839f575038567",
+    "recorder_dirty": false,
+    "reduction_percent": 87.10750642417408,
+    "source_bytes": 42337349,
+    "source_event_sha256": "d3d8dbea60007a48a0c12bdfe869fb243238b2a5040225de71fa0b87f55320e4"
+  },
+  "stock": {
+    "checked_exact_events": {
+      "command": 0,
+      "policy": 0,
+      "policy_ack": 0
+    },
+    "compressed_bytes": 736574,
+    "conversion_elapsed_s": 0.20505415089428425,
+    "raw_action_joint_order": null,
+    "recorder_commit": "974fd1003cadddba81ab99bd089839f575038567",
+    "recorder_dirty": false,
+    "reduction_percent": 81.06910636911097,
+    "source_bytes": 3890857,
+    "source_event_sha256": "7bd70a47bec777898edee0bb2b5a733534724ab3cd0cb43305e90f34de97bbce"
+  }
+}
