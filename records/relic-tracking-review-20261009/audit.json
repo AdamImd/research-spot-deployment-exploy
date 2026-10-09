@@ -1,0 +1,33 @@
+{
+  "after_rad": 0.75,
+  "before_rad": 0.5,
+  "changed_joint": "fr_hx",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "limitation": "Recorded targets only, with idealized age/policy clocks. Does not predict later dynamics, real-time timing or full-duration success under the revised limit.",
+  "other_envelope_fields_unchanged": true,
+  "parameter": "tracking_error_max",
+  "physical_execution": false,
+  "results": [
+    {
+      "all_emitted_commands_pass_both_envelopes": true,
+      "recorded_commands": 2003,
+      "source_run": "runs/relic-standing-harness-20261009-001",
+      "source_status": "passed"
+    },
+    {
+      "all_emitted_commands_pass_both_envelopes": true,
+      "recorded_commands": 39,
+      "recorded_rejected_target": {
+        "error_rad": 0.5042191743850708,
+        "joint": "fr_hx",
+        "new_guard": "passed",
+        "new_limit_rad": 0.75,
+        "old_guard": "command tracking error limit",
+        "old_limit_rad": 0.5
+      },
+      "source_run": "runs/relic-standing-harness-20261009-002",
+      "source_status": "failed"
+    }
+  ]
+}
