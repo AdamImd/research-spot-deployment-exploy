@@ -1,0 +1,120 @@
+{
+  "status": "success",
+  "commit": "875068519d48aa6e64ce985a946d9996f98566fc",
+  "dirty": false,
+  "environment": {
+    "uv": "uv 0.10.0",
+    "repository_python": "Python 3.12.3",
+    "isaac_python": "Python 3.11.15",
+    "omp_num_threads": 2,
+    "physics_device": "cpu",
+    "policy_device": "cpu"
+  },
+  "duration_seconds": 75,
+  "stage_count": 5,
+  "stages": [
+    {
+      "index": 1,
+      "name": "pytest",
+      "exit_code": 0,
+      "started": "2026-10-09T12:11:02-05:00",
+      "ended": "2026-10-09T12:11:09-05:00"
+    },
+    {
+      "index": 2,
+      "name": "ruff",
+      "exit_code": 0,
+      "started": "2026-10-09T12:11:09-05:00",
+      "ended": "2026-10-09T12:11:09-05:00"
+    },
+    {
+      "index": 3,
+      "name": "demo",
+      "exit_code": 0,
+      "started": "2026-10-09T12:11:09-05:00",
+      "ended": "2026-10-09T12:11:10-05:00"
+    },
+    {
+      "index": 4,
+      "name": "mujoco",
+      "exit_code": 0,
+      "started": "2026-10-09T12:11:10-05:00",
+      "ended": "2026-10-09T12:11:21-05:00"
+    },
+    {
+      "index": 5,
+      "name": "isaaclab",
+      "exit_code": 0,
+      "started": "2026-10-09T12:11:21-05:00",
+      "ended": "2026-10-09T12:12:17-05:00"
+    }
+  ],
+  "result_checks": {
+    "mujoco": {
+      "reason": "completed",
+      "stable_final_window": true
+    },
+    "isaaclab": {
+      "reason": "completed",
+      "stable_final_window": true
+    }
+  },
+  "hardware_qualification": {
+    "mujoco": false,
+    "isaaclab": false,
+    "hardware_access": false
+  },
+  "artifact_sha256": {
+    "mujoco/result.json": "fe9919120fcc035cc023287fd533b41cab9bbb456867c66259fe40d495148030",
+    "isaaclab/result.json": "e3f0d154c922ee6f0b86ed2bf55f997411c79270dae2682041cdfdf7f2f4dbb5"
+  },
+  "mujoco": {
+    "reason": "completed",
+    "stable_final_window": true,
+    "policy_duration_s": 60.0,
+    "policy_samples": 3001,
+    "max_observation_error": 5.960464477539063e-08,
+    "max_raw_action_error": 9.5367431640625e-07,
+    "max_target_error_rad": 2.384185791015625e-07,
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "late_window_metrics": {
+      "angular_speed_p95_rad_s": 9.421128695540918e-07,
+      "height_span_m": 4.172325134277344e-07,
+      "joint_speed_p95_rad_s": 1.3074884464003844e-06,
+      "linear_speed_p95_m_s": 3.048803645414287e-07,
+      "max_tilt_deg": 0.9563395020882077,
+      "mean_height_m": 0.4765356028455308,
+      "min_height_m": 0.476535439491272,
+      "planar_speed_p95_m_s": 2.9214331147027255e-07,
+      "samples": 2001,
+      "span_s": 10.0,
+      "tilt_span_deg": 0.0
+    }
+  },
+  "isaaclab": {
+    "reason": "completed",
+    "stable_final_window": true,
+    "policy_duration_s": 60.0,
+    "policy_samples": 3001,
+    "max_observation_error": 5.960464477539063e-08,
+    "max_raw_action_error": 9.5367431640625e-07,
+    "max_target_error_rad": 2.384185791015625e-07,
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "late_window_metrics": {
+      "angular_speed_p95_rad_s": 0.0007402920486744093,
+      "height_span_m": 1.6391277313232422e-06,
+      "joint_speed_p95_rad_s": 0.06530264765024185,
+      "linear_speed_p95_m_s": 0.00012782694756912567,
+      "max_tilt_deg": 0.6211811475979176,
+      "mean_height_m": 0.4817968006136416,
+      "min_height_m": 0.4817960262298584,
+      "planar_speed_p95_m_s": 4.561382813880923e-05,
+      "samples": 2001,
+      "span_s": 10.0,
+      "tilt_span_deg": 0.0006303271262711989
+    }
+  },
+  "isaac_visual_warning": "Unresolved USD visual-reference warnings were logged; physics/parity/completion criteria passed."
+}

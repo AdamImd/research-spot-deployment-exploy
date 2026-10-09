@@ -1,0 +1,29 @@
+{
+  "finished_at": "2026-10-09T17:11:17.655980+00:00",
+  "passed": true,
+  "checks": {
+    "arm_stowed": true,
+    "external_estop_ready": true,
+    "identity_firmware": true,
+    "joint_control_license": true,
+    "joint_layout": true,
+    "no_active_faults": true,
+    "payload_configuration": true,
+    "physical_arm": true,
+    "robot_model": true
+  },
+  "snapshot": {
+    "firmware": "5.0.1",
+    "sdk_version": "5.1.1",
+    "motors_off": false,
+    "battery_percent": 100.0,
+    "active_fault_count": 0,
+    "arm_stowed": true,
+    "estop_authority": "tablet",
+    "estop_ready": true
+  },
+  "control_lease_acquired": false,
+  "motion_commands": 0,
+  "complete_sha256": "808145777c227930f0113936a67992b38ff8801de5391acf05c973073d023427",
+  "note": "Read-only preflight passed. Motors were already on; the separate control-entry check requires motors initially off. No power/motion/stop requests were sent."
+}

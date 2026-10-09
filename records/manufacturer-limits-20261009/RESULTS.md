@@ -39,6 +39,29 @@ tested and acceptable by Adam; no new physical measurements are claimed here.
 ## Results
 
 Targeted regression: 101 tests passed; Ruff passed before the pinned campaign.
-Full-suite and simulator results will be recorded from the campaign's completion
-records. The selected limit configuration is distinct from approval of a physical
-rollout; numerical checks do not turn operator-reported tests into new measurements.
+Pinned campaign commit: `875068519d48aa6e64ce985a946d9996f98566fc`, clean tree.
+**345 tests passed**, Ruff passed, and the offline demo passed. Both simulations
+completed 60 seconds with a passing stable final window and 3,001 policy samples.
+Maximum target parity error was 2.384e-7 rad in each. See [validation.json](validation.json)
+for numerical results, environment and raw artifact hashes. Raw logs and completion
+records are in `runs/manufacturer-limits-validation-20261009-001` on the control host.
+Isaac emitted USD visual-reference warnings; physics/parity criteria passed.
+
+The selected hardware envelope was packaged offline into
+`local/spot-deployment-manufacturer-20261009-001`. Policy, runtime, robot profile,
+hardware envelope and fresh preflight checks passed; the final evidence index is
+not populated. The operator's completed-test confirmation is stored alongside the
+bundle, without inventing per-test files or expiry dates.
+
+A fresh read-only preflight at **12:11:17 America/Chicago** passed identity, model,
+payload, arm stow, entitlement, fault and tablet stop-state checks. Battery was
+100%; **motors were already on**. No control lease was acquired or motion command
+sent. See [sanitized snapshot](preflight.json); raw identity records remain local.
+The separate control-entry check requires motors initially off and would reject
+that snapshot for activation. Motor state was not changed by this work.
+
+Decision: manufacturer torque selection is implemented and passes the registered
+offline regression. Retain the distinction between the torque-isolation simulation
+and the tighter full hardware envelope. Attach the team's completed-test artifacts
+to the final binding and perform the normal fresh preflight/operator entry sequence
+before activation. No physical policy rollout was attempted.
