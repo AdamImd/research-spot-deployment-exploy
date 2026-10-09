@@ -4,6 +4,10 @@ Start with [deployment preparation](DEPLOYMENT.md) to assemble the local candida
 review template and command arguments. The Exploy graph uses manifest v3; the
 original actor uses v2. Both share the standing gates described here.
 
+For an explicitly requested native power/stand/sit baseline, use the separate
+[stock rehearsal protocol](STOCK_REHEARSAL.md). It collects prerequisite physical
+measurements without activating ReLIC or promoting policy qualification.
+
 The selected authority is the [manufacturer tablet](TABLET_ESTOP.md). Use
 `estop_authority: tablet` and `hardware_estop: null`; the local joystick/ESP32
 bridge stays inactive. Robot stop-state monitoring and the independent operator
