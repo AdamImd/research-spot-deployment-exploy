@@ -154,7 +154,8 @@ def run(args):
                     command = core.command(state, 10 + t, 1000 + t)
                 except ContractError as exc:
                     reason, failure = "guard_stop", str(exc)
-                    log.event("first_failure", reason=failure, simulation_time_s=t)
+                    log.event("first_failure", reason=failure, simulation_time_s=t,
+                              state=state.model_dump())
                     break
                 compute_times.append(time.monotonic() - began)
                 core_finished = time.monotonic()
