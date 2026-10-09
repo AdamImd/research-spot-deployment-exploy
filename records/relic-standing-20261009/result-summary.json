@@ -1,0 +1,29 @@
+{
+  "action_history_acknowledgements": 6,
+  "commands": 29,
+  "compact_complete_sha256": "0e6bf5c2a80d13f000a391e19f43bedf1881292e59accf2cc465b8db931c0c25",
+  "completed": false,
+  "first_failure": "measured joint position limit",
+  "initial_previous_actions_zero": true,
+  "last_recorded_nearest_bound": {
+    "causal_joint_confirmed": false,
+    "configured_min_rad": -3.141592653589793,
+    "joint": "arm0_sh1",
+    "margin_deg": 0.014912124190973318,
+    "position_rad": -3.1413323879241943
+  },
+  "lease_returned": true,
+  "max_command_gap_ms": 5.536376964300871,
+  "max_inference_ms": 0.5425179842859507,
+  "motors_off_confirmed": true,
+  "policy_first_to_last_s": 0.1250415751710534,
+  "policy_predictions": 7,
+  "policy_qualified": false,
+  "post_preflight_active_faults": 0,
+  "post_preflight_motor_off": true,
+  "raw_complete_sha256": "30d8fc759fb63843971b17f6a78ee4d0d04801452317077a1b8d40b63b532b45",
+  "retry_policy": "none",
+  "runtime_commit": "b8ecd62da2a93f4fd3b7cbf590eb3d2e48fa97c1",
+  "shutdown_s": 6.012945745140314,
+  "within_approved_10s_shutdown_budget": true
+}
