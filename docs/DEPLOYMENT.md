@@ -47,6 +47,11 @@ checks use `bundle.json` for immutable artifacts and readiness for review inputs
 
 ## 2. Review the physical envelope
 
+The current [hardware-limit draft](HARDWARE_LIMIT_REVIEW.md) records the operator's
+10-second trial, 20 cm fall-arrest slack and source-backed discussion values. Its
+sampled trace comparisons expose unresolved arm and speed-threshold issues. It
+is a review artifact and cannot substitute for an approved envelope.
+
 Fill every null in `envelope.review.json` and save the reviewed result as
 `envelope.json`. Document the reviewer, source of limits and relevant model/rig
 assumptions in a review artifact. The template lists all 19 joints in SDK order.

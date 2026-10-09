@@ -1,0 +1,226 @@
+{
+  "kind": "hardware_limit_review_proposal",
+  "approval_status": "unreviewed",
+  "hardware_qualified": false,
+  "description": "Discussion values only; this is not an Envelope and cannot activate Spot.",
+  "operator_inputs": {
+    "support": "slack fall arrest, four feet load bearing",
+    "drop_before_taut_m": 0.2,
+    "payload": "Spot arm only",
+    "known_repair_restrictions": "none known",
+    "clearance": "operator reports checked including harness stretch; minimum gap pending",
+    "policy_duration_s": 10,
+    "startup": "direct, no fade",
+    "stop_authority": "manufacturer tablet"
+  },
+  "units": {
+    "positions_and_tracking": "rad",
+    "speeds_and_target_rate": "rad/s",
+    "loads_and_handover_step": "N m",
+    "times": "s"
+  },
+  "joints": {
+    "fl_hx": {
+      "position_min_rad": -0.4,
+      "position_max_rad": 0.4,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 30.0,
+      "tracking_error_max_rad": 0.5,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "fl_hy": {
+      "position_min_rad": 0.5,
+      "position_max_rad": 1.45,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 25.0,
+      "tracking_error_max_rad": 0.4,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "fl_kn": {
+      "position_min_rad": -2.1,
+      "position_max_rad": -0.8,
+      "speed_max_rad_s": 8.0,
+      "load_max_Nm": 60.0,
+      "tracking_error_max_rad": 1.0,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "fr_hx": {
+      "position_min_rad": -0.4,
+      "position_max_rad": 0.4,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 30.0,
+      "tracking_error_max_rad": 0.5,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "fr_hy": {
+      "position_min_rad": 0.5,
+      "position_max_rad": 1.45,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 25.0,
+      "tracking_error_max_rad": 0.4,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "fr_kn": {
+      "position_min_rad": -2.1,
+      "position_max_rad": -0.8,
+      "speed_max_rad_s": 8.0,
+      "load_max_Nm": 60.0,
+      "tracking_error_max_rad": 1.0,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "hl_hx": {
+      "position_min_rad": -0.4,
+      "position_max_rad": 0.4,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 30.0,
+      "tracking_error_max_rad": 0.5,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "hl_hy": {
+      "position_min_rad": 0.5,
+      "position_max_rad": 1.45,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 25.0,
+      "tracking_error_max_rad": 0.4,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "hl_kn": {
+      "position_min_rad": -2.1,
+      "position_max_rad": -0.8,
+      "speed_max_rad_s": 8.0,
+      "load_max_Nm": 60.0,
+      "tracking_error_max_rad": 1.0,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "hr_hx": {
+      "position_min_rad": -0.4,
+      "position_max_rad": 0.4,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 30.0,
+      "tracking_error_max_rad": 0.5,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "hr_hy": {
+      "position_min_rad": 0.5,
+      "position_max_rad": 1.45,
+      "speed_max_rad_s": 4.0,
+      "load_max_Nm": 25.0,
+      "tracking_error_max_rad": 0.4,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "hr_kn": {
+      "position_min_rad": -2.1,
+      "position_max_rad": -0.8,
+      "speed_max_rad_s": 8.0,
+      "load_max_Nm": 60.0,
+      "tracking_error_max_rad": 1.0,
+      "target_rate_max_rad_s": 100.0,
+      "handover_step_max_Nm": 12.0
+    },
+    "arm0_sh0": {
+      "position_min_rad": -0.050049114227294925,
+      "position_max_rad": 0.04995088577270508,
+      "speed_max_rad_s": 1.0,
+      "load_max_Nm": 8.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 5.0
+    },
+    "arm0_sh1": {
+      "position_min_rad": -3.141592653589793,
+      "position_max_rad": -3.06574125289917,
+      "speed_max_rad_s": 1.0,
+      "load_max_Nm": 15.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 5.0
+    },
+    "arm0_el0": {
+      "position_min_rad": 3.0831577301025392,
+      "position_max_rad": 3.141592653589793,
+      "speed_max_rad_s": 1.0,
+      "load_max_Nm": 15.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 12.0
+    },
+    "arm0_el1": {
+      "position_min_rad": 1.505377960205078,
+      "position_max_rad": 1.6053779602050782,
+      "speed_max_rad_s": 0.5,
+      "load_max_Nm": 5.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 3.0
+    },
+    "arm0_wr0": {
+      "position_min_rad": -0.04916374683380127,
+      "position_max_rad": 0.05083625316619873,
+      "speed_max_rad_s": 0.5,
+      "load_max_Nm": 5.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 3.0
+    },
+    "arm0_wr1": {
+      "position_min_rad": -1.620042610168457,
+      "position_max_rad": -1.520042610168457,
+      "speed_max_rad_s": 0.5,
+      "load_max_Nm": 5.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 3.0
+    },
+    "arm0_f1x": {
+      "position_min_rad": -0.05648045539855957,
+      "position_max_rad": 0.0,
+      "speed_max_rad_s": 1.0,
+      "load_max_Nm": 2.0,
+      "tracking_error_max_rad": 0.05,
+      "target_rate_max_rad_s": 0.5,
+      "handover_step_max_Nm": 1.0
+    }
+  },
+  "body_proposal": {
+    "max_roll_rad": 0.17453292519943295,
+    "max_pitch_rad": 0.17453292519943295,
+    "max_linear_speed": 0.3,
+    "max_angular_speed": 0.5,
+    "max_arm_pose_error": 0.05
+  },
+  "timing_proposal": {
+    "max_state_age_s": 0.03,
+    "max_state_gap_s": 0.015,
+    "max_future_skew_s": 0.001,
+    "max_inference_s": 0.005,
+    "max_policy_age_s": 0.05,
+    "max_command_gap_s": 0.015,
+    "max_command_ack_s": 0.015,
+    "max_full_state_age_s": 0.25,
+    "command_ttl_s": 0.03,
+    "shutdown_timeout_s": 2.0
+  },
+  "trial_proposal": {
+    "min_battery_percent": 50.0,
+    "max_duration_s": 10.0,
+    "transition_s": 0.0
+  },
+  "unresolved": [
+    "One SDK velocity threshold is currently derived as the minimum per-joint bound; these heterogeneous values are incompatible with that mapping.",
+    "Same position bounds currently constrain measured positions and targets; observed arm/model boundary discrepancies remain unresolved.",
+    "Isaac gripper speed/load exceed the proposal.",
+    "Physical joint speed ratings, continuous/thermal load limits, shutdown/ACK timing and tablet response are unverified.",
+    "No dynamic body-height/drop guard is implemented; 20 cm rig slack is not a software threshold."
+  ]
+}
