@@ -67,3 +67,8 @@ Shutdown measurement has a separate 10-second native timeout; the existing
 
 No paid resources, GPU or remote host is required. Do not disturb unrelated tmux
 sessions. No physical motion process was started during this preparation.
+
+
+## Smaller crouch trial, 2026-10-09
+
+Runtime 800b49e; +1/-2 degree offsets. Aborted at 5.62 s on measured front-right hip pitch below the configured 0.5 rad lower bound; maximum sampled leg error 15.20 degrees. Automatic shutdown confirmed in 6.02 s and lease returned. Subsequent read-only inspection confirms motors OFF and zero active faults. No retry. Report: records/joint-api-crouch-20261009/SMALL_PHYSICAL_RESULT.md; raw runs/joint-api-crouch-small-20261009-001. No active diagnostic process remains. ReLIC not run. Next: diagnose drift and shutdown latency, not widen bounds.

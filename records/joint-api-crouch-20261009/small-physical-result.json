@@ -1,0 +1,23 @@
+{
+  "runtime_commit": "800b49e7c2b0ef42d902a564545a7e5ac4dedc99",
+  "completed": false,
+  "first_failure": "measured joint position limit",
+  "recorded_commands": 1126,
+  "last_recorded_trial_s": 5.6175131818745285,
+  "violating_joint": "fr_hy",
+  "rejected_position_rad": 0.4994474947452545,
+  "configured_position_min_rad": 0.5,
+  "last_target_rad": 0.7410684620450898,
+  "max_leg_error_deg": 15.20090934913916,
+  "rejected_roll_deg": -2.653938727868873,
+  "rejected_pitch_deg": -6.158495162911185,
+  "command_gap_max_ms": 6.373263895511627,
+  "max_state_age_ms": 6.916522979736328,
+  "shutdown_s": 6.021812058985233,
+  "motors_off_confirmed": true,
+  "lease_returned": true,
+  "within_rl_shutdown_budget": false,
+  "post_inspection_zero_active_faults": true,
+  "policy_used": false,
+  "source_complete_sha256": "634918cb96ba6fbdbb0d0ccc3e6bb97f92180e078fd1253f6fb02d84bd6f959c"
+}

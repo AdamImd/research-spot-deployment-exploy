@@ -1,6 +1,6 @@
 # Standalone joint-API hold/crouch diagnostic
 
-Prepared for the next supervised session; **not physically executed**. This is a
+Two supervised physical attempts have been recorded; neither completed. This is a
 deterministic reference trajectory, not a ReLIC rollout. The purpose is to measure
 joint-command transport, timing, tracking and PD behavior before a policy handover.
 The tested stock baseline is recorded in `records/stock-rehearsal-20261009/`.
@@ -11,6 +11,12 @@ read-only confirmation. See `records/joint-api-crouch-20261009/PHYSICAL_RESULT.m
 The user explicitly requested a smaller repeat. `configs/joint-api-crouch-small.json`
 reduces the hip/knee offsets to +1/−2 degrees with all other settings unchanged.
 Select it with `--settings configs/joint-api-crouch-small.json`.
+
+The smaller repeat stopped at 5.62 seconds on the configured measured-position
+bound for front-right hip pitch. Automatic shutdown and lease return succeeded;
+a subsequent read-only inspection confirmed motors off and no active faults.
+See `records/joint-api-crouch-20261009/SMALL_PHYSICAL_RESULT.md`. This is not a
+successful full-duration timing or tracking qualification.
 
 The explicitly selected diagnostic flag `--allow-known-payload-info` accepts only
 system `payload.fault` code 9 at INFO severity 1. Original counts/details remain
