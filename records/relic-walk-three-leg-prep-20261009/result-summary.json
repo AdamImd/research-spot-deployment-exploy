@@ -1,0 +1,1497 @@
+{
+  "bracket_and_renderer_commit": "92545cb0730e3407a650c47e8272d2f7bf9011fd",
+  "cells": {
+    "standing": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "0cac2b11f5d1a727c0532727750e1a5e6bfcdb3d1a602d9affdf0cf0f3dd71e8",
+      "configuration_sha256": "d0bd6e6ac4166857a8fae40b3fe4d5fadad05798a4d0f7ae704909b2bd21bc68",
+      "demonstration": null,
+      "first_failure": null,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": null,
+      "result": {
+        "compute_max_s": 0.03968543489463627,
+        "compute_p99_s": 0.0006443778984248638,
+        "failure": null,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 1.1411322332076869e-06,
+          "height_span_m": 1.043081283569336e-06,
+          "joint_speed_p95_rad_s": 1.8545033526606858e-06,
+          "linear_speed_p95_m_s": 3.632637539890046e-07,
+          "max_tilt_deg": 0.9297802047789073,
+          "mean_height_m": 0.47819124259750945,
+          "min_height_m": 0.47819072008132935,
+          "planar_speed_p95_m_s": 3.1286704057096964e-07,
+          "samples": 2001,
+          "span_s": 10.0,
+          "tilt_span_deg": 0.0
+        },
+        "loop_wall_s": 10.06541197001934,
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "policy_duration_s": 60.0,
+        "policy_samples": 3001,
+        "real_time_factor": 5.961007873171505,
+        "reason": "completed",
+        "stable_final_window": true,
+        "three_leg_demo": null,
+        "timing": {
+          "core_s": {
+            "max_s": 0.039685725001618266,
+            "over_5ms": 2,
+            "p50_s": 0.0003164829686284065,
+            "p99_s": 0.0006445180624723434
+          },
+          "parity_s": {
+            "max_s": 0.00018915697000920773,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00010728812776505947
+          },
+          "physics_s": {
+            "max_s": 0.0002717559691518545,
+            "over_5ms": 0,
+            "p50_s": 0.00014266581274569035,
+            "p99_s": 0.00015973905101418495
+          },
+          "recording_s": {
+            "max_s": 0.0034663709811866283,
+            "over_5ms": 0,
+            "p50_s": 0.00015892810188233852,
+            "p99_s": 0.00019081891514360905
+          },
+          "state_s": {
+            "max_s": 0.0010360060259699821,
+            "over_5ms": 0,
+            "p50_s": 0.00011949101462960243,
+            "p99_s": 0.00015398790128529072
+          },
+          "total_s": {
+            "max_s": 0.04045866196975112,
+            "over_5ms": 2,
+            "p50_s": 0.0007375879213213921,
+            "p99_s": 0.001179264159873128
+          }
+        },
+        "trial_duration_s": 60.0,
+        "walking": null,
+        "walking_completed": null
+      },
+      "run": "runs/relic-walk-three-leg-prep-20261009-002/standing",
+      "seed": 101
+    },
+    "three-leg-isaac": {
+      "backend": "isaaclab",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "7858bb62980a485fba9344bf30acab11143e11250870cf138dbe1c2cbda27ca1",
+      "configuration_sha256": "a7975ec590b01d0d511e1108c195aa22c204adbdb85ec0973315ca2f1fd03525",
+      "demonstration": {
+        "final_hold_s": 12.0,
+        "foot_radius_m": 0.036,
+        "hold_s": 5.0,
+        "initial_hold_s": 5.0,
+        "kind": "front-left-lift-hold-return",
+        "leg": "fl",
+        "lift_s": 4.0,
+        "lifted_positions": [
+          0.12,
+          1.1,
+          -1.9
+        ],
+        "lower_s": 4.0,
+        "min_clearance_m": 0.05,
+        "min_hold_fraction": 0.9,
+        "support_clearance_max_m": 0.015
+      },
+      "first_failure": {
+        "body_angular_speed_rad_s": 0.032881262345755016,
+        "body_linear_speed_m_s": 0.07141267208488784,
+        "mode_activation": {
+          "joint_target_changes_rad": [
+            0.10863876342773438,
+            0.06347709894180298,
+            -0.331013560295105,
+            0.4600650444626808,
+            -0.12673121690750122,
+            -0.4767448902130127,
+            -0.10501318424940109,
+            -0.19263672828674316,
+            0.09657847881317139,
+            -0.11731566488742828,
+            0.19499683380126953,
+            -0.04596400260925293,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "next_leg_command": [
+            0.16804836690425873,
+            0.9900276064872742,
+            -1.693198561668396,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "previous_leg_command": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "target_violations": [
+            {
+              "joint": "fr_hx",
+              "max_rad": 0.4,
+              "min_rad": -0.4,
+              "target_rad": 0.5387105941772461
+            }
+          ]
+        },
+        "reason": "command position limit",
+        "time_s": 5.0,
+        "velocity_violations": []
+      },
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": null,
+        "bosdyn-client": null,
+        "numpy": "1.26.0",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.11.7",
+        "spot-deployment": null
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": null,
+      "result": {
+        "compute_max_s": 0.0012523650657385588,
+        "compute_p99_s": 0.0008180981944315134,
+        "failure": "command position limit",
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 0.13938800842019664,
+          "height_span_m": 0.08126181364059448,
+          "joint_speed_p95_rad_s": 0.9032810807228084,
+          "linear_speed_p95_m_s": 0.152505675285474,
+          "max_tilt_deg": 3.0513979095025974,
+          "mean_height_m": 0.471611112177372,
+          "min_height_m": 0.4419023394584656,
+          "planar_speed_p95_m_s": 0.08628283551280488,
+          "samples": 1000,
+          "span_s": 4.995,
+          "tilt_span_deg": 2.8835391204293463
+        },
+        "loop_wall_s": 3.829400273039937,
+        "max_observation_error": 1.1175870895385742e-08,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "policy_duration_s": 5.0,
+        "policy_samples": 251,
+        "real_time_factor": 1.3056874819802506,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "three_leg_demo": {
+          "clearance_proxy_passed": false,
+          "final_four_feet_near_floor_fraction": 0.0,
+          "geometric_three_leg_fraction": 0.0,
+          "hardware_qualified": false,
+          "hold_samples": 0,
+          "passed": false,
+          "pose_sequence_finished": false,
+          "support_evidence": "foot clearance geometry only; foot forces/loaded contacts not measured"
+        },
+        "timing": {
+          "core_s": {
+            "max_s": 0.0012527760118246078,
+            "over_5ms": 0,
+            "p50_s": 0.0004488739650696516,
+            "p99_s": 0.0008190250839106737
+          },
+          "parity_s": {
+            "max_s": 0.000344226136803627,
+            "over_5ms": 0,
+            "p50_s": 3.110617399215698e-07,
+            "p99_s": 0.00022469608346000313
+          },
+          "physics_s": {
+            "max_s": 0.005960509879514575,
+            "over_5ms": 4,
+            "p50_s": 0.002673486596904695,
+            "p99_s": 0.0036860797274857753
+          },
+          "recording_s": {
+            "max_s": 0.00028486200608313084,
+            "over_5ms": 0,
+            "p50_s": 0.00015766010619699955,
+            "p99_s": 0.00021776552544906729
+          },
+          "state_s": {
+            "max_s": 0.0005654350388795137,
+            "over_5ms": 0,
+            "p50_s": 0.00036063313018530607,
+            "p99_s": 0.0004962513409554958
+          },
+          "total_s": {
+            "max_s": 0.007129363948479295,
+            "over_5ms": 10,
+            "p50_s": 0.003676257445476949,
+            "p99_s": 0.004958828003145754
+          }
+        },
+        "trial_duration_s": 5.0,
+        "walking": null,
+        "walking_completed": null
+      },
+      "run": "runs/relic-walk-three-leg-prep-20261009-002/three-leg-isaac",
+      "seed": 101
+    },
+    "three-leg-mujoco": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "1f24bc4600a412d87154a0b2867263b2b995c472eaba1f0d288727ac7a50989e",
+      "configuration_sha256": "8a9420b7492f4b238134de9692bb6a9057ec4d9ffc6cbefcb29d8fa683119b58",
+      "demonstration": {
+        "final_hold_s": 12.0,
+        "foot_radius_m": 0.036,
+        "hold_s": 5.0,
+        "initial_hold_s": 5.0,
+        "kind": "front-left-lift-hold-return",
+        "leg": "fl",
+        "lift_s": 4.0,
+        "lifted_positions": [
+          0.12,
+          1.1,
+          -1.9
+        ],
+        "lower_s": 4.0,
+        "min_clearance_m": 0.05,
+        "min_hold_fraction": 0.9,
+        "support_clearance_max_m": 0.015
+      },
+      "first_failure": {
+        "body_angular_speed_rad_s": 0.5700239051780953,
+        "body_linear_speed_m_s": 0.06201969148701851,
+        "mode_activation": {
+          "joint_target_changes_rad": [
+            0.18032605946063995,
+            0.11687695980072021,
+            -0.2028123140335083,
+            0.1918196678161621,
+            -0.08314782381057739,
+            -0.2095087766647339,
+            -0.05399918556213379,
+            -0.16545546054840088,
+            0.0727396011352539,
+            -0.10838963836431503,
+            0.14146173000335693,
+            -0.07374453544616699,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "next_leg_command": [
+            0.2453017234802246,
+            0.971255898475647,
+            -1.5357226133346558,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "previous_leg_command": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "target_violations": []
+        },
+        "reason": "body speed limit",
+        "time_s": 5.0200000000000005,
+        "velocity_violations": []
+      },
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": null,
+      "result": {
+        "compute_max_s": 0.0014188969507813454,
+        "compute_p99_s": 0.0005816395045258105,
+        "failure": "body speed limit",
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 0.1390565020035051,
+          "height_span_m": 0.08057740330696106,
+          "joint_speed_p95_rad_s": 0.9663260519504542,
+          "linear_speed_p95_m_s": 0.16036322643568945,
+          "max_tilt_deg": 2.7242640660287214,
+          "mean_height_m": 0.47239849217740665,
+          "min_height_m": 0.442586749792099,
+          "planar_speed_p95_m_s": 0.08752237271004262,
+          "samples": 1004,
+          "span_s": 5.015,
+          "tilt_span_deg": 2.6336099800633304
+        },
+        "loop_wall_s": 0.8384648261126131,
+        "max_observation_error": 4.656612873077393e-10,
+        "max_raw_action_error": 2.384185791015625e-07,
+        "max_target_error_rad": 1.1920928955078125e-07,
+        "policy_duration_s": 5.0200000000000005,
+        "policy_samples": 251,
+        "real_time_factor": 5.987132487446493,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "three_leg_demo": {
+          "clearance_proxy_passed": false,
+          "final_four_feet_near_floor_fraction": 0.0,
+          "geometric_three_leg_fraction": 0.0,
+          "hardware_qualified": false,
+          "hold_samples": 0,
+          "passed": false,
+          "pose_sequence_finished": false,
+          "support_evidence": "foot clearance geometry only; foot forces/loaded contacts not measured"
+        },
+        "timing": {
+          "core_s": {
+            "max_s": 0.0014190669171512127,
+            "over_5ms": 0,
+            "p50_s": 0.00032368756365031004,
+            "p99_s": 0.0005818094708956778
+          },
+          "parity_s": {
+            "max_s": 0.00021455506794154644,
+            "over_5ms": 0,
+            "p50_s": 1.5087425708770752e-07,
+            "p99_s": 0.00019306207774206997
+          },
+          "physics_s": {
+            "max_s": 0.00023171794600784779,
+            "over_5ms": 0,
+            "p50_s": 0.0001418950268998742,
+            "p99_s": 0.0001592584396712482
+          },
+          "recording_s": {
+            "max_s": 0.0004588691517710686,
+            "over_5ms": 0,
+            "p50_s": 0.00015616253949701786,
+            "p99_s": 0.0001815422484651208
+          },
+          "state_s": {
+            "max_s": 0.0010784489568322897,
+            "over_5ms": 0,
+            "p50_s": 0.0001168315066024661,
+            "p99_s": 0.00013851221650838856
+          },
+          "total_s": {
+            "max_s": 0.0020190197974443436,
+            "over_5ms": 0,
+            "p50_s": 0.0007345573976635933,
+            "p99_s": 0.001188547289930284
+          }
+        },
+        "trial_duration_s": 5.0200000000000005,
+        "walking": null,
+        "walking_completed": null
+      },
+      "run": "runs/relic-walk-three-leg-prep-20261009-002/three-leg-mujoco",
+      "seed": 101
+    },
+    "walk0125-slow-ramp": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "c9a67eb8879beb286058c8324195291c586b7802e8cf6a1b7605ea58b3394b19",
+      "configuration_sha256": "a55376fe64618a16411d8e4cbb10ee2d7f477491ce0fadc000458bd702995137",
+      "demonstration": null,
+      "first_failure": {
+        "body_angular_speed_rad_s": 0.0006771874082555463,
+        "body_linear_speed_m_s": 0.0006332557655095664,
+        "reason": "walking progress stalled",
+        "time_s": 14.175,
+        "velocity_violations": []
+      },
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 1.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.125,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "result": {
+        "compute_max_s": 0.0010472179856151342,
+        "compute_p99_s": 0.0006844068830832838,
+        "failure": "walking progress stalled",
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 0.020113501867406895,
+          "height_span_m": 0.027136802673339844,
+          "joint_speed_p95_rad_s": 0.1143692284822464,
+          "linear_speed_p95_m_s": 0.03565810067945783,
+          "max_tilt_deg": 2.612319399966328,
+          "mean_height_m": 0.4999483433263055,
+          "min_height_m": 0.4789183735847473,
+          "planar_speed_p95_m_s": 0.03454490168944131,
+          "samples": 2001,
+          "span_s": 10.0,
+          "tilt_span_deg": 1.2223031196653904
+        },
+        "loop_wall_s": 2.4847346108872443,
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "policy_duration_s": 14.175,
+        "policy_samples": 709,
+        "real_time_factor": 5.704834608046297,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "three_leg_demo": null,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0010473979637026787,
+            "over_5ms": 0,
+            "p50_s": 0.00035561900585889816,
+            "p99_s": 0.0006845802860334514
+          },
+          "parity_s": {
+            "max_s": 0.00012903893366456032,
+            "over_5ms": 0,
+            "p50_s": 1.501757651567459e-07,
+            "p99_s": 0.00010753431823104617
+          },
+          "physics_s": {
+            "max_s": 0.00023386185057461262,
+            "over_5ms": 0,
+            "p50_s": 0.00014392915181815624,
+            "p99_s": 0.0001595721347257495
+          },
+          "recording_s": {
+            "max_s": 0.019160290015861392,
+            "over_5ms": 1,
+            "p50_s": 0.00015521002933382988,
+            "p99_s": 0.00018490688875317572
+          },
+          "state_s": {
+            "max_s": 0.0013105468824505806,
+            "over_5ms": 0,
+            "p50_s": 0.00011948100291192532,
+            "p99_s": 0.00015005293302237905
+          },
+          "total_s": {
+            "max_s": 0.019841858884319663,
+            "over_5ms": 1,
+            "p50_s": 0.0007736170664429665,
+            "p99_s": 0.0012175614619627595
+          }
+        },
+        "trial_duration_s": 14.175,
+        "walking": {
+          "forward_m": 0.2512113898237105,
+          "heading_error_rad": -0.07959497492020008,
+          "lateral_m": 0.028338697833303436,
+          "monotonic_s": 24.17,
+          "odom_position_m": [
+            0.24923428893089294,
+            0.04233808442950249,
+            0.5045276284217834
+          ],
+          "phase": "forward",
+          "remaining_m": 0.4987886101762895,
+          "requested_forward_m_s": 0.125,
+          "robot_time_s": 1014.17,
+          "speed_m_s": 0.00019336704687685592
+        },
+        "walking_completed": false
+      },
+      "run": "runs/relic-walk-three-leg-prep-20261009-002/walk0125-slow-ramp",
+      "seed": 101
+    },
+    "walk014-isaac": {
+      "backend": "isaaclab",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "310004d4cf0ba63e524a3d67c8faec5e60a40176a122002aa7f315773aec300e",
+      "configuration_sha256": "9929c7c0ceda47cef7ef751882553653d57a2028e55a56b8a4ace69989577701",
+      "demonstration": null,
+      "first_failure": {
+        "body_angular_speed_rad_s": 0.23964615750647217,
+        "body_linear_speed_m_s": 0.1205997078636332,
+        "reason": "measured joint velocity or load limit",
+        "time_s": 9.085,
+        "velocity_violations": [
+          {
+            "joint": "fr_kn",
+            "limit_rad_s": 8.0,
+            "velocity_rad_s": -8.143062591552734
+          }
+        ]
+      },
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": null,
+        "bosdyn-client": null,
+        "numpy": "1.26.0",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.11.7",
+        "spot-deployment": null
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 1.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.14,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "result": {
+        "compute_max_s": 0.001826605061069131,
+        "compute_p99_s": 0.0009967432916164396,
+        "failure": "measured joint velocity or load limit",
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 0.13502407815270412,
+          "height_span_m": 0.0720924437046051,
+          "joint_speed_p95_rad_s": 0.7609737873077392,
+          "linear_speed_p95_m_s": 0.12675274683573806,
+          "max_tilt_deg": 3.0501145359353368,
+          "mean_height_m": 0.48630759945005,
+          "min_height_m": 0.45107170939445496,
+          "planar_speed_p95_m_s": 0.07374401349991301,
+          "samples": 1817,
+          "span_s": 9.08,
+          "tilt_span_deg": 2.8822557468620857
+        },
+        "loop_wall_s": 7.001784018939361,
+        "max_observation_error": 1.1175870895385742e-08,
+        "max_raw_action_error": 9.5367431640625e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "policy_duration_s": 9.085,
+        "policy_samples": 455,
+        "real_time_factor": 1.297526455461305,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "three_leg_demo": null,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0018270150758326054,
+            "over_5ms": 0,
+            "p50_s": 0.0004833859857171774,
+            "p99_s": 0.000997178629040718
+          },
+          "parity_s": {
+            "max_s": 0.0002099159173667431,
+            "over_5ms": 0,
+            "p50_s": 3.2014213502407074e-07,
+            "p99_s": 0.0001555096823722124
+          },
+          "physics_s": {
+            "max_s": 0.010082280961796641,
+            "over_5ms": 14,
+            "p50_s": 0.0026422529481351376,
+            "p99_s": 0.004515416752547024
+          },
+          "recording_s": {
+            "max_s": 0.0002976958639919758,
+            "over_5ms": 0,
+            "p50_s": 0.00015861704014241695,
+            "p99_s": 0.0002235981170088051
+          },
+          "state_s": {
+            "max_s": 0.0006910171359777451,
+            "over_5ms": 0,
+            "p50_s": 0.0003617799375206232,
+            "p99_s": 0.000490879090502858
+          },
+          "total_s": {
+            "max_s": 0.012079155072569847,
+            "over_5ms": 29,
+            "p50_s": 0.003692324971780181,
+            "p99_s": 0.005733745768666266
+          }
+        },
+        "trial_duration_s": 9.085,
+        "walking": {
+          "forward_m": 0.25474039519530584,
+          "heading_error_rad": -0.06544296929438509,
+          "lateral_m": 0.024843482860294107,
+          "monotonic_s": 19.08,
+          "odom_position_m": [
+            0.2529531717300415,
+            0.03904562070965767,
+            0.5012643933296204
+          ],
+          "phase": "forward",
+          "remaining_m": 0.49525960480469416,
+          "requested_forward_m_s": 0.14,
+          "robot_time_s": 1009.08,
+          "speed_m_s": 0.047600808129396634
+        },
+        "walking_completed": false
+      },
+      "run": "runs/relic-walk-bracket-20261009-001/isaac",
+      "seed": 101
+    },
+    "walk014-mujoco": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "80de9d41fce68030d1c2881dc78c3c9480ea4ddeac42ad65b183ad9fa547efd9",
+      "configuration_sha256": "e96df8869cf9d65f86334be31a9f333a606182fcbcb759cab8d3ae2e5b4aa360",
+      "demonstration": null,
+      "first_failure": {
+        "body_angular_speed_rad_s": 0.21169688370407083,
+        "body_linear_speed_m_s": 0.10954663430820762,
+        "reason": "measured joint velocity or load limit",
+        "time_s": 8.065,
+        "velocity_violations": [
+          {
+            "joint": "fr_kn",
+            "limit_rad_s": 8.0,
+            "velocity_rad_s": -8.300106048583984
+          }
+        ]
+      },
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 1.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.14,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "result": {
+        "compute_max_s": 0.001325154909864068,
+        "compute_p99_s": 0.0007397260423749656,
+        "failure": "measured joint velocity or load limit",
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 0.12825822031885395,
+          "height_span_m": 0.08057740330696106,
+          "joint_speed_p95_rad_s": 0.9637040853500358,
+          "linear_speed_p95_m_s": 0.14104667490762152,
+          "max_tilt_deg": 2.7241923490424362,
+          "mean_height_m": 0.4809386240940839,
+          "min_height_m": 0.442586749792099,
+          "planar_speed_p95_m_s": 0.08046327450947532,
+          "samples": 1613,
+          "span_s": 8.06,
+          "tilt_span_deg": 2.647575669193277
+        },
+        "loop_wall_s": 1.4097464818041772,
+        "max_observation_error": 5.960464477539063e-08,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "policy_duration_s": 8.065,
+        "policy_samples": 404,
+        "real_time_factor": 5.720886772264547,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "three_leg_demo": null,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0013253050856292248,
+            "over_5ms": 0,
+            "p50_s": 0.00035331398248672485,
+            "p99_s": 0.0007398894242942305
+          },
+          "parity_s": {
+            "max_s": 0.00014574197120964527,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00011320134624838824
+          },
+          "physics_s": {
+            "max_s": 0.00035970588214695454,
+            "over_5ms": 0,
+            "p50_s": 0.000144248828291893,
+            "p99_s": 0.00017798842862248385
+          },
+          "recording_s": {
+            "max_s": 0.0009303800761699677,
+            "over_5ms": 0,
+            "p50_s": 0.000155711080878973,
+            "p99_s": 0.00019960590638220266
+          },
+          "state_s": {
+            "max_s": 0.0005003379192203283,
+            "over_5ms": 0,
+            "p50_s": 0.00011981208808720112,
+            "p99_s": 0.00016450304538011534
+          },
+          "total_s": {
+            "max_s": 0.0018386379815638065,
+            "over_5ms": 0,
+            "p50_s": 0.0007753099780529737,
+            "p99_s": 0.0012951636593788855
+          }
+        },
+        "trial_duration_s": 8.065,
+        "walking": {
+          "forward_m": 0.25318968544078085,
+          "heading_error_rad": -0.07038978701451035,
+          "lateral_m": 0.024952867796653566,
+          "monotonic_s": 18.060000000000002,
+          "odom_position_m": [
+            0.2513987720012665,
+            0.03906814381480217,
+            0.49820056557655334
+          ],
+          "phase": "forward",
+          "remaining_m": 0.49681031455921915,
+          "requested_forward_m_s": 0.14,
+          "robot_time_s": 1008.06,
+          "speed_m_s": 0.04175559358332721
+        },
+        "walking_completed": false
+      },
+      "run": "runs/relic-walk-bracket-20261009-001/mujoco",
+      "seed": 101
+    },
+    "walk015-slow-ramp": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "88ad9bc3594079b2487802767e2974cc213bdfd2f74e63bb7fb64aacddf09cef",
+      "configuration_sha256": "b2ab411988a6bdcfa1a2c2de075722a34d4832d7a8df3679d4b9b9fcf91cc6e5",
+      "demonstration": null,
+      "first_failure": {
+        "body_angular_speed_rad_s": 0.22737029587274807,
+        "body_linear_speed_m_s": 0.10759617217293535,
+        "reason": "measured joint velocity or load limit",
+        "time_s": 8.025,
+        "velocity_violations": [
+          {
+            "joint": "fr_kn",
+            "limit_rad_s": 8.0,
+            "velocity_rad_s": -11.787545204162598
+          }
+        ]
+      },
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "requested_walk": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 1.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.15,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "result": {
+        "compute_max_s": 0.0013297849800437689,
+        "compute_p99_s": 0.000691871140152216,
+        "failure": "measured joint velocity or load limit",
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "late_window_metrics": {
+          "angular_speed_p95_rad_s": 0.12843048220550418,
+          "height_span_m": 0.08057740330696106,
+          "joint_speed_p95_rad_s": 0.9707655429840086,
+          "linear_speed_p95_m_s": 0.14211348154139922,
+          "max_tilt_deg": 2.8784803459775006,
+          "mean_height_m": 0.48059195525178283,
+          "min_height_m": 0.442586749792099,
+          "planar_speed_p95_m_s": 0.08047936663371501,
+          "samples": 1605,
+          "span_s": 8.02,
+          "tilt_span_deg": 2.8018636661283414
+        },
+        "loop_wall_s": 1.3945718118920922,
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 8.344650268554688e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "policy_duration_s": 8.025,
+        "policy_samples": 402,
+        "real_time_factor": 5.754454472381771,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "three_leg_demo": null,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0013299749698489904,
+            "over_5ms": 0,
+            "p50_s": 0.0003563598729670048,
+            "p99_s": 0.0006920231226831675
+          },
+          "parity_s": {
+            "max_s": 0.00012309802696108818,
+            "over_5ms": 0,
+            "p50_s": 1.501757651567459e-07,
+            "p99_s": 0.00010781734250485898
+          },
+          "physics_s": {
+            "max_s": 0.0001796879805624485,
+            "over_5ms": 0,
+            "p50_s": 0.00014369911514222622,
+            "p99_s": 0.00016049710102379323
+          },
+          "recording_s": {
+            "max_s": 0.0006840841379016638,
+            "over_5ms": 0,
+            "p50_s": 0.00015444890595972538,
+            "p99_s": 0.00018437433987855911
+          },
+          "state_s": {
+            "max_s": 0.00018928712233901024,
+            "over_5ms": 0,
+            "p50_s": 0.00011920114047825336,
+            "p99_s": 0.00013848689384758474
+          },
+          "total_s": {
+            "max_s": 0.00176971685141325,
+            "over_5ms": 0,
+            "p50_s": 0.0007736280094832182,
+            "p99_s": 0.0012149477284401655
+          }
+        },
+        "trial_duration_s": 8.025,
+        "walking": {
+          "forward_m": 0.26599072682924585,
+          "heading_error_rad": -0.07081263115200881,
+          "lateral_m": 0.015201929991900115,
+          "monotonic_s": 18.02,
+          "odom_position_m": [
+            0.2647249102592468,
+            0.030048083513975143,
+            0.5011876225471497
+          ],
+          "phase": "forward",
+          "remaining_m": 0.48400927317075415,
+          "requested_forward_m_s": 0.15,
+          "robot_time_s": 1008.02,
+          "speed_m_s": 0.0476442233667079
+        },
+        "walking_completed": false
+      },
+      "run": "runs/relic-walk-three-leg-prep-20261009-002/walk015-slow-ramp",
+      "seed": 101
+    }
+  },
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "replays": {
+    "three-leg-isaac": {
+      "artifacts": {
+        "dynamics.pdf": "3bdb1a94b1e8331838c7860e2fb1a1ec32307e1138f22fa0308ad6b4421b875b",
+        "dynamics.png": "664e196057f3f19ec04a61fc494a21f968ff0610a56b05ea33490972ce472e82",
+        "ffmpeg.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "replay.mp4": "beda23aec923bd27a5d57dc6d8ea78434bad80eb61564947bf7f86909fb51768"
+      },
+      "fps": 50,
+      "frames": 250,
+      "hardware_access": false,
+      "new_dynamics": false,
+      "recorded_duration_s": 4.995,
+      "source_complete_sha256": "7858bb62980a485fba9344bf30acab11143e11250870cf138dbe1c2cbda27ca1",
+      "source_reason": "guard_stop",
+      "source_trajectory_sha256": "ebbaf0a6e42740e621c6455c52d9e7959e37db7f4b0f99fd88ac184b016d2d80",
+      "status": "completed",
+      "tool_sha256": "4acc59345caf90f728c1271dd1d2ef7684a6dc16168c36cb323822b82da26d88"
+    },
+    "three-leg-mujoco": {
+      "artifacts": {
+        "dynamics.pdf": "592940a5d7474bee269a7c1796ade50f349b03247dc9dc11afcc9f153ca5b92f",
+        "dynamics.png": "a5a9b621655c4ca7faaf2dc8c910e51156011911dc3a580ae187f18bd9a66271",
+        "ffmpeg.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "replay.mp4": "fd59da0926bf8c218ab667bc29ad3fc652a2fdfe8fdc1a6a8c8e64112df710a5"
+      },
+      "fps": 50,
+      "frames": 251,
+      "hardware_access": false,
+      "new_dynamics": false,
+      "recorded_duration_s": 5.015,
+      "source_complete_sha256": "1f24bc4600a412d87154a0b2867263b2b995c472eaba1f0d288727ac7a50989e",
+      "source_reason": "guard_stop",
+      "source_trajectory_sha256": "266ed0d5f18a467eae4233ee6de037e850b514e91432fa5fd29c197bfefd2c21",
+      "status": "completed",
+      "tool_sha256": "4acc59345caf90f728c1271dd1d2ef7684a6dc16168c36cb323822b82da26d88"
+    }
+  },
+  "simulation_commit": "abe17c27230b1dcaba21adf1e9e7371d313a2c16",
+  "tests_passed": 440
+}

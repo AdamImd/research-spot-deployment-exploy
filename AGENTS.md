@@ -21,6 +21,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   operator-requested walking requires task=walking, a bound WalkingPlan, and the
   walking_distance/walking_clearance evidence gates. See docs/WALKING.md. No
   automatic retries, fault clearing or manipulation in the hardware path.
+- Three-leg preparation is simulation-only via tools/simulate_relic.py and
+  docs/THREE_LEG_DEMO.md. The current nine-input Exploy graph fixes leg commands
+  at zero; do not pretend it supports a selected lifted leg or dispatch the offline
+  adapter to hardware. Physical three-leg work needs a new export/live contract and review.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
 

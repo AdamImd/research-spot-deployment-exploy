@@ -29,6 +29,10 @@ audit = ["spatialmath-python==1.1.15"]
 simulation = [
     "mujoco==3.3.7",
 ]
+visualization = [
+    "matplotlib==3.11.2",
+    "pillow==12.3.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

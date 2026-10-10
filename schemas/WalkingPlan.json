@@ -72,6 +72,20 @@
       "maximum": 30,
       "title": "Max Duration S",
       "type": "number"
+    },
+    "stall_timeout_s": {
+      "default": 5.0,
+      "maximum": 10,
+      "minimum": 2,
+      "title": "Stall Timeout S",
+      "type": "number"
+    },
+    "min_progress_m": {
+      "default": 0.005,
+      "exclusiveMinimum": 0,
+      "maximum": 0.02,
+      "title": "Min Progress M",
+      "type": "number"
     }
   },
   "required": [

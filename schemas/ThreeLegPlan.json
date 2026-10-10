@@ -1,0 +1,94 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "front-left-lift-hold-return",
+      "title": "Kind",
+      "type": "string"
+    },
+    "leg": {
+      "const": "fl",
+      "title": "Leg",
+      "type": "string"
+    },
+    "initial_hold_s": {
+      "maximum": 10,
+      "minimum": 2,
+      "title": "Initial Hold S",
+      "type": "number"
+    },
+    "lift_s": {
+      "maximum": 10,
+      "minimum": 2,
+      "title": "Lift S",
+      "type": "number"
+    },
+    "hold_s": {
+      "maximum": 10,
+      "minimum": 2,
+      "title": "Hold S",
+      "type": "number"
+    },
+    "lower_s": {
+      "maximum": 10,
+      "minimum": 2,
+      "title": "Lower S",
+      "type": "number"
+    },
+    "final_hold_s": {
+      "maximum": 20,
+      "minimum": 5,
+      "title": "Final Hold S",
+      "type": "number"
+    },
+    "lifted_positions": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "title": "Lifted Positions",
+      "type": "array"
+    },
+    "min_clearance_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.15,
+      "title": "Min Clearance M",
+      "type": "number"
+    },
+    "support_clearance_max_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.03,
+      "title": "Support Clearance Max M",
+      "type": "number"
+    },
+    "min_hold_fraction": {
+      "maximum": 1,
+      "minimum": 0.8,
+      "title": "Min Hold Fraction",
+      "type": "number"
+    },
+    "foot_radius_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.1,
+      "title": "Foot Radius M",
+      "type": "number"
+    }
+  },
+  "required": [
+    "kind",
+    "leg",
+    "initial_hold_s",
+    "lift_s",
+    "hold_s",
+    "lower_s",
+    "final_hold_s",
+    "lifted_positions",
+    "min_clearance_m",
+    "support_clearance_max_m",
+    "min_hold_fraction",
+    "foot_radius_m"
+  ],
+  "title": "ThreeLegPlan",
+  "type": "object"
+}

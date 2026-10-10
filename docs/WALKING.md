@@ -26,6 +26,8 @@ Spot; Minghao holds the manufacturer tablet E-stop. No local E-stop is started.
 | Final stationary hold | 1 s |
 | Maximum measured speed during final hold | 0.03 m/s |
 | Maximum policy-active duration | 20 s |
+| Progress stall window | 5 s |
+| Required progress per stall window | 0.005 m |
 
 Native standing precedes policy activation. Capture initial height and the robot
 odom/body pose, start previous raw actions at zero, and activate directly without
@@ -50,7 +52,10 @@ bounded acceleration. At the distance tolerance request zero immediately.
 Require measured planar velocity below 0.03 m/s for one continuous second before
 success. Continued motion resets that hold. No elapsed-time distance estimate or
 reverse correction is used. Missing/stale/replayed/backwards pose timestamps,
-odometry jumps, excessive drift, overshoot or timeout stop the trial.
+odometry jumps, excessive drift, overshoot or timeout stop the trial. A forward
+request of at least half the maximum speed (capped at 0.05 m/s) must produce
+0.005 m of measured progress within five seconds; otherwise stop with a recorded
+`walk_stall`. This detects a stationary policy before the total distance timeout.
 
 Retain all numeric joint/load/body/timing guards. The existing explicit harness
 arm-observation exception retains held arm targets and measured/predicted torque
@@ -60,6 +65,13 @@ initiates native safe-power-off and requires observed OFF plus lease return.
 If shutdown is unconfirmed, Minghao uses the tablet immediately.
 
 ## Validation and activation
+
+The 2026-10-09 preparation compared slower 0.025 m/s² request ramps. At
+0.125 m/s MuJoCo stalled after about 0.25 m; at 0.14 m/s both MuJoCo and Isaac
+exceeded the 8 rad/s knee-speed bound. The 0.15 m/s MuJoCo trial also exceeded
+that bound. Native actor parity passed, so a slower request ramp alone did not
+resolve the gait failure. No physical walking was started. Full provenance and
+results are in ../records/relic-walk-three-leg-prep-20261009/README.md.
 
 A walking manifest requires `task: walking` and a non-null `walking` plan; a
 standing manifest cannot carry that plan. Fresh evidence binds the plan through

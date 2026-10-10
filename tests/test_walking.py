@@ -201,3 +201,14 @@ def test_final_hold_requires_low_measured_speed_and_checks_drift(state, plan):
     assert travel.completed
     with pytest.raises(ContractError, match='final position drift'):
         travel.update(posed(state, 10.3, x=.726), 20.3)
+
+
+def test_positive_request_without_measured_progress_stops_before_distance_timeout(state, plan):
+    travel = ForwardTravel(plan, Log())
+    travel.latch(posed(state, 0))
+    travel.activate(10)
+    with pytest.raises(ContractError, match='progress stalled'):
+        for tick in range(1, 2001):
+            t = tick*.005
+            travel.update(posed(state, t), 10+t)
+    assert not travel.completed and t < plan.max_duration_s

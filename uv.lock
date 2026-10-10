@@ -986,6 +986,10 @@ firmware = [
 simulation = [
     { name = "mujoco" },
 ]
+visualization = [
+    { name = "matplotlib" },
+    { name = "pillow" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1007,6 +1011,10 @@ dev = [
 ]
 firmware = [{ name = "platformio", specifier = "==6.1.18" }]
 simulation = [{ name = "mujoco", specifier = "==3.3.7" }]
+visualization = [
+    { name = "matplotlib", specifier = "==3.11.2" },
+    { name = "pillow", specifier = "==12.3.0" },
+]
 
 [[package]]
 name = "starlette"

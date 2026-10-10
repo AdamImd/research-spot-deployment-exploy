@@ -151,9 +151,10 @@ def main():
     from spot_deploy.relic_contract import ReLICManifest
     from spot_deploy.exploy_policy import ExployReLICManifest
     from spot_deploy.walking import WalkingPlan
+    from spot_deploy.simulation_demo import ThreeLegPlan
 
     for cls in (Manifest, Envelope, RobotConfig, WatchRobotConfig, State, EvidenceIndex,
-                EstopProfile, JoystickProfile, ReLICManifest, ExployReLICManifest, DeploymentBundle, WalkingPlan):
+                EstopProfile, JoystickProfile, ReLICManifest, ExployReLICManifest, DeploymentBundle, WalkingPlan, ThreeLegPlan):
         (schema_dir / f"{cls.__name__}.json").write_text(
             json.dumps(cls.model_json_schema(), indent=2) + "\n"
         )
