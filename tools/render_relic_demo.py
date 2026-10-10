@@ -87,9 +87,11 @@ def video(rows,config,result,source,output,fps):
     font=ImageFont.load_default(size=18)
     times=np.array([r['trial_time'] for r in rows])
     frames=np.arange(times[0],times[-1]+1e-9,1/fps)
-    command=['ffmpeg','-hide_banner','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24',
+    command=['ffmpeg','-nostdin','-hide_banner','-loglevel','error','-filter_threads','1',
+             '-f','rawvideo','-pix_fmt','rgb24',
              '-s','720x560','-r',str(fps),'-i','-','-an','-c:v','libx264','-preset','fast',
-             '-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(output/'replay.mp4')]
+             '-threads','2','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',
+             str(output/'replay.mp4')]
     try:
         with (output/'ffmpeg.log').open('wb') as log:
             process=subprocess.Popen(command,stdin=subprocess.PIPE,stderr=log)
