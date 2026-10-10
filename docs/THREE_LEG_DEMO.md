@@ -79,6 +79,15 @@ recording includes demo_prediction and requested leg commands.
 
 ## Remaining physical preparation
 
+The 2026-10-09 commissioning comparison stopped at mode activation in both
+backends: MuJoCo body angular speed exceeded its bound at 5.02 s, and Isaac's
+fr_hx target exceeded +0.4 rad at 5 s. No hold/return phase was reached. Native
+parity passed; a smooth selected-leg path did not prevent supporting-leg target
+jumps when the leg-command observation became nonzero. See
+../records/relic-walk-three-leg-prep-20261009/README.md for metrics, provenance
+and preserved failures. This is an implemented offline prototype, not a
+successfully validated three-leg motion.
+
 Keep this simulation-only until selected-leg Exploy inputs/output overrides are
 explicitly exported, native parity passes through lift/return, SDK/live history
 and limb/stop semantics are reviewed, support/contact measurements are available,

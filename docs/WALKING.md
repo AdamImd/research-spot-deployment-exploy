@@ -66,6 +66,13 @@ If shutdown is unconfirmed, Minghao uses the tablet immediately.
 
 ## Validation and activation
 
+The 2026-10-09 preparation compared slower 0.025 m/s² request ramps. At
+0.125 m/s MuJoCo stalled after about 0.25 m; at 0.14 m/s both MuJoCo and Isaac
+exceeded the 8 rad/s knee-speed bound. The 0.15 m/s MuJoCo trial also exceeded
+that bound. Native actor parity passed, so a slower request ramp alone did not
+resolve the gait failure. No physical walking was started. Full provenance and
+results are in ../records/relic-walk-three-leg-prep-20261009/README.md.
+
 A walking manifest requires `task: walking` and a non-null `walking` plan; a
 standing manifest cannot carry that plan. Fresh evidence binds the plan through
 the manifest hash. All existing gates remain required, plus `walking_distance`
