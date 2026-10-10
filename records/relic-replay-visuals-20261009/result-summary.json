@@ -1,0 +1,109 @@
+{
+  "cells": [
+    {
+      "authored_visual_triangles": 162762,
+      "body_triangles": 33207,
+      "complete": {
+        "artifacts": {
+          "dynamics.pdf": "c173f129ec88807d5e2851b904c9a7427ab1a824f1b4cbe7f11408c038b211cf",
+          "dynamics.png": "a5a9b621655c4ca7faaf2dc8c910e51156011911dc3a580ae187f18bd9a66271",
+          "ffmpeg.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "replay.mp4": "0adfde63a7fada50649cc188692289292a59c70232ca29b6e47c0a0a27ff56a9"
+        },
+        "fps": 50,
+        "frames": 251,
+        "hardware_access": false,
+        "new_dynamics": false,
+        "recorded_duration_s": 5.015,
+        "source_complete_sha256": "1f24bc4600a412d87154a0b2867263b2b995c472eaba1f0d288727ac7a50989e",
+        "source_reason": "guard_stop",
+        "source_trajectory_sha256": "266ed0d5f18a467eae4233ee6de037e850b514e91432fa5fd29c197bfefd2c21",
+        "status": "completed",
+        "tool_sha256": "4215035acc903036e5f57e24d4da586c7c38486bc55ab6f9c91a6a66d3637460",
+        "visual_manifest_sha256": "43a6d154f02c8e048922ff13c65d2f1a68bcd2323d59b41ed1bece7090c7cb4c",
+        "visual_model_sha256": "d522f4a5d0564e04be0d7bb944df1710e63a4d0e2d7bb643682ddd8d4ac3a390",
+        "visual_restoration_tool_sha256": "c2ff8951836522ec4ee466c345a46168ac0850fa9d0eeb7cecb68f2de9477e20"
+      },
+      "ffprobe": {
+        "programs": [],
+        "streams": [
+          {
+            "duration": "5.020000",
+            "nb_read_frames": "251",
+            "r_frame_rate": "50/1"
+          }
+        ]
+      },
+      "frames": 251,
+      "links_without_authored_visuals": [
+        "fl_foot",
+        "fr_foot",
+        "hl_foot",
+        "hr_foot",
+        "arm_link_jaw"
+      ],
+      "material_groups": 30,
+      "name": "three-leg-mujoco",
+      "source_failure": "body speed limit",
+      "source_hardware_access": false,
+      "source_reason": "guard_stop",
+      "visual_complete": "completed"
+    },
+    {
+      "authored_visual_triangles": 162762,
+      "body_triangles": 33207,
+      "complete": {
+        "artifacts": {
+          "dynamics.pdf": "fe6173a6861bb84bd58868378e68ea43481a9b23dc17a127e07fde0cee3ca62f",
+          "dynamics.png": "664e196057f3f19ec04a61fc494a21f968ff0610a56b05ea33490972ce472e82",
+          "ffmpeg.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "replay.mp4": "05d60f256b85ef0033102d176901f36a5a905836b5ef9827f85c2e91d406d6f8"
+        },
+        "fps": 50,
+        "frames": 250,
+        "hardware_access": false,
+        "new_dynamics": false,
+        "recorded_duration_s": 4.995,
+        "source_complete_sha256": "7858bb62980a485fba9344bf30acab11143e11250870cf138dbe1c2cbda27ca1",
+        "source_reason": "guard_stop",
+        "source_trajectory_sha256": "ebbaf0a6e42740e621c6455c52d9e7959e37db7f4b0f99fd88ac184b016d2d80",
+        "status": "completed",
+        "tool_sha256": "4215035acc903036e5f57e24d4da586c7c38486bc55ab6f9c91a6a66d3637460",
+        "visual_manifest_sha256": "07cf71d85b2e1dfb296ef2da39137cc021d7b7f0e5bb92e28f1a27eb23b26f4b",
+        "visual_model_sha256": "3d570afbf44d2e4bda44b63f3dc63132efea7923fbbb41cf0e25ed2239d3760e",
+        "visual_restoration_tool_sha256": "c2ff8951836522ec4ee466c345a46168ac0850fa9d0eeb7cecb68f2de9477e20"
+      },
+      "ffprobe": {
+        "programs": [],
+        "streams": [
+          {
+            "duration": "5.000000",
+            "nb_read_frames": "250",
+            "r_frame_rate": "50/1"
+          }
+        ]
+      },
+      "frames": 250,
+      "links_without_authored_visuals": [
+        "fl_foot",
+        "fr_foot",
+        "hl_foot",
+        "hr_foot",
+        "arm_link_jaw"
+      ],
+      "material_groups": 30,
+      "name": "three-leg-isaac",
+      "source_failure": "command position limit",
+      "source_hardware_access": false,
+      "source_reason": "guard_stop",
+      "visual_complete": "completed"
+    }
+  ],
+  "commit": "df92b89a6ae24d3b394ea142dfe6711f72bf3440",
+  "decoded": true,
+  "hardware_access": false,
+  "new_dynamics": false,
+  "ruff_passed": true,
+  "run": "runs/relic-replay-visuals-20261009-002",
+  "tests_passed": 441
+}
