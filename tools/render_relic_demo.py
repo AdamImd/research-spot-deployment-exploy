@@ -145,7 +145,7 @@ def main():
         raise ValueError('Encoded frame count mismatch')
     atomic_json(args.output/'COMPLETE.json',dict(status='completed',frames=count,fps=args.fps,
         recorded_duration_s=rows[-1]['trial_time'],source_reason=result['reason'],
-        source_complete_sha256=sha256(args.run/'COMPLETE.json'),tool_sha256=sha256(__file__),
+        source_complete_sha256=sha256(args.run/'COMPLETE.json'),tool_sha256=sha256(Path(__file__)),
         source_trajectory_sha256=sha256(args.run/'rollout.jsonl'),
         new_dynamics=False,hardware_access=False,
         artifacts={p.name:sha256(p) for p in args.output.glob('*') if p.is_file()}))
