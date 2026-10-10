@@ -27,14 +27,15 @@ def finite(value, size):
     return value
 
 
-def observation(state, arm_target, previous_action, body_height=.55):
+def observation(state, arm_target, previous_action, body_height=.55, velocity_command=None):
     world_to_body = rotation(state).T
     angular = world_to_body @ state.angular_velocity_odom
     # Isaac observes root rigid-body COM velocity, SDK reports the body origin.
     linear = world_to_body @ state.linear_velocity_odom + np.cross(angular, ROOT_COM_B)
     q, dq = finite(state.positions, 19), finite(state.velocities, 19)
     return finite(np.concatenate((linear, angular, world_to_body @ [0, 0, -1],
-        np.zeros(3), finite(arm_target, 7), np.zeros(12), [0, 0, body_height],
+        finite([0, 0, 0] if velocity_command is None else velocity_command, 3),
+        finite(arm_target, 7), np.zeros(12), [0, 0, body_height],
         q[OBS_IDS] - DEFAULT_Q[OBS_IDS], dq[OBS_IDS], finite(previous_action, 12))), 84)
 
 

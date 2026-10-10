@@ -1,0 +1,93 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "distance_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "title": "Distance M",
+      "type": "number"
+    },
+    "max_speed_m_s": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.15,
+      "title": "Max Speed M S",
+      "type": "number"
+    },
+    "acceleration_m_s2": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.2,
+      "title": "Acceleration M S2",
+      "type": "number"
+    },
+    "tolerance_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.03,
+      "title": "Tolerance M",
+      "type": "number"
+    },
+    "max_lateral_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.15,
+      "title": "Max Lateral M",
+      "type": "number"
+    },
+    "max_heading_rad": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.2,
+      "title": "Max Heading Rad",
+      "type": "number"
+    },
+    "max_pose_age_s": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.03,
+      "title": "Max Pose Age S",
+      "type": "number"
+    },
+    "max_pose_step_m": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.03,
+      "title": "Max Pose Step M",
+      "type": "number"
+    },
+    "initial_hold_s": {
+      "maximum": 3,
+      "minimum": 0.5,
+      "title": "Initial Hold S",
+      "type": "number"
+    },
+    "final_hold_s": {
+      "maximum": 3,
+      "minimum": 0.5,
+      "title": "Final Hold S",
+      "type": "number"
+    },
+    "stopped_speed_m_s": {
+      "exclusiveMinimum": 0,
+      "maximum": 0.04,
+      "title": "Stopped Speed M S",
+      "type": "number"
+    },
+    "max_duration_s": {
+      "exclusiveMinimum": 0,
+      "maximum": 30,
+      "title": "Max Duration S",
+      "type": "number"
+    }
+  },
+  "required": [
+    "distance_m",
+    "max_speed_m_s",
+    "acceleration_m_s2",
+    "tolerance_m",
+    "max_lateral_m",
+    "max_heading_rad",
+    "max_pose_age_s",
+    "max_pose_step_m",
+    "initial_hold_s",
+    "final_hold_s",
+    "stopped_speed_m_s",
+    "max_duration_s"
+  ],
+  "title": "WalkingPlan",
+  "type": "object"
+}

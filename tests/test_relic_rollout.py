@@ -364,3 +364,59 @@ def test_generic_controller_rejects_zero_transition(manifest, envelope):
     envelope.transition_s = 0
     with pytest.raises(ContractError, match="zero transition"):
         Guard(manifest, envelope)
+
+
+@pytest.mark.parametrize("completion", [True, False])
+def test_walking_orchestrator_completion_and_timeout_cleanup(
+        state, relic_manifest, relic_envelope, monkeypatch, completion):
+    from spot_deploy.walking import WalkingPlan
+    from spot_deploy import walking
+    plan = WalkingPlan.model_validate(json.loads(
+        (Path(__file__).parents[1]/'configs/relic-walk-075.json').read_text()))
+    data = relic_manifest.model_dump()
+    data.update(task='walking', walking=plan.model_dump())
+    manifest = ReLICManifest.model_validate(data)
+    relic_envelope.max_duration_s = 20
+
+    class Motion:
+        # Only orchestration is stubbed; real distance/speed logic has separate tests.
+        completed = False
+        progress = None
+        count = 0
+
+        def __init__(self, *args):
+            pass
+
+        def latch(self, *args):
+            pass
+
+        def activate(self, *args):
+            pass
+
+        def update(self, *args):
+            self.count += 1
+            if completion and self.count >= 15:
+                self.completed = True
+                self.progress = {'phase':'completed', 'forward_m':.75}
+            return [0, 0, 0]
+
+    class Policy(FakeReLIC):
+        def evaluate(self, state, previous, velocity_command=None):
+            assert velocity_command == [0, 0, 0]
+            return super().evaluate(state, previous)
+
+    monkeypatch.setattr(walking, 'ForwardTravel', Motion)
+    reader = FakeReader(sample(state, 0))
+    reader.read_body_height = lambda: dict(height_m=.52, foot_contacts=[1]*4)
+    control = FakeControl(reader)
+    if completion:
+        result = stand(reader, control, Policy(manifest), relic_envelope, .25,
+                       Log(), lambda c,*a:c)
+        assert result['walking']['phase'] == 'completed'
+        assert result['duration_s'] < .25
+    else:
+        with pytest.raises(ContractError, match='walking distance not reached'):
+            stand(reader, control, Policy(manifest), relic_envelope, .1,
+                  Log(), lambda c,*a:c)
+    assert control.calls[-1] == 'close'
+    assert not control.worker.is_alive()

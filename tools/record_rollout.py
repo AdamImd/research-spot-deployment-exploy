@@ -30,10 +30,16 @@ FIELDS = {
     "height_latched": ("height_m", "source", "robot_time_s", "foot_contacts"),
     "first_failure": ("error_type", "reason", "error"),
     "cleanup_failure": ("reason", "error"),
+    'walk_origin': ('odom_position_m', 'yaw_rad', 'robot_time_s', 'plan', 'source',
+                    'reference_frame', 'distance_formula'),
+    'walk_progress': ('phase', 'forward_m', 'lateral_m', 'heading_error_rad', 'remaining_m',
+                      'speed_m_s', 'requested_forward_m_s', 'odom_position_m', 'robot_time_s'),
+    'shutdown_result': ('motors_off_confirmed', 'lease_returned', 'elapsed_s', 'errors',
+                        'within_shutdown_budget', 'motor_power_state'),
     "shadow_wait": ("reason", "robot_time_s", "state_age_s", "receive_age_s", "skipped_state_ticks"),
 }
 for _kind in PREDICTIONS:
-    FIELDS[_kind] = ("targets", "raw_actions", "inference_s")
+    FIELDS[_kind] = ("targets", "raw_actions", "inference_s", 'velocity_command')
 TIMES = ("time", "monotonic_s", "simulation_time_s")
 
 
@@ -69,6 +75,10 @@ class Projector:
         state = None
         if "state" in event:
             state = State.model_validate(event["state"]).model_dump()
+            # Preserve legacy records without inventing absent optional pose inputs.
+            for field in ("body_position_odom", "body_pose_robot_time_s"):
+                if field not in event["state"]:
+                    state.pop(field)
             # Pydantic allows infinity on some scalar fields; the recording does not.
             json.dumps(state, allow_nan=False)
             stamp = state["robot_time_s"]

@@ -1,0 +1,107 @@
+{
+  "automatic_retries": false,
+  "budget_dollars": 0,
+  "capture_integrity_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+  "cells": [
+    {
+      "cell": "MuJoCo .10 no-slip10",
+      "completion_sha256": "51e3f6ffe40c4290ed8b74311382f944a59340d72750b3ca34e738a9b6408583",
+      "duration_s": 20.005,
+      "failure": "walking distance timeout",
+      "final_speed_m_s": 2.863151896852481e-07,
+      "forward_m": 0.2502908787359632,
+      "hardware_access": false,
+      "max_raw_action_error": 7.748603820800781e-07,
+      "reason": "guard_stop",
+      "result_sha256": "2d6d99602e1d3ceae606ee0bbc162cdbbd9cf2e7e4bb4d2643cd71e44d3d2c31",
+      "run": "runs/relic-walk-validation-20261009-002/mujoco",
+      "walking_completed": false
+    },
+    {
+      "cell": "Isaac .10",
+      "completion_sha256": "88ffba09acdb4487f5b83c8e6deda6010b0d0ff4b989859bf65eff71e191a685",
+      "duration_s": 20.005,
+      "failure": "walking distance timeout",
+      "final_speed_m_s": 8.644854080683742e-05,
+      "forward_m": 0.2547914319871549,
+      "hardware_access": false,
+      "max_raw_action_error": 9.5367431640625e-07,
+      "reason": "guard_stop",
+      "result_sha256": "d57af8d56db4448fe39ec3ed720860c843326d6b9a97068c92bf8ef586cdb958",
+      "run": "runs/relic-walk-isaac-check-20261009-001/walk010",
+      "velocity_violations": [],
+      "walking_completed": false
+    },
+    {
+      "cell": "Isaac .15",
+      "completion_sha256": "505ed02b15aa8bfd693a1965d93a5169497aab5b27b07437009345e46f946133",
+      "duration_s": 6.425,
+      "failure": "measured joint velocity or load limit",
+      "final_speed_m_s": 0.07230260285988636,
+      "forward_m": 0.47501398352570023,
+      "hardware_access": false,
+      "max_raw_action_error": 9.5367431640625e-07,
+      "reason": "guard_stop",
+      "result_sha256": "ba35db540f90aa1ebc947c1a5b529ee378e9b1237fdc3943a3aaad7aab817d79",
+      "run": "runs/relic-walk-isaac-check-20261009-001/walk015",
+      "velocity_violations": [
+        {
+          "joint": "fl_hy",
+          "limit_rad_s": 4.0,
+          "velocity_rad_s": -4.472780704498291
+        }
+      ],
+      "walking_completed": false
+    },
+    {
+      "cell": "MuJoCo .15 no-slip10",
+      "completion_sha256": "1ffc73fba1c3fec5c4c7a15fbbb6f1e80ae234dbdb22e3c9d2ebc14ed2994625",
+      "duration_s": 3.765,
+      "failure": "measured joint velocity or load limit",
+      "final_speed_m_s": 0.01709117831555214,
+      "forward_m": 0.24894907406219377,
+      "hardware_access": false,
+      "max_raw_action_error": 7.152557373046875e-07,
+      "reason": "guard_stop",
+      "result_sha256": "19acfe89742a287c188e8f462b103ce59304b9154af8b5f2aad6781271413791",
+      "run": "runs/relic-walk-isaac-check-20261009-001/mujoco015-guardstate",
+      "velocity_violations": [
+        {
+          "joint": "fr_kn",
+          "limit_rad_s": 8.0,
+          "velocity_rad_s": -8.681395530700684
+        }
+      ],
+      "walking_completed": false
+    }
+  ],
+  "decision": "Physical walking not started: no measured-distance completion under existing guards",
+  "gains_unchanged": true,
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "hypothesis": "Nonzero commands produce measured forward travel followed by stable stopping",
+  "initial_height_m": 0.5231641656329914,
+  "initial_pose_source": "successful physical standing trial; simulation initializes captured joints/orientation and zero velocity",
+  "leg_kd": 1.5,
+  "leg_kp": 60,
+  "plan": {
+    "acceleration_m_s2": 0.1,
+    "distance_m": 0.75,
+    "final_hold_s": 1.0,
+    "initial_hold_s": 1.0,
+    "max_duration_s": 20.0,
+    "max_heading_rad": 0.15,
+    "max_lateral_m": 0.1,
+    "max_pose_age_s": 0.02,
+    "max_pose_step_m": 0.025,
+    "max_speed_m_s": 0.1,
+    "stopped_speed_m_s": 0.03,
+    "tolerance_m": 0.02
+  },
+  "question": "Can released ReLIC perform a slow 0.75 m forward move under the existing reviewed guards?",
+  "seed": 101,
+  "simulation_commit": "c55b718c06fa85e7372b3fdfed71160d9c2840b3",
+  "test_commit": "d2ebfa17268f0b94955d5aa3c590115c050f4377",
+  "tests_passed": 434,
+  "weights_and_action_mapping_unchanged": true
+}

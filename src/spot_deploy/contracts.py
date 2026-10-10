@@ -281,6 +281,8 @@ class State(StrictModel):
     odom_quaternion_wxyz: Annotated[list[float], Field(min_length=4, max_length=4)]
     linear_velocity_odom: Annotated[list[float], Field(min_length=3, max_length=3)]
     angular_velocity_odom: Annotated[list[float], Field(min_length=3, max_length=3)]
+    body_position_odom: Annotated[list[float], Field(min_length=3, max_length=3)] | None = None
+    body_pose_robot_time_s: float | None = Field(default=None, ge=0)
     last_command_key: int = Field(ge=0)
     last_command_received_robot_s: float = Field(ge=0)
 

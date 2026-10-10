@@ -16,7 +16,7 @@ from .safety import Schedule, bounded_join, percentiles
 def stand(reader, control, policy, envelope, duration, record, encode, interlock=None):
     core = ReLICRollout(policy, envelope, record)
     stop, emitted, lock = threading.Event(), threading.Event(), threading.Lock()
-    shared = dict(error=None, health_at=None, active=False, last_emit=None)
+    shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False)
     gaps, acknowledgements = [], []
     worker = None
 
@@ -127,6 +127,9 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                         shared["last_emit"] = finished
                     yield encode(command, policy.manifest, envelope)
                     emitted.set()
+                    if core.motion and core.motion.completed:
+                        with lock:
+                            shared['motion_done'] = True
                     stop.wait(schedule.advance(time.monotonic()))
             except BaseException as exc:
                 if not isinstance(exc, GeneratorExit):
@@ -155,12 +158,18 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             check_error()
             with lock:
                 last_emit = shared["last_emit"]
+                motion_done = shared['motion_done']
+            if motion_done:
+                break
             if last_emit is None or time.monotonic() - last_emit > envelope.max_command_gap_s:
                 raise ContractError("ReLIC command producer stalled")
             stop.wait(min(.005, envelope.max_command_gap_s / 3))
         check_error()
         if core.phase != "policy" or core.policy_samples < 1:
             raise ContractError("standing trial ended before ReLIC handover")
+        if core.motion and not core.motion.completed:
+            raise ContractError('walking distance not reached and settled before timeout')
+        active_duration = time.monotonic() - start
     except BaseException as exc:
         primary_error = exc
         record.event("first_failure", error_type=type(exc).__name__,
@@ -194,4 +203,5 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                 policy_samples=core.policy_samples, command_gap_s=percentiles(gaps),
                 command_ack_s=percentiles(acknowledgements), shutdown_confirmed=True,
                 shutdown=shutdown,
-                phase="stopped", duration_s=duration)
+                phase="stopped", duration_s=active_duration if core.motion else duration,
+                walking=core.motion.progress if core.motion else None)

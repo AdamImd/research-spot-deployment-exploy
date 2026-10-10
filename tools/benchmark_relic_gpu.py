@@ -152,7 +152,11 @@ def run(args):
             logical_t = release - epoch
             source_index = min(round(logical_t / .005), len(states) - 1)
             state = State.model_validate(states[source_index][1])
+            pose_offset = (state.body_pose_robot_time_s - state.robot_time_s
+                           if state.body_pose_robot_time_s is not None else None)
             state.robot_time_s, state.received_monotonic_s = 1000 + logical_t, 10 + logical_t
+            if pose_offset is not None:
+                state.body_pose_robot_time_s = state.robot_time_s + pose_offset
             state.last_command_key = command.key
             state.last_command_received_robot_s = state.robot_time_s
             state_at = time.monotonic()
@@ -234,7 +238,8 @@ def audit_exploy(policy, frames, checkpoint, directory, manifest_path, height):
     for frame in frames:
         obs = np.asarray(frame["observations"], dtype=np.float32)
         expected = reference.session.run(["actions"], {"obs": obs[None]})[0][0]
-        _, _, actual_obs, action = policy.evaluate(State.model_validate(frame["state"]), obs[-12:])
+        _, _, actual_obs, action = policy.evaluate(State.model_validate(frame["state"]), obs[-12:],
+                                                  velocity_command=frame.get('velocity_command'))
         np.testing.assert_allclose(actual_obs[0], obs, rtol=0, atol=1e-5)
         largest = max(largest, float(np.max(np.abs(expected - action))))
     if largest > 1e-4:

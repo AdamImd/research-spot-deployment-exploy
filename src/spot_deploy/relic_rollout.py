@@ -29,6 +29,13 @@ class ReLICRollout:
         self.phase = "uninitialized"
         self.policy_samples = 0
         self.last_arm_motion_observation = None
+        self.motion = None
+        if self.manifest.task == 'walking':
+            from .walking import ForwardTravel
+            self.motion = ForwardTravel(self.manifest.walking, record)
+            if self.manifest.walking.max_duration_s > envelope.max_duration_s:
+                raise ContractError('walking timeout exceeds reviewed envelope')
+        self.velocity_command = None
 
     def initialize(self, state, height, now, robot_now):
         if self.initial is not None:
@@ -43,6 +50,8 @@ class ReLICRollout:
                          else DEFAULT_Q.astype(float).copy())
         self.endpoint[12:] = self.manifest.arm_stowed_positions
         self.phase = "supported_hold"
+        if self.motion:
+            self.motion.latch(state)
         self.record.event("relic_initialized", state=state.model_dump(), height=height,
                           requested_height_m=self.policy.body_height,
                           previous_actions=self.previous.tolist(), endpoint=self.endpoint.tolist())
@@ -55,6 +64,8 @@ class ReLICRollout:
         if self.initial is None or self.active_at is not None or not np.isfinite(now):
             raise ContractError("invalid or repeated ReLIC activation")
         self.active_at = now
+        if self.motion:
+            self.motion.activate(now)
         self.phase = "direct_handover" if self.spec.kind == "direct" else "preparation"
         self.record.event("relic_phase", phase=self.phase, monotonic_s=now)
 
@@ -62,6 +73,8 @@ class ReLICRollout:
         if self.initial is None:
             raise ContractError("rollout was not initialized")
         self.guard.check_state(state, now, robot_now)
+        if self.motion and self.active_at is not None:
+            self.velocity_command = self.motion.update(state, now)
         observation = self.guard.arm_motion_observation
         if observation is not None and observation != self.last_arm_motion_observation:
             self.record.event('arm_motion_observation', **observation,
@@ -104,7 +117,11 @@ class ReLICRollout:
                 self.next_policy_at = now
             new_action = None
             if now + 1e-10 >= self.next_policy_at and self.pending is None:
-                target, inference_s, obs, action = self.policy.evaluate(state, self.previous)
+                if self.motion:
+                    target, inference_s, obs, action = self.policy.evaluate(
+                        state, self.previous, velocity_command=self.velocity_command)
+                else:
+                    target, inference_s, obs, action = self.policy.evaluate(state, self.previous)
                 if inference_s > self.envelope.max_inference_s:
                     raise ContractError("ReLIC inference deadline exceeded")
                 self.target, self.inference_s = target.copy(), inference_s
@@ -118,7 +135,8 @@ class ReLICRollout:
                 new_action = action.copy()
                 self.record.event("policy", state=state.model_dump(), observations=obs[0].tolist(),
                                   raw_actions=action.tolist(), targets=target.tolist(),
-                                  inference_s=inference_s, monotonic_s=now)
+                                  inference_s=inference_s, monotonic_s=now,
+                                  velocity_command=self.velocity_command or [0., 0., 0.])
             target = self.target
             feedforward = np.zeros(19)
             policy_at, inference_s = self.policy_at, self.inference_s

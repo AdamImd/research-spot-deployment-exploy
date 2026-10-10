@@ -48,6 +48,11 @@ def decode_state(message, received=None):
         odom_quaternion_wxyz=[quat.w, quat.x, quat.y, quat.z],
         linear_velocity_odom=[lin.x, lin.y, lin.z],
         angular_velocity_odom=[ang.x, ang.y, ang.z],
+        body_position_odom=([kin.odom_tform_body.position.x, kin.odom_tform_body.position.y,
+                             kin.odom_tform_body.position.z]
+                           if kin.odom_tform_body.HasField('position') else None),
+        body_pose_robot_time_s=(seconds(kin.acquisition_timestamp)
+                               if kin.HasField('acquisition_timestamp') else None),
         last_command_key=message.last_command.user_command_key,
         last_command_received_robot_s=seconds(message.last_command.received_timestamp),
     )
@@ -75,6 +80,8 @@ def decode_full_state(message, received=None):
         odom_quaternion_wxyz=[quat.w, quat.x, quat.y, quat.z],
         linear_velocity_odom=[lin.x, lin.y, lin.z],
         angular_velocity_odom=[ang.x, ang.y, ang.z],
+        body_position_odom=[pose.x, pose.y, pose.z],
+        body_pose_robot_time_s=seconds(kin.acquisition_timestamp),
         # Unary measured-state telemetry does not provide joint-command acknowledgements.
         last_command_key=0,
         last_command_received_robot_s=0,

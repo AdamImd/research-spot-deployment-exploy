@@ -15,7 +15,7 @@ from .contracts import (
     artifact_path, check_artifacts, load, sha256,
 )
 from .exploy_policy import ExployReLICManifest
-from .readiness import GATES, HARDWARE_DESCRIPTION, HARDWARE_GATE, report
+from .readiness import GATES, HARDWARE_DESCRIPTION, HARDWARE_GATE, WALKING_GATES, report
 from .records import atomic_json, runtime_packages, source_identity, verify_run
 from .relic_contract import load_manifest, make_policy
 from .safety import Guard
@@ -114,7 +114,10 @@ def review_text(manifest):
         "artifacts with matching hashes, named reviewers and timezone-aware validity dates",
         "using schemas/EvidenceIndex.json. No gate is passed by creating this bundle.", "",
     ]
-    for name, description in {**GATES, HARDWARE_GATE: HARDWARE_DESCRIPTION}.items():
+    gates = {**GATES, HARDWARE_GATE: HARDWARE_DESCRIPTION}
+    if manifest.task == "walking":
+        gates.update(WALKING_GATES)
+    for name, description in gates.items():
         lines.append(f"- `{name}`: {description}. Status: UNVERIFIED; reviewer/artifact: pending.")
     lines += [
         "", "For estop_authority=tablet, the hardware_estop evidence gate covers the",
@@ -132,11 +135,12 @@ def review_text(manifest):
     return "\n".join(lines) + "\n"
 
 
-def command_templates(directory):
+def command_templates(directory, task="standing"):
     base = directory.resolve()
     inputs = ["--manifest", str(base / "policy/manifest.json"),
               "--envelope", str(base / "envelope.json"), "--robot", str(base / "robot.json")]
     prefix = ["uv", "run", "--no-sync", "spot-deploy"]
+    action = "walk" if task == "walking" else "stand"
     return {
         "note": "Argument templates only. Replace uppercase placeholders; run from the repository root.",
         "preflight": prefix + ["preflight", "--manifest", str(base / "policy/manifest.json"),
@@ -145,10 +149,10 @@ def command_templates(directory):
                             "--output", "NEW_SHADOW_RUN"],
         "readiness": prefix + ["readiness", *inputs, "--evidence", str(base / "evidence.json"),
                                "--output", "NEW_READINESS_RUN"],
-        "stand_requires_explicit_execution": prefix + ["stand", *inputs,
+        f"{action}_requires_explicit_execution": prefix + [action, *inputs,
             "--evidence", str(base / "evidence.json"), "--operator", "ROBOT_OPERATOR",
             "--safety-operator", "INDEPENDENT_ESTOP_OPERATOR", "--duration",
-            "REVIEWED_DURATION_SECONDS", "--output", "NEW_STAND_RUN"],
+            "REVIEWED_DURATION_SECONDS", "--output", f"NEW_{action.upper()}_RUN"],
     }
 
 
@@ -180,7 +184,7 @@ def prepare(manifest_path, robot_path, envelope_path, record):
         shutil.copy2(envelope_path, base / "envelope.json")
     atomic_json(base / "envelope.review.json", review_template(manifest))
     atomic_json(base / "evidence.json", {"schema_version": 1, "evidence": []})
-    atomic_json(base / "commands.json", command_templates(base))
+    atomic_json(base / "commands.json", command_templates(base, manifest.task))
     (base / "REVIEW.md").write_text(review_text(manifest))
     bundle = DeploymentBundle(schema_version=1, manifest_file="policy/manifest.json",
         source_commit=source["commit"], source_sha256=source["source_sha256"],
