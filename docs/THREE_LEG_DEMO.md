@@ -77,6 +77,17 @@ advances dynamics. Labels preserve a source guard stop or failure. COMPLETE.json
 binds the source recording, rendered files, frame count and tool hash. Compact
 recording includes demo_prediction and requested leg commands.
 
+Replay restores every authored OBJ material group as a separate MSH asset,
+including black plastic and the original yellow-wrap texture, with original
+normals, UV coordinates and visual transforms. The ordinary MuJoCo OBJ import
+kept only one material subset (body: 26,748 of 33,207 faces), leaving holes;
+its gold fallback color also discarded the original materials. A face-count
+check now rejects incomplete imports. visuals/visual-manifest.json records
+source/material/texture hashes and links without authored visual geometry.
+The replay model is a separate copy: simulation conversion, collisions, joint
+frames, inertials and policy behavior are unchanged. Visual-only regression
+checks compare those fields and articulated poses against the canonical model.
+
 ## Remaining physical preparation
 
 The 2026-10-09 commissioning comparison stopped at mode activation in both

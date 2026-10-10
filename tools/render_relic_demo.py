@@ -14,6 +14,7 @@ import numpy as np
 
 from spot_deploy.contracts import JOINTS, sha256
 from spot_deploy.records import atomic_json, verify_run
+from spot_deploy.replay_visuals import restore_visuals, validate_visual_faces
 
 
 def plots(rows, config, result, output):
@@ -63,7 +64,11 @@ def video(rows,config,result,source,output,fps):
     from PIL import Image,ImageDraw,ImageFont
     sys.path.insert(0,str(source.resolve()))
     from spot_relic_sim.mujoco_backend import convert_model
-    model=mj.MjModel.from_xml_path(str(convert_model(output/'model')))
+    from spot_relic_sim.contract import ASSET
+    canonical=convert_model(output/'model')
+    restored=restore_visuals(canonical, ASSET/'spot_with_arm.urdf', output/'visuals')
+    model=mj.MjModel.from_xml_path(str(restored))
+    validate_visual_faces(model, output/'visuals/visual-manifest.json')
     floor=mj.mj_name2id(model,mj.mjtObj.mjOBJ_GEOM,'floor')
     for i in range(model.ngeom):
         if model.geom_contype[i] and i!=floor:
@@ -147,6 +152,10 @@ def main():
         recorded_duration_s=rows[-1]['trial_time'],source_reason=result['reason'],
         source_complete_sha256=sha256(args.run/'COMPLETE.json'),tool_sha256=sha256(Path(__file__)),
         source_trajectory_sha256=sha256(args.run/'rollout.jsonl'),
+        visual_manifest_sha256=sha256(args.output/'visuals/visual-manifest.json'),
+        visual_model_sha256=sha256(args.output/'visuals/replay.xml'),
+        visual_restoration_tool_sha256=sha256(Path(__file__).resolve().parents[1]
+                                             /'src/spot_deploy/replay_visuals.py'),
         new_dynamics=False,hardware_access=False,
         artifacts={p.name:sha256(p) for p in args.output.glob('*') if p.is_file()}))
     print(json.dumps(dict(output=str(args.output),frames=count,source_reason=result['reason'])))
