@@ -26,6 +26,8 @@ Spot; Minghao holds the manufacturer tablet E-stop. No local E-stop is started.
 | Final stationary hold | 1 s |
 | Maximum measured speed during final hold | 0.03 m/s |
 | Maximum policy-active duration | 20 s |
+| Progress stall window | 5 s |
+| Required progress per stall window | 0.005 m |
 
 Native standing precedes policy activation. Capture initial height and the robot
 odom/body pose, start previous raw actions at zero, and activate directly without
@@ -50,7 +52,10 @@ bounded acceleration. At the distance tolerance request zero immediately.
 Require measured planar velocity below 0.03 m/s for one continuous second before
 success. Continued motion resets that hold. No elapsed-time distance estimate or
 reverse correction is used. Missing/stale/replayed/backwards pose timestamps,
-odometry jumps, excessive drift, overshoot or timeout stop the trial.
+odometry jumps, excessive drift, overshoot or timeout stop the trial. A forward
+request of at least half the maximum speed (capped at 0.05 m/s) must produce
+0.005 m of measured progress within five seconds; otherwise stop with a recorded
+`walk_stall`. This detects a stationary policy before the total distance timeout.
 
 Retain all numeric joint/load/body/timing guards. The existing explicit harness
 arm-observation exception retains held arm targets and measured/predicted torque

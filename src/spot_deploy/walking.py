@@ -22,6 +22,8 @@ class WalkingPlan(StrictModel):
     final_hold_s: float = Field(ge=.5, le=3)
     stopped_speed_m_s: float = Field(gt=0, le=.04)
     max_duration_s: float = Field(gt=0, le=30)
+    stall_timeout_s: float = Field(default=5., ge=2, le=10)
+    min_progress_m: float = Field(default=.005, gt=0, le=.02)
 
     @model_validator(mode='after')
     def feasible(self):
@@ -43,6 +45,7 @@ class ForwardTravel:
         self.completed = False
         self.progress = None
         self.last_recorded = -math.inf
+        self.progress_anchor = self.progress_at = None
 
     def pose(self, state):
         p, stamp = state.body_position_odom, state.body_pose_robot_time_s
@@ -119,6 +122,16 @@ class ForwardTravel:
         else:
             step = self.plan.acceleration_m_s2 * dt
             self.velocity += float(np.clip(desired - self.velocity, -step, step))
+        if self.phase == 'forward' and self.velocity >= min(.05, self.plan.max_speed_m_s/2):
+            if self.progress_at is None or x >= self.progress_anchor + self.plan.min_progress_m:
+                self.progress_anchor, self.progress_at = float(x), now
+            elif now - self.progress_at > self.plan.stall_timeout_s:
+                self.record.event('walk_stall', forward_m=float(x),
+                    requested_forward_m_s=self.velocity, elapsed_without_progress_s=now-self.progress_at,
+                    min_progress_m=self.plan.min_progress_m)
+                raise ContractError('walking progress stalled')
+        else:
+            self.progress_anchor = self.progress_at = None
         self.last_at = now
         self.progress = dict(phase=self.phase, forward_m=float(x), lateral_m=float(y),
             heading_error_rad=heading, remaining_m=float(remaining), speed_m_s=speed,

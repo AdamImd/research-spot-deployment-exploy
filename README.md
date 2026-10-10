@@ -15,6 +15,8 @@ controller is outside this implementation.
 
 Explicitly requested forward travel uses the [distance-based walking protocol](docs/WALKING.md).
 Standing remains the default; walking requires its own manifest, plan and evidence.
+Prepare a simulated [front-left lift/hold/return demo](docs/THREE_LEG_DEMO.md)
+with the original actor, unchanged gains and recorded visual-mesh replay.
 
 For a supervised hardware trial, start with [deployment preparation](docs/DEPLOYMENT.md).
 `prepare-deployment` creates a local candidate bundle and hardware-limit review template;

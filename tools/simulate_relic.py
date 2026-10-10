@@ -20,6 +20,7 @@ from spot_deploy.records import atomic_json, runtime_packages, verify_run
 from spot_deploy.relic_contract import load_manifest, make_policy
 from spot_deploy.relic_policy import ROOT_COM_B
 from spot_deploy.relic_rollout import ReLICRollout
+from spot_deploy.simulation_demo import ThreeLegPlan, SimulationThreeLegPolicy, demo_metrics
 
 
 class Log:
@@ -73,6 +74,14 @@ def run(args):
         raise ValueError("duration must include preparation and remain within envelope")
     policy = make_policy(check_artifacts(args.manifest, manifest), manifest, args.manifest,
                          device=args.policy_device)
+    demo = None
+    if getattr(args, 'three_leg_plan', None):
+        plan = load(args.three_leg_plan, ThreeLegPlan)
+        if plan.duration_s > args.duration:
+            raise ValueError('simulation duration cannot end before the three-leg sequence')
+        demo = SimulationThreeLegPolicy(policy,
+            args.simulation_source/'source/relic/relic/assets/spot/pretrained/policy.onnx',plan)
+        policy = demo
     prewarm_times = []
     for _ in range(args.prewarm_inference):
         began = time.monotonic()
@@ -126,6 +135,10 @@ def run(args):
                       seed=101, hardware_access=False, manifest=manifest.model_dump(),
                       envelope=envelope.model_dump(),
                       initial_state="captured physical standing state; zero simulated velocity",
+                      demonstration=demo.sequence.plan.model_dump() if demo else None,
+                      policy_execution=('released raw actor with native selected-leg override'
+                                        if demo else 'bound deployment adapter'),
+                      baseline_manifest_used_for_numeric_guards_only=bool(demo),
                       stock_stand_simulated=False, acknowledgements="ideal, one command tick later",
                       physics_actuators="released simulated effort saturation; hardware equivalence unverified")
         atomic_json(args.output / "configuration.json", config)
@@ -150,6 +163,11 @@ def run(args):
                 state, sim = sdk_state(backend, t, key)
                 began = time.monotonic()
                 count = core.policy_samples
+                if demo:
+                    previous_phase = demo.sequence.phase
+                    demo.update(state,t)
+                    if demo.sequence.phase != previous_phase:
+                        log.event('demo_phase',phase=demo.sequence.phase,simulation_time_s=t)
                 try:
                     command = core.command(state, 10 + t, 1000 + t)
                 except ContractError as exc:
@@ -162,6 +180,14 @@ def run(args):
                 if core.policy_samples != count:
                     recorded = log.last_policy
                     ref_command.velocity = np.asarray(recorded['velocity_command'], dtype=np.float32)
+                    if demo:
+                        ref_command.leg = demo.sequence.leg
+                        ref_command.leg_pose = demo.sequence.pose.copy()
+                        recorded['leg_command'] = demo.command.tolist()
+                        log.event('demo_prediction',simulation_time_s=t,
+                                  phase=demo.sequence.phase,leg_command=demo.command.tolist(),
+                                  targets=recorded['targets'], raw_actions=recorded['raw_actions'],
+                                  state=state.model_dump())
                     obs = backend.contract.observation(sim, ref_command,
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
@@ -178,6 +204,8 @@ def run(args):
                 row = dict(time=max(0., t - envelope.transition_s), trial_time=t, phase=core.phase,
                            height=float(sim["position"][2]),
                            tilt=float(np.arccos(np.clip(-sim["gravity"][2], -1, 1))),
+                           demo_phase=demo.sequence.phase if demo else None,
+                           leg_command=demo.command.tolist() if demo else None,
                            root_quaternion_wxyz=state.odom_quaternion_wxyz,
                            preceding_applied_torque_Nm=state.loads,
                            pd_torque_Nm=(np.asarray(manifest.gains.kp)
@@ -237,8 +265,14 @@ def run(args):
                               for k in ("state_s", "core_s", "parity_s", "recording_s", "physics_s", "total_s")}
                              if timing_rows else {},
                       hardware_qualified=False, hardware_access=False,
+                      three_leg_demo=demo_metrics(rows,demo.sequence.plan) if demo and rows else None,
                       walking_completed=core.motion.completed if core.motion else None,
                       walking=core.motion.progress if core.motion else None)
+        if demo and result['three_leg_demo']:
+            result['three_leg_demo']['passed'] = bool(reason == 'completed'
+                and result['stable_final_window']
+                and result['three_leg_demo']['pose_sequence_finished']
+                and result['three_leg_demo']['clearance_proxy_passed'])
         atomic_json(args.output / "result.json", result)
         return result
     finally:
@@ -261,6 +295,8 @@ def main():
                         help="Discard zero-input inferences before activation; history stays zero")
     parser.add_argument("--mujoco-noslip-iterations", type=int, choices=[0, 10], default=0,
                         help="Explicit friction-drift diagnostic; default preserves the baseline")
+    parser.add_argument('--three-leg-plan',type=Path,
+                        help='Offline-only raw actor front-left lift/hold/return; never a live manifest')
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     if args.backend == "mujoco" and args.physics_device != "cpu":

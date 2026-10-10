@@ -15,7 +15,7 @@ from spot_deploy.contracts import JOINTS, State, sha256
 from spot_deploy.records import atomic_json, source_identity, utcnow
 
 MAX_LINE = 256_000
-PREDICTIONS = {"policy", "shadow_sample", "replay_sample"}
+PREDICTIONS = {"policy", "shadow_sample", "replay_sample", "demo_prediction"}
 FIELDS = {
     "command": ("key", "positions", "feedforward", "end_robot_time_s", "phase"),
     "policy_ack": ("command_key", "state_key", "raw_actions"),
@@ -36,10 +36,12 @@ FIELDS = {
                       'speed_m_s', 'requested_forward_m_s', 'odom_position_m', 'robot_time_s'),
     'shutdown_result': ('motors_off_confirmed', 'lease_returned', 'elapsed_s', 'errors',
                         'within_shutdown_budget', 'motor_power_state'),
+    "demo_phase": ("phase",),
+    "walk_stall": ("forward_m", "requested_forward_m_s", "elapsed_without_progress_s", "min_progress_m"),
     "shadow_wait": ("reason", "robot_time_s", "state_age_s", "receive_age_s", "skipped_state_ticks"),
 }
 for _kind in PREDICTIONS:
-    FIELDS[_kind] = ("targets", "raw_actions", "inference_s", 'velocity_command')
+    FIELDS[_kind] = ("targets", "raw_actions", "inference_s", 'velocity_command', 'leg_command', 'phase')
 TIMES = ("time", "monotonic_s", "simulation_time_s")
 
 
