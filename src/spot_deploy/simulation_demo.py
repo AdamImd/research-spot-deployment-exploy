@@ -87,6 +87,7 @@ class SimulationThreeLegPolicy:
             raise ContractError('three-leg demo requires the standing baseline, not a walking task')
         self.baseline = baseline
         self.actor = ReLICPolicy(checkpoint)
+        self.runner = self.actor  # Simulator provenance records the actual inference provider.
         self.sequence = ThreeLegSequence(plan)
         self.manifest, self.support = baseline.manifest, baseline.support
         self.command = np.zeros(12, dtype=np.float32)

@@ -51,6 +51,7 @@ def test_selected_leg_observation_override_history_and_other_joints_match_refere
     base=make_policy(check_artifacts(path,manifest),manifest,path)
     policy=SimulationThreeLegPolicy(base,
         ROOT/'simulation/source/relic/relic/assets/spot/pretrained/policy.onnx',plan)
+    assert policy.runner.session is policy.actor.session
     policy.initialize_height({'height_m':.52,'foot_contacts':[1]*4})
     state.positions=DEFAULT_Q.astype(float).tolist()
     previous=np.zeros(12,np.float32)
