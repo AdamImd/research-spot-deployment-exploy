@@ -92,3 +92,27 @@ investigated; do not widen hardware limits to pass it.
 `walk_origin`, 20 Hz `walk_progress`, per-policy velocity commands and timestamped
 odom/body positions are included in raw and compact robot/action recordings.
 Use `tools/record_rollout.py` after the run to create the gzip JSONL artifact.
+
+## Offline onset diagnostics
+
+`tools/analyze_relic_walk.py` separates measured body travel from world-frame
+foot displacement and identifies motion before the first nonzero velocity
+request. Foot clearance/displacement are geometric stepping proxies; neither
+proves loaded support or independently validates robot odometry. The report
+compares simulator joint speed with position-derived speed, and plots issued
+targets, requested PD torque and the preceding applied torque. An exact rejected
+state is shown separately from the last accepted physics tick.
+
+```bash
+uv sync --locked --group simulation --group visualization
+uv run --no-sync python tools/analyze_relic_walk.py \
+  --run runs/walking-001 --output runs/walking-onset-analysis-001
+```
+
+The tool verifies recording integrity before analysis and creates diagnostics.json,
+walking-overview.png/pdf, walking-onset.png/pdf and hash-bound COMPLETE.json.
+It cannot construct a robot client or change controller output. When comparing
+initial zero-velocity hold duration, retain direct policy startup and zero raw
+history: delaying the base-velocity request is distinct from fading joint targets.
+Keep new manifests/protocols frozen separately; a diagnostic comparison does not
+replace the physical walking plan or its qualification evidence.
