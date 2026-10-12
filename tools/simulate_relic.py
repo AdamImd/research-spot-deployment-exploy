@@ -107,7 +107,12 @@ def run(args):
             backend = IsaacBackend(args.output / "model", scenario,
                                    device=args.physics_device, headless=True)
         initialize_captured(backend, initial, height["height_m"], nominal_arm=False)
-        core = ReLICRollout(policy, envelope, log)
+        unguarded = getattr(args, 'no_guards', False)
+        if unguarded:
+            from spot_deploy.simulation_diagnostic import SimulationDiagnosticRollout
+            core = SimulationDiagnosticRollout(policy, envelope, log)
+        else:
+            core = ReLICRollout(policy, envelope, log)
         state, _ = sdk_state(backend, 0., 0)
         # The already-standing capture substitutes for stock stand. A supported
         # command is accepted before activation; no physics advances in this handshake.
@@ -122,6 +127,7 @@ def run(args):
         ref_command = SimCommand(arm=np.asarray(manifest.arm_stowed_positions, dtype=np.float32),
                                 torso=np.array([0., 0., policy.body_height], dtype=np.float32))
         rows, reason, failure = [], "completed", None
+        first_fall_s = None
         max_obs_error = max_action_error = max_target_error = 0.
         compute_times = []
         config = dict(backend=args.backend, duration_s=args.duration, preparation_s=envelope.transition_s,
@@ -132,6 +138,7 @@ def run(args):
                       policy_hz=manifest.policy_hz, command_hz=manifest.stream_hz,
                       mujoco_noslip_iterations=args.mujoco_noslip_iterations,
                       simulation_joint_names=list(backend.contract.names),
+                      guard_mode=('disabled-simulation-diagnostic' if unguarded else 'enforced'),
                       seed=101, hardware_access=False, manifest=manifest.model_dump(),
                       envelope=envelope.model_dump(),
                       initial_state="captured physical standing state; zero simulated velocity",
@@ -171,7 +178,7 @@ def run(args):
                 try:
                     command = core.command(state, 10 + t, 1000 + t)
                 except ContractError as exc:
-                    reason, failure = "guard_stop", str(exc)
+                    reason, failure = ("integrity_stop" if unguarded else "guard_stop"), str(exc)
                     log.event("first_failure", reason=failure, simulation_time_s=t,
                               state=state.model_dump())
                     break
@@ -221,7 +228,12 @@ def run(args):
                           state=state.model_dump(), simulation_time_s=t,
                           end_robot_time_s=command.end_robot_time_s)
                 recorded_at = time.monotonic()
-                terminal = row["height"] < .25 or row["tilt"] > .9
+                fall = row["height"] < .25 or row["tilt"] > .9
+                if fall and first_fall_s is None:
+                    first_fall_s = t
+                    log.event('first_fall_proxy', simulation_time_s=t,
+                              height_m=row['height'], tilt_rad=row['tilt'])
+                terminal = fall and not unguarded
                 if terminal:
                     reason = "fall"
                 # Equivalent PD+feedforward before the same simulated saturation;
@@ -266,6 +278,7 @@ def run(args):
                              if timing_rows else {},
                       hardware_qualified=False, hardware_access=False,
                       three_leg_demo=demo_metrics(rows,demo.sequence.plan) if demo and rows else None,
+                      guard_mode=config['guard_mode'], first_fall_proxy_s=first_fall_s,
                       walking_completed=core.motion.completed if core.motion else None,
                       walking=core.motion.progress if core.motion else None)
         if demo and result['three_leg_demo']:
@@ -273,6 +286,9 @@ def run(args):
                 and result['stable_final_window']
                 and result['three_leg_demo']['pose_sequence_finished']
                 and result['three_leg_demo']['clearance_proxy_passed'])
+        if unguarded and rows:
+            from spot_deploy.simulation_diagnostic import demand_summary
+            result['demands'] = demand_summary(rows, config)
         atomic_json(args.output / "result.json", result)
         return result
     finally:
@@ -297,6 +313,9 @@ def main():
                         help="Explicit friction-drift diagnostic; default preserves the baseline")
     parser.add_argument('--three-leg-plan',type=Path,
                         help='Offline-only raw actor front-left lift/hold/return; never a live manifest')
+    parser.add_argument('--no-guards', action='store_true',
+                        help='Simulation-only diagnostic: disable operating stops, continue after falls; '
+                             'retain physical saturation and integrity checks. Never qualifies hardware.')
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     if args.backend == "mujoco" and args.physics_device != "cpu":

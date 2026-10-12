@@ -100,3 +100,29 @@ specialization. [Operator runbook](docs/OPERATIONS.md).
 Contributions use branches and pull requests; see [CONTRIBUTING.md](CONTRIBUTING.md).
 ReLIC source, models and derived graphs retain the **RAI Institute Research License
 (non-commercial research)**. See [third-party notices](THIRD_PARTY_NOTICES.md).
+
+### Unguarded simulation diagnostic
+
+`tools/simulate_relic.py --no-guards` explicitly disables software operating-envelope,
+handover, inference-deadline and walking-monitor stops **in simulation only**.
+Use a direct-start manifest and an envelope whose `scope` is `simulation`.
+The fixed recording horizon continues after the fall proxy (body height below
+0.25 m or tilt above 0.9 rad), without changing weights, gains, action history,
+walking request law, simulated actuator saturation or model joint constraints.
+Finite-data, artifact/parity, held-arm and ACK integrity checks remain active.
+There is no such flag on the hardware CLI. The original hardware envelope is
+unchanged. `result.json.demands` reports per-joint speed, tracking offset,
+requested PD torque, preceding applied torque, target slew and joint/target ranges,
+with peak times and reference-bound exceedances. Peaks before the first fall
+are separate from all samples. These are observed demands, not safe hardware limits;
+completion means the recording horizon finished, not that walking succeeded.
+
+Example (private frozen standing capture and candidate required):
+
+```bash
+uv run --no-sync python tools/simulate_relic.py \
+  --simulation-source simulation --capture /absolute/path/to/capture \
+  --manifest /absolute/path/to/direct-walking/manifest.json \
+  --envelope /absolute/path/to/simulation-envelope.json \
+  --backend mujoco --duration 60 --no-guards --output runs/unguarded-diagnostic
+```
