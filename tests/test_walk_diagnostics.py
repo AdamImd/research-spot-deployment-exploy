@@ -63,3 +63,22 @@ def test_unordered_times_and_missing_joint_names_are_rejected():
     config['simulation_joint_names'][0] = 'unknown'
     with pytest.raises(ContractError, match='named joint'):
         summarize(rows, config, events)
+
+
+def test_tracking_failure_selects_rejected_target_and_reports_pd_offset():
+    rows, config, events = inputs()
+    joint = JOINTS.index('fl_hy')
+    config['manifest']['gains'] = dict(kp=[60.]*19, kd=[1.5]*19)
+    config['envelope']['tracking_error_max'] = [.4]*19
+    events[-2]['targets'] = [0.]*19
+    events[-2]['targets'][joint] = .7277
+    failure = events[-1]
+    failure['reason'] = 'command tracking error limit'
+    failure['state']['positions'][joint] = 1.13
+    failure['state']['velocities'] = [0.]*19
+    report, _, _, _ = summarize(rows, config, events)
+    assert report['selected_joint'] == 'fl_hy'
+    violation = report['first_failure']['tracking_violations'][0]
+    assert violation['error_rad'] == pytest.approx(-.4023)
+    assert violation['predicted_pd_torque_Nm'] == pytest.approx(-24.138)
+    assert 'not issued' in report['first_failure']['target_source']

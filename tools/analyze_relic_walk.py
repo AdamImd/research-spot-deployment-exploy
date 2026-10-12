@@ -41,7 +41,7 @@ def plots(report, data, events, origin, failure, config, output):
         if report['first_nonzero_velocity_request_s'] is not None:
             ax.axvline(report['first_nonzero_velocity_request_s'], color='gray', linestyle=':')
     axes[1, 0].legend(ncol=4)
-    axes[1, 1].legend(ncol=3)
+    axes[1, 1].legend(ncol=3, loc='lower left', bbox_to_anchor=(0, 1.02), fontsize=8)
     for ax in axes[1]:
         ax.set_xlabel('Recorded simulation time (s)')
     figure.suptitle(f"Walking diagnostics · {config['backend']}\n"
@@ -77,6 +77,14 @@ def plots(report, data, events, origin, failure, config, output):
         state = failure['state']
         axes[0, 0].scatter([end], [state['positions'][j]], color='red', marker='x')
         axes[0, 1].scatter([end], [state['velocities'][j]], color='red', marker='x', label='Exact rejected state')
+        rejected_speed = report['selected_joint_rejected_step_position_derived_speed_rad_s']
+        if rejected_speed is not None:
+            axes[0, 1].scatter([(end+t[-1])/2], [rejected_speed], color='orange', marker='+',
+                               label='Rejected-step position derivative')
+        for violation in report['first_failure']['tracking_violations']:
+            if violation['joint'] == report['selected_joint']:
+                axes[0, 0].scatter([end], [violation['target_rad']], color='orange', marker='x',
+                                   label=report['first_failure']['target_source'])
     for ax in axes.flat[:3]:
         ax.legend(fontsize=8)
     for ax in axes[1]:

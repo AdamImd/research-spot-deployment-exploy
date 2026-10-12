@@ -49,10 +49,27 @@ def summarize(rows, config, events):
         reject = dict(time_s=failure['simulation_time_s'], reason=failure['reason'],
             velocity_violations=[dict(joint=JOINTS[i], velocity_rad_s=velocity,
                                       limit_rad_s=float(limits[i]))
-                for i, velocity in enumerate(state['velocities']) if abs(velocity) > limits[i]])
+                for i, velocity in enumerate(state['velocities'][:12]) if abs(velocity) > limits[i]],
+            tracking_violations=[])
+        issued = [e for e in events if e.get('event') == 'command']
+        target = (policies[-1].get('targets') if failure['reason'].startswith('command ')
+                  and policies else issued[-1].get('positions') if issued else None)
+        if target is not None:
+            error = np.asarray(target)-state['positions']
+            torque = (np.asarray(config['manifest']['gains']['kp'])*error
+                      - np.asarray(config['manifest']['gains']['kd'])*state['velocities'])
+            caps = config['envelope']['tracking_error_max']
+            reject['target_source'] = ('rejected policy prediction, not issued'
+                if failure['reason'].startswith('command ') else 'last issued command')
+            reject['tracking_violations'] = [dict(joint=JOINTS[i], error_rad=float(error[i]),
+                limit_rad=caps[i], target_rad=target[i], measured_rad=state['positions'][i],
+                predicted_pd_torque_Nm=float(torque[i])) for i in range(12) if abs(error[i]) > caps[i]]
     if reject and reject['velocity_violations']:
         selected = max(reject['velocity_violations'],
                        key=lambda v: abs(v['velocity_rad_s'])/v['limit_rad_s'])['joint']
+    elif reject and reject['tracking_violations']:
+        selected = max(reject['tracking_violations'],
+                       key=lambda v: abs(v['error_rad'])/v['limit_rad'])['joint']
     else:
         selected = JOINTS[int(np.argmax(np.max(ratios[:, :12], axis=0)))]
     joint = JOINTS.index(selected)
@@ -67,6 +84,10 @@ def summarize(rows, config, events):
             final_forward_displacement_m=float(data['foot_forward'][-1, i]))
     # Position-derived speed is independent of the simulator's dq field.
     differentiated = np.diff(data['q'][:, joint])/np.diff(data['t'])
+    rejected_speed = None
+    if failure and failure['simulation_time_s'] > data['t'][-1]:
+        rejected_speed = float((failure['state']['positions'][joint]-data['q'][-1, joint])
+                               /(failure['simulation_time_s']-data['t'][-1]))
     report = dict(hardware_access=False, hardware_qualified=False,
         first_nonzero_velocity_request_s=requested_at,
         forward_before_nonzero_request_m=float(data['body_forward'][before[-1]]) if len(before) else 0.,
@@ -76,6 +97,7 @@ def summarize(rows, config, events):
         selected_joint=selected, selected_joint_speed_limit_rad_s=float(limits[joint]),
         selected_joint_max_accepted_speed_rad_s=float(np.abs(data['dq'][:, joint]).max()),
         selected_joint_max_position_derived_speed_rad_s=float(np.abs(differentiated).max()),
+        selected_joint_rejected_step_position_derived_speed_rad_s=rejected_speed,
         selected_joint_peak_requested_pd_torque_Nm=float(np.abs(data['torque'][:, joint]).max()),
         first_failure=reject, accepted_trajectory_end_s=float(data['t'][-1]))
     return report, data, origin, failure
