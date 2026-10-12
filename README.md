@@ -126,3 +126,7 @@ uv run --no-sync python tools/simulate_relic.py \
   --envelope /absolute/path/to/simulation-envelope.json \
   --backend mujoco --duration 60 --no-guards --output runs/unguarded-diagnostic
 ```
+
+The [2026-10-12 diagnostic record](records/relic-unguarded-walk-20261012/README.md)
+compares guarded-prefix parity, two MuJoCo friction settings and Isaac Lab, with
+observed demands and a clear separation between recording completion and gait success.
