@@ -9,7 +9,7 @@ from .contract import Contract, DT, LEGS
 
 
 class IsaacBackend:
-    def __init__(self, output, scenario, device="cpu", headless=True):
+    def __init__(self, output, scenario, device="cpu", headless=True, diagnostics=False):
         self.headless = headless
         self.sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(dt=DT, device=device,
                                               render_interval=4, gravity=(0, 0, -9.81)))
@@ -35,6 +35,11 @@ class IsaacBackend:
             actuator.min_delay = scenario.delay
             actuator.max_delay = scenario.delay
         self.robot = Articulation(cfg)
+        self.contact_sensor = None
+        if diagnostics:
+            from isaaclab.sensors import ContactSensor, ContactSensorCfg
+            self.contact_sensor = ContactSensor(ContactSensorCfg(
+                prim_path='/World/Spot/.*_foot', update_period=0., history_length=0))
         self.sim.reset()
         self.contract = Contract(self.robot.joint_names)
         self.feet = [self.robot.body_names.index(f"{leg}_foot") for leg in LEGS]
@@ -86,6 +91,8 @@ class IsaacBackend:
         if not np.isclose(advance, DT, rtol=0, atol=1e-7):
             raise RuntimeError(f"Unexpected physics advance: {advance:.9f} s; expected {DT} s")
         self.robot.update(DT)
+        if self.contact_sensor is not None:
+            self.contact_sensor.update(DT, force_recompute=True)
 
     def push(self, dvy):
         velocity = self.robot.data.root_vel_w.clone()

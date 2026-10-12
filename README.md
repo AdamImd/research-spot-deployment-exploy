@@ -130,3 +130,37 @@ uv run --no-sync python tools/simulate_relic.py \
 The [2026-10-12 diagnostic record](records/relic-unguarded-walk-20261012/README.md)
 compares guarded-prefix parity, two MuJoCo friction settings and Isaac Lab, with
 observed demands and a clear separation between recording completion and gait success.
+
+### Physics attribution diagnostics
+
+The simulation runner accepts `--physics-diagnostics` to record model properties,
+foot normal forces/velocities, and MuJoCo contact pairs/constraint torques. Isaac
+normal forces are impulse averages over the preceding 5 ms; MuJoCo reports its
+instantaneous solved contact force, so they are not pointwise equivalent.
+`--audit-native-actuators` independently compares 400 Isaac/NumPy actuator cases
+after an Isaac rollout. Defaults preserve existing physics and behavior.
+
+Two explicit offline interventions require `--no-guards`: `--mujoco-substeps 4`
+uses 1.25 ms physics while holding one PD torque/delay update per 5 ms control tick;
+`--initial-height-offset 2` places the same joint pose two metres above the floor,
+retaining the original requested torso height for a short no-floor-contact probe.
+These are attribution experiments, not deployment settings. Normal policy and
+command rates, original gains and physical saturation remain unchanged.
+
+For an audit without repeating physics, use `tools/audit_relic_physics.py` with
+`--simulation-source simulation --output runs/NEW-native-audit` in the existing
+Isaac Python 3.11 overlay. Install its extra packages using UV and
+`configs/native-physics-audit-requirements.lock` (NumPy remains 1.26.4, MuJoCo 3.3.7).
+Auxiliary audit errors preserve the completed rollout's `result.json`; a missing
+COMPLETE or present ERROR still indicates a failed stage, regardless of a Kit
+process returning exit zero during shutdown.
+
+MuJoCo conversion gives generated collision OBJs a `collision__` basename prefix.
+The URDF importer otherwise aliases visual and collision meshes with matching
+basenames (the wrist visual mesh extends about 9 cm beyond its intended collider).
+Source assets and visual meshes stay untouched. A regression checks every compiled
+collision mesh's transformed bounds against the referenced URDF collision vertices.
+
+The [physics attribution record](records/relic-physics-attribution-20261012/README.md)
+isolates ground contact, friction/integration and gripper self-contact, with an
+independent actuator audit and measured impact of the repaired mesh alias.

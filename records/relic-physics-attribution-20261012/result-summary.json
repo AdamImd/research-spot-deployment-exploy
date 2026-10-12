@@ -1,0 +1,452 @@
+{
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "cells": {
+    "MuJoCo baseline": {
+      "recording": "runs/relic-physics-attribution-20261012-001/mujoco-noslip0",
+      "raw_rollout_sha256": "ab552521836103818db8c48e2633bf1b9874a823657e721704f4683881b384eb",
+      "config_sha256": "928a951ed325291ed30e8567c5c31abb3df93eacf0f90fcc4269489edd4ac681",
+      "physics_recording_status": "completed/hash verified",
+      "final_forward_m": 0.24606068503370832,
+      "first_fall_s": 8.995000000000001,
+      "max_leg_speed_rad_s": 26.855897903442383,
+      "peak_requested_leg_PD_Nm": 90.22353869397193,
+      "max_leg_target_gap_rad": 1.503582239151001,
+      "seed": 101,
+      "warmup": 100,
+      "substeps": 1,
+      "noslip_iterations": 0
+    },
+    "MuJoCo no-slip10": {
+      "recording": "runs/relic-physics-attribution-20261012-001/mujoco-noslip10",
+      "raw_rollout_sha256": "4fe8e96904d15b3a98461624928903ee726a3a03b47ce2703ba7300d14435ccf",
+      "config_sha256": "9d794f4d6d0ce9fd84204dcda023767ecfab4c7761e8251a1a638294cb4cf8e4",
+      "physics_recording_status": "completed/hash verified",
+      "final_forward_m": 0.6695557771225631,
+      "first_fall_s": null,
+      "max_leg_speed_rad_s": 16.89576530456543,
+      "peak_requested_leg_PD_Nm": 49.912482568994164,
+      "max_leg_target_gap_rad": 0.8307284116744995,
+      "seed": 101,
+      "warmup": 100,
+      "substeps": 1,
+      "noslip_iterations": 10
+    },
+    "MuJoCo 4 substeps": {
+      "recording": "runs/relic-physics-attribution-20261012-001/mujoco-substeps4",
+      "raw_rollout_sha256": "dcc249376607172a98e77523645914a0467265b4178d313b8c07afe94aaea174",
+      "config_sha256": "4dad2d390a39aaab45dbff3b832f227f29ea7765ed3024fc45832cd020ba10f7",
+      "physics_recording_status": "completed/hash verified",
+      "final_forward_m": 0.4696147722542023,
+      "first_fall_s": 13.505,
+      "max_leg_speed_rad_s": 20.626920700073242,
+      "peak_requested_leg_PD_Nm": 82.2565255057707,
+      "max_leg_target_gap_rad": 1.3710100650787354,
+      "seed": 101,
+      "warmup": 100,
+      "substeps": 4,
+      "noslip_iterations": 0
+    },
+    "Isaac baseline": {
+      "recording": "runs/relic-physics-attribution-20261012-001/isaaclab",
+      "raw_rollout_sha256": "d1ea5d9a4a8e061a44235b339c1596f679a62a82a5860cd159ccaa6e3d06a329",
+      "config_sha256": "7787becbc27ba8d5ad2bec56d110e6fe7e3e84dfa7576cec8aaa278fc7a1576c",
+      "physics_recording_status": "full raw trajectory; auxiliary audit failed",
+      "final_forward_m": 0.6767771280955408,
+      "first_fall_s": null,
+      "max_leg_speed_rad_s": 10.0758056640625,
+      "peak_requested_leg_PD_Nm": 51.26387429237366,
+      "max_leg_target_gap_rad": 0.8454650640487671,
+      "seed": 101,
+      "warmup": 100,
+      "substeps": 1,
+      "noslip_iterations": 0
+    },
+    "MuJoCo mesh fix": {
+      "recording": "runs/relic-physics-mesh-fix-20261012-003/mujoco-noslip0",
+      "raw_rollout_sha256": "ab552521836103818db8c48e2633bf1b9874a823657e721704f4683881b384eb",
+      "config_sha256": "050adbd04f6f9259154a350196849ab93600fe80c63d2eeef1d49d06a3446c25",
+      "physics_recording_status": "completed/hash verified",
+      "final_forward_m": 0.24606068503370832,
+      "first_fall_s": 8.995000000000001,
+      "max_leg_speed_rad_s": 26.855897903442383,
+      "peak_requested_leg_PD_Nm": 90.22353869397193,
+      "max_leg_target_gap_rad": 1.503582239151001,
+      "seed": 101,
+      "warmup": 100,
+      "substeps": 1,
+      "noslip_iterations": 0
+    },
+    "MuJoCo mesh fix no-slip10": {
+      "recording": "runs/relic-physics-mesh-fix-20261012-003/mujoco-noslip10",
+      "raw_rollout_sha256": "4fe8e96904d15b3a98461624928903ee726a3a03b47ce2703ba7300d14435ccf",
+      "config_sha256": "c9c3e651aaf76407c7d08c2745a7dd60a2720ae1123eb474fe031758624727e7",
+      "physics_recording_status": "completed/hash verified",
+      "final_forward_m": 0.6695557771225631,
+      "first_fall_s": null,
+      "max_leg_speed_rad_s": 16.89576530456543,
+      "peak_requested_leg_PD_Nm": 49.912482568994164,
+      "max_leg_target_gap_rad": 0.8307284116744995,
+      "seed": 101,
+      "warmup": 100,
+      "substeps": 1,
+      "noslip_iterations": 10
+    }
+  },
+  "first_step_ground": {
+    "initial_q_max_error_rad": 0.0,
+    "initial_target_max_error_rad": 0.0,
+    "first_step_leg_velocity_max_error_rad_s": 7.839406728744507,
+    "first_step_all_joint_velocity_max_error_rad_s": 9.597748443484306,
+    "first_step_gripper_velocity_rad_s": [
+      -0.13678868114948273,
+      -9.734537124633789
+    ],
+    "first_step_foot_normal_force_w_N": [
+      [
+        [
+          0.0,
+          0.0,
+          83.04516063885764
+        ],
+        [
+          0.0,
+          0.0,
+          106.30389542176634
+        ],
+        [
+          0.0,
+          0.0,
+          137.2250963275419
+        ],
+        [
+          0.0,
+          0.0,
+          60.726278784589326
+        ]
+      ],
+      [
+        [
+          0.0,
+          0.0,
+          121.04947662353516
+        ],
+        [
+          0.0,
+          0.0,
+          201.81546020507812
+        ],
+        [
+          0.0,
+          0.0,
+          68.10067749023438
+        ],
+        [
+          0.0,
+          0.0,
+          77.93697357177734
+        ]
+      ]
+    ]
+  },
+  "first_step_air": {
+    "initial_q_max_error_rad": 0.0,
+    "initial_target_max_error_rad": 0.0,
+    "first_step_leg_velocity_max_error_rad_s": 0.005999565124511719,
+    "first_step_all_joint_velocity_max_error_rad_s": 9.576521575450897,
+    "first_step_gripper_velocity_rad_s": [
+      -0.1550467610359192,
+      -9.731568336486816
+    ],
+    "first_step_foot_normal_force_w_N": [
+      [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    ]
+  },
+  "first_step_air_fixed_mesh": {
+    "initial_q_max_error_rad": 0.0,
+    "initial_target_max_error_rad": 0.0,
+    "first_step_leg_velocity_max_error_rad_s": 0.005999565124511719,
+    "first_step_all_joint_velocity_max_error_rad_s": 9.576521575450897,
+    "first_step_gripper_velocity_rad_s": [
+      -0.1550467610359192,
+      -9.731568336486816
+    ],
+    "first_step_foot_normal_force_w_N": [
+      [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    ]
+  },
+  "model_properties": {
+    "total_mass_MuJoCo_kg": 39.06743300000871,
+    "total_mass_Isaac_kg": 39.06740951538086,
+    "largest_link_mass_error_kg": 4.886169433504506e-05,
+    "maximum_inertia_eigenvalue_error_kg_m2": 3.7192916868544756e-07,
+    "maximum_COM_position_error_m": 3.6564688544520815e-05,
+    "armature_max_error_kg_m2": 2.2351741811588166e-10
+  },
+  "collision_bounds_original": {
+    "body": {
+      "minimum_m": [
+        -0.2898024153540507,
+        -0.1236073984052175,
+        -0.10568560126579181
+      ],
+      "maximum_m": [
+        0.2748865024393305,
+        0.1236065987405719,
+        0.09848120354533552
+      ]
+    },
+    "fl_uleg": {
+      "minimum_m": [
+        -0.05237789926189603,
+        -0.03777650187547414,
+        -0.27085641765613466
+      ],
+      "maximum_m": [
+        0.052656801022566944,
+        0.060533402043945826,
+        0.07626639333896708
+      ]
+    },
+    "fr_uleg": {
+      "minimum_m": [
+        -0.05265680102256694,
+        -0.060533402043945826,
+        -0.27085641765613466
+      ],
+      "maximum_m": [
+        0.052377899261896024,
+        0.03777650187547414,
+        0.07626639333896708
+      ]
+    },
+    "arm_link_wr1": {
+      "minimum_m": [
+        0.05549999733944942,
+        -0.041971999694409394,
+        -0.06065199928287303
+      ],
+      "maximum_m": [
+        0.23565399593263592,
+        0.04197199909519488,
+        0.03839699827631367
+      ]
+    }
+  },
+  "collision_bounds_fixed": {
+    "body": {
+      "minimum_m": [
+        -0.2898024153540507,
+        -0.1236073984052175,
+        -0.10568560126579181
+      ],
+      "maximum_m": [
+        0.2748865024393305,
+        0.1236065987405719,
+        0.09848120354533552
+      ]
+    },
+    "fl_uleg": {
+      "minimum_m": [
+        -0.05237789926189603,
+        -0.03777650187547414,
+        -0.27085641765613466
+      ],
+      "maximum_m": [
+        0.052656801022566944,
+        0.060533402043945826,
+        0.07626639333896708
+      ]
+    },
+    "fr_uleg": {
+      "minimum_m": [
+        -0.05265680102256694,
+        -0.060533402043945826,
+        -0.27085641765613466
+      ],
+      "maximum_m": [
+        0.052377899261896024,
+        0.03777650187547414,
+        0.07626639333896708
+      ]
+    },
+    "arm_link_wr1": {
+      "minimum_m": [
+        0.055499998318927525,
+        -0.04197199972067285,
+        -0.06065199983457623
+      ],
+      "maximum_m": [
+        0.1461000015120333,
+        0.04197200067365173,
+        0.038396998177513304
+      ]
+    }
+  },
+  "native_actuator_audit": {
+    "case_columns": "delay, q[19], dq[19], target[19], mujoco_torque[19], native_torque[19]",
+    "cases": 400,
+    "passed": true,
+    "results": [
+      {
+        "cases": 200,
+        "delay_steps": 0,
+        "max_absolute_torque_error": 1.6927719116210938e-05
+      },
+      {
+        "cases": 200,
+        "delay_steps": 3,
+        "max_absolute_torque_error": 1.8835067749023438e-05
+      }
+    ],
+    "scope": "All 19 joints; PD, knee angle/speed saturation, target delay including warmup",
+    "seed": 102,
+    "units": "N m"
+  },
+  "policy_input_substitution_at_20ms": {
+    "original_max_raw_action_difference": 0.30949509143829346,
+    "remaining_raw_difference": {
+      "body": 0.23141133785247803,
+      "q": 0.20089256763458252,
+      "dq": 0.1862659454345703,
+      "arm_q_dq": 0.25904130935668945,
+      "leg_q_dq": 0.1796669363975525,
+      "all": 0.0
+    },
+    "dimensionless": true,
+    "offline_only": true
+  },
+  "gripper_pair_probe": {
+    "mujoco-default": {
+      "rows": 5,
+      "source_result_sha256": "7ebeb2ec89a4cf4c27d1fa6d9760b5f493e4c302486ce3e18ded797cbe4ea1bd",
+      "gripper_velocity_rad_s": [
+        0.0,
+        -0.1550467610359192,
+        -0.09186461567878723,
+        -0.043257955461740494,
+        -0.016477026045322418
+      ],
+      "root_initial_height_m": 2.5231642723083496,
+      "specific_pairs": false
+    },
+    "mujoco-explicit-finger-jaw": {
+      "rows": 5,
+      "source_result_sha256": "7684633f8d4ed9c21967d43110d680f1ff99cdff6fa4fb188c768501422428f1",
+      "gripper_velocity_rad_s": [
+        0.0,
+        -1.1251096725463867,
+        -1.4735422134399414,
+        -1.493181824684143,
+        -1.3207879066467285
+      ],
+      "root_initial_height_m": 2.5231642723083496,
+      "specific_pairs": true
+    },
+    "isaaclab-filtered-force": {
+      "rows": 5,
+      "source_result_sha256": "f03f701f7b14c914bd91ff9abf0def04cd34705a7f36baa2b64d70aa579ccf8d",
+      "gripper_velocity_rad_s": [
+        0.0,
+        -9.731568336486816,
+        -0.5283364057540894,
+        0.0011616545962169766,
+        -0.0005557640106417239
+      ],
+      "root_initial_height_m": 2.5231642723083496,
+      "specific_pairs": false,
+      "finger_jaw_normal_force_norm_N": [
+        42.72639842093795,
+        9.383474442190602,
+        5.6980299450688205,
+        5.8929563955137185
+      ]
+    }
+  }
+}
