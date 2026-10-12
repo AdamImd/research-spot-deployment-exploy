@@ -1,0 +1,4 @@
+# Extra audit packages for the existing Isaac Python 3.11 overlay.
+# Keep its NumPy unchanged; main Python 3.12 simulation is already uv.lock-pinned.
+numpy==1.26.4
+mujoco==3.3.7

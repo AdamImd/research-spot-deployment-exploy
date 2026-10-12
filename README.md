@@ -146,3 +146,11 @@ uses 1.25 ms physics while holding one PD torque/delay update per 5 ms control t
 retaining the original requested torso height for a short no-floor-contact probe.
 These are attribution experiments, not deployment settings. Normal policy and
 command rates, original gains and physical saturation remain unchanged.
+
+For an audit without repeating physics, use `tools/audit_relic_physics.py` with
+`--simulation-source simulation --output runs/NEW-native-audit` in the existing
+Isaac Python 3.11 overlay. Install its extra packages using UV and
+`configs/native-physics-audit-requirements.lock` (NumPy remains 1.26.4, MuJoCo 3.3.7).
+Auxiliary audit errors preserve the completed rollout's `result.json`; a missing
+COMPLETE or present ERROR still indicates a failed stage, regardless of a Kit
+process returning exit zero during shutdown.

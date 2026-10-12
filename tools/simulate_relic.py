@@ -308,11 +308,12 @@ def run(args):
         if unguarded and rows:
             from spot_deploy.simulation_diagnostic import demand_summary
             result['demands'] = demand_summary(rows, config)
+        # Preserve the completed physics result even if an auxiliary audit fails.
+        atomic_json(args.output / 'result.json', result)
         if args.audit_native_actuators:
             from spot_relic_sim.native_audit import audit_actuators
             atomic_json(args.output/'native-actuator-audit.json',
                         audit_actuators(backend, args.output/'actuator-audit-model'))
-        atomic_json(args.output / "result.json", result)
         return result
     finally:
         log.stream.close()
