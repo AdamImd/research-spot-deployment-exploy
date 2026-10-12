@@ -47,20 +47,23 @@ class ForwardTravel:
         self.last_recorded = -math.inf
         self.progress_anchor = self.progress_at = None
 
+    def _operating_check(self, condition, message):
+        if not condition:
+            raise ContractError(message)
+
     def pose(self, state):
         p, stamp = state.body_position_odom, state.body_pose_robot_time_s
         if p is None or stamp is None:
             raise ContractError('walking requires robot odom/body position and acquisition time')
-        if abs(state.robot_time_s - stamp) > self.plan.max_pose_age_s:
-            raise ContractError('walking odom/body pose is stale or future-dated')
+        self._operating_check(abs(state.robot_time_s - stamp) <= self.plan.max_pose_age_s,
+                              'walking odom/body pose is stale or future-dated')
         p = np.asarray(p)
         if self.last_pose_time is not None:
             if stamp < self.last_pose_time:
                 raise ContractError('walking pose timestamp moved backwards')
             change = np.linalg.norm(p[:2] - self.last_position[:2])
-            if ((stamp == self.last_pose_time and change > 1e-8)
-                    or change > self.plan.max_pose_step_m):
-                raise ContractError('walking odometry discontinuity')
+            self._operating_check(not ((stamp == self.last_pose_time and change > 1e-8)
+                    or change > self.plan.max_pose_step_m), 'walking odometry discontinuity')
         self.last_pose_time, self.last_position = stamp, p.copy()
         r = rotation(state)
         yaw = math.atan2(r[1, 0], r[0, 0])
@@ -89,19 +92,21 @@ class ForwardTravel:
         x, y = self.axes @ (p[:2] - self.origin[:2])
         heading = math.atan2(math.sin(yaw - self.yaw), math.cos(yaw - self.yaw))
         remaining = self.plan.distance_m - x
-        if abs(y) > self.plan.max_lateral_m or abs(heading) > self.plan.max_heading_rad:
-            raise ContractError('walking lateral or heading deviation limit')
-        if x < -self.plan.tolerance_m or x > self.plan.distance_m + self.plan.tolerance_m:
-            raise ContractError('walking backwards or overshoot limit')
+        self._operating_check(abs(y) <= self.plan.max_lateral_m
+                              and abs(heading) <= self.plan.max_heading_rad,
+                              'walking lateral or heading deviation limit')
+        self._operating_check(-self.plan.tolerance_m <= x
+                              <= self.plan.distance_m + self.plan.tolerance_m,
+                              'walking backwards or overshoot limit')
         elapsed, dt = now - self.started_at, now - self.last_at
         old_phase = self.phase
         speed = float(np.linalg.norm(np.asarray(state.linear_velocity_odom)[:2]))
-        if not self.completed and elapsed > self.plan.max_duration_s:
-            raise ContractError('walking distance timeout')
+        self._operating_check(self.completed or elapsed <= self.plan.max_duration_s,
+                              'walking distance timeout')
         if self.completed:
             desired = 0.
-            if abs(remaining) > self.plan.tolerance_m:
-                raise ContractError('walking final position drift')
+            self._operating_check(abs(remaining) <= self.plan.tolerance_m,
+                                  'walking final position drift')
         elif elapsed < self.plan.initial_hold_s:
             desired = 0.
         elif abs(remaining) <= self.plan.tolerance_m:
@@ -129,7 +134,7 @@ class ForwardTravel:
                 self.record.event('walk_stall', forward_m=float(x),
                     requested_forward_m_s=self.velocity, elapsed_without_progress_s=now-self.progress_at,
                     min_progress_m=self.plan.min_progress_m)
-                raise ContractError('walking progress stalled')
+                self._operating_check(False, 'walking progress stalled')
         else:
             self.progress_anchor = self.progress_at = None
         self.last_at = now

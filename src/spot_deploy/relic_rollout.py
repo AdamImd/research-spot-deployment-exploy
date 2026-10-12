@@ -37,6 +37,10 @@ class ReLICRollout:
                 raise ContractError('walking timeout exceeds reviewed envelope')
         self.velocity_command = None
 
+    def _operating_check(self, condition, message):
+        if not condition:
+            raise ContractError(message)
+
     def initialize(self, state, height, now, robot_now):
         if self.initial is not None:
             raise ContractError("rollout cannot be reinitialized")
@@ -108,12 +112,12 @@ class ReLICRollout:
         else:
             handover = self.phase != "policy"
             if handover:
-                if (np.max(np.abs(np.asarray(state.positions)[:12] - self.endpoint[:12]))
-                        > self.spec.handover_pose_error_rad):
-                    raise ContractError("ReLIC handover pose gate failed")
-                if (np.max(np.abs(state.velocities[:self.guard.motion_joint_count]))
-                        > self.spec.handover_joint_speed_rad_s):
-                    raise ContractError("ReLIC handover velocity gate failed")
+                self._operating_check(
+                    np.max(np.abs(np.asarray(state.positions)[:12] - self.endpoint[:12]))
+                    <= self.spec.handover_pose_error_rad, "ReLIC handover pose gate failed")
+                self._operating_check(
+                    np.max(np.abs(state.velocities[:self.guard.motion_joint_count]))
+                    <= self.spec.handover_joint_speed_rad_s, "ReLIC handover velocity gate failed")
                 self.next_policy_at = now
             new_action = None
             if now + 1e-10 >= self.next_policy_at and self.pending is None:
@@ -122,8 +126,8 @@ class ReLICRollout:
                         state, self.previous, velocity_command=self.velocity_command)
                 else:
                     target, inference_s, obs, action = self.policy.evaluate(state, self.previous)
-                if inference_s > self.envelope.max_inference_s:
-                    raise ContractError("ReLIC inference deadline exceeded")
+                self._operating_check(inference_s <= self.envelope.max_inference_s,
+                                      "ReLIC inference deadline exceeded")
                 self.target, self.inference_s = target.copy(), inference_s
                 self.policy_at = min(now, state.received_monotonic_s)
                 # Skip missed periods, never issue catch-up bursts.
@@ -150,8 +154,8 @@ class ReLICRollout:
                          - self.last_command.feedforward)
                 self.record.event("relic_handover", torque_step_Nm=delta.tolist(),
                                   previous_actions=self.previous.tolist(), monotonic_s=now)
-                if np.any(np.abs(delta) > self.spec.handover_torque_step_max):
-                    raise ContractError("ReLIC handover torque-step gate failed")
+                self._operating_check(np.all(np.abs(delta) <= self.spec.handover_torque_step_max),
+                                      "ReLIC handover torque-step gate failed")
                 self.phase = "policy"
                 self.record.event("relic_phase", phase=self.phase, monotonic_s=now)
         command = self.guard.command(target, state, now, robot_now, policy_at, inference_s,

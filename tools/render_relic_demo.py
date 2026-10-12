@@ -52,7 +52,7 @@ def plots(rows, config, result, output):
         ax.grid(alpha=.25)
     axes[2,0].set_xlabel('Recorded simulation time (s)')
     axes[2,1].set_xlabel('Recorded simulation time (s)')
-    figure.suptitle(f"ReLIC simulation: {config['backend']} · {result['reason']}\n"
+    figure.suptitle(f"ReLIC simulation: {config['backend']} · {result['reason']} · {config.get('guard_mode', 'enforced')}\n"
                    'Original gains and weights; foot clearance does not measure support load')
     figure.savefig(output/'dynamics.png',dpi=160)
     figure.savefig(output/'dynamics.pdf')
@@ -113,7 +113,8 @@ def video(rows,config,result,source,output,fps):
                     draw=ImageDraw.Draw(canvas)
                     phase=row.get('demo_phase') or row['phase']
                     draw.text((12,7),f"{config['backend']} · {phase} · t={t:.2f} s",font=font,fill='white')
-                    draw.text((12,30),'Recorded visual-mesh replay · simulation only',font=font,fill='white')
+                    draw.text((12,30),('UNGUARDED simulation diagnostic' if config.get('guard_mode') == 'disabled-simulation-diagnostic'
+                                               else 'Recorded visual-mesh replay · simulation only'),font=font,fill='white')
                     draw.text((12,533),f"Run outcome: {result['reason']} · no new dynamics",font=font,fill='white')
                     process.stdin.write(np.asarray(canvas).tobytes())
                 process.stdin.close()
