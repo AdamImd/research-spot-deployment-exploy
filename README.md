@@ -160,3 +160,7 @@ The URDF importer otherwise aliases visual and collision meshes with matching
 basenames (the wrist visual mesh extends about 9 cm beyond its intended collider).
 Source assets and visual meshes stay untouched. A regression checks every compiled
 collision mesh's transformed bounds against the referenced URDF collision vertices.
+
+The [physics attribution record](records/relic-physics-attribution-20261012/README.md)
+isolates ground contact, friction/integration and gripper self-contact, with an
+independent actuator audit and measured impact of the repaired mesh alias.
