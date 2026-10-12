@@ -102,11 +102,20 @@ def run(args):
             backend = MujocoBackend(Contract.load(args.simulation_source / "configs/articulation.json"),
                                     args.output / "model", scenario)
             backend.model.opt.noslip_iterations = args.mujoco_noslip_iterations
+            backend.model.opt.timestep = dt / args.mujoco_substeps
         else:
             from spot_relic_sim.isaac_backend import IsaacBackend
             backend = IsaacBackend(args.output / "model", scenario,
-                                   device=args.physics_device, headless=True)
-        initialize_captured(backend, initial, height["height_m"], nominal_arm=False)
+                                   device=args.physics_device, headless=True,
+                                   diagnostics=args.physics_diagnostics)
+        initialize_captured(backend, initial, height["height_m"] + args.initial_height_offset,
+                            nominal_arm=False)
+        if args.physics_diagnostics:
+            from spot_relic_sim.physics_diagnostics import model_snapshot
+            atomic_json(args.output/'physics-model.json', model_snapshot(backend))
+            if args.backend == 'isaaclab':
+                from debug_shadow import collision_audit
+                collision_audit(backend, args.output)
         unguarded = getattr(args, 'no_guards', False)
         if unguarded:
             from spot_deploy.simulation_diagnostic import SimulationDiagnosticRollout
@@ -137,6 +146,9 @@ def run(args):
                       prewarm_inference=args.prewarm_inference, prewarm_times_s=prewarm_times,
                       policy_hz=manifest.policy_hz, command_hz=manifest.stream_hz,
                       mujoco_noslip_iterations=args.mujoco_noslip_iterations,
+                      mujoco_substeps=args.mujoco_substeps,
+                      initial_root_height_offset_m=args.initial_height_offset,
+                      physics_diagnostics=args.physics_diagnostics,
                       simulation_joint_names=list(backend.contract.names),
                       guard_mode=('disabled-simulation-diagnostic' if unguarded else 'enforced'),
                       seed=101, hardware_access=False, manifest=manifest.model_dump(),
@@ -221,6 +233,9 @@ def run(args):
                                + command.feedforward).tolist(),
                            **{k: v.tolist() for k, v in sim.items()},
                            positions=list(command.positions), feedforward=list(command.feedforward))
+                if args.physics_diagnostics:
+                    from spot_relic_sim.physics_diagnostics import contacts
+                    row['physics_diagnostic'] = contacts(backend)
                 rows.append(row)
                 stream.write(json.dumps(row, allow_nan=False) + "\n")
                 log.event("command", key=command.key, positions=list(command.positions),
@@ -241,7 +256,11 @@ def run(args):
                 effective = (np.asarray(command.positions)
                              + np.asarray(command.feedforward) / manifest.gains.kp)
                 if not terminal and tick != round(args.duration / dt):
-                    backend.step(effective[inverse])
+                    if args.backend == 'mujoco' and args.mujoco_substeps != 1:
+                        from spot_relic_sim.physics_diagnostics import control_step
+                        control_step(backend, effective[inverse], args.mujoco_substeps)
+                    else:
+                        backend.step(effective[inverse])
                     if args.physics_device.startswith("cuda"):
                         # Include completion of GPU physics, not just kernel dispatch.
                         import torch
@@ -289,6 +308,10 @@ def run(args):
         if unguarded and rows:
             from spot_deploy.simulation_diagnostic import demand_summary
             result['demands'] = demand_summary(rows, config)
+        if args.audit_native_actuators:
+            from spot_relic_sim.native_audit import audit_actuators
+            atomic_json(args.output/'native-actuator-audit.json',
+                        audit_actuators(backend, args.output/'actuator-audit-model'))
         atomic_json(args.output / "result.json", result)
         return result
     finally:
@@ -313,6 +336,14 @@ def main():
                         help="Explicit friction-drift diagnostic; default preserves the baseline")
     parser.add_argument('--three-leg-plan',type=Path,
                         help='Offline-only raw actor front-left lift/hold/return; never a live manifest')
+    parser.add_argument('--physics-diagnostics', action='store_true',
+                        help='Record model, contact normal force and foot velocity; native collision audit')
+    parser.add_argument('--audit-native-actuators', action='store_true',
+                        help='After Isaac rollout, compare 400 native/NumPy actuator cases')
+    parser.add_argument('--mujoco-substeps', type=int, choices=[1, 4], default=1,
+                        help='Hold one 200 Hz PD torque across finer physics steps (diagnostic only)')
+    parser.add_argument('--initial-height-offset', type=float, choices=[0., 2.], default=0.,
+                        help='Two-metre air probe: retain original torso-height request and initial targets')
     parser.add_argument('--no-guards', action='store_true',
                         help='Simulation-only diagnostic: disable operating stops, continue after falls; '
                              'retain physical saturation and integrity checks. Never qualifies hardware.')
@@ -323,6 +354,12 @@ def main():
     if args.policy_device == "cuda":
         # Use the isolated Isaac-compatible CUDA libraries, never modify the host.
         import torch  # noqa: F401
+    if args.backend != 'mujoco' and args.mujoco_substeps != 1:
+        parser.error('MuJoCo substeps cannot be used with Isaac')
+    if args.audit_native_actuators and args.backend != 'isaaclab':
+        parser.error('native actuator audit requires Isaac')
+    if (args.mujoco_substeps != 1 or args.initial_height_offset) and not args.no_guards:
+        parser.error('physics interventions require the explicit unguarded diagnostic mode')
     args.output.mkdir(parents=True, exist_ok=False)
     app = None
     try:

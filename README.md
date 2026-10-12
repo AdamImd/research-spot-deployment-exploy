@@ -130,3 +130,19 @@ uv run --no-sync python tools/simulate_relic.py \
 The [2026-10-12 diagnostic record](records/relic-unguarded-walk-20261012/README.md)
 compares guarded-prefix parity, two MuJoCo friction settings and Isaac Lab, with
 observed demands and a clear separation between recording completion and gait success.
+
+### Physics attribution diagnostics
+
+The simulation runner accepts `--physics-diagnostics` to record model properties,
+foot normal forces/velocities, and MuJoCo contact pairs/constraint torques. Isaac
+normal forces are impulse averages over the preceding 5 ms; MuJoCo reports its
+instantaneous solved contact force, so they are not pointwise equivalent.
+`--audit-native-actuators` independently compares 400 Isaac/NumPy actuator cases
+after an Isaac rollout. Defaults preserve existing physics and behavior.
+
+Two explicit offline interventions require `--no-guards`: `--mujoco-substeps 4`
+uses 1.25 ms physics while holding one PD torque/delay update per 5 ms control tick;
+`--initial-height-offset 2` places the same joint pose two metres above the floor,
+retaining the original requested torso height for a short no-floor-contact probe.
+These are attribution experiments, not deployment settings. Normal policy and
+command rates, original gains and physical saturation remain unchanged.
