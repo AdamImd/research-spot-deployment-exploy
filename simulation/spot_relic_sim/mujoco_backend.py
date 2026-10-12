@@ -17,7 +17,11 @@ def convert_model(output):
     for mesh in urdf.findall(".//collision/geometry/mesh"):
         relative = Path(mesh.attrib["filename"])
         if relative.suffix.lower() == ".obj":
-            prepared = output / "collision_meshes" / relative
+            # MuJoCo's URDF importer keys mesh assets by basename. Visual and
+            # collision files such as arm_link_wr1.obj otherwise alias: it can
+            # silently use the visual geometry for collision. Generated copies
+            # have distinct basenames, leaving source assets/visuals untouched.
+            prepared = output / "collision_meshes" / relative.parent / ("collision__" + relative.name)
             if str(relative) not in collision_meshes:
                 collision_meshes[str(relative)] = compact_obj(ASSET / relative, prepared)
             mesh.set("filename", str(prepared))

@@ -154,3 +154,9 @@ Isaac Python 3.11 overlay. Install its extra packages using UV and
 Auxiliary audit errors preserve the completed rollout's `result.json`; a missing
 COMPLETE or present ERROR still indicates a failed stage, regardless of a Kit
 process returning exit zero during shutdown.
+
+MuJoCo conversion gives generated collision OBJs a `collision__` basename prefix.
+The URDF importer otherwise aliases visual and collision meshes with matching
+basenames (the wrist visual mesh extends about 9 cm beyond its intended collider).
+Source assets and visual meshes stay untouched. A regression checks every compiled
+collision mesh's transformed bounds against the referenced URDF collision vertices.
