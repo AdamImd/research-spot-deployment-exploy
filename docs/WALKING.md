@@ -116,3 +116,11 @@ initial zero-velocity hold duration, retain direct policy startup and zero raw
 history: delaying the base-velocity request is distinct from fading joint targets.
 Keep new manifests/protocols frozen separately; a diagnostic comparison does not
 replace the physical walking plan or its qualification evidence.
+
+The October 12 follow-up kept preparation simulation-only at the operator's
+explicit instruction. Startup holds and speed/ramp brackets all failed to
+complete 0.75 m. A separately approved fl_hy tracking-cap comparison (0.4 to
+0.5 rad in simulation only) passed its prior tracking stop, then exceeded the
+unchanged knee-speed bound after 0.3408 m. Hardware limits remain unchanged.
+See ../records/relic-walking-onset-20261012/README.md for the PD-offset review,
+foot/body displacement, exact rejected states, 200 fps replay and scope.
