@@ -1,0 +1,2176 @@
+{
+  "cells": {
+    "approved-simulation-tracking05": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "a6f9dcba661018066225f471caec2d8596a534047f5e1edddd8b272608b1ef39",
+      "configuration_sha256": "5c6ef9f63a9ee5240d236487f6dd8ac11650daad290fa5c77ddb97d961547854",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 9.965,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.14662437115117052,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.008367086142301562,
+            "max_planar_excursion_m": 0.16352650448200862
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.06844732912196802,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0024952127933502224,
+            "max_planar_excursion_m": 0.07018607496721231
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.15121383995503146,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.003297133684158328,
+            "max_planar_excursion_m": 0.1535364567803711
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.07828156462801317,
+            "first_clearance_15mm_s": 4.025,
+            "max_clearance_m": 0.0351551234126091,
+            "max_planar_excursion_m": 0.08777958502478164
+          }
+        },
+        "final_body_forward_m": 0.3408007335479668,
+        "final_mean_foot_forward_m": 0.11114177621404579,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 9.97,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fr_kn",
+              "limit_rad_s": 8.0,
+              "velocity_rad_s": -8.641562461853027
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fr_kn",
+        "selected_joint_max_accepted_speed_rad_s": 6.395203590393066,
+        "selected_joint_max_position_derived_speed_rad_s": 6.395196914674124,
+        "selected_joint_peak_requested_pd_torque_Nm": 49.03422199934721,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -8.641576766966423,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.5,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0014289012178778648,
+            "over_5ms": 0,
+            "p50_s": 0.0003491649404168129,
+            "p99_s": 0.0006920154578983783
+          },
+          "parity_s": {
+            "max_s": 0.00015903683379292488,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00010855375789105891
+          },
+          "physics_s": {
+            "max_s": 0.00024844007566571236,
+            "over_5ms": 0,
+            "p50_s": 0.0001431661657989025,
+            "p99_s": 0.0001640052022412419
+          },
+          "recording_s": {
+            "max_s": 0.001094565261155367,
+            "over_5ms": 0,
+            "p50_s": 0.0001543837133795023,
+            "p99_s": 0.00019195248838514085
+          },
+          "state_s": {
+            "max_s": 0.0011897999793291092,
+            "over_5ms": 0,
+            "p50_s": 0.00011819391511380672,
+            "p99_s": 0.00015892359893769016
+          },
+          "total_s": {
+            "max_s": 0.0018694628961384296,
+            "over_5ms": 0,
+            "p50_s": 0.0007657348178327084,
+            "p99_s": 0.001223145551048219
+          }
+        },
+        "trial_duration_s": 9.97,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.1,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.1325,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-tracking-20261012-001/mujoco",
+      "seed": 101
+    },
+    "archived-isaac014": {
+      "backend": "isaaclab",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "310004d4cf0ba63e524a3d67c8faec5e60a40176a122002aa7f315773aec300e",
+      "configuration_sha256": "9929c7c0ceda47cef7ef751882553653d57a2028e55a56b8a4ace69989577701",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 9.08,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.10893644543432011,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.005105762124061587,
+            "max_planar_excursion_m": 0.12148535343019908
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.054115329086407045,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.009360669493675235,
+            "max_planar_excursion_m": 0.055903755680490344
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.0425960134860626,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0016847162842750577,
+            "max_planar_excursion_m": 0.04289070727486331
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.0009726402302180128,
+            "first_clearance_15mm_s": 3.265,
+            "max_clearance_m": 0.028750209450721743,
+            "max_planar_excursion_m": 0.05895059773175319
+          }
+        },
+        "final_body_forward_m": 0.25474039519530584,
+        "final_mean_foot_forward_m": 0.05165510705925194,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 9.085,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fr_kn",
+              "limit_rad_s": 8.0,
+              "velocity_rad_s": -8.143062591552734
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 1.0,
+        "forward_before_nonzero_request_m": 0.06268575366254238,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fr_kn",
+        "selected_joint_max_accepted_speed_rad_s": 7.439128875732422,
+        "selected_joint_max_position_derived_speed_rad_s": 7.4398994445789155,
+        "selected_joint_peak_requested_pd_torque_Nm": 47.91410878300667,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -8.144474029539742,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 1.1175870895385742e-08,
+        "max_raw_action_error": 9.5367431640625e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0018270150758326054,
+            "over_5ms": 0,
+            "p50_s": 0.0004833859857171774,
+            "p99_s": 0.000997178629040718
+          },
+          "parity_s": {
+            "max_s": 0.0002099159173667431,
+            "over_5ms": 0,
+            "p50_s": 3.2014213502407074e-07,
+            "p99_s": 0.0001555096823722124
+          },
+          "physics_s": {
+            "max_s": 0.010082280961796641,
+            "over_5ms": 14,
+            "p50_s": 0.0026422529481351376,
+            "p99_s": 0.004515416752547024
+          },
+          "recording_s": {
+            "max_s": 0.0002976958639919758,
+            "over_5ms": 0,
+            "p50_s": 0.00015861704014241695,
+            "p99_s": 0.0002235981170088051
+          },
+          "state_s": {
+            "max_s": 0.0006910171359777451,
+            "over_5ms": 0,
+            "p50_s": 0.0003617799375206232,
+            "p99_s": 0.000490879090502858
+          },
+          "total_s": {
+            "max_s": 0.012079155072569847,
+            "over_5ms": 29,
+            "p50_s": 0.003692324971780181,
+            "p99_s": 0.005733745768666266
+          }
+        },
+        "trial_duration_s": 9.085,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": null,
+        "bosdyn-client": null,
+        "numpy": "1.26.0",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.11.7",
+        "spot-deployment": null
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 1.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.14,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walk-bracket-20261009-001/isaac",
+      "seed": 101
+    },
+    "hold1-speed014-slow": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "a42a1bbb90cd3c4bbf340153c6ecea6f376c498fd6e8e325f3ed69ef55520b7b",
+      "configuration_sha256": "e96df8869cf9d65f86334be31a9f333a606182fcbcb759cab8d3ae2e5b4aa360",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 8.06,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.11314159206013932,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.005701350361108783,
+            "max_planar_excursion_m": 0.12581799990331205
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.027526615881161145,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.002520097732543948,
+            "max_planar_excursion_m": 0.028913242289881243
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.03668235245475315,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0016849137246608761,
+            "max_planar_excursion_m": 0.03685639557503757
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.003265923760796041,
+            "first_clearance_15mm_s": 3.4050000000000002,
+            "max_clearance_m": 0.02625988268852234,
+            "max_planar_excursion_m": 0.06762818783696531
+          }
+        },
+        "final_body_forward_m": 0.25318968544078085,
+        "final_mean_foot_forward_m": 0.045154121039212416,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 8.065,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fr_kn",
+              "limit_rad_s": 8.0,
+              "velocity_rad_s": -8.300106048583984
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 1.0,
+        "forward_before_nonzero_request_m": 0.06262101121285522,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fr_kn",
+        "selected_joint_max_accepted_speed_rad_s": 3.691072463989258,
+        "selected_joint_max_position_derived_speed_rad_s": 3.691053390503664,
+        "selected_joint_peak_requested_pd_torque_Nm": 48.46225943416357,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -8.300113677980168,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 5.960464477539063e-08,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.001264836173504591,
+            "over_5ms": 0,
+            "p50_s": 0.0003504469059407711,
+            "p99_s": 0.0006770344264805316
+          },
+          "parity_s": {
+            "max_s": 0.00014321692287921906,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00010818975046277045
+          },
+          "physics_s": {
+            "max_s": 0.00022694934159517288,
+            "over_5ms": 0,
+            "p50_s": 0.00014325696974992752,
+            "p99_s": 0.00015997739508748053
+          },
+          "recording_s": {
+            "max_s": 0.0007378873415291309,
+            "over_5ms": 0,
+            "p50_s": 0.0001542782410979271,
+            "p99_s": 0.00018428362905979157
+          },
+          "state_s": {
+            "max_s": 0.00018793391063809395,
+            "over_5ms": 0,
+            "p50_s": 0.00011851964518427849,
+            "p99_s": 0.00014143517240881891
+          },
+          "total_s": {
+            "max_s": 0.0016923430375754833,
+            "over_5ms": 0,
+            "p50_s": 0.0007685059681534767,
+            "p99_s": 0.0012029075622558593
+          }
+        },
+        "trial_duration_s": 8.065,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 1.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.14,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-001/walk014-hold1",
+      "seed": 101
+    },
+    "hold3-speed013-fast": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "859f9ee501303bf6e26a50572b67173fa8b4e174b7b3b12aeeffb4329ad4c530",
+      "configuration_sha256": "8b19f6199f5c93ede5e551298e775820a29b9d5879580aa4b5a65bbb9f6603a7",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 6.84,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.13956740100385379,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.008367086142301562,
+            "max_planar_excursion_m": 0.15641260583491354
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.0392643591334263,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.008717870652675631,
+            "max_planar_excursion_m": 0.03984224307276175
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.03303990804054956,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0016849137246608761,
+            "max_planar_excursion_m": 0.033137164651680935
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.01672567874394466,
+            "first_clearance_15mm_s": 4.025,
+            "max_clearance_m": 0.0351551234126091,
+            "max_planar_excursion_m": 0.06762818783696531
+          }
+        },
+        "final_body_forward_m": 0.25611537003798635,
+        "final_mean_foot_forward_m": 0.057149336730443576,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 6.845,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fr_kn",
+              "limit_rad_s": 8.0,
+              "velocity_rad_s": -9.557347297668457
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fr_kn",
+        "selected_joint_max_accepted_speed_rad_s": 6.007579803466797,
+        "selected_joint_max_position_derived_speed_rad_s": 6.007575988769659,
+        "selected_joint_peak_requested_pd_torque_Nm": 49.03422199934721,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -9.55734252929708,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 5.960464477539063e-08,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0012631909921765327,
+            "over_5ms": 0,
+            "p50_s": 0.0003511193208396435,
+            "p99_s": 0.0006897084042429924
+          },
+          "parity_s": {
+            "max_s": 0.00012598326429724693,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00010915556922554969
+          },
+          "physics_s": {
+            "max_s": 0.00021471502259373665,
+            "over_5ms": 0,
+            "p50_s": 0.0001430870033800602,
+            "p99_s": 0.00016274224966764448
+          },
+          "recording_s": {
+            "max_s": 0.0007643066346645355,
+            "over_5ms": 0,
+            "p50_s": 0.00015419768169522285,
+            "p99_s": 0.00018201706930994987
+          },
+          "state_s": {
+            "max_s": 0.001142068300396204,
+            "over_5ms": 0,
+            "p50_s": 0.00011869985610246658,
+            "p99_s": 0.0001397678442299366
+          },
+          "total_s": {
+            "max_s": 0.0018442049622535706,
+            "over_5ms": 0,
+            "p50_s": 0.0007698889821767807,
+            "p99_s": 0.0012165854685008525
+          }
+        },
+        "trial_duration_s": 6.845,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.1,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.13,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-003/walk013-hold3-fast",
+      "seed": 101
+    },
+    "hold3-speed013-slow": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "d449b1a9ae91dbb22d6dac10df0655f8aed909b2e27a0ce51881363ea7fc1873",
+      "configuration_sha256": "040ba9037a6f029fa1cb188bc5dede7ccc44997b8ab4098cd6b9ac8a351df09c",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 17.125,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.08783583720124215,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0029135628938674954,
+            "max_planar_excursion_m": 0.1032312566328289
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.016103033438856846,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": -0.003245854437351224,
+            "max_planar_excursion_m": 0.01620987225260998
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.004036031557420297,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0016849137246608761,
+            "max_planar_excursion_m": 0.01581165805843938
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": -0.010698293219302822,
+            "first_clearance_15mm_s": 4.71,
+            "max_clearance_m": 0.021658985257148745,
+            "max_planar_excursion_m": 0.06762818783696531
+          }
+        },
+        "final_body_forward_m": 0.2485307298500049,
+        "final_mean_foot_forward_m": 0.024319152244554117,
+        "first_failure": {
+          "reason": "walking progress stalled",
+          "target_source": "last issued command",
+          "time_s": 17.13,
+          "tracking_violations": [],
+          "velocity_violations": []
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "hl_kn",
+        "selected_joint_max_accepted_speed_rad_s": 7.717833995819092,
+        "selected_joint_max_position_derived_speed_rad_s": 7.7178239822387695,
+        "selected_joint_peak_requested_pd_torque_Nm": 42.18460102379322,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": 0.00021457672119144894,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "walking progress stalled",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0013270559720695019,
+            "over_5ms": 0,
+            "p50_s": 0.0003526469226926565,
+            "p99_s": 0.0006869211792945862
+          },
+          "parity_s": {
+            "max_s": 0.00016967812553048134,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00011010805610567331
+          },
+          "physics_s": {
+            "max_s": 0.0002518170513212681,
+            "over_5ms": 0,
+            "p50_s": 0.00014400901272892952,
+            "p99_s": 0.00016249646432697773
+          },
+          "recording_s": {
+            "max_s": 0.001031343825161457,
+            "over_5ms": 0,
+            "p50_s": 0.0001553548499941826,
+            "p99_s": 0.00018620467744767666
+          },
+          "state_s": {
+            "max_s": 0.01877513388171792,
+            "over_5ms": 1,
+            "p50_s": 0.00011959089897572994,
+            "p99_s": 0.00015209661796689034
+          },
+          "total_s": {
+            "max_s": 0.019686816725879908,
+            "over_5ms": 1,
+            "p50_s": 0.0007725085597485304,
+            "p99_s": 0.0012256698682904243
+          }
+        },
+        "trial_duration_s": 17.13,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.13,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-001/walk013-hold3",
+      "seed": 101
+    },
+    "hold3-speed01325-fast": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "1dba7c85db714973dcc7b156b393db2126ec0c7bc7a119923a71fe8087f9989e",
+      "configuration_sha256": "116379d4cfbcbcd5740d42911538d41a418a1e7ada0f1bef0acfe79032c2f938",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 9.695,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.14578513208474994,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.008367086142301562,
+            "max_planar_excursion_m": 0.1628375772318669
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.06324977993693282,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0024952127933502224,
+            "max_planar_excursion_m": 0.06461822899741344
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.11692233012829718,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.003297133684158328,
+            "max_planar_excursion_m": 0.11710971039937022
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.07167903399489517,
+            "first_clearance_15mm_s": 4.025,
+            "max_clearance_m": 0.0351551234126091,
+            "max_planar_excursion_m": 0.08210709530585493
+          }
+        },
+        "final_body_forward_m": 0.33057895056760206,
+        "final_mean_foot_forward_m": 0.09940906903621878,
+        "first_failure": {
+          "reason": "command tracking error limit",
+          "target_source": "rejected policy prediction, not issued",
+          "time_s": 9.700000000000001,
+          "tracking_violations": [
+            {
+              "error_rad": -0.4022523760795593,
+              "joint": "fl_hy",
+              "limit_rad": 0.4,
+              "measured_rad": 1.1299446821212769,
+              "preceding_measured_load_Nm": -23.973987148767957,
+              "predicted_pd_torque_Nm": -24.127359084784985,
+              "target_rad": 0.7276923060417175
+            }
+          ],
+          "velocity_violations": []
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fl_hy",
+        "selected_joint_max_accepted_speed_rad_s": 2.3944408893585205,
+        "selected_joint_max_position_derived_speed_rad_s": 2.394437789916618,
+        "selected_joint_peak_requested_pd_torque_Nm": 23.9813701515086,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -0.005173683166503098,
+        "selected_joint_speed_limit_rad_s": 4.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "command tracking error limit",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.001235147938132286,
+            "over_5ms": 0,
+            "p50_s": 0.0003524310886859894,
+            "p99_s": 0.0006894303951412437
+          },
+          "parity_s": {
+            "max_s": 0.00013250624760985374,
+            "over_5ms": 0,
+            "p50_s": 1.4994293451309204e-07,
+            "p99_s": 0.00010769432876259088
+          },
+          "physics_s": {
+            "max_s": 0.0003002900630235672,
+            "over_5ms": 0,
+            "p50_s": 0.0001440979540348053,
+            "p99_s": 0.0001617313362658023
+          },
+          "recording_s": {
+            "max_s": 0.0009371419437229633,
+            "over_5ms": 0,
+            "p50_s": 0.00015492946840822697,
+            "p99_s": 0.00018346098717302083
+          },
+          "state_s": {
+            "max_s": 0.0009413002990186214,
+            "over_5ms": 0,
+            "p50_s": 0.00011903000995516777,
+            "p99_s": 0.00014200411736965164
+          },
+          "total_s": {
+            "max_s": 0.001686550211161375,
+            "over_5ms": 0,
+            "p50_s": 0.0007732301019132137,
+            "p99_s": 0.0012194956140592695
+          }
+        },
+        "trial_duration_s": 9.700000000000001,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.1,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.1325,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-003/walk01325-hold3-fast",
+      "seed": 101
+    },
+    "hold3-speed0135-fast": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "c3f90c4fc6d43d2174c394010199949f469e5915f989d75b60ac65b0ebe736cf",
+      "configuration_sha256": "28058be9ca51c8d3e32db8bb7754083d82d536b21f8b00883e7b5b90a7629390",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 6.735,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.21491978234501552,
+            "first_clearance_15mm_s": 6.72,
+            "max_clearance_m": 0.02294732847809792,
+            "max_planar_excursion_m": 0.22040524857590957
+          },
+          "fr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.15732080241207258,
+            "first_clearance_15mm_s": 6.4350000000000005,
+            "max_clearance_m": 0.018616823792457583,
+            "max_planar_excursion_m": 0.1594660739989102
+          },
+          "hl": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.14855217726486392,
+            "first_clearance_15mm_s": 6.47,
+            "max_clearance_m": 0.017018812090158465,
+            "max_planar_excursion_m": 0.14869423227046846
+          },
+          "hr": {
+            "clearance_crossings_15mm": 2,
+            "final_forward_displacement_m": 0.15277978366550282,
+            "first_clearance_15mm_s": 4.025,
+            "max_clearance_m": 0.0351551234126091,
+            "max_planar_excursion_m": 0.1645513202323057
+          }
+        },
+        "final_body_forward_m": 0.27477195383532915,
+        "final_mean_foot_forward_m": 0.1683931364218637,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 6.74,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fl_hy",
+              "limit_rad_s": 4.0,
+              "velocity_rad_s": -4.126073837280273
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fl_hy",
+        "selected_joint_max_accepted_speed_rad_s": 3.9688496589660645,
+        "selected_joint_max_position_derived_speed_rad_s": 3.968858718872155,
+        "selected_joint_peak_requested_pd_torque_Nm": 15.930782496929169,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -4.1260719299317286,
+        "selected_joint_speed_limit_rad_s": 4.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0010280278511345387,
+            "over_5ms": 0,
+            "p50_s": 0.0003486338537186384,
+            "p99_s": 0.0006774878688156604
+          },
+          "parity_s": {
+            "max_s": 0.0001470940187573433,
+            "over_5ms": 0,
+            "p50_s": 1.5087425708770752e-07,
+            "p99_s": 0.00010859527625143527
+          },
+          "physics_s": {
+            "max_s": 0.00020102877169847488,
+            "over_5ms": 0,
+            "p50_s": 0.00014300132170319557,
+            "p99_s": 0.00016125934198498725
+          },
+          "recording_s": {
+            "max_s": 0.0009469613432884216,
+            "over_5ms": 0,
+            "p50_s": 0.0001546188723295927,
+            "p99_s": 0.00018345108255743978
+          },
+          "state_s": {
+            "max_s": 0.001073123887181282,
+            "over_5ms": 0,
+            "p50_s": 0.00011893501505255699,
+            "p99_s": 0.0001481088157743215
+          },
+          "total_s": {
+            "max_s": 0.001764500979334116,
+            "over_5ms": 0,
+            "p50_s": 0.0007678288966417313,
+            "p99_s": 0.001208456507883966
+          }
+        },
+        "trial_duration_s": 6.74,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.1,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.135,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-002/walk0135-hold3-fast",
+      "seed": 101
+    },
+    "hold3-speed0135-slow": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "013d4ed28f35da284a014a7344c83de20cd2b4829a69917b8d27f5a08bf188f6",
+      "configuration_sha256": "72a0dff3a704aed5e7d93fde875a15e0118459e8bd3f7dc91475b52d3aee85b6",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 18.495,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.08811418402965392,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0029135628938674954,
+            "max_planar_excursion_m": 0.10351811487065854
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.016220452171569633,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": -0.003245854437351224,
+            "max_planar_excursion_m": 0.01625225304425556
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.00762982170525342,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0016849137246608761,
+            "max_planar_excursion_m": 0.01581165805843938
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": -0.010545667729540473,
+            "first_clearance_15mm_s": 4.71,
+            "max_clearance_m": 0.021658985257148745,
+            "max_planar_excursion_m": 0.06762818783696531
+          }
+        },
+        "final_body_forward_m": 0.2519702149230369,
+        "final_mean_foot_forward_m": 0.025354697544234122,
+        "first_failure": {
+          "reason": "walking progress stalled",
+          "target_source": "last issued command",
+          "time_s": 18.5,
+          "tracking_violations": [],
+          "velocity_violations": []
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "hl_kn",
+        "selected_joint_max_accepted_speed_rad_s": 7.717833995819092,
+        "selected_joint_max_position_derived_speed_rad_s": 7.7178239822387695,
+        "selected_joint_peak_requested_pd_torque_Nm": 42.18460102379322,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -9.536743164064397e-05,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "walking progress stalled",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 9.5367431640625e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0012901839800179005,
+            "over_5ms": 0,
+            "p50_s": 0.0003513989504426718,
+            "p99_s": 0.0006881903158500788
+          },
+          "parity_s": {
+            "max_s": 0.00015389779582619667,
+            "over_5ms": 0,
+            "p50_s": 1.41095370054245e-07,
+            "p99_s": 0.00010891957674175501
+          },
+          "physics_s": {
+            "max_s": 0.00025200797244906425,
+            "over_5ms": 0,
+            "p50_s": 0.00014412915334105492,
+            "p99_s": 0.00016474103555083266
+          },
+          "recording_s": {
+            "max_s": 0.0010257130488753319,
+            "over_5ms": 0,
+            "p50_s": 0.00015600654296576977,
+            "p99_s": 0.00018768562935292716
+          },
+          "state_s": {
+            "max_s": 0.018180636689066887,
+            "over_5ms": 1,
+            "p50_s": 0.00011879438534379005,
+            "p99_s": 0.00015241662971675392
+          },
+          "total_s": {
+            "max_s": 0.01905903499573469,
+            "over_5ms": 1,
+            "p50_s": 0.0007718722335994244,
+            "p99_s": 0.0012236462580040095
+          }
+        },
+        "trial_duration_s": 18.5,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.135,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-002/walk0135-hold3-slow",
+      "seed": 101
+    },
+    "hold3-speed014-fast": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "140f6a86cb97e06dff6b6402c36d7ace1b84451eb34f8901a4025a6c8ccf75ec",
+      "configuration_sha256": "c21438f07a4907873e0a9e1e90ab524c0b3e6e0e54df64434b77e56f567eef1c",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 6.2250000000000005,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.13889063858844575,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.008367086142301562,
+            "max_planar_excursion_m": 0.15610662442933138
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.0492309435045928,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.011130130231380465,
+            "max_planar_excursion_m": 0.05041551711409079
+          },
+          "hl": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.03384680395296419,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.0016849137246608761,
+            "max_planar_excursion_m": 0.03407795287607907
+          },
+          "hr": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.015980592850570643,
+            "first_clearance_15mm_s": 4.025,
+            "max_clearance_m": 0.0351551234126091,
+            "max_planar_excursion_m": 0.06762818783696531
+          }
+        },
+        "final_body_forward_m": 0.25025395185208205,
+        "final_mean_foot_forward_m": 0.05948724472414334,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 6.23,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fr_kn",
+              "limit_rad_s": 8.0,
+              "velocity_rad_s": -8.147543907165527
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fr_kn",
+        "selected_joint_max_accepted_speed_rad_s": 7.967488765716553,
+        "selected_joint_max_position_derived_speed_rad_s": 7.96747207641477,
+        "selected_joint_peak_requested_pd_torque_Nm": 49.03422199934721,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -8.1475496292116,
+        "selected_joint_speed_limit_rad_s": 8.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0010128072462975979,
+            "over_5ms": 0,
+            "p50_s": 0.00034549320116639137,
+            "p99_s": 0.0006764532299712299
+          },
+          "parity_s": {
+            "max_s": 0.0001376061700284481,
+            "over_5ms": 0,
+            "p50_s": 1.5040859580039978e-07,
+            "p99_s": 0.00010710610076785088
+          },
+          "physics_s": {
+            "max_s": 0.00021412409842014313,
+            "over_5ms": 0,
+            "p50_s": 0.00014245067723095417,
+            "p99_s": 0.00015887061599642038
+          },
+          "recording_s": {
+            "max_s": 0.0007578651420772076,
+            "over_5ms": 0,
+            "p50_s": 0.00015459908172488213,
+            "p99_s": 0.00018113888800144195
+          },
+          "state_s": {
+            "max_s": 0.00017153192311525345,
+            "over_5ms": 0,
+            "p50_s": 0.00011884956620633602,
+            "p99_s": 0.0001377363223582506
+          },
+          "total_s": {
+            "max_s": 0.0015974179841578007,
+            "over_5ms": 0,
+            "p50_s": 0.0007657655514776707,
+            "p99_s": 0.0012009482132270932
+          }
+        },
+        "trial_duration_s": 6.23,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.1,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.14,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-002/walk014-hold3-fast",
+      "seed": 101
+    },
+    "hold3-speed014-slow": {
+      "backend": "mujoco",
+      "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+      "complete_sha256": "bdf5a9a1a685b536bea8f36f302901933f63b174727f9e11434f7f36ea9f0854",
+      "configuration_sha256": "6d66a499769cfcc38ef1045c09cfde4ef8886094919ebf454d3e691264fb07a3",
+      "diagnostics": {
+        "accepted_trajectory_end_s": 12.895,
+        "feet": {
+          "fl": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.1635021140737865,
+            "first_clearance_15mm_s": 12.88,
+            "max_clearance_m": 0.02840437585115433,
+            "max_planar_excursion_m": 0.16777576700215327
+          },
+          "fr": {
+            "clearance_crossings_15mm": 0,
+            "final_forward_displacement_m": 0.1488641023378188,
+            "first_clearance_15mm_s": null,
+            "max_clearance_m": 0.011009613364934924,
+            "max_planar_excursion_m": 0.15390312187386299
+          },
+          "hl": {
+            "clearance_crossings_15mm": 1,
+            "final_forward_displacement_m": 0.13637046325556568,
+            "first_clearance_15mm_s": 12.725,
+            "max_clearance_m": 0.015440089941024783,
+            "max_planar_excursion_m": 0.1385077789248007
+          },
+          "hr": {
+            "clearance_crossings_15mm": 2,
+            "final_forward_displacement_m": 0.16521638219053006,
+            "first_clearance_15mm_s": 4.71,
+            "max_clearance_m": 0.026832318246364596,
+            "max_planar_excursion_m": 0.17315021036765038
+          }
+        },
+        "final_body_forward_m": 0.2713518904346959,
+        "final_mean_foot_forward_m": 0.15348826546442526,
+        "first_failure": {
+          "reason": "measured joint velocity or load limit",
+          "target_source": "last issued command",
+          "time_s": 12.9,
+          "tracking_violations": [],
+          "velocity_violations": [
+            {
+              "joint": "fl_hy",
+              "limit_rad_s": 4.0,
+              "velocity_rad_s": -4.411754131317139
+            }
+          ]
+        },
+        "first_nonzero_velocity_request_s": 3.0,
+        "forward_before_nonzero_request_m": 0.08721846145954337,
+        "hardware_access": false,
+        "hardware_qualified": false,
+        "selected_joint": "fl_hy",
+        "selected_joint_max_accepted_speed_rad_s": 3.8509833812713623,
+        "selected_joint_max_position_derived_speed_rad_s": 3.850984573365024,
+        "selected_joint_peak_requested_pd_torque_Nm": 21.109776109457016,
+        "selected_joint_rejected_step_position_derived_speed_rad_s": -4.411745071410444,
+        "selected_joint_speed_limit_rad_s": 4.0,
+        "support_evidence": "foot-center geometry only; normal forces and loaded support not measured"
+      },
+      "fl_hy_tracking_cap_rad": 0.4,
+      "gains": {
+        "feedforward": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd": [
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.32
+        ],
+        "kp": [
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          60.0,
+          120.0,
+          120.0,
+          120.0,
+          100.0,
+          100.0,
+          100.0,
+          16.0
+        ]
+      },
+      "graph_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "outcome": {
+        "failure": "measured joint velocity or load limit",
+        "max_observation_error": 3.725290298461914e-09,
+        "max_raw_action_error": 7.152557373046875e-07,
+        "max_target_error_rad": 2.384185791015625e-07,
+        "reason": "guard_stop",
+        "stable_final_window": false,
+        "timing": {
+          "core_s": {
+            "max_s": 0.0014602639712393284,
+            "over_5ms": 0,
+            "p50_s": 0.00034926505759358406,
+            "p99_s": 0.0006798887206241489
+          },
+          "parity_s": {
+            "max_s": 0.0001416737213730812,
+            "over_5ms": 0,
+            "p50_s": 1.5087425708770752e-07,
+            "p99_s": 0.00010815095622092486
+          },
+          "physics_s": {
+            "max_s": 0.00021599791944026947,
+            "over_5ms": 0,
+            "p50_s": 0.0001435528974980116,
+            "p99_s": 0.00015982608776539566
+          },
+          "recording_s": {
+            "max_s": 0.0007537370547652245,
+            "over_5ms": 0,
+            "p50_s": 0.00015494413673877716,
+            "p99_s": 0.000182345574721694
+          },
+          "state_s": {
+            "max_s": 0.0011439621448516846,
+            "over_5ms": 0,
+            "p50_s": 0.00011876947246491909,
+            "p99_s": 0.00014698712620884202
+          },
+          "total_s": {
+            "max_s": 0.0018720999360084534,
+            "over_5ms": 0,
+            "p50_s": 0.0007672891952097416,
+            "p99_s": 0.0012080966401845216
+          }
+        },
+        "trial_duration_s": 12.9,
+        "walking_completed": false
+      },
+      "packages": {
+        "bosdyn-api": "5.1.1",
+        "bosdyn-client": "5.1.1",
+        "numpy": "2.2.6",
+        "onnxruntime": "1.23.2",
+        "onnxruntime-gpu": null,
+        "pydantic": "2.12.3",
+        "spot-deployment": "0.1.0"
+      },
+      "parameters": {
+        "acceleration_m_s2": 0.025,
+        "distance_m": 0.75,
+        "final_hold_s": 1.0,
+        "initial_hold_s": 3.0,
+        "max_duration_s": 20.0,
+        "max_heading_rad": 0.15,
+        "max_lateral_m": 0.1,
+        "max_pose_age_s": 0.02,
+        "max_pose_step_m": 0.025,
+        "max_speed_m_s": 0.14,
+        "min_progress_m": 0.005,
+        "stall_timeout_s": 5.0,
+        "stopped_speed_m_s": 0.03,
+        "tolerance_m": 0.02
+      },
+      "physics_device": "cpu",
+      "policy_device": "cpu",
+      "run": "runs/relic-walking-onset-20261012-001/walk014-hold3",
+      "seed": 101
+    }
+  },
+  "diagnostic_acceptance_commit": "799a0824e29f2ba276660660f95e1f116c3f0311",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "instruction": "Do not deploy on real hardware",
+  "native_replay": {
+    "artifacts": {
+      "dynamics.pdf": "a287d91d653cf42488f4b6948cef87545c7ff0d2deaa9ddd3fc7ac9b1db1830b",
+      "dynamics.png": "1ee6a8d607ec07747041e5924de36b914db6df58a43a601ebd4109f372412994",
+      "ffmpeg.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "replay.mp4": "001e6f6647938640db725060e832903a0c7d707ff2e570986c28a70b37b72fe2"
+    },
+    "fps": 200,
+    "frames": 1348,
+    "hardware_access": false,
+    "new_dynamics": false,
+    "recorded_duration_s": 6.735,
+    "source_complete_sha256": "c3f90c4fc6d43d2174c394010199949f469e5915f989d75b60ac65b0ebe736cf",
+    "source_reason": "guard_stop",
+    "source_trajectory_sha256": "bfea188e607acf6a5a822923a65f33a4945451b871878fa6c043664ab5e994a8",
+    "status": "completed",
+    "tool_sha256": "4215035acc903036e5f57e24d4da586c7c38486bc55ab6f9c91a6a66d3637460",
+    "visual_manifest_sha256": "4d5814bd39d582c48cbc9b03aeed14cbf0643ca7a5b372d8655ee85bd071d74f",
+    "visual_model_sha256": "3e37781b6436c5b38bc48fb7e8549e05612086efa04aabb4531298895b1b9215",
+    "visual_restoration_tool_sha256": "c2ff8951836522ec4ee466c345a46168ac0850fa9d0eeb7cecb68f2de9477e20"
+  },
+  "real_hardware_deployment": false,
+  "simulation_commit": "f7b414a6a55c124bd5a08f66da300d28ef69ccec",
+  "simulation_only_approval": {
+    "approved_change": {
+      "fl_hy_tracking_error_max_rad": [
+        0.4,
+        0.5
+      ]
+    },
+    "constraint": "Do not deploy on real hardware",
+    "date": "2026-10-12",
+    "hardware_activation_authorized": false,
+    "hardware_envelope_changed": false,
+    "operator": "Adam",
+    "proposal_sha256": "28f670cc854f591692a41f9256ae6091f5fd713cced82aaf892433e64aea2110",
+    "request": "Evaluate the 0.5 rad simulation draft",
+    "review_sha256": "491a40cc6ef00feef430eaa6cd88b3e0dcf4fce5d4172197dd72455a70a507e7",
+    "scope": "simulation only"
+  },
+  "simulation_only_tracking_review": {
+    "approval_required_before_proposed_comparison": true,
+    "calculation": "60*0.5 +1.5*4=36Nm; dynamic guards still independently enforce loads/torques/positions/speeds",
+    "changed_fields": {
+      "tracking_error_max[fl_hy]": [
+        0.4,
+        0.5
+      ]
+    },
+    "conservative_proposed_pd_torque_bound_Nm": 36,
+    "current_result": "command tracking error at9.70s/.3307m, not completed",
+    "current_tracking_limit_rad": 0.4,
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "hip_speed_cap_rad_s": 4,
+    "joint": "fl_hy",
+    "kd": 1.5,
+    "kp": 60,
+    "limitations": "Algebraic PD bound is not proof of hardware tracking tolerance, thermal capability, gait robustness or safe contact forces. No hardware envelope change is proposed for automatic activation.",
+    "manufacturer_torque_bound_Nm": 44.88,
+    "observed_actual_rad": 1.1299446821212769,
+    "observed_offset_rad": -0.4022523760795593,
+    "observed_target_rad": 0.7276923060417175,
+    "observed_velocity_rad_s": -0.005188986659049988,
+    "original_simulation_envelope_sha256": "af457ea41f15d55d837f517d51dcb26c6ce0ee9a27be64beea30db635adf3815",
+    "predicted_pd_torque_Nm": -24.127359084784985,
+    "proposal_envelope_sha256": "28f670cc854f591692a41f9256ae6091f5fd713cced82aaf892433e64aea2110",
+    "proposed_tracking_limit_rad": 0.5,
+    "source": "runs/relic-walking-onset-20261012-003/walk01325-hold3-fast",
+    "status": "unapproved; proposed simulation comparison only"
+  },
+  "slow_replay": {
+    "frame_count_identical": true,
+    "hardware_access": false,
+    "native_duration_s": 6.74,
+    "native_fps": "200/1",
+    "native_frames": 1348,
+    "new_dynamics": false,
+    "playback_scale": 8,
+    "slow_duration_s": 53.92,
+    "slow_fps": "25/1",
+    "slow_frames": 1348,
+    "source_hash": "001e6f6647938640db725060e832903a0c7d707ff2e570986c28a70b37b72fe2",
+    "source_replay": "runs/relic-walking-review-artifacts-20261012-001/stepping-replay/replay.mp4"
+  },
+  "tests_passed": 445
+}
