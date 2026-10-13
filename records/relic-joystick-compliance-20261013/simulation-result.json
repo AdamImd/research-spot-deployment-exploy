@@ -1,0 +1,73 @@
+{
+  "compute_max_s": 0.0008786479011178017,
+  "compute_p99_s": 0.0006559980101883411,
+  "failure": null,
+  "first_fall_proxy_s": null,
+  "guard_mode": "enforced",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "late_window_metrics": {
+    "angular_speed_p95_rad_s": 3.369731917952068e-05,
+    "height_span_m": 2.562999725341797e-06,
+    "joint_speed_p95_rad_s": 3.794062649831176e-05,
+    "linear_speed_p95_m_s": 1.4496361082146533e-05,
+    "max_tilt_deg": 0.16312942335159455,
+    "mean_height_m": 0.49557834299190945,
+    "min_height_m": 0.49557724595069885,
+    "planar_speed_p95_m_s": 1.449561899532513e-05,
+    "samples": 2001,
+    "span_s": 10.0,
+    "tilt_span_deg": 0.0
+  },
+  "loop_wall_s": 10.124043790157884,
+  "max_observation_error": 5.960464477539063e-08,
+  "max_raw_action_error": 9.5367431640625e-07,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "policy_duration_s": 60.0,
+  "policy_samples": 3001,
+  "real_time_factor": 5.926485626062696,
+  "reason": "completed",
+  "stable_final_window": true,
+  "three_leg_demo": null,
+  "timing": {
+    "core_s": {
+      "max_s": 0.0008790190331637859,
+      "over_5ms": 0,
+      "p50_s": 0.000305230263620615,
+      "p99_s": 0.0006561782211065292
+    },
+    "parity_s": {
+      "max_s": 0.0001731952652335167,
+      "over_5ms": 0,
+      "p50_s": 1.41095370054245e-07,
+      "p99_s": 0.00011174613609910011
+    },
+    "physics_s": {
+      "max_s": 0.00028642406687140465,
+      "over_5ms": 0,
+      "p50_s": 0.0001485268585383892,
+      "p99_s": 0.00017355475574731827
+    },
+    "recording_s": {
+      "max_s": 0.0029908912256360054,
+      "over_5ms": 0,
+      "p50_s": 0.00015464890748262405,
+      "p99_s": 0.00019211089238524437
+    },
+    "state_s": {
+      "max_s": 0.04660878796130419,
+      "over_5ms": 2,
+      "p50_s": 0.00012029288336634636,
+      "p99_s": 0.00016560964286327362
+    },
+    "total_s": {
+      "max_s": 0.04750414891168475,
+      "over_5ms": 2,
+      "p50_s": 0.0007341890595853329,
+      "p99_s": 0.0012067221105098724
+    }
+  },
+  "trial_duration_s": 60.0,
+  "walking": null,
+  "walking_completed": null
+}

@@ -1,0 +1,18 @@
+{
+  "environment": "lockedUV/Python3.12 existing CPU runtime",
+  "full_tests_passed": 540,
+  "initial_capture": "fixtures/standing-capture",
+  "raw_hashes": {
+    "runs/relic-joystick-compliance-validation-20261013-001/01-pytest.log": "938d58a7287a67a02225e161cd2ac0e9733353ab9be3ab33ced1ffb24caf4717",
+    "runs/relic-joystick-compliance-validation-20261013-001/02-ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "runs/relic-joystick-compliance-validation-20261013-001/03-demo.log": "67f70cbc827cb0411542d4225023b7680bfd8a7502b1cc493d81a56245375dab",
+    "runs/relic-joystick-compliance-validation-20261013-001/simulation/COMPLETE.json": "f134c8dd9eb8e2662137b39c48ee5da378e13db6e1efc6e87e810c10f1d6249f",
+    "runs/relic-joystick-compliance-validation-20261013-001/simulation/configuration.json": "90dafffcc6cba9f1e1dd7b27626616fdc424ec6dd87fa80e6c92ba562674a109",
+    "runs/relic-joystick-compliance-validation-20261013-001/simulation/events.jsonl": "494edb415301492a615185ad7515ab1d93125946f262ce49decddd6896ccb980",
+    "runs/relic-joystick-compliance-validation-20261013-001/simulation/result.json": "40572ae169367f6f4cc504db66e88120033352eaf9db39708ab4e537ad6395b9",
+    "runs/relic-joystick-compliance-validation-20261013-001/simulation/rollout.jsonl": "acc16437fd30274ff9a14d612b4e4b4fc80e0b0d67dee28e8708ece3b7f37446"
+  },
+  "scope": "offline; no hardware access",
+  "seed": 101,
+  "source_commit": "b9cb3c2"
+}

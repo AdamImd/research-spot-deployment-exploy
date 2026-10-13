@@ -40,3 +40,15 @@ performs fresh preflight, runs one session, verifies motors off and saves a comp
 recording. Every invocation has a unique output directory; no retry. The local
 prepared launcher supplies this Spot's ignored frozen bundle. No physical motion
 is executed while preparing or validating the command.
+
+## Validation result
+
+Full source `b9cb3c2` passed540tests, Ruff and the Exploy demo. The guarded60s
+MuJoCo sequence completed without a fall proxy and passed stable final standing.
+Observation/raw-action/target parity maxima were5.96e-8/9.54e-7/2.38e-7rad.
+Compute p99/max0.656/0.879ms. Default-only launcher display also passed without
+robot/USB access. Full logs and data remain under
+`runs/relic-joystick-compliance-validation-20261013-001`; see artifact hashes and
+`simulation-result.json`. Subsequent documentation-only commit records results;
+controller/launcher source unchanged. No physical trial was performed for this
+change. Fresh operator-start commissioning remains separate from qualification.
