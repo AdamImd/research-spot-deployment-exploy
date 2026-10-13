@@ -22,6 +22,8 @@ FIELDS = {
     "policy_ack": ("command_key", "state_key", "raw_actions"),
     "relic_initialized": ("height", "requested_height_m", "previous_actions", "endpoint"),
     "relic_phase": ("phase",), "stock_phase": ("phase",),
+    "leg_position_mode": ("mode", "reason", "torque_profile", "command_bounds_enforced"),
+    "leg_position_observation": ("indices", "positions", "reference_min", "reference_max"),
     "relic_handover": ("torque_step_Nm", "previous_actions"),
     "preparation": ("phase", "reference", "feedforward"),
     "health": ("estop_ready", "battery_percent", "fault_count", "arm_stowed"),

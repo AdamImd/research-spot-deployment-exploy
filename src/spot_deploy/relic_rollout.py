@@ -29,6 +29,7 @@ class ReLICRollout:
         self.phase = "uninitialized"
         self.policy_samples = 0
         self.last_arm_motion_observation = None
+        self.last_leg_position_observation = None
         self.motion = None
         if self.manifest.task == 'walking':
             from .walking import ForwardTravel
@@ -63,6 +64,11 @@ class ReLICRollout:
             self.record.event('arm_motion_mode', mode='observe',
                               reason=self.envelope.arm_motion_reason,
                               torque_limits_enforced=True, arm_targets_held=True)
+        if self.guard.observe_leg_positions:
+            self.record.event('leg_position_mode', mode='observe',
+                              reason=self.envelope.leg_position_reason,
+                              torque_profile=self.envelope.actuator_limit_profile,
+                              command_bounds_enforced=True)
 
     def activate(self, now):
         if self.initial is None or self.active_at is not None or not np.isfinite(now):
@@ -77,6 +83,14 @@ class ReLICRollout:
         if self.initial is None:
             raise ContractError("rollout was not initialized")
         self.guard.check_state(state, now, robot_now)
+        position_observation = self.guard.leg_position_observation
+        if (position_observation is not None
+                and position_observation != self.last_leg_position_observation):
+            self.record.event('leg_position_observation', indices=position_observation,
+                              positions=state.positions[:12],
+                              reference_min=self.envelope.position_min[:12],
+                              reference_max=self.envelope.position_max[:12], monotonic_s=now)
+            self.last_leg_position_observation = position_observation.copy()
         if self.motion and self.active_at is not None:
             self.velocity_command = self.motion.update(state, now)
         observation = self.guard.arm_motion_observation

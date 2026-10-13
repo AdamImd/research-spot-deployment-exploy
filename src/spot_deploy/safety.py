@@ -75,6 +75,11 @@ class Guard:
             raise ContractError("arm observation mode requires a ReLIC leg controller")
         self.motion_joint_count = 12 if self.observe_arm_motion else 19
         self.arm_motion_observation = None
+        self.observe_leg_positions = envelope.leg_position_guard == "observe"
+        self.leg_position_observation = None
+        if (self.observe_leg_positions
+                and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")):
+            raise ContractError("leg position observation requires a ReLIC controller")
         if envelope.transition_s == 0:
             if (getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")
                     or manifest.relic.preparation.kind != "direct"
@@ -135,7 +140,11 @@ class Guard:
                 observation['tracking_indices'] = np.flatnonzero(np.abs(q[12:]
                     - self.last_command[12:]) > np.asarray(env.tracking_error_max)[12:]).tolist()
             self.arm_motion_observation = observation
-        if np.any(q[:n] < env.position_min[:n]) or np.any(q[:n] > env.position_max[:n]):
+        position_bad = (q[:n] < env.position_min[:n]) | (q[:n] > env.position_max[:n])
+        if self.observe_leg_positions:
+            self.leg_position_observation = np.flatnonzero(position_bad[:12]).tolist()
+            position_bad[:12] = False
+        if np.any(position_bad):
             raise ContractError("measured joint position limit")
         if np.any(np.abs(v[:n]) > env.velocity_max[:n]) or np.any(np.abs(load) > env.load_max):
             raise ContractError("measured joint velocity or load limit")
