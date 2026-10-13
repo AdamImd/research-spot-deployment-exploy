@@ -146,3 +146,11 @@ host timing thresholds only; the119ms outlier is retained, not a timing pass.
 Nominal50/200Hz rates and all other physical settings remain. Final exact approval
 must disclose that the last target may remain valid for about half a second.
 No physical approval is supplied by this draft or its motors-off preflight.
+
+The subsequently approved ONE latency500 hardware attempt is consumed:
+records/relic-three-leg-latency500-hardware-20261013. Native stand completed;
+two preparation commands, zero policy predictions, then command stream ended
+unexpectedly. Stream response status was discarded, so server cause is unknown.
+OFF/lease return confirmed5.017s; fault-free motors-off postcheck passed.
+No retry. Next diagnosis should preserve stream response status; do not infer
+a confirmed expiry rejection or claim three-leg success.

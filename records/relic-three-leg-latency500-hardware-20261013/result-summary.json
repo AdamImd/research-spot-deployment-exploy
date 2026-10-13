@@ -1,0 +1,36 @@
+{
+  "approval_consumed": true,
+  "automatic_retry": false,
+  "diagnostic_limitation": "ControlSpot.check_stream discards returned stream response status before raising generic ended-unexpectedly error. Saved artifacts cannot establish server rejection reason.",
+  "failure": {
+    "error": "command stream ended unexpectedly",
+    "error_type": "ContractError"
+  },
+  "full_sequence_completed": false,
+  "hardware_qualified": false,
+  "native_stand_completed": true,
+  "policy_predictions": 0,
+  "postcheck": {
+    "active_fault_count": 0,
+    "motors_off": true,
+    "passed": true,
+    "tablet_stop_ready": true
+  },
+  "recorded_preparation_commands": 2,
+  "recording": {
+    "compact_bytes": 3611,
+    "compact_complete_sha256": "15366c0a4be2f180f68443f5684ff95c4b0fd6ceef8dd99b40f35041bf0f26cf",
+    "raw_and_compact_integrity_verified": true,
+    "raw_complete_sha256": "d049bfca04e8a6321f5d49c26f8c1f433d00fc086f52f89e06a83232f00b9c8d"
+  },
+  "requested_duration_s": 47,
+  "server_response_status_recorded": false,
+  "shutdown": {
+    "elapsed_s": 5.016860586125404,
+    "errors": [],
+    "lease_returned": true,
+    "motors_off_confirmed": true,
+    "within_shutdown_budget": true
+  },
+  "source_commit": "101f6926d3c64a67193a62f08e92b370c39a2f3c"
+}
