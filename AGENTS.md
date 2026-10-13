@@ -166,3 +166,10 @@ The next draft follows the official firmware-matched SDK5.0.1 example:50ms TTL,
 This fixes end-time rejection only;500ms compute/stall tolerance is not achieved
 with the synchronous producer and50ms firmware expiry. No offline tests requested;
 new exact physical approval remains required before the proposed repeat.
+
+The50ms expiry trial reached lifting with290policy predictions, then stopped on
+"joint control no longer processing" at~5.8s; no saved specific feedback cause.
+Three physical episodes recovered5/5/15ms, none triggered500ms stop. Native OFF/
+lease return7.021s and fault-free postcheck confirmed. Adam requested an unchanged
+repeat, saying "We jumped the gun"; no source/envelope change or offline tests.
+Record: records/relic-three-leg-expiry50-20261013. Previous approval consumed.

@@ -1,0 +1,9 @@
+{
+  "local/relic-three-leg-expiry50-preparation-20261013-001/final-approval.json": "5a5fe561a0786364815f5d3f2ab7b0b0ea06849aef5ad07e18aa379f37b310af",
+  "local/relic-three-leg-expiry50-preparation-20261013-001/hardware-contract.json": "f3ef768c2efc0cbba93702ffbd18092b1f0fa5aaff073de821c602c30538f186",
+  "runs/relic-three-leg-expiry50-hardware-20261013-001/compact/COMPLETE.json": "f50fd776c485794d39a94e6c42e8c6c79e35d0bdb095788fa156e4642f294df6",
+  "runs/relic-three-leg-expiry50-hardware-20261013-001/postcheck/COMPLETE.json": "b37e834f205dede6df0578e1f82fecd4bd0662b6b7dcb2dbe21a38ad83055b45",
+  "runs/relic-three-leg-expiry50-hardware-20261013-001/trial/COMPLETE.json": "cf1abcc08585a04439e229bc07df0a2c063c9a926f91677fd488f2fcf962553c",
+  "runs/relic-three-leg-expiry50-hardware-20261013-001/trial/events.jsonl": "9dc0daa0f03954b1db199f3087e241a04b57e24ef59bf098baba184b24646112",
+  "runs/relic-three-leg-expiry50-hardware-20261013-001/trial/result.json": "53607f99db9cb237384a6601b6ef4d10338832ac3d83336236abce3d9e49da9b"
+}

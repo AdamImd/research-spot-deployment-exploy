@@ -45,3 +45,29 @@ source-bound bundle and obtain the requested exact final confirmation with Adam
 operating and Minghao on the tablet, rig attached and workspace clear. One
 attempt only; no retries. Local packet:
 `local/relic-three-leg-expiry50-preparation-20261013-001`.
+
+## First corrected attempt outcome
+
+The approved trial ran once at clean commit
+`cc853566f76d949c2f902fc88bbf8c98f3e5e179`. The50ms expiry was accepted:
+1,162 commands,290 policy predictions and289 acknowledgements were recorded,
+with5.780seconds between first and last policy predictions. Initial four-foot
+standing and lifting were observed; the IK square and return were not reached.
+The first error was `joint control no longer processing`. The saved feedback
+does not identify whether an operator command, firmware condition or another
+event caused that status. Do not infer the cause from absent active faults.
+
+Three physical-limit episodes recovered: front-right hip speed in5.001ms,
+front-right knee manufacturer torque in5.005ms and body angular speed in15.007ms.
+None reached the500ms persistence threshold. These crossings were not the
+recorded stop reason. Motors off and lease return were confirmed in7.021s;
+postcheck passed with zero active faults and clear stop states. No retry was
+made under that approval. Raw and compact recording hashes were verified.
+See `result-summary.json` and `artifacts.json`.
+
+Adam then stated "We jumped the gun" and requested another run as-is. That
+statement is operator context, not independently verified stop causality.
+Prepare one separate repeat with identical runtime source, manifest, robot
+profile and envelope; no offline tests. The new local packet is
+`local/relic-three-leg-expiry50-repeat-20261013-001`. Fresh final confirmation
+and motors-off preflight remain required; the preceding approval is consumed.
