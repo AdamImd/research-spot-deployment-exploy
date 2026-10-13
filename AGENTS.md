@@ -207,3 +207,14 @@ at SH1 lower/EL0 upper model bounds; arm commands/torque/tracking are unchanged.
 See records/relic-joystick-hardware-20261013. Approval consumed. Adam subsequently
 requested a300s session; plan maximum is now300s, default remains60s. Prepare a
 new duration-bound manifest/envelope and ask immediately before the new trial.
+
+Adam directly requested300s then "Just do it", overriding another question for
+that repeat. Initial source918fd3c rejected at the CLI60s gate before any control
+lease/power/motion; motorsoff postcheck passed. Corrected source1ef834b allows300s
+for joystick CLI only; other mode caps unchanged.12targeted tests/Ruff passed.
+The corrected physical session reached229.03s/11451policy samples/45782commands,
+exercised X/Y/yaw inputs and completed the front-arm command path, then stopped on EL0
+(SDK14/arm-local2) tracking0.15555rad over0.15rad for0.502005s. This is not a SH1
+or measured-position stop. OFF/lease return6.023s and fault-free postcheck confirmed.
+See records/relic-joystick-five-minute-20261013. No retry; five-minute endurance
+not completed, moving-arm robustness unqualified. Latest authorization consumed.
