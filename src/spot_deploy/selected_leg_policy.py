@@ -73,6 +73,7 @@ class SelectedLegPolicy(ExployReLICPolicy):
         if np.any(self.command[3:]) or not np.all(np.isfinite(self.command)):
             raise ContractError('only the front-left leg can have an explicit command')
         result = super().inputs(state, previous, velocity_command)
+        result['torso_command'] = np.asarray(self.sequence.torso_command(self.body_height),dtype=np.float32)[None]
         result['leg_command'] = self.command[None]
         return result
 
@@ -82,12 +83,13 @@ class SelectedLegPolicy(ExployReLICPolicy):
         target, _, obs, action = super().evaluate(state, previous, velocity_command)
         if self.sequence.phase == 'three-leg-handover':
             values = super().inputs(state, previous, velocity_command)
+            values['torso_command'] = np.asarray(self.sequence.torso_command(self.body_height),dtype=np.float32)[None]
             values['leg_command'] = np.zeros((1,12),dtype=np.float32)
             four_target, _, _, four_raw = self._evaluate_inputs(values, start)
             target, action = mix_entry(self.sequence, four_target, four_raw, target, action)
         if self.sequence.phase == 'four-foot-handover':
             p = self.manifest.demo
-            begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+            begin = p.initial_hold_s+p.support_transfer_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
             alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
             ids = self.sequence.ids
             target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)

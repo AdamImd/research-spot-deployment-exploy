@@ -48,3 +48,13 @@ to4s, still overlapping the same6s lift and keeping total46s, to allow more time
 for weight redistribution. No torque/speed bound changes, no new random seeds,
 no alternate history method or hidden branch rescaling. Native parity remains
 independent; physical-stance gate must pass before baseline case.
+
+004 support-position hypothesis:4s overlap still crossed angular-speed cap7.29s
+(003). Time alone did not resolve support redistribution. Add a4s four-foot
+support-transfer phase before mode entry: existing native torso roll+0.08rad,
+pitch−0.08rad requested smoothly, toward right/rear support in the leg/body model.
+Keep that orientation request through tripod/lowering, then smoothly restorelevel
+in the first4s of final12s hold. No direct body translation/COM claim; actualmodel
+pose/contact response must be measured. Singleactor duringfourfootlean; existing
+4s target/raw mix overlaps6slift afterward. Total50s/future51s margin. No hardware
+motion/approval, newbounds or retraining; notqualified by this geometric hypothesis.

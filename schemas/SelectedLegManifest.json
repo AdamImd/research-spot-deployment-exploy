@@ -431,6 +431,27 @@
           "title": "Entry Blend S",
           "type": "number"
         },
+        "support_transfer_s": {
+          "default": 0,
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Support Transfer S",
+          "type": "number"
+        },
+        "support_roll_rad": {
+          "default": 0,
+          "maximum": 0.15,
+          "minimum": -0.15,
+          "title": "Support Roll Rad",
+          "type": "number"
+        },
+        "support_pitch_rad": {
+          "default": 0,
+          "maximum": 0.15,
+          "minimum": -0.15,
+          "title": "Support Pitch Rad",
+          "type": "number"
+        },
         "lifted_positions": {
           "anyOf": [
             {

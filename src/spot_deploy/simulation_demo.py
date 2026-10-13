@@ -48,6 +48,9 @@ class ThreeLegPlan(StrictModel):
     final_hold_s: float = Field(ge=5, le=20)
     return_blend_s: float = Field(default=0, ge=0, le=5)
     entry_blend_s: float = Field(default=0, ge=0, le=5)
+    support_transfer_s: float = Field(default=0, ge=0, le=6)
+    support_roll_rad: float = Field(default=0, ge=-.15, le=.15)
+    support_pitch_rad: float = Field(default=0, ge=-.15, le=.15)
     lifted_positions: list[float] | None = Field(default=None, min_length=3, max_length=3)
     cartesian_path: CartesianLegPath | None = None
     min_clearance_m: float = Field(gt=0, le=.15)
@@ -57,10 +60,12 @@ class ThreeLegPlan(StrictModel):
 
     @model_validator(mode='after')
     def mode(self):
-        if (self.return_blend_s or self.entry_blend_s) and self.kind != 'front-left-cartesian-ik':
+        if (self.return_blend_s or self.entry_blend_s or self.support_transfer_s) and self.kind != 'front-left-cartesian-ik':
             raise ValueError('return blend requires the Cartesian sequence')
         if self.entry_blend_s > self.lift_s:
             raise ValueError('entry blend must finish within lift duration')
+        if bool(self.support_transfer_s) != bool(self.support_roll_rad or self.support_pitch_rad):
+            raise ValueError('support lean requires an explicit nonzero transfer duration and angles')
         if self.kind == 'front-left-cartesian-ik':
             if self.cartesian_path is None or self.lifted_positions is not None:
                 raise ValueError('IK demo requires a Cartesian path, without a joint-space lifted pose')
@@ -72,7 +77,7 @@ class ThreeLegPlan(StrictModel):
     def duration_s(self):
         return sum(getattr(self, k) for k in ('initial_hold_s', 'lift_s', 'hold_s',
                                             'lower_s', 'final_hold_s')) + (
-            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s
+            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s + self.support_transfer_s
 
 
 def smoothstep(alpha):
@@ -97,7 +102,17 @@ class ThreeLegSequence:
     def entry_alpha(self):
         if self.phase != 'three-leg-handover':
             return 1.
-        return smoothstep((self.last_time-self.plan.initial_hold_s)/self.plan.entry_blend_s)
+        return smoothstep((self.last_time-self.plan.initial_hold_s-self.plan.support_transfer_s)/self.plan.entry_blend_s)
+
+    def torso_command(self, height):
+        p = self.plan
+        alpha = 0.
+        if p.support_transfer_s:
+            alpha = smoothstep((self.last_time-p.initial_hold_s)/p.support_transfer_s)
+            final_begin = p.duration_s-p.final_hold_s
+            if self.last_time >= final_begin:
+                alpha = 1-smoothstep((self.last_time-final_begin)/p.support_transfer_s)
+        return [alpha*p.support_roll_rad, alpha*p.support_pitch_rad, height]
 
     def __init__(self, plan, ik=None):
         self.plan = plan
@@ -116,13 +131,16 @@ class ThreeLegSequence:
 
     def _cartesian_update(self, state, elapsed, dt, previously_active):
         p, path = self.plan, self.plan.cartesian_path
-        lift_start = p.initial_hold_s
+        lift_start = p.initial_hold_s+p.support_transfer_s
         lift_end = lift_start+p.lift_s
         hold_end = lift_end+p.hold_s
         move_end = hold_end+path.duration_s
         lower_end = move_end+p.lower_s
         if elapsed < p.initial_hold_s:
             self.phase, self.leg, self.target_body_m = 'four-foot-initial', None, None
+            return
+        if elapsed < lift_start:
+            self.phase, self.leg, self.target_body_m = 'four-foot-support-transfer', None, None
             return
         if elapsed >= lower_end:
             self.phase = ('four-foot-handover' if elapsed < lower_end+p.return_blend_s
@@ -274,7 +292,7 @@ class SimulationThreeLegPolicy:
         if self.sequence.phase != 'four-foot-handover':
             return target
         p = self.sequence.plan
-        begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+        begin = p.initial_hold_s+p.support_transfer_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
         alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
         target = np.asarray(target).copy()
         ids = self.sequence.ids
@@ -294,6 +312,7 @@ class SimulationThreeLegPolicy:
         if self.selected_session is not None:
             from .exploy_policy import TARGET
             values = self.baseline.inputs(state, previous)
+            values['torso_command'] = np.asarray(self.sequence.torso_command(self.body_height),dtype=np.float32)[None]
             values['leg_command'] = self.command[None]
             action, obs, target = self.selected_session.run(['actions','obs',TARGET],values)
             target = finite(target[0],19).astype(float)
@@ -308,6 +327,7 @@ class SimulationThreeLegPolicy:
             target = self.return_blend(target)
             return target, monotonic()-began, obs, action
         obs = observation(state, self.manifest.arm_stowed_positions, previous, self.body_height)
+        obs[31:34] = self.sequence.torso_command(self.body_height)
         obs[19:31] = self.command
         action = finite(self.actor.session.run(['actions'], {'obs':obs[None]})[0][0],12)
         target = joint_targets(action, self.manifest.arm_stowed_positions).astype(float)

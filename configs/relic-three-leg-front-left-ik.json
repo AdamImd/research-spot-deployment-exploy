@@ -44,5 +44,8 @@
   "min_hold_fraction": 0.9,
   "foot_radius_m": 0.036,
   "return_blend_s": 2.0,
-  "entry_blend_s": 4.0
+  "entry_blend_s": 4.0,
+  "support_transfer_s": 4.0,
+  "support_roll_rad": 0.08,
+  "support_pitch_rad": -0.08
 }

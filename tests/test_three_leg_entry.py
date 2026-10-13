@@ -24,9 +24,9 @@ def test_entry_is_continuous_with_four_foot_command_and_keeps_history_input(stat
     policy.initialize_height({'height_m':.52,'foot_contacts':[1]*4})
     previous=np.linspace(-.2,.3,12,dtype=np.float32)
     original=previous.copy()
-    policy.update(state,plan.initial_hold_s-1e-6)
+    policy.update(state,(plan.initial_hold_s+plan.support_transfer_s)-1e-6)
     before=policy.evaluate(state,previous)
-    policy.update(state,plan.initial_hold_s)
+    policy.update(state,(plan.initial_hold_s+plan.support_transfer_s))
     entered=policy.evaluate(state,previous)
     np.testing.assert_array_equal(entered[0],before[0])
     np.testing.assert_array_equal(entered[3],before[3])
@@ -42,16 +42,16 @@ def test_entry_unloads_foot_continuously_while_mode_blends(state):
     ik=LegPositionIK(base.support,base.support_model,'fl')
     seq=ThreeLegSequence(plan,ik)
     start=ik.forward(state.positions[:3])[0]
-    seq.update(state,plan.initial_hold_s)
+    seq.update(state,(plan.initial_hold_s+plan.support_transfer_s))
     np.testing.assert_allclose(seq.target_body_m,start,rtol=0,atol=1e-12)
     previous=start.copy()
-    for t in np.arange(plan.initial_hold_s+.005,plan.initial_hold_s+plan.entry_blend_s+.0025,.005):
+    for t in (plan.initial_hold_s+plan.support_transfer_s)+np.arange(1,round(plan.entry_blend_s*200)+1)/200:
         seq.update(state,t)
         assert np.linalg.norm(seq.target_body_m-previous)<.001
         previous=seq.target_body_m.copy()
     assert seq.target_body_m[2]>start[2]
-    seq.update(state,plan.initial_hold_s+plan.entry_blend_s)
+    seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+plan.entry_blend_s)
     assert seq.phase=='lifting'
-    seq.update(state,plan.initial_hold_s+plan.entry_blend_s+1)
+    seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+plan.entry_blend_s+1)
     assert np.linalg.norm(seq.target_body_m-start)>0
-    assert plan.duration_s==46
+    assert plan.duration_s==50

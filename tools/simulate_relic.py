@@ -216,6 +216,7 @@ def run(args):
                 if core.policy_samples != count:
                     recorded = log.last_policy
                     ref_command.velocity = np.asarray(recorded['velocity_command'], dtype=np.float32)
+                    ref_command.torso = np.asarray(recorded['observations'][31:34],dtype=np.float32)
                     if demo:
                         ref_command.leg = demo.sequence.leg
                         ref_command.leg_pose = demo.sequence.pose.copy()
