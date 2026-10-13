@@ -96,3 +96,11 @@ step. It stopped~5.34s on body angular speed1.0047rad/s above1rad/s, shortly aft
 lift began; no completedthreeleg/IKsquare is claimed. Shutdown/OFF/lease confirmed
 5.015s; passivepostcheck faultfree. No retry/limit change. This approval is consumed.
 See records/relic-three-leg-smoothed-hardware-20261012 and compact recording.
+
+The subsequent one-trial review increased only measured body angular speed to
+2 rad/s, with no offline tests. The recorded attempt stopped at 5.485 s during
+lift on pitch 0.179495 rad (10.284 degrees) above the retained 10-degree attitude
+cap; angular speed was 1.061006 rad/s. Target steps/rates remained <=0.02 rad /
+1 rad/s. Motors OFF and lease return confirmed in 5.015 s; fault-free passive
+postcheck passed. No full sequence or hardware qualification; approval consumed,
+no retry. See records/relic-three-leg-angular2-hardware-20261012.

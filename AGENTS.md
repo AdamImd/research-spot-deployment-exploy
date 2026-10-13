@@ -40,7 +40,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   MuJoCo runs passed, fromrecordedphysicalpose andearlierbaseline. A smoothed
   hardwaretrialverified targetlimiting, butstopped5.34s on1.0047rad/s bodyangular
   speed against1rad/s; OFF/lease returnconfirmed. No fulltripod qualification;
-  latest physicalapprovalconsumed. See records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
+  Latest cap2rad/s physical attempt stopped5.485s onpitch10.284degrees
+  against10degrees; OFF/lease returnconfirmed5.015s. No tests/retries forcapchange;
+  latest physicalapprovalconsumed. See records/relic-three-leg-angular2-hardware-20261012
+  and records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
   torque stop; other simulator/hardware qualification remains separate.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
