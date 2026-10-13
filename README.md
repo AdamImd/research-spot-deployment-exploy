@@ -181,3 +181,9 @@ simulation velocity input. The regular policy adapter still rejects requests
 above its bound WalkingPlan. All other input transforms, history and output/held-arm
 checks use the same graph and decoder. An integration test sends 0.3 m/s through
 the real graph while confirming the original live adapter still rejects it.
+
+The [faster-request experiment](records/relic-faster-sim-20261012/README.md)
+records four 60-second runs: both engines stay upright at a 0.3 m/s maximum
+request. The taper still stalls near 0.69 m; constant requests pass the 0.75 m
+goal but settle at 0.81–0.82 m. Accurate stopping remains unresolved. These are
+simulation results with unchanged weights/gains, not hardware qualification.
