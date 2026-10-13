@@ -29,11 +29,16 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   adapter to hardware. The new schema4 relic-exploy-leg / task=three-leg-demo uses
   an explicit ten-input graph and separate live adapter. CLI three-leg requires
   complete bound three_leg_sequence / three_leg_clearance evidence, exact plan.duration_s+1
-  duration (currently49s for48s with2s mode-entry blend), tablet stop, two operators and new one-trial approval.
-  Its two-second mode-entry transition blends BOTH branch targets and raw outputs,
-  using the same ACKed previous vector. Initial history remainszero; only ACKed
-  mixed outputs advance it. The two-second return OUTPUT blend remains separate.
-  Do not alter weights/gains or silently revert the entry/history contract. MuJoCo60s passed after preserving the original32s
+  duration (currently47s for46s withtarget-rate limit), tablet stop, two operators and new one-trial approval.
+  Current demo uses one native actor and target_slew_rad_s=1 for all12leg
+  targets afterinitialfour-foot phase through finalhold. First exact entry
+  incrementzero, laterincrements<=.02rad/50Hztick, no catch-up. Preserve native
+  raw ACKed history and weights/gains. Raw proposals and limitedcommands differ
+  and must both be recorded. Two-second return output blend remains. Failed
+  dualactor/supportlean experiments are offline-only, not enabled inlivecontract.
+  Current plan46s/live47s; previous physical approval is consumed. Two60s guarded
+  MuJoCo runs passed, fromrecordedphysicalpose andearlierbaseline; nohardware
+  rerun or qualification. See records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
   torque stop; other simulator/hardware qualification remains separate.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.

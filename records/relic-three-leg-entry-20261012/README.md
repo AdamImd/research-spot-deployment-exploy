@@ -72,3 +72,14 @@ This is explicit target postprocessing, not a claim the raw actor predictions st
 changing. Native raw/obs parity and independent limitedtarget parity checked.
 Existing manufacturer/body/timing/speed/torque guards still inspect limited commands
 and measuredstate. No physicalexecution, newbounds or qualification assumed.
+
+Method005 passed BOTH60s guarded MuJoCo cases fromfrozen96501f8. Entire46s sequence,
+IK motion tracking/clearance/return/final-standing passed. Post-entry target rates
+max1rad/s, stepsmax0.02rad. Body angular max0.8783rad/s(recordedpose) and0.9184rad/s
+(baseline); IK tracking p95~0.01915/0.01910m. Raw/obs/native reference limitedtarget
+parity passed. Separate live adapter exactly matched3,001 recorded predictions.
+Both recorded videos60s/50fps. Nominal5ms timing outliers retained; no physical
+qualification. Public case/result files and exact-state continuity retain these
+observations; superseded methods/failed recordings remain for audit. Final live
+contract excludes entry mixtures and support lean. This fix requires NEW exact
+operator approval before any hardware run; no motors/robot IO occurred here.

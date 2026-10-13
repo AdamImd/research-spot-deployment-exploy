@@ -1,0 +1,92 @@
+{
+  "compute_max_s": 0.11212665867060423,
+  "compute_p99_s": 0.0009111911058425903,
+  "failure": null,
+  "first_fall_proxy_s": null,
+  "guard_mode": "enforced",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "late_window_metrics": {
+    "angular_speed_p95_rad_s": 7.728612103060162e-05,
+    "height_span_m": 7.241964340209961e-06,
+    "joint_speed_p95_rad_s": 7.688909681746736e-05,
+    "linear_speed_p95_m_s": 9.528132248090565e-06,
+    "max_tilt_deg": 0.9993636107220585,
+    "mean_height_m": 0.49146123718226453,
+    "min_height_m": 0.49145540595054626,
+    "planar_speed_p95_m_s": 9.13092362486121e-06,
+    "samples": 2001,
+    "span_s": 10.0,
+    "tilt_span_deg": 0.001959944126676315
+  },
+  "loop_wall_s": 15.59937857883051,
+  "max_observation_error": 5.960464477539063e-08,
+  "max_raw_action_error": 3.814697265625e-06,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "policy_duration_s": 60.0,
+  "policy_samples": 3001,
+  "real_time_factor": 3.846307062604683,
+  "reason": "completed",
+  "stable_final_window": true,
+  "three_leg_demo": {
+    "clearance_proxy_passed": true,
+    "final_four_feet_near_floor_fraction": 1.0,
+    "geometric_three_leg_fraction": 1.0,
+    "hardware_qualified": false,
+    "hold_samples": 3000,
+    "ik_motion_samples": 2400,
+    "ik_tracking_passed": true,
+    "passed": true,
+    "pose_sequence_finished": true,
+    "support_evidence": "foot clearance geometry only; foot forces/loaded contacts not measured"
+  },
+  "timing": {
+    "core_s": {
+      "max_s": 0.11212700000032783,
+      "over_5ms": 3,
+      "p50_s": 0.0004606703296303749,
+      "p99_s": 0.0009113922715187073
+    },
+    "parity_s": {
+      "max_s": 0.0004736557602882385,
+      "over_5ms": 0,
+      "p50_s": 1.6996636986732483e-07,
+      "p99_s": 0.000318214762955904
+    },
+    "physics_s": {
+      "max_s": 0.0003604572266340256,
+      "over_5ms": 0,
+      "p50_s": 0.00014322716742753983,
+      "p99_s": 0.0001640869304537773
+    },
+    "recording_s": {
+      "max_s": 0.06807791208848357,
+      "over_5ms": 2,
+      "p50_s": 0.00042225606739521027,
+      "p99_s": 0.0005302750505506992
+    },
+    "state_s": {
+      "max_s": 0.0010748868808150291,
+      "over_5ms": 0,
+      "p50_s": 0.0001234780065715313,
+      "p99_s": 0.00015480909496545792
+    },
+    "total_s": {
+      "max_s": 0.11311158305034041,
+      "over_5ms": 6,
+      "p50_s": 0.0012237448245286942,
+      "p99_s": 0.001989413984119892
+    }
+  },
+  "trial_duration_s": 60.0,
+  "walking": null,
+  "walking_completed": null,
+  "source_commit": "96501f8644cce15fa911c8d97dec3debbbece6f8",
+  "max_post_entry_target_rate_rad_s": 1.0000000000001776,
+  "max_post_entry_target_step_rad": 0.020000000000000018,
+  "max_body_angular_speed_rad_s": 0.9184336421395948,
+  "max_body_linear_speed_m_s": 0.35480015322934205,
+  "ik_tracking_error_p95_m": 0.01910498382724432,
+  "ik_tracking_error_max_m": 0.01918578379959743,
+  "limits_unchanged": true
+}
