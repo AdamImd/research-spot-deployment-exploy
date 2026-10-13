@@ -89,7 +89,7 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
 
 ## Validation and handoff
 
-Run `uv sync --locked --group simulation`, then `pytest -q`,
+Run `uv sync --locked --group simulation --group visualization`, then `pytest -q`,
 `ruff check src tests tools` and `python tools/demo_exploy.py` through `uv run --no-sync`.
 For a changed graph, also run the independent parity procedure in EXPLOY.md.
 For controller/simulator changes, use the bounded 60-second simulation protocol.
@@ -187,3 +187,56 @@ Latest approved forward repeat walked0.715016m (goal0.75,tolerance0.02), lateral
 OFF/lease return7.018s; postcheck passed with known payload.fault9 INFO only.
 No offline tests/retry. Record: records/relic-forward-repeat-20261013. Approval
 consumed; no further physical motion authorized automatically.
+
+## Joystick ReLIC arm task (2026-10-13)
+
+Explicit user scope adds schema5 joystick-arm / spot-arm-mobile; see
+`docs/JOYSTICK_TELEOP.md`. The unchanged nine-input graph accepts moving arm and
+3-axis body velocity commands. Trigger0 toggles arm, thumb1 enables, button3 finishes;
+tablet stays sole E-stop. Do not run the old joystick E-stop bridge alongside it.
+Legacy tasks keep held-arm checks. New task requires enforced arm limits, a bound
+path/profile and additional joystick_control/arm_deployment/teleop_clearance evidence.
+No physical run is authorized by implementing or testing this script. Use a new
+reviewed bundle and ask immediately before a physical trial; prior approvals are consumed.
+
+The first approved60s joystick hardware session completed3000policy samples/
+11995commands, clean OFF/lease return6.018s, fault-free postcheck. Native requests
+exercised locomotion; no arm toggle occurred, so moving-arm hardware behavior is
+still unverified. The accepted envelope allows0.01rad measured penetration only
+at SH1 lower/EL0 upper model bounds; arm commands/torque/tracking are unchanged.
+See records/relic-joystick-hardware-20261013. Approval consumed. Adam subsequently
+requested a300s session; plan maximum is now300s, default remains60s. Prepare a
+new duration-bound manifest/envelope and ask immediately before the new trial.
+
+Adam directly requested300s then "Just do it", overriding another question for
+that repeat. Initial source918fd3c rejected at the CLI60s gate before any control
+lease/power/motion; motorsoff postcheck passed. Corrected source1ef834b allows300s
+for joystick CLI only; other mode caps unchanged.12targeted tests/Ruff passed.
+The corrected physical session reached229.03s/11451policy samples/45782commands,
+exercised X/Y/yaw inputs and completed the front-arm command path, then stopped on EL0
+(SDK14/arm-local2) tracking0.15555rad over0.15rad for0.502005s. This is not a SH1
+or measured-position stop. OFF/lease return6.023s and fault-free postcheck confirmed.
+See records/relic-joystick-five-minute-20261013. No retry; five-minute endurance
+not completed, moving-arm robustness unqualified. Latest authorization consumed.
+
+Adam subsequently requested arm tracking be ignored for compliant manipulation
+and a single operator-start command. New arm_tracking_guard=observe with an
+explicit reason affects arm/gripper tracking only (reference, previous-command
+and proposed-command error). Mobile-arm arm_motion_guard remains enforce;
+position/speed, measured/requested/coupled torque, target bounds/slew, leg tracking,
+body/timing/tablet guards remain. Defaults enforce tracking. Crossing masks and
+measured/reference values are recorded, including compact recordings. Preparation
+does not execute physical motion. tools/run_joystick_bundle.py defaults to showing
+the profile; a human --execute invocation confirms current named operators,
+tablet and reviewed rig/arm/shutdown workspace, repeats preflight, runs once and
+records postcheck/compact data. Unique output per invocation, no automatic retry.
+
+Operator run20261013-154632 stopped after native stand on joystick INIT
+resynchronization: the link was opened before a blocking power/stand step and its
+queue overflowed while unread. The startup fix reopens the identical device
+after native stand, discards queued edges and resets the neutral-enable latch.
+No held/INIT enable or trigger may activate motion. Active-session queue loss,
+device replacement and polling timeout remain stops. Launcher now prints failure
+reasons and blocking robot faults; native power cancellation preserves the first
+health-worker error. The earlier operator run145858 reported CPU over-temperature
+and clean motors-off/lease shutdown; that fault is never bypassed by this fix.

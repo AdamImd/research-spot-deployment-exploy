@@ -1,0 +1,73 @@
+{
+  "compute_max_s": 0.000833289697766304,
+  "compute_p99_s": 0.0006392602110281586,
+  "failure": "arm is outside commanded pose",
+  "first_fall_proxy_s": null,
+  "guard_mode": "enforced",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "late_window_metrics": {
+    "angular_speed_p95_rad_s": 0.0565684451568496,
+    "height_span_m": 0.020156294107437134,
+    "joint_speed_p95_rad_s": 0.49947354197502136,
+    "linear_speed_p95_m_s": 0.06262659874804892,
+    "max_tilt_deg": 2.6493714686663545,
+    "mean_height_m": 0.4779749365969338,
+    "min_height_m": 0.4648011326789856,
+    "planar_speed_p95_m_s": 0.06067197828917743,
+    "samples": 2001,
+    "span_s": 10.0,
+    "tilt_span_deg": 1.7421738969959195
+  },
+  "loop_wall_s": 3.188408323097974,
+  "max_observation_error": 5.960464477539063e-08,
+  "max_raw_action_error": 9.5367431640625e-07,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "policy_duration_s": 19.240000000000002,
+  "policy_samples": 962,
+  "real_time_factor": 6.03435885567684,
+  "reason": "guard_stop",
+  "stable_final_window": false,
+  "three_leg_demo": null,
+  "timing": {
+    "core_s": {
+      "max_s": 0.0008335709571838379,
+      "over_5ms": 0,
+      "p50_s": 0.00029085692949593067,
+      "p99_s": 0.0006394352111965417
+    },
+    "parity_s": {
+      "max_s": 0.00016042962670326233,
+      "over_5ms": 0,
+      "p50_s": 1.3969838619232178e-07,
+      "p99_s": 0.00011265708599239584
+    },
+    "physics_s": {
+      "max_s": 0.0002622469328343868,
+      "over_5ms": 0,
+      "p50_s": 0.00014970917254686356,
+      "p99_s": 0.00016937215812504275
+    },
+    "recording_s": {
+      "max_s": 0.0032835560850799084,
+      "over_5ms": 0,
+      "p50_s": 0.00015434366650879383,
+      "p99_s": 0.00018207267392426725
+    },
+    "state_s": {
+      "max_s": 0.019192242063581944,
+      "over_5ms": 1,
+      "p50_s": 0.00012103421613574028,
+      "p99_s": 0.00016737075988203286
+    },
+    "total_s": {
+      "max_s": 0.0206285179592669,
+      "over_5ms": 1,
+      "p50_s": 0.0007191449403762817,
+      "p99_s": 0.0011971815442666407
+    }
+  },
+  "trial_duration_s": 19.240000000000002,
+  "walking": null,
+  "walking_completed": null
+}

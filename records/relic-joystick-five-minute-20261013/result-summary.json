@@ -1,0 +1,81 @@
+{
+  "arm_deployment_requested": true,
+  "automatic_retries": 0,
+  "commands": 45782,
+  "compact_bytes": 23243091,
+  "completed_requested_duration": false,
+  "core_inference_s": {
+    "max": 0.001648890320211649,
+    "p99": 0.0003992777783423662
+  },
+  "enable_samples": 3986,
+  "failed_joint": "arm0_el0",
+  "failure": {
+    "error": "arm is outside commanded pose persisted 0.502005s > 0.500000s",
+    "error_type": "ContractError"
+  },
+  "finish_button_seen": false,
+  "hardware_qualified": false,
+  "issued_command_span_s": 229.02922215964645,
+  "last_issued_elbow": {
+    "load_Nm": -18.29363250732422,
+    "measured_rad": 2.555797815322876,
+    "reference_rad": 2.4
+  },
+  "maximum_arm_path_progress_s": 10.071689486503601,
+  "outcome": "Arm front deployment command completed; session stopped early on sustainedEL0 tracking error and cleanly shut down. Five-minute endurance not completed.",
+  "physical_invocations_after_startup_fix": 1,
+  "physical_limit_recoveries": 10,
+  "physical_limit_starts": 13,
+  "physical_limit_stop": {
+    "elapsed_s": 0.5020051342435181,
+    "event": "physical_limit_stop",
+    "index": 2,
+    "limit": "arm is outside commanded pose",
+    "monotonic_s": 2322225.760453238,
+    "persistence_s": 0.5,
+    "reason": "arm is outside commanded pose",
+    "since_s": 2322225.258448104,
+    "time": "2026-10-13T19:29:27.214960+00:00",
+    "value": 0.15555009841918954
+  },
+  "policy_history_acks": 11451,
+  "policy_sample_span_s": 229.00167373009026,
+  "policy_samples": 11451,
+  "policy_velocity_max": [
+    0.3,
+    0.12517603949802528,
+    0.5
+  ],
+  "policy_velocity_min": [
+    -0.3,
+    -0.09197141247985086,
+    -0.5
+  ],
+  "postcheck": {
+    "active_fault_count": 0,
+    "motors_off": true,
+    "passed": true,
+    "tablet_ready": true
+  },
+  "recording_integrity_verified": true,
+  "requested_duration_s": 300,
+  "shutdown": {
+    "elapsed_s": 6.0232415036298335,
+    "errors": [],
+    "lease_return_elapsed_s": 0.0054289610125124454,
+    "lease_returned": true,
+    "motor_power_state": 1,
+    "motors_off_confirmed": true,
+    "power_owned": true,
+    "safe_power_off_elapsed_s": 6.017743668984622,
+    "stream_cancel_elapsed_s": 6.626779213547707e-05,
+    "within_shutdown_budget": true
+  },
+  "source_commit": "1ef834bfc496ec81c9206e4dcb9899777532f291",
+  "velocity_axis_order": [
+    "body_forward_m_s",
+    "body_left_m_s",
+    "body_yaw_rad_s"
+  ]
+}

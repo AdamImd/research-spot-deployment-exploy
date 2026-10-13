@@ -135,6 +135,10 @@ def review_text(manifest):
     if manifest.task == 'three-leg-demo':
         from .readiness import THREE_LEG_GATES
         gates.update(THREE_LEG_GATES)
+    if manifest.task == 'joystick-arm':
+        from .readiness import TELEOP_GATES
+        gates.update(TELEOP_GATES)
+        gates['arm_hold'] = 'Startup stow and dynamic arm command/tracking contract reviewed'
     for name, description in gates.items():
         lines.append(f"- `{name}`: {description}. Status: UNVERIFIED; reviewer/artifact: pending.")
     lines += [
@@ -158,7 +162,7 @@ def command_templates(directory, task="standing"):
     inputs = ["--manifest", str(base / "policy/manifest.json"),
               "--envelope", str(base / "envelope.json"), "--robot", str(base / "robot.json")]
     prefix = ["uv", "run", "--no-sync", "spot-deploy"]
-    action = {"walking":"walk", "standing":"stand", "three-leg-demo":"three-leg"}[task]
+    action = {"walking":"walk", "standing":"stand", "three-leg-demo":"three-leg", "joystick-arm":"joystick"}[task]
     return {
         "note": "Argument templates only. Replace uppercase placeholders; run from the repository root.",
         "preflight": prefix + ["preflight", "--manifest", str(base / "policy/manifest.json"),

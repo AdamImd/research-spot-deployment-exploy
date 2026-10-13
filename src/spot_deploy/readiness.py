@@ -33,6 +33,13 @@ THREE_LEG_GATES = {
 }
 
 
+TELEOP_GATES = {
+    'joystick_control': 'USB identity, signs, neutral enable, release/disconnect and all three axes verified',
+    'arm_deployment': 'Exact reversible arm path, limits, collisions, balance and shutdown reviewed',
+    'teleop_clearance': 'Rig follows travel in all directions and clears deployed arm and swept path',
+}
+
+
 class Evidence(StrictModel):
     gate: str
     status: Literal["passed", "failed", "unverified"]
@@ -74,6 +81,9 @@ def report(manifest_path=None, envelope_path=None, robot_path=None, index_path=N
             gates.update(WALKING_GATES)
         if json.loads(Path(manifest_path).read_text()).get('task') == 'three-leg-demo':
             gates.update(THREE_LEG_GATES)
+        if json.loads(Path(manifest_path).read_text()).get('task') == 'joystick-arm':
+            gates.update(TELEOP_GATES)
+            gates['arm_hold'] = 'Startup stow and dynamic arm command/tracking contract reviewed'
     if robot_path and Path(robot_path).is_file():
         robot = load(Path(robot_path), RobotConfig)
         if robot.estop_authority == "tablet":
@@ -83,7 +93,7 @@ def report(manifest_path=None, envelope_path=None, robot_path=None, index_path=N
     if index_path and Path(index_path).is_file():
         index = EvidenceIndex.model_validate_json(Path(index_path).read_text())
         for entry in index.evidence:
-            if entry.gate not in {*GATES, HARDWARE_GATE, *WALKING_GATES, *THREE_LEG_GATES} or entry.gate in records:
+            if entry.gate not in {*GATES, HARDWARE_GATE, *WALKING_GATES, *THREE_LEG_GATES, *TELEOP_GATES} or entry.gate in records:
                 raise ContractError("unknown or duplicate readiness evidence gate")
             records[entry.gate] = entry
     now = datetime.now(timezone.utc)
@@ -158,6 +168,14 @@ def require_live(
             raise ContractError('walking duration or speed exceeds the reviewed envelope')
     if manifest.task == 'three-leg-demo' and duration != manifest.demo.duration_s+1:
         raise ContractError('three-leg duration must cover the reviewed full sequence and margin')
+    if manifest.task == 'joystick-arm':
+        import math
+        plan = manifest.teleop
+        if (duration != plan.duration_s or robot_config.estop_authority != 'tablet'
+                or robot_config.hardware_estop is not None
+                or math.hypot(plan.axes[0].maximum, plan.axes[1].maximum) >= envelope.max_linear_speed
+                or plan.axes[2].maximum >= envelope.max_angular_speed):
+            raise ContractError('joystick requires tablet authority and reviewed duration/speed margins')
     if source_identity()["dirty"]:
         raise ContractError("live control requires a clean committed source tree")
     result = report(manifest_path, envelope_path, robot_path, index_path)

@@ -21,13 +21,23 @@ BUTTON, AXIS, INIT = 1, 2, 128
 BTN_TRIGGER = 0x120
 
 
-class JoystickProfile(StrictModel):
-    schema_version: Literal[1]
-    input_type: Literal["linux_joystick"]
+class JoystickDevice(StrictModel):
+    """USB identity shared by motion input and the separate, optional stop bridge."""
     joystick_device: str = Field(pattern=r"^/dev/input/by-id/[^/]+-joystick$")
     expected_name: str = Field(min_length=1, max_length=127)
     vendor_id: str = Field(pattern=r"^[0-9a-f]{4}$")
     product_id: str = Field(pattern=r"^[0-9a-f]{4}$")
+
+    @model_validator(mode="after")
+    def joydev_path(self):
+        if self.joystick_device.endswith("-event-joystick"):
+            raise ValueError("use the joydev by-id path, not the evdev path")
+        return self
+
+
+class JoystickProfile(JoystickDevice):
+    schema_version: Literal[1]
+    input_type: Literal["linux_joystick"]
     stop_button: Literal[0, 1]
     rearm_button: int = Field(ge=1, le=31)
     release_hold_s: float = Field(ge=0.5, le=2)
@@ -91,7 +101,7 @@ class JoystickLink:
             try:
                 fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except OSError:
-                raise ContractError("joystick already has a stop-input owner") from None
+                raise ContractError("joystick already has an input owner") from None
             name = bytearray(128)
             fcntl.ioctl(self.fd, 0x80806A13, name)  # JSIOCGNAME(128)
             name = name.split(b"\0")[0].decode("utf-8")
@@ -107,7 +117,8 @@ class JoystickLink:
                 profile.expected_name, profile.vendor_id, profile.product_id
             ):
                 raise ContractError("joystick USB identity differs from the profile")
-            if (count[0] <= max(profile.stop_button, profile.rearm_button)
+            if isinstance(profile, JoystickProfile) and (
+                    count[0] <= max(profile.stop_button, profile.rearm_button)
                     or mapping[profile.stop_button] != BTN_TRIGGER + profile.stop_button):
                 raise ContractError("joystick STOP mapping must match BTN_TRIGGER/BTN_THUMB; rearm must exist")
             self.metadata = dict(name=name, vendor_id=vendor, product_id=product,

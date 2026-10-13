@@ -76,11 +76,20 @@ class Guard:
                 and (getattr(manifest, "adapter", None) != "relic-exploy-leg"
                      or manifest.task != "three-leg-demo")):
             raise ContractError("command rate observation requires the selected-leg demo")
+        self.mobile_arm = manifest.task == 'joystick-arm'
+        self.arm_reference = np.asarray(manifest.arm_stowed_positions, dtype=float)
+        self.observe_arm_tracking = envelope.arm_tracking_guard == 'observe'
+        if self.observe_arm_tracking and not self.mobile_arm:
+            raise ContractError('arm tracking observation requires joystick-arm task')
+        self.arm_tracking_observation = None
+        if self.mobile_arm and envelope.arm_motion_guard != 'enforce':
+            raise ContractError('joystick arm control requires enforced arm motion limits')
         self.observe_arm_motion = envelope.arm_motion_guard == "observe"
         if (self.observe_arm_motion
                 and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy", "relic-exploy-leg")):
             raise ContractError("arm observation mode requires a ReLIC leg controller")
         self.motion_joint_count = 12 if self.observe_arm_motion else 19
+        self.tracking_joint_count = 12 if self.observe_arm_tracking else self.motion_joint_count
         self.arm_motion_observation = None
         self.observe_leg_positions = envelope.leg_position_guard == "observe"
         self.leg_position_observation = None
@@ -103,6 +112,26 @@ class Guard:
             raise ContractError("arm stow target exceeds position envelope")
         if np.any(arm < envelope.command_lower[12:]) or np.any(arm > envelope.command_upper[12:]):
             raise ContractError("arm stow target exceeds command position envelope")
+
+        if self.mobile_arm:
+            from .joystick_teleop import ArmPath
+            path = ArmPath(manifest.arm_stowed_positions, manifest.teleop)
+            points = path.points
+            if (np.any(points < np.array(envelope.position_min)[12:])
+                    or np.any(points > np.array(envelope.position_max)[12:])
+                    or np.any(points < np.array(envelope.command_lower)[12:])
+                    or np.any(points > np.array(envelope.command_upper)[12:])):
+                raise ContractError('arm path exceeds reviewed position envelope')
+            if np.any(np.array(envelope.command_rate_max)[12:18] < manifest.teleop.arm_speed_rad_s):
+                raise ContractError('arm path speed exceeds reviewed target slew envelope')
+
+    def set_arm_reference(self, reference):
+        if not self.mobile_arm:
+            raise ContractError('dynamic arm reference requires joystick-arm task')
+        arm = np.asarray(reference, dtype=float)
+        if arm.shape != (7,) or not np.isfinite(arm).all():
+            raise ContractError('invalid arm command reference')
+        self.arm_reference = arm.copy()
 
     def check_actuator_load(self, positions, loads, context, now, *, requested=False):
         if self.envelope.actuator_limit_profile:
@@ -185,11 +214,22 @@ class Guard:
         speeds = [np.linalg.norm(state.linear_velocity_odom), np.linalg.norm(state.angular_velocity_odom)]
         self.physical_limits.check(np.array(speeds) > [env.max_linear_speed, env.max_angular_speed],
                                    now, 'body speed limit', values=speeds)
-        if not self.observe_arm_motion:
-            arm_error = np.abs(q[12:] - self.manifest.arm_stowed_positions)
+        if self.observe_arm_tracking:
+            self.arm_tracking_observation = dict(
+                reference_indices=np.flatnonzero(np.abs(q[12:] - self.arm_reference)
+                    > env.max_arm_pose_error).tolist(), measured_tracking_indices=[],
+                command_tracking_indices=[])
+            if self.last_command is not None:
+                self.arm_tracking_observation['measured_tracking_indices'] = np.flatnonzero(
+                    np.abs(q[12:] - self.last_command[12:])
+                    > np.asarray(env.tracking_error_max)[12:]).tolist()
+        if not self.observe_arm_motion and not self.observe_arm_tracking:
+            arm_error = np.abs(q[12:] - self.arm_reference)
             self.physical_limits.check(arm_error > env.max_arm_pose_error, now,
-                                       'arm is outside registered stowed pose', values=arm_error)
+                                       ('arm is outside commanded pose' if self.mobile_arm else
+                                        'arm is outside registered stowed pose'), values=arm_error)
         if self.last_command is not None:
+            n = self.tracking_joint_count
             error = np.abs(q[:n] - self.last_command[:n])
             self.physical_limits.check(error > env.tracking_error_max[:n], now,
                                        'measured joint tracking error', values=error)
@@ -206,10 +246,14 @@ class Guard:
             raise ContractError("command must contain nineteen finite positions")
         self.physical_limits.check((target < env.command_lower) | (target > env.command_upper),
                                    now, 'command position limit', values=target)
-        n = self.motion_joint_count
+        n = self.tracking_joint_count
         error = np.abs(target[:n] - state.positions[:n])
         self.physical_limits.check(error > env.tracking_error_max[:n], now,
                                    'command tracking error limit', values=error)
+        if self.observe_arm_tracking:
+            self.arm_tracking_observation['command_tracking_indices'] = np.flatnonzero(
+                np.abs(target[12:] - np.asarray(state.positions)[12:])
+                > np.asarray(env.tracking_error_max)[12:]).tolist()
         feedforward = np.asarray(self.manifest.gains.feedforward if feedforward is None
                                  else feedforward, dtype=float)
         if feedforward.shape != (19,) or not np.isfinite(feedforward).all():
@@ -230,7 +274,7 @@ class Guard:
                                    'predicted PD-plus-feedforward load limit', values=torque)
         self.check_actuator_load(state.positions, feedforward, "feedforward", now)
         self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load", now, requested=True)
-        if not np.allclose(target[12:], self.manifest.arm_stowed_positions, rtol=0, atol=1e-9):
+        if not np.allclose(target[12:], self.arm_reference, rtol=0, atol=1e-9):
             raise ContractError("leg-only policy attempted arm movement")
         if self.last_sent is not None:
             dt = now - self.last_sent

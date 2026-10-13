@@ -1,0 +1,19 @@
+{
+  "operators": [
+    "Adam",
+    "Minghao"
+  ],
+  "physical_policy_qualified": false,
+  "prior_rejected_launch": "runs/relic-joystick-five-minute-hardware-20261013-001",
+  "private_packet": "local/relic-joystick-five-minute-20261013-002",
+  "raw_artifacts": {
+    "runs/relic-joystick-five-minute-hardware-20261013-002/compact/COMPLETE.json": "f99061039f709e857ae84ade4261f43284882f77b3de52072489b6719c3517ef",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/compact/recording.json": "d1989059dab85641629a222c178d0d7b9db7800e779f422a931e8769c92e3d9a",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/compact/rollout.jsonl.gz": "839ba15275422d38a269c72ef5100fe0ec411dd81f7541433fc10dad234059c0",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/postcheck/COMPLETE.json": "09bfe7c3a01354d9e43875009440dc3fedc8919a1cbedf4b4ed8b8d25bcb91cf",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/postcheck/result.json": "af49a44581539894027a19a7e7fb0a52de477e7c00d8affd13142144f66afd36",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/trial/COMPLETE.json": "f4278408373fff6781a23b5e3f4310ffb2538ac8601e7cc9520d2bd02ffd7ae5",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/trial/events.jsonl": "1a81178a2122259448e51d00bad7c7454ff578af113700ec8a15d5fd55a3ad07",
+    "runs/relic-joystick-five-minute-hardware-20261013-002/trial/result.json": "8899120c9b8fe4ed4a042d953bf2ee09c001efb640c62d3cf5b4c761ec6455c0"
+  }
+}

@@ -247,6 +247,27 @@
       "default": null,
       "title": "Arm Motion Reason"
     },
+    "arm_tracking_guard": {
+      "default": "enforce",
+      "enum": [
+        "enforce",
+        "observe"
+      ],
+      "title": "Arm Tracking Guard",
+      "type": "string"
+    },
+    "arm_tracking_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Arm Tracking Reason"
+    },
     "leg_position_guard": {
       "default": "enforce",
       "enum": [
@@ -325,7 +346,7 @@
     },
     "max_duration_s": {
       "exclusiveMinimum": 0,
-      "maximum": 60,
+      "maximum": 300,
       "title": "Max Duration S",
       "type": "number"
     },

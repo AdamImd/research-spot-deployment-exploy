@@ -83,3 +83,11 @@ build-machine paths inside that provenance file. Those paths are not opened at
 runtime. The initial import's model/payload hashes are historical bindings and
 do not qualify another physical robot. See [validation](VALIDATION.md) and
 [third-party notices](../THIRD_PARTY_NOTICES.md).
+
+## Joystick and arm input extension
+
+Schema5 `joystick-arm` reuses the identical nine-input graph and weights. It supplies
+three body-frame velocities and a seven-joint arm command through existing named
+inputs; it does not invoke native SDK arm commands during joint control. See
+[control path and deployment boundaries](JOYSTICK_TELEOP.md) and
+[offline validation](../records/joystick-arm-20261013/README.md).

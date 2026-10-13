@@ -12,7 +12,7 @@ from .safety import Guard
 
 
 class ReLICRollout:
-    def __init__(self, policy, envelope, record):
+    def __init__(self, policy, envelope, record, teleop_source=None):
         self.policy, self.manifest, self.envelope, self.record = (
             policy, policy.manifest, envelope, record)
         self.spec = self.manifest.relic.preparation
@@ -31,6 +31,7 @@ class ReLICRollout:
         self.phase = "uninitialized"
         self.policy_samples = 0
         self.last_arm_motion_observation = None
+        self.last_arm_tracking_observation = None
         self.last_leg_position_observation = None
         self.motion = None
         if self.manifest.task == 'walking':
@@ -39,6 +40,14 @@ class ReLICRollout:
                                         physical_limits=self.guard.physical_limits)
             if self.manifest.walking.max_duration_s > envelope.max_duration_s:
                 raise ContractError('walking timeout exceeds reviewed envelope')
+        self.teleop = None
+        if self.manifest.task == 'joystick-arm':
+            from .joystick_teleop import TeleopMotion
+            if teleop_source is None:
+                raise ContractError('joystick-arm rollout requires explicit live or replay input')
+            self.teleop = TeleopMotion(self.manifest, teleop_source)
+        elif teleop_source is not None:
+            raise ContractError('joystick input requires the bound joystick-arm task')
         self.velocity_command = None
 
     def _operating_check(self, condition, message):
@@ -71,6 +80,10 @@ class ReLICRollout:
             self.record.event('arm_motion_mode', mode='observe',
                               reason=self.envelope.arm_motion_reason,
                               torque_limits_enforced=True, arm_targets_held=True)
+        if getattr(self.guard, 'observe_arm_tracking', False):
+            self.record.event('arm_tracking_mode', mode='observe',
+                              reason=self.envelope.arm_tracking_reason,
+                              measured_position_speed_torque_enforced=True)
         if self.guard.observe_leg_positions:
             self.record.event('leg_position_mode', mode='observe',
                               reason=self.envelope.leg_position_reason,
@@ -97,6 +110,10 @@ class ReLICRollout:
     def command(self, state, now, robot_now):
         if self.initial is None:
             raise ContractError("rollout was not initialized")
+        if self.teleop:
+            self.velocity_command, arm = self.teleop.update(now, self.active_at)
+            self.policy.arm_command = arm.copy()
+            self.guard.set_arm_reference(arm)
         self.guard.check_state(state, now, robot_now)
         position_observation = self.guard.leg_position_observation
         if (position_observation is not None
@@ -152,7 +169,7 @@ class ReLICRollout:
                 self.next_policy_at = now
             new_action = None
             if now + 1e-10 >= self.next_policy_at and self.pending is None:
-                if self.motion:
+                if self.motion or self.teleop:
                     target, inference_s, obs, action = self.policy.evaluate(
                         state, self.previous, velocity_command=self.velocity_command)
                 else:
@@ -172,6 +189,8 @@ class ReLICRollout:
                                   raw_actions=action.tolist(), targets=target.tolist(),
                                   inference_s=inference_s, monotonic_s=now,
                                   velocity_command=self.velocity_command or [0., 0., 0.])
+                if self.teleop:
+                    self.record.event('joystick', monotonic_s=now, **self.teleop.status)
                 if self.manifest.task == 'three-leg-demo':
                     self.record.event('demo_prediction', state=state.model_dump(),
                                       monotonic_s=now, targets=target.tolist(),
@@ -193,8 +212,19 @@ class ReLICRollout:
                                       "ReLIC handover torque-step gate failed")
                 self.phase = "policy"
                 self.record.event("relic_phase", phase=self.phase, monotonic_s=now)
+        if self.teleop:
+            # Arm output is the native deterministic override, interpolated at
+            # 200 Hz. The actor sees that same reference at each 50 Hz inference.
+            target = target.copy()
+            target[12:] = self.policy.arm_command
         command = self.guard.command(target, state, now, robot_now, policy_at, inference_s,
                                      feedforward=feedforward)
+        tracking = getattr(self.guard, 'arm_tracking_observation', None)
+        if tracking is not None and tracking != self.last_arm_tracking_observation:
+            self.record.event('arm_tracking_observation', **tracking,
+                              positions=state.positions[12:], reference=target[12:].tolist(),
+                              monotonic_s=now)
+            self.last_arm_tracking_observation = tracking.copy()
         rate_observation = getattr(self.guard, 'command_rate_observation', None)
         if rate_observation is not None:
             self.record.event('command_rate_observation',

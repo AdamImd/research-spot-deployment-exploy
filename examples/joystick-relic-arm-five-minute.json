@@ -1,0 +1,57 @@
+{
+  "arm_button": 0,
+  "arm_segment_min_s": 4.0,
+  "arm_speed_rad_s": 0.5,
+  "arm_waypoints": [
+    [
+      0.0,
+      -2.0,
+      2.4,
+      1.5553779602050781,
+      0.0008362531661987305,
+      -1.570042610168457,
+      -0.00648045539855957
+    ],
+    [
+      0.0,
+      -2.0,
+      2.4,
+      0.0,
+      -0.4,
+      0.0,
+      -0.00648045539855957
+    ]
+  ],
+  "axes": [
+    {
+      "acceleration": 0.1,
+      "index": 1,
+      "maximum": 0.3,
+      "sign": -1
+    },
+    {
+      "acceleration": 0.1,
+      "index": 0,
+      "maximum": 0.2,
+      "sign": -1
+    },
+    {
+      "acceleration": 0.4,
+      "index": 2,
+      "maximum": 0.5,
+      "sign": -1
+    }
+  ],
+  "deadzone": 0.12,
+  "device": {
+    "expected_name": "Logitech Logitech Extreme 3D",
+    "joystick_device": "/dev/input/by-id/usb-Logitech_Logitech_Extreme_3D-joystick",
+    "product_id": "c215",
+    "vendor_id": "046d"
+  },
+  "duration_s": 300,
+  "enable_button": 1,
+  "finish_button": 3,
+  "initial_hold_s": 3.0,
+  "input_timeout_s": 0.15
+}

@@ -80,7 +80,12 @@ class ReferenceGuard(Guard):
         self.observe_leg_positions = False
         self.leg_position_observation = None
         self.motion_joint_count = 19
+        self.tracking_joint_count = 19
+        self.observe_arm_tracking = False
+        self.arm_tracking_observation = None
         self.arm_motion_observation = None
+        self.mobile_arm = False
+        self.arm_reference = np.asarray(initial, dtype=float)[12:].copy()
         self.manifest = SimpleNamespace(
             gains=SimpleNamespace(kp=config['kp'], kd=config['kd'], feedforward=feedforward),
             arm_stowed_positions=np.asarray(initial)[12:])

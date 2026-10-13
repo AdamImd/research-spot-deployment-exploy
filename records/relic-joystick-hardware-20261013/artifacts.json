@@ -1,0 +1,18 @@
+{
+  "operators": [
+    "Adam",
+    "Minghao"
+  ],
+  "physical_policy_qualified": false,
+  "private_packet": "local/relic-joystick-hardware-20261013-002",
+  "raw_artifacts": {
+    "runs/relic-joystick-hardware-trial-20261013-002/compact/COMPLETE.json": "6ac883b1bf8c9dae33a18db5873a31d72150d314b250d45406b3e0e9c0cbfd75",
+    "runs/relic-joystick-hardware-trial-20261013-002/compact/recording.json": "7f6809993675d900c9655aea0eebe7dd3c0fb5fe0ff8b577099a825e0c5dc20c",
+    "runs/relic-joystick-hardware-trial-20261013-002/compact/rollout.jsonl.gz": "ec54a86f8ec0b6eac66f445f81f3917c7f65b3049aefde3d98e82a24317e4ba0",
+    "runs/relic-joystick-hardware-trial-20261013-002/postcheck/COMPLETE.json": "e45ef2db5fd1e13e51a3f90224c35c5c2e11055cb8dcab34133a486539ce83dc",
+    "runs/relic-joystick-hardware-trial-20261013-002/postcheck/result.json": "67c1cc144d7b922139df53891a9a56c1dc431dc3bac030c573dd73d6e7d4ee6d",
+    "runs/relic-joystick-hardware-trial-20261013-002/trial/COMPLETE.json": "2038e7298471e704dda0afad69f62ca9e0a30b0d08149ddb92672a6aea616031",
+    "runs/relic-joystick-hardware-trial-20261013-002/trial/events.jsonl": "2bc6a2a21f008addcd7fbf885f5db2eefaeb730de400e6b08c85a6a5f2b62d2f",
+    "runs/relic-joystick-hardware-trial-20261013-002/trial/result.json": "ef707c10f738193220861a7ebfe902e3a20ecdd8d72ee465828ae71fa5a0c69e"
+  }
+}

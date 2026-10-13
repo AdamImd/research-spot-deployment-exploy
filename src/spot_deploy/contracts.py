@@ -191,6 +191,9 @@ class Envelope(StrictModel):
     # Commanded arm targets and all torque limits remain enforced.
     arm_motion_guard: Literal["enforce", "observe"] = "enforce"
     arm_motion_reason: str | None = None
+    # Compliant manipulation: tracking only; measured position/speed/torque remain enforced.
+    arm_tracking_guard: Literal["enforce", "observe"] = "enforce"
+    arm_tracking_reason: str | None = None
     # Explicit operator-selected reliance on firmware position saturation.
     # This affects measured leg-angle operating bounds only, not torque/targets.
     leg_position_guard: Literal["enforce", "observe"] = "enforce"
@@ -206,7 +209,7 @@ class Envelope(StrictModel):
     command_ttl_s: Positive
     shutdown_timeout_s: Positive
     transition_s: float = Field(ge=0, allow_inf_nan=False)
-    max_duration_s: float = Field(gt=0, le=60)
+    max_duration_s: float = Field(gt=0, le=300)
     min_battery_percent: float = Field(gt=0, le=100)
 
     @model_validator(mode="after")
@@ -233,6 +236,11 @@ class Envelope(StrictModel):
                 raise ValueError("arm observation mode requires an operator reason")
         elif self.arm_motion_reason is not None:
             raise ValueError("arm motion reason requires observation mode")
+        if self.arm_tracking_guard == 'observe':
+            if not self.arm_tracking_reason or not self.arm_tracking_reason.strip():
+                raise ValueError('arm tracking observation requires an operator reason')
+        elif self.arm_tracking_reason is not None:
+            raise ValueError('arm tracking reason requires observation mode')
         if self.leg_position_guard == "observe":
             if not self.leg_position_reason or not self.leg_position_reason.strip():
                 raise ValueError("leg position observation requires an operator reason")

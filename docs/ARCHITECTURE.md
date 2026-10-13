@@ -224,3 +224,9 @@ The checked-in fixture has no robot model or physical validity. Its provenance i
 deterministic synthetic data, generator seed 0, no training, and a zero-output ONNX
 graph. `tools/make_fixture.py` regenerates fixtures and JSON schemas. Fixture tests
 prove software contracts only; neither replay nor shadow establishes stability.
+
+Schema5 joystick-arm adds a hash-bound USB input/arm-path contract on the existing
+Exploy graph. See [JOYSTICK_TELEOP.md](JOYSTICK_TELEOP.md). The shared rollout owns
+input freshness, 200 Hz arm interpolation and unchanged 50 Hz ACK-owned leg
+history. Dynamic references are allowed only in this task; arm limits remain
+enforced. Native arm RPCs and the joystick E-stop bridge are not used.

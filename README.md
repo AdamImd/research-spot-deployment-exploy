@@ -187,3 +187,11 @@ records four 60-second runs: both engines stay upright at a 0.3 m/s maximum
 request. The taper still stalls near 0.69 m; constant requests pass the 0.75 m
 goal but settle at 0.81–0.82 m. Accurate stopping remains unresolved. These are
 simulation results with unchanged weights/gains, not hardware qualification.
+
+## USB joystick locomotion and arm deployment
+
+Use `uv run --no-sync python tools/joystick_relic.py` for a robot-disconnected
+USB preview. Stick X/Y and twist drive ReLIC's body-frame velocity inputs; hold
+thumb button 2 to enable and use trigger button 1 (index 0) to toggle the arm to
+a default front pose. The tablet remains the E-stop. See
+[controls, preparation and commissioning](docs/JOYSTICK_TELEOP.md).
