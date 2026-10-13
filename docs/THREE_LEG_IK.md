@@ -75,3 +75,20 @@ standing must pass separately. Physics/collision/support-force review and a new
 selected-leg Exploy export/live contract/stop review are still needed before a
 physical demonstration. The current payload COM INFO warning also needs an
 explicit live fault-policy review; it has not been silently cleared or ignored.
+
+## Selected-leg graph under preparation (2026-10-12)
+
+`tools/export_relic_selected_leg.py` composes the pinned Exploy native observation
+subgraph with the unchanged released ONNX actor and a new `leg_command` input.
+The graph uses `relic-exploy-leg-v1`, 12 SDK-order leg commands, SDK-order19targets,
+and a front-left override only. A zero command means four-foot mode. The original
+standing graph is unchanged. `tools/simulate_relic.py --three-leg-graph PATH`
+can rehearse this graph offline with `--three-leg-plan`; it is not a live adapter.
+Adam approved one guarded dynamics rehearsal before physical deployment review.
+See records/relic-three-leg-live-prep-20261012. Live support must not be activated
+or inferred from structural/numeric parity alone.
+
+The separately explicit robot-profile `fault_policy=known-payload-info-observe`
+with `fault_policy_reason` permits only system `payload.fault` code9 severity1.
+Original counts/details/messages remain recorded; all other faults or incomplete
+fault detail counts still block. This does not clear or acknowledge firmware faults.

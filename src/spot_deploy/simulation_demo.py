@@ -169,7 +169,7 @@ class ThreeLegSequence:
 
 class SimulationThreeLegPolicy:
     """Wrap a standing adapter solely inside an offline simulator process."""
-    def __init__(self, baseline, checkpoint, plan):
+    def __init__(self, baseline, checkpoint, plan, selected_leg_graph=None):
         if baseline.manifest.task != 'standing':
             raise ContractError('three-leg demo requires the standing baseline, not a walking task')
         self.baseline = baseline
@@ -182,6 +182,31 @@ class SimulationThreeLegPolicy:
         self.sequence = ThreeLegSequence(plan, self.ik)
         self.manifest, self.support = baseline.manifest, baseline.support
         self.command = np.zeros(12, dtype=np.float32)
+        self.selected_session = None
+        if selected_leg_graph is not None:
+            import json
+            import onnxruntime as ort
+            from .exploy_policy import META_KEY, INPUT_SIZES
+            from .contracts import sha256
+            record = json.loads(selected_leg_graph.with_name('export.json').read_text())
+            if record['policy_sha256'] != sha256(selected_leg_graph):
+                raise ContractError('selected-leg graph differs from its parity record')
+            options = ort.SessionOptions()
+            options.intra_op_num_threads = options.inter_op_num_threads = 1
+            self.selected_session = ort.InferenceSession(str(selected_leg_graph),
+                sess_options=options, providers=['CPUExecutionProvider'])
+            metadata = json.loads(self.selected_session.get_modelmeta().custom_metadata_map[META_KEY])
+            if (metadata['contract'] != 'relic-exploy-leg-v1'
+                    or metadata['joint_names'] != list(JOINTS)
+                    or metadata['selected_leg'] != 'fl'
+                    or record['weights_changed'] or record['parity_samples'] != 64):
+                raise ContractError('selected-leg graph contract/parity mismatch')
+            sizes = dict(INPUT_SIZES, leg_command=12)
+            fields = self.selected_session.get_inputs()
+            if {f.name for f in fields} != set(sizes) or any(
+                f.shape != [1,sizes[f.name]] or f.type != 'tensor(float)' for f in fields):
+                raise ContractError('selected-leg graph input layout mismatch')
+            self.runner = type('Runner', (), {'session':self.selected_session})()
 
     @property
     def body_height(self):
@@ -197,6 +222,16 @@ class SimulationThreeLegPolicy:
         self.command[:] = 0
 
     def warmup(self):
+        if self.selected_session is not None:
+            from .exploy_policy import INPUT_SIZES
+            from .relic_policy import DEFAULT_Q
+            values = {k:np.zeros((1,n),dtype=np.float32) for k,n in dict(INPUT_SIZES,leg_command=12).items()}
+            values['base_quaternion'][0,0] = 1
+            values['joint_positions'][0] = DEFAULT_Q[self.baseline.graph_from_sdk]
+            values['arm_command'][0] = self.manifest.arm_stowed_positions
+            values['torso_command'][0,2] = .55
+            self.selected_session.run(['actions'],values)
+            return
         self.actor.session.run(['actions'], {'obs':np.zeros((1,84),dtype=np.float32)})
 
     def update(self, state, elapsed):
@@ -212,6 +247,14 @@ class SimulationThreeLegPolicy:
 
     def evaluate(self, state, previous):
         began = monotonic()
+        if self.selected_session is not None:
+            from .exploy_policy import TARGET
+            values = self.baseline.inputs(state, previous)
+            values['leg_command'] = self.command[None]
+            action, obs, target = self.selected_session.run(['actions','obs',TARGET],values)
+            target = finite(target[0],19).astype(float)
+            target[12:] = self.manifest.arm_stowed_positions
+            return target, monotonic()-began, obs, finite(action[0],12)
         obs = observation(state, self.manifest.arm_stowed_positions, previous, self.body_height)
         obs[19:31] = self.command
         action = finite(self.actor.session.run(['actions'], {'obs':obs[None]})[0][0],12)

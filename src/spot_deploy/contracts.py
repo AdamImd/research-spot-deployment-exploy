@@ -278,6 +278,8 @@ class RobotConfig(StrictModel):
     joint_control_feature: Literal["joint_level_control"]
     estop_authority: Literal["sdk_endpoint", "tablet"] = "sdk_endpoint"
     hardware_estop: HardwareEstopRequirement | None = None
+    fault_policy: Literal['all-block', 'known-payload-info-observe'] = 'all-block'
+    fault_policy_reason: str | None = None
 
     @field_validator("joint_control_feature", mode="before")
     @classmethod
@@ -287,6 +289,11 @@ class RobotConfig(StrictModel):
 
     @model_validator(mode="after")
     def check(self):
+        if self.fault_policy == 'known-payload-info-observe':
+            if not self.fault_policy_reason or not self.fault_policy_reason.strip():
+                raise ValueError('known payload INFO exception requires an operator reason')
+        elif self.fault_policy_reason is not None:
+            raise ValueError('fault policy reason requires the explicit INFO exception')
         if self.estop_authority == "tablet" and self.hardware_estop is not None:
             raise ValueError("tablet authority cannot also require a local E-stop bridge")
         for value in (self.endpoint, self.expected_host, self.wired_interface):
