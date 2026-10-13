@@ -112,6 +112,8 @@ class ReLICRollout:
         elapsed = 0. if self.active_at is None else now - self.active_at
         if elapsed < 0:
             raise ContractError("rollout clock moved backwards")
+        if self.manifest.task == 'three-leg-demo':
+            self.policy.update_command(state, elapsed)
         if self.active_at is None or elapsed + 1e-10 < self.spec.duration_s:
             alpha = (np.clip(elapsed / self.spec.duration_s, 0., 1.)
                      if self.spec.duration_s else 0.)
@@ -155,6 +157,10 @@ class ReLICRollout:
                                   raw_actions=action.tolist(), targets=target.tolist(),
                                   inference_s=inference_s, monotonic_s=now,
                                   velocity_command=self.velocity_command or [0., 0., 0.])
+                if self.manifest.task == 'three-leg-demo':
+                    self.record.event('demo_prediction', state=state.model_dump(),
+                                      monotonic_s=now, targets=target.tolist(),
+                                      raw_actions=action.tolist(), **self.policy.demo_record(state))
             target = self.target
             feedforward = np.zeros(19)
             policy_at, inference_s = self.policy_at, self.inference_s

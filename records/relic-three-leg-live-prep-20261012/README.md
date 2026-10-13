@@ -26,3 +26,30 @@ Inputs and raw results are ignored local/ and runs/; the execution contract reco
 source commit, simulator commit, hashes, paths, commands and environment. The
 original nine-input standing graph and live task whitelist remain unchanged while
 this new interface is under rehearsal. No motors/leases/robot commands in this run.
+
+Result: export001 matched64 native cases exactly. Its rehearsal did not step
+physics: the selected external simulator checkout lacked diagnostics. This setup
+failure was preserved; vendored simulator fixed the dependency selection.
+Rehearsal002 (sourcee71816a) stopped at32s on90.98Nm flHX request against44.88Nm,
+exactly as native leg mode switched from selected IK to all-zero four-foot mode.
+IK motion maxtracking error19.3mm, and foot had returned near the floor. This is
+an output/mode handoff transient, not a graph joint-order mismatch. Raw selected-leg
+actor actions still update history while its targets are overridden, matching native
+ReLIC; no history zeroing or weight/gain change was introduced to mask the issue.
+
+Adam approved2s output return blend and ONE new guarded rehearsal. Rehearsal003
+(source7f28ee3) completed60s, full46s sequence, IK/clearance/final-standing checks.
+Native maxima: observations7.45e-9, raw actions3.81e-6, targets2.38e-7rad.
+Simulation wall-clock timing had3core and7total nominal5ms misses, not hardware
+transport measurements. No guard was loosened; no physical qualification claimed.
+Separate live schema4 adapter then matched all3,001 retained predictions exactly
+against recorded200Hz states and native raw-history inputs. It does not reuse the
+simulation wrapper as a hardware adapter. Targeted integration checks86passed;
+fault/SDK focused checks58passed; these overlap and are not a full-suite claim.
+Raw logs/videos/private profiles are under ignored runs/relic-three-leg-rehearsal-
+20261012-{001,002,003} and local/relic-three-leg-live-review-20261012-001. Public
+sanitized result files retain failures, source commits and actual numerical outcomes.
+
+Next: freeze live review bundle, current motors-off preflight and exact approval
+for ONE47s trial with Adam/Minghao and a clear supported three-foot workspace.
+No physical activation has occurred during this preparation.

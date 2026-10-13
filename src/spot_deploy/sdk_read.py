@@ -412,7 +412,7 @@ def validate_snapshot(snapshot, config, manifest=None, envelope=None, for_contro
             # alternative prerequisite, not a claim that a displaced arm is stowed.
             checks.pop('arm_stowed')
             checks['arm_harness_observation'] = (
-                getattr(manifest, 'adapter', None) in ('relic84', 'relic-exploy'))
+                getattr(manifest, 'adapter', None) in ('relic84', 'relic-exploy', 'relic-exploy-leg'))
     if for_control:
         checks["motors_initially_off"] = snapshot["motors_off"]
     return checks

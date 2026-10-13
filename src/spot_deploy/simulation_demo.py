@@ -56,6 +56,8 @@ class ThreeLegPlan(StrictModel):
 
     @model_validator(mode='after')
     def mode(self):
+        if self.return_blend_s and self.kind != 'front-left-cartesian-ik':
+            raise ValueError('return blend requires the Cartesian sequence')
         if self.kind == 'front-left-cartesian-ik':
             if self.cartesian_path is None or self.lifted_positions is not None:
                 raise ValueError('IK demo requires a Cartesian path, without a joint-space lifted pose')

@@ -45,12 +45,13 @@ class ExployReLICManifest(ReLICManifest):
             raise ValueError("Exploy requires named state inputs and all-joint output")
 
 
-def validate_metadata(metadata, manifest):
+def validate_metadata(metadata, manifest, contract='relic-exploy-v1', mode='four-foot-standing'):
     expected = {"contract": "relic-exploy-v1", "exploy_commit": EXPLOY_COMMIT,
                 "source_onnx_sha256": CHECKPOINT_SHA256, "source_torchscript_sha256": SCRIPT_SHA256,
                 "policy_hz": 50, "stream_hz": 200, "graph": "policy-step",
                 "mode": "four-foot-standing", "target_output": TARGET,
                 "history": "external-acknowledged-raw-actions; zero at activation"}
+    expected.update(contract=contract, mode=mode)
     if any(metadata.get(k) != v for k, v in expected.items()):
         raise ContractError("Exploy graph provenance or execution contract mismatch")
     names = metadata.get("joint_names", [])
@@ -70,6 +71,10 @@ def validate_metadata(metadata, manifest):
 
 
 class ExployReLICPolicy(ReLICDeploymentPolicy):
+    input_sizes = INPUT_SIZES
+    metadata_contract = 'relic-exploy-v1'
+    metadata_mode = 'four-foot-standing'
+
     def create_runner(self, path, manifest_path, device, profile_prefix):
         import onnxruntime as ort
 
@@ -98,7 +103,7 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
         session = ort.InferenceSession(str(path), sess_options=options,
                                        providers=["CPUExecutionProvider"])
         session.disable_fallback()
-        for fields, sizes in ((session.get_inputs(), INPUT_SIZES),
+        for fields, sizes in ((session.get_inputs(), self.input_sizes),
                               (session.get_outputs(), OUTPUT_SIZES)):
             if {f.name for f in fields} != set(sizes) or any(
                 f.shape != [1, sizes[f.name]] or f.type != "tensor(float)" for f in fields
@@ -108,11 +113,14 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
             metadata = json.loads(session.get_modelmeta().custom_metadata_map[META_KEY])
         except (KeyError, TypeError, ValueError) as exc:
             raise ContractError("Missing or invalid Exploy deployment metadata") from exc
-        names = validate_metadata(metadata, self.manifest)
-        self.graph_from_sdk = [JOINTS.index(n) for n in names]
+        names = validate_metadata(metadata, self.manifest, self.metadata_contract, self.metadata_mode)
+        self.graph_from_sdk = [JOINTS.index(n) for n in self.input_joint_names(metadata, names)]
         self.sdk_from_graph = [names.index(n) for n in JOINTS]
         self.graph_metadata = metadata
         return SimpleNamespace(session=session)
+
+    def input_joint_names(self, metadata, output_names):
+        return output_names
 
     def inputs(self, state, previous, velocity_command=None):
         if self.body_height is None:
@@ -150,7 +158,7 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
         return target, monotonic() - start, obs[None], action
 
     def warmup(self):
-        values = {k: np.zeros((1, n), dtype=np.float32) for k, n in INPUT_SIZES.items()}
+        values = {k: np.zeros((1, n), dtype=np.float32) for k, n in self.input_sizes.items()}
         values["base_quaternion"][0, 0] = 1
         values["joint_positions"][0] = DEFAULT_Q[self.graph_from_sdk]
         values["arm_command"][0] = self.manifest.arm_stowed_positions

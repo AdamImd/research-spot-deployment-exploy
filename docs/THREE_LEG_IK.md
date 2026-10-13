@@ -92,3 +92,30 @@ The separately explicit robot-profile `fault_policy=known-payload-info-observe`
 with `fault_policy_reason` permits only system `payload.fault` code9 severity1.
 Original counts/details/messages remain recorded; all other faults or incomplete
 fault detail counts still block. This does not clear or acknowledge firmware faults.
+
+## Guarded rehearsal and live preparation
+
+The original handoff stopped at32s: fl_hx target1.721rad against actual0.205rad
+requested90.98Nm, exceeding44.88Nm. Lift/hold/IK tracking passed; no complete
+return was demonstrated. Adam approved a2s quintic return OUTPUT blend from the
+last selected-leg IK pose to the current actor target, while the native leg
+command switches to zero. Weights, gains, raw ACK history and startup are unchanged.
+The updated plan is46s (plus1s live margin). A newly approved60s guarded MuJoCo
+rehearsal completed the entire sequence and passed final standing/IK/clearance
+checks. See records/relic-three-leg-live-prep-20261012. This is one simulator result,
+not hardware qualification or Isaac verification. Recorded wall-clock outliers
+remain; the same computation/command deadlines still stop physical execution.
+
+Schema4 `relic-exploy-leg`, task `three-leg-demo`, is a distinct live contract.
+It verifies the pinned base graph input joint order separately from SDK-order
+outputs. `three-leg` requires the full46s sequence plus1s margin, bound additional
+`three_leg_sequence` and `three_leg_clearance` evidence, fresh preflight, two named
+operators and explicit execution. `stand`/`walk` reject this task. The live adapter
+matched all3,001 retained rehearsal predictions exactly. It is a separate adapter;
+the simulation wrapper is never dispatched to hardware. Initialization and
+ACK-owned action history remain zero/unchanged. Demo telemetry retains Cartesian
+IK targets, actual foot coordinates, tracking errors and phase/leg commands.
+
+Package with `tools/prepare_selected_leg_candidate.py`; frozen preparation uses
+`prepare-deployment`. Selected-leg candidates are deployment review inputs until
+robot, rig/workspace, tablet and final exact one-trial approval are current.
