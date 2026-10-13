@@ -1,5 +1,10 @@
 # Smooth entry into selected-leg ReLIC, October12,2026
 
+Current implementation: Method005, ONE native actor with1rad/s command-target
+limiter; raw ACK history/weights/gains unchanged. Both60s guarded MuJoCo cases
+passed. Earlier methods below are preserved failed experiments, not active live
+behavior. No physical trial was run for this fix.
+
 Question: remove the deterministic mode-entry target discontinuity seen in the
 single physical trial, without changing weights/gains/manufacturer torque limits.
 No physical execution or new physical approval is part of this task.
