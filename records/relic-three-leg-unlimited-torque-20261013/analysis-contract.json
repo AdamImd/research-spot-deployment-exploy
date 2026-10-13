@@ -1,0 +1,51 @@
+{
+  "objective": "Analyze preserved dynamics with explicit float32 recording uncertainty bound; no dynamics or video rerun",
+  "mode": "launch-and-collect",
+  "cwd": "/home/adam/repos/research/research-spot-exploy-public",
+  "host": "cs-u-rpm-dt-03",
+  "commit": "fef3b0cb797fc767493c36c42ac80b0642d77ce3",
+  "simulation_commit": "239a203cf53a67ddf5daa36fd19e97b95a04a7f3",
+  "run_directory": "runs/relic-three-leg-unlimited-torque-analysis-20261013-001",
+  "resources": "CPU2; GPU0 EGL rendering only; no paid resources",
+  "seed": 101,
+  "max_duration_s": 60,
+  "success": "Analysis exit0; source rollout hashes unchanged, metrics/figures written. No parameter/physics changes.",
+  "stop": "Validation failure, nonfinite/integrity/infrastructure errors stop and preserve partial artifacts. Operating crossings or finite falls do not stop47s diagnostic. No retry, source/config edits or physical access.",
+  "authority": "Offline only; no robot SDK/client/network/motor/lease/estop access",
+  "retry": "Primary authorized analysis repair only: derive numerical uncertainty from recorded state precision. Preserve original failed outputs. No automatic retry.",
+  "stages": [
+    {
+      "name": "analysis",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "records/relic-three-leg-native-recovery-20261013/analyze.py",
+        "--run",
+        "runs/relic-three-leg-unlimited-torque-20261013-001/rollout",
+        "--output",
+        "runs/relic-three-leg-unlimited-torque-analysis-20261013-001/analysis"
+      ],
+      "timeout_s": 30,
+      "environment": {
+        "OMP_NUM_THREADS": "2"
+      }
+    }
+  ],
+  "initialization": "Latest recorded pre-entry hardware standing pose; model-derived root0.44790276786489125m; zero simulated velocity/history; seed101; same5s policy hold",
+  "measurement_contract": {
+    "sampling_hz": 200,
+    "requested_vs_applied": "row[k].pd_torque_Nm aligns with row[k+1].preceding_applied_torque_Nm",
+    "saturation_difference_threshold_Nm": 1e-05,
+    "loaded_foot_diagnostic_threshold_N": 5.0,
+    "fall_failure": "Any first_fall_proxy_s != null fails transition even if later recovered",
+    "validation": "Existing three_leg_demo.passed and stable_final_window must both pass, plus no fall",
+    "saturation": "abs(request[k]-applied[k+1]) > halfULP(float32(q))*kp + halfULP(float32(dq))*kd + 1e-5 Nm. Log raw differences separately."
+  },
+  "expected_artifacts": [
+    "analysis/summary.json",
+    "analysis/recovery.png",
+    "analysis/entry-torques.png"
+  ]
+}

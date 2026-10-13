@@ -167,3 +167,9 @@ mode. This is a diagnostic of unconstrained PD dynamics, not hardware capability
 The 47-second sequence, seed 101, recorded standing pose, zero initial velocities,
 unchanged actor/gains and two-second return blend provide the paired comparison
 with `records/relic-three-leg-native-recovery-20261013`.
+
+The [unlimited-torque result](../records/relic-three-leg-unlimited-torque-20261013/README.md)
+completed 47 s and recovered with unchanged weights/gains, no fall, loaded support
+feet and stable final standing. Peak requested knee torque was 75.85 N·m; peak
+applied hip torque was 49.92 N·m. These cross the proposed requested/measured
+hardware bounds; this ideal-actuator diagnostic does not qualify a physical trial.

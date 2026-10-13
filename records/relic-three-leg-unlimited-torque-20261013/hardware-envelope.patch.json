@@ -1,0 +1,4 @@
+{
+  "leg_requested_torque_max": 75.0,
+  "leg_requested_torque_reason": "Adam approved 75 N m requested leg PD-plus-feedforward demand only; measured manufacturer limits remain enforced. No physical trial authorized."
+}

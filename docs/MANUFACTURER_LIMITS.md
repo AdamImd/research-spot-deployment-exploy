@@ -82,7 +82,7 @@ supervised activation path. No motor activation occurs during this update.
 ## Separate requested leg PD torque (operator-selected draft)
 
 `leg_requested_torque_max` optionally bounds the absolute **predicted leg
-PD-plus-feedforward demand** before firmware saturation, in N·m, for all 12 legs'
+PD-plus-feedforward demand** before firmware saturation, in N·m, for all 12 leg
 joints. It requires `leg_requested_torque_reason` and the manufacturer profile.
 Adam selected **75 N·m requested demand only** on 2026-10-13. This is an operator
 operating cap, not a new manufacturer rating or a firmware configuration change.

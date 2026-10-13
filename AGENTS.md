@@ -115,3 +115,8 @@ actuators are unchanged. Unlimited dynamics are not hardware evidence.
 12-leg PD-plus-feedforward demand; Adam selected 75 N·m for a hardware draft.
 Measured manufacturer, arm/coupling, feedforward and knee-table-domain checks stay
 unchanged. No new physical approval; rebind source and preflight before review.
+The paired unlimited-torque47s diagnostic completed/recovered; see
+records/relic-three-leg-unlimited-torque-20261013. Requested knee peak75.85Nm
+exceeds the new75Nm draft, and measured hip torque/speed also cross retained
+bounds. No physical approval or hardware qualification. Video and precision-aware
+analysis were repaired from saved data without rerunning dynamics.
