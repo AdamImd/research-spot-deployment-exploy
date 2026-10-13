@@ -39,3 +39,12 @@ activation, bind the new source/graph/envelope, retain the lack of new experimen
 qualification, check current motors-off/health/tablet state and obtain Adam's
 requested exact final confirmation with distinct Adam/Minghao and a following
 rig/clear path. Preserve failures and recordings; no automatic retries.
+
+## Recorded operator-approved proof of concept
+
+The [single physical attempt](../records/relic-firmware-leg-angles-20261012/README.md)
+advanced0.6925m over12.920s with observed knee-bound crossings and unchanged policy.
+Adam accepted the walking proof of concept. The health monitor ended the stream;
+a payload fault remained in the postcheck. Motors-OFF shutdown and lease return
+were confirmed, recordings retained, no retry/fault clearing performed. Preserve
+raw failed status and incomplete nominal goal separately from operator acceptance.
