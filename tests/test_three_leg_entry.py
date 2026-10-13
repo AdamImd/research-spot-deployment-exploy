@@ -29,10 +29,10 @@ def test_entry_is_continuous_with_four_foot_command_and_keeps_history_input(stat
     policy.update(state,(plan.initial_hold_s+plan.support_transfer_s))
     entered=policy.evaluate(state,previous)
     np.testing.assert_array_equal(entered[0],before[0])
-    np.testing.assert_array_equal(entered[3],before[3])
+    # Raw network output stays native; only emitted targets are slew limited.
+    np.testing.assert_array_equal(entered[3],policy.actor.session.run(['actions'],{'obs':entered[2]})[0][0])
     np.testing.assert_array_equal(previous,original)
-    assert policy.sequence.phase=='three-leg-handover'
-    assert policy.sequence.entry_alpha==0
+    assert policy.sequence.phase=='lifting'
 
 
 def test_entry_unloads_foot_continuously_while_mode_blends(state):
@@ -45,13 +45,27 @@ def test_entry_unloads_foot_continuously_while_mode_blends(state):
     seq.update(state,(plan.initial_hold_s+plan.support_transfer_s))
     np.testing.assert_allclose(seq.target_body_m,start,rtol=0,atol=1e-12)
     previous=start.copy()
-    for t in (plan.initial_hold_s+plan.support_transfer_s)+np.arange(1,round(plan.entry_blend_s*200)+1)/200:
+    for t in (plan.initial_hold_s+plan.support_transfer_s)+np.arange(1,round(2*200)+1)/200:
         seq.update(state,t)
         assert np.linalg.norm(seq.target_body_m-previous)<.001
         previous=seq.target_body_m.copy()
     assert seq.target_body_m[2]>start[2]
-    seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+plan.entry_blend_s)
+    seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+2)
     assert seq.phase=='lifting'
     seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+plan.entry_blend_s+1)
     assert np.linalg.norm(seq.target_body_m-start)>0
-    assert plan.duration_s==50
+    assert plan.duration_s==46
+
+
+def test_limiter_bounds_steps_and_does_not_catch_up_after_gap():
+    from types import SimpleNamespace
+    from spot_deploy.simulation_demo import DemoTargetSlew
+    limiter=DemoTargetSlew()
+    sequence=SimpleNamespace(last_time=4.98,plan=SimpleNamespace(initial_hold_s=5.,support_transfer_s=0.,target_slew_rad_s=1.))
+    limiter.apply(sequence,np.zeros(19))
+    sequence.last_time=5.
+    np.testing.assert_array_equal(limiter.apply(sequence,np.ones(19)*100)[:12],0)
+    sequence.last_time=5.02
+    np.testing.assert_allclose(limiter.apply(sequence,np.ones(19)*100)[:12],.02,atol=1e-12)
+    sequence.last_time=100.
+    np.testing.assert_allclose(limiter.apply(sequence,np.ones(19)*100)[:12],.04,atol=1e-12)

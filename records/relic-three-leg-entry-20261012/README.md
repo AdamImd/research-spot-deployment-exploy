@@ -58,3 +58,17 @@ in the first4s of final12s hold. No direct body translation/COM claim; actualmod
 pose/contact response must be measured. Singleactor duringfourfootlean; existing
 4s target/raw mix overlaps6slift afterward. Total50s/future51s margin. No hardware
 motion/approval, newbounds or retraining; notqualified by this geometric hypothesis.
+
+005 final method revision: support lean also crossed body angular cap(00411.345s).
+Trace analysis found feedback predictions changing knees~0.35rad/20ms(~17.5rad/s),
+even though blend coefficients were smooth. Replace that experimental method:
+use ONE unchanged native actor, no entry mixture or support lean. Rate-limit all
+12leg virtual targets to1rad/s AFTER mode entry through finalhold. Cache preceding
+four-foot output; first exact mode-entry increment iszero; later increments<=0.02rad
+at50Hz. No catch-up after late inference. Raw history returns to the native actor's
+unmodified ACKed outputs, initialzeros unchanged. Plannedfoot IK/lift/return smooth,
+original46s/47s margin. Raw proposals AND limitedcommands recorded separately.
+This is explicit target postprocessing, not a claim the raw actor predictions stop
+changing. Native raw/obs parity and independent limitedtarget parity checked.
+Existing manufacturer/body/timing/speed/torque guards still inspect limited commands
+and measuredstate. No physicalexecution, newbounds or qualification assumed.

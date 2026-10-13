@@ -51,6 +51,7 @@ class ThreeLegPlan(StrictModel):
     support_transfer_s: float = Field(default=0, ge=0, le=6)
     support_roll_rad: float = Field(default=0, ge=-.15, le=.15)
     support_pitch_rad: float = Field(default=0, ge=-.15, le=.15)
+    target_slew_rad_s: float | None = Field(default=None, ge=.1, le=2)
     lifted_positions: list[float] | None = Field(default=None, min_length=3, max_length=3)
     cartesian_path: CartesianLegPath | None = None
     min_clearance_m: float = Field(gt=0, le=.15)
@@ -95,6 +96,34 @@ def mix_entry(sequence, four_target, four_raw, selected_target, selected_raw):
     alpha = sequence.entry_alpha
     return (four_target+alpha*(selected_target-four_target),
             np.asarray(four_raw+alpha*(selected_raw-four_raw),dtype=np.float32))
+
+
+class DemoTargetSlew:
+    """Bound demo target increments, not model weights, gains or raw history.
+
+    The rollout evaluates only after its previous inference is ACKed. Remember
+    the last returned command; reset between runs. No catch-up increment after a
+    delayed tick. Four-foot startup remains native and unfiltered.
+    """
+    def __init__(self):
+        self.last_target = None
+        self.last_time = None
+
+    def apply(self, sequence, target):
+        target = np.asarray(target,dtype=float).copy()
+        time = sequence.last_time
+        begin = sequence.plan.initial_hold_s+sequence.plan.support_transfer_s
+        limit = sequence.plan.target_slew_rad_s
+        if self.last_time is not None and time < self.last_time:
+            raise ContractError('demo target limiter clock moved backwards')
+        if limit is not None and time >= begin:
+            if self.last_target is None:
+                raise ContractError('demo target limiter requires preceding four-foot commands')
+            budget = limit*min(.02,max(0.,time-max(begin,self.last_time)))
+            target[:12] = self.last_target[:12]+np.clip(
+                target[:12]-self.last_target[:12],-budget,budget)
+        self.last_target, self.last_time = target.copy(), time
+        return target
 
 
 class ThreeLegSequence:
@@ -228,6 +257,8 @@ class SimulationThreeLegPolicy:
         self.sequence = ThreeLegSequence(plan, self.ik)
         self.manifest, self.support = baseline.manifest, baseline.support
         self.command = np.zeros(12, dtype=np.float32)
+        self.target_slew = DemoTargetSlew()
+        self.proposed_targets = None
         self.selected_session = None
         if selected_leg_graph is not None:
             import json
@@ -266,6 +297,7 @@ class SimulationThreeLegPolicy:
         self.actor.previous_action[:] = 0
         self.sequence = ThreeLegSequence(self.sequence.plan, self.ik)
         self.command[:] = 0
+        self.target_slew = DemoTargetSlew()
 
     def warmup(self):
         if self.selected_session is not None:
@@ -325,6 +357,8 @@ class SimulationThreeLegPolicy:
                 four_target[12:] = self.manifest.arm_stowed_positions
                 target, action = mix_entry(self.sequence, four_target, four_raw[0], target, action)
             target = self.return_blend(target)
+            self.proposed_targets = target.copy()
+            target = self.target_slew.apply(self.sequence,target)
             return target, monotonic()-began, obs, action
         obs = observation(state, self.manifest.arm_stowed_positions, previous, self.body_height)
         obs[31:34] = self.sequence.torso_command(self.body_height)
@@ -342,6 +376,8 @@ class SimulationThreeLegPolicy:
             four_target[12:] = self.manifest.arm_stowed_positions
             target, action = mix_entry(self.sequence, four_target, four_raw, target, action)
         target = self.return_blend(target)
+        self.proposed_targets = target.copy()
+        target = self.target_slew.apply(self.sequence,target)
         return target, monotonic()-began, obs[None], action
 
 

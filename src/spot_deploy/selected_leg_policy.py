@@ -9,7 +9,7 @@ from pydantic import model_validator
 from .contracts import JOINTS, ContractError, artifact_path, sha256
 from .exploy_policy import ExploySettings, ExployReLICManifest, ExployReLICPolicy, INPUT_SIZES, META_KEY
 from .leg_ik import LegPositionIK
-from .simulation_demo import ThreeLegPlan, ThreeLegSequence, smoothstep, mix_entry
+from .simulation_demo import ThreeLegPlan, ThreeLegSequence, smoothstep, mix_entry, DemoTargetSlew
 
 BASE_GRAPH_SHA = '1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8'
 
@@ -30,9 +30,9 @@ class SelectedLegManifest(ExployReLICManifest):
     @model_validator(mode='after')
     def selected_contract(self):
         if (self.demo.kind != 'front-left-cartesian-ik' or self.demo.return_blend_s != 2
-                or self.demo.entry_blend_s not in (2,4)
+                or self.demo.entry_blend_s != 0 or self.demo.target_slew_rad_s != 1
                 or self.demo.duration_s >= 60 or self.relic.preparation.kind != 'direct'):
-            raise ValueError('live demo requires front-left IK, reviewed2s/4s entry and2s return transitions and direct startup')
+            raise ValueError('live demo requires front-left IK, native raw history,1rad/s target limiter and2s return blend')
         return self
 
 
@@ -65,6 +65,8 @@ class SelectedLegPolicy(ExployReLICPolicy):
         self.ik = LegPositionIK(self.support, self.support_model, 'fl')
         self.sequence = ThreeLegSequence(self.manifest.demo, self.ik)
         self.command = np.zeros(12, dtype=np.float32)
+        self.target_slew = DemoTargetSlew()
+        self.proposed_targets = None
 
     def update_command(self, state, elapsed):
         self.command = self.sequence.update(state, elapsed)
@@ -93,10 +95,14 @@ class SelectedLegPolicy(ExployReLICPolicy):
             alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
             ids = self.sequence.ids
             target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)
+        self.proposed_targets = target.copy()
+        target = self.target_slew.apply(self.sequence,target)
         return target, monotonic()-start, obs, action
 
     def demo_record(self, state):
         result = dict(phase=self.sequence.phase, leg_command=self.command.tolist(),
+                      proposed_targets=self.proposed_targets.tolist(),
+                      target_slew_rad_s=self.manifest.demo.target_slew_rad_s,
                       entry_blend_alpha=(self.sequence.entry_alpha
                                          if self.sequence.phase == 'three-leg-handover' else None))
         if self.sequence.leg:

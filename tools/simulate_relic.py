@@ -20,7 +20,7 @@ from spot_deploy.records import atomic_json, runtime_packages, verify_run
 from spot_deploy.relic_contract import load_manifest, make_policy
 from spot_deploy.relic_policy import ROOT_COM_B
 from spot_deploy.relic_rollout import ReLICRollout
-from spot_deploy.simulation_demo import ThreeLegPlan, SimulationThreeLegPolicy, demo_metrics
+from spot_deploy.simulation_demo import ThreeLegPlan, SimulationThreeLegPolicy, demo_metrics, DemoTargetSlew
 
 
 class Log:
@@ -142,6 +142,7 @@ def run(args):
         core.activate(10.)
         inverse = [JOINTS.index(n.replace("arm_", "arm0_")) for n in backend.contract.names]
         reference_policy = Policy()
+        reference_slew = DemoTargetSlew()
         ref_command = SimCommand(arm=np.asarray(manifest.arm_stowed_positions, dtype=np.float32),
                                 torso=np.array([0., 0., policy.body_height], dtype=np.float32))
         rows, reason, failure = [], "completed", None
@@ -223,6 +224,8 @@ def run(args):
                         recorded['leg_command'] = demo.command.tolist()
                         log.event('demo_prediction',simulation_time_s=t,
                                   phase=demo.sequence.phase,leg_command=demo.command.tolist(),
+                                  proposed_targets=demo.proposed_targets.tolist(),
+                                  target_slew_rad_s=demo.sequence.plan.target_slew_rad_s,
                                   targets=recorded['targets'], raw_actions=recorded['raw_actions'],
                                   state=state.model_dump(), **demo.kinematic_record(state))
                     obs = backend.contract.observation(sim, ref_command,
@@ -242,6 +245,10 @@ def run(args):
                         sdk_target = np.empty(19)
                         sdk_target[inverse] = target
                         target = demo.return_blend(sdk_target)[inverse]
+                    if demo:
+                        sdk_target = np.empty(19)
+                        sdk_target[inverse] = target
+                        target = reference_slew.apply(demo.sequence,sdk_target)[inverse]
                     max_obs_error = max(max_obs_error,
                                         float(np.max(np.abs(obs - recorded["observations"]))))
                     max_action_error = max(max_action_error,

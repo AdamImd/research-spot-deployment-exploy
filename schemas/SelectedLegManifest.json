@@ -452,6 +452,20 @@
           "title": "Support Pitch Rad",
           "type": "number"
         },
+        "target_slew_rad_s": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0.1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Slew Rad S"
+        },
         "lifted_positions": {
           "anyOf": [
             {
