@@ -144,3 +144,8 @@ allows an explicitly bound request up to 0.30 m/s; live envelope/evidence guards
 still apply. Short travel is operator-accepted as proof of concept, with actual
 distance and normal timeout/shutdown recorded rather than claiming goal success.
 Exact proposed operating caps and final physical approval remain separate.
+
+After the first physical tapered trial stopped on its knee target-angle bounds,
+the operator requested [separate, wider virtual PD target bounds](PD_TARGET_BOUNDS.md).
+Measured-angle limits remain distinct; a new physical attempt needs new bound
+review and explicit final approval. The recorded stop and shutdown remain preserved.

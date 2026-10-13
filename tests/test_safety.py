@@ -4,7 +4,9 @@ import time
 import numpy as np
 import pytest
 
-from spot_deploy.contracts import ContractError
+from pydantic import ValidationError
+
+from spot_deploy.contracts import ContractError, Envelope
 from spot_deploy.safety import Guard, LatestState, Schedule, bounded_join
 
 
@@ -72,6 +74,65 @@ def test_predicted_load(manifest, envelope, state):
     manifest.gains.kp = [100] * 19
     with pytest.raises(ContractError, match="predicted"):
         issue(Guard(manifest, envelope), state, targets=[0.1] * 12 + [0] * 7)
+
+
+def separated_positions(envelope):
+    data = envelope.model_dump()
+    data['position_min'][0], data['position_max'][0] = -.1, .1
+    data['command_position_min'] = data['position_min'].copy()
+    data['command_position_max'] = data['position_max'].copy()
+    data['command_position_min'][0], data['command_position_max'][0] = -3., 3.
+    return Envelope.model_validate(data)
+
+
+def test_virtual_target_can_exceed_measured_bound_without_clipping(manifest, envelope, state):
+    env = separated_positions(envelope)
+    target = [0.] * 19
+    target[0] = .2
+    command = issue(Guard(manifest, env), state, targets=target)
+    assert command.positions == tuple(target)
+    # The same angle remains outside the measured-position envelope.
+    measured = state.model_copy(deep=True)
+    measured.positions[0] = .2
+    with pytest.raises(ContractError, match='measured joint position'):
+        Guard(manifest, env).check_state(measured, 100., 1000.)
+
+
+def test_legacy_shared_bounds_still_reject_outside_target(manifest, envelope, state):
+    env = separated_positions(envelope).model_dump()
+    env['command_position_min'] = env['command_position_max'] = None
+    target = [0.] * 19
+    target[0] = .2
+    with pytest.raises(ContractError, match='command position'):
+        issue(Guard(manifest, Envelope.model_validate(env)), state, targets=target)
+
+
+def test_wider_virtual_bounds_keep_tracking_torque_and_slew_checks(manifest, envelope, state):
+    env = separated_positions(envelope)
+    target = [0.] * 19
+    target[0] = .6
+    with pytest.raises(ContractError, match='tracking'):
+        issue(Guard(manifest, env), state, targets=target)
+    target[0] = .2
+    high_gain = manifest.model_copy(deep=True)
+    high_gain.gains.kp = [100.] * 19
+    with pytest.raises(ContractError, match='predicted'):
+        issue(Guard(high_gain, env), state, targets=target)
+    guard = Guard(manifest, env)
+    issue(guard, state)
+    with pytest.raises(ContractError, match='slew'):
+        issue(guard, state, targets=target, now=100.005)
+
+
+@pytest.mark.parametrize('change', [
+    {'command_position_min': [-3.] * 19},
+    {'command_position_min': [-3.] * 18, 'command_position_max': [3.] * 19},
+    {'command_position_min': [3.] * 19, 'command_position_max': [3.] * 19},
+    {'command_position_min': [float('nan')] * 19, 'command_position_max': [3.] * 19},
+])
+def test_command_position_bounds_are_paired_ordered_finite_vectors(envelope, change):
+    with pytest.raises(ValidationError):
+        Envelope.model_validate(envelope.model_dump() | change)
 
 
 def test_state_mailbox_latest_duplicate_error_and_close(state):

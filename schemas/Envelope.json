@@ -40,6 +40,40 @@
       "title": "Position Max",
       "type": "array"
     },
+    "command_position_min": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Command Position Min"
+    },
+    "command_position_max": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 19,
+          "minItems": 19,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Command Position Max"
+    },
     "velocity_max": {
       "items": {
         "type": "number"

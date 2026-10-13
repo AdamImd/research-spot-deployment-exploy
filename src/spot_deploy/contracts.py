@@ -161,6 +161,10 @@ class Envelope(StrictModel):
     joint_order: list[str]
     position_min: Vector19
     position_max: Vector19
+    # Optional virtual PD target bounds; measured positions keep the limits above.
+    # Both omitted/null preserves the historical shared position bounds.
+    command_position_min: Vector19 | None = None
+    command_position_max: Vector19 | None = None
     velocity_max: Vector19
     load_max: Vector19
     actuator_limit_profile: Literal["spot-sdk-5.0.1"] | None = None
@@ -203,6 +207,12 @@ class Envelope(StrictModel):
             raise ValueError("envelope vectors must use canonical SDK joint order")
         if any(lo >= hi for lo, hi in zip(self.position_min, self.position_max)):
             raise ValueError("joint position bounds must be ordered")
+        if (self.command_position_min is None) != (self.command_position_max is None):
+            raise ValueError("supply both command position bounds or neither")
+        if self.command_position_min is not None and any(
+            lo >= hi for lo, hi in zip(self.command_position_min, self.command_position_max)
+        ):
+            raise ValueError("command position bounds must be ordered")
         for field in (
             self.velocity_max,
             self.load_max,
@@ -229,6 +239,14 @@ class Envelope(StrictModel):
                    or self.position_max[i] > KNEE_TABLE[-1, 0] for i in KNEE_INDICES):
                 raise ValueError("knee envelope outside manufacturer torque table")
         return self
+
+    @property
+    def command_lower(self):
+        return self.position_min if self.command_position_min is None else self.command_position_min
+
+    @property
+    def command_upper(self):
+        return self.position_max if self.command_position_max is None else self.command_position_max
 
 
 class HardwareEstopRequirement(StrictModel):
