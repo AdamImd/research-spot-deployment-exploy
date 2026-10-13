@@ -144,3 +144,7 @@ Raw inputs/configurations, captured height, commands, environment and logs remai
 in the ignored registered run/proposal directories. Public clones can reproduce
 the contract tests and offline tools; the physical-capture comparison requires
 those private hash-bound inputs and is not claimed to run from public files alone.
+
+Subsequent operator selection: [10 ms computation limit](../relic-computation-10ms-20261012/README.md).
+Its retained-trace review accepts the observed nominal misses and passes the new
+limit; the failed 5 ms evidence above is preserved rather than overwritten.

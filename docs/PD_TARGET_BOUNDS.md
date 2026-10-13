@@ -60,3 +60,10 @@ reports both guarded 20-second walks and 60-second standing tests passing, with
 the walks still about 6 cm short. Its host benchmark missed the selected 5 ms
 computation deadline once (5.272 ms) and two nominal releases. The proposed bounds
 are prepared; the timing gate has not passed and no second physical trial ran.
+
+Adam subsequently selected a **10 ms inference/core computation limit**, retaining
+the 200 Hz schedule and accepting the observed nominal misses. The
+[revised trace review](../records/relic-computation-10ms-20261012/README.md) passes
+that selected limit without rerunning or erasing the old 5 ms result. Command-gap
+and ACK limits remain 15 ms; expiry remains 30 ms. This is a new envelope-bound
+proposal, with exact final deployment/current operator confirmation still pending.

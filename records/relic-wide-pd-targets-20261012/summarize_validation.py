@@ -13,6 +13,8 @@ def main():
     parser.add_argument('--run', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--envelope', required=True, type=Path)
+    parser.add_argument('--accept-observed-nominal-misses', action='store_true',
+                        help='Operator accepts this retained trace\'s nominal misses; counts remain visible')
     args = parser.parse_args()
     assert (args.run / 'STATUS').read_text().strip() == 'completed'
     contract = json.loads((args.run / 'contract.json').read_text())
@@ -31,6 +33,9 @@ def main():
                'virtual_knee_target_rad': [-3., 0.], 'virtual_hip_target_rad': [-3., 3.],
                'leg_tracking_error_max_rad': list(envelope.tracking_error_max[:12]),
                'measured_angle_limits_changed': False}
+    summary['max_command_computation_s'] = envelope.max_inference_s
+    summary['nominal_period_s'] = .005
+    summary['accepted_observed_nominal_misses'] = args.accept_observed_nominal_misses
     for name in ['hardware-replay', 'mujoco-walk', 'isaaclab-walk',
                  'mujoco-stand', 'isaaclab-stand', 'timing']:
         path = args.run / name
@@ -61,10 +66,16 @@ def main():
                 entry['walking'] = {key: result['walking'][key] for key in
                     ['forward_m', 'lateral_m', 'remaining_m', 'heading_error_rad', 'speed_m_s']}
         summary['stages'][name] = entry
-    summary['timing_gate_passed'] = (summary['stages']['timing']['observed_5ms_gate']
-        and summary['stages']['timing']['live_computation_deadline_pass'])
+    timing = summary['stages']['timing']
+    summary['timing_gate_passed'] = (
+        (timing['observed_5ms_gate'] or args.accept_observed_nominal_misses)
+        and timing['live_computation_deadline_pass']
+        and timing['live_command_gap_pass'] and timing['live_inference_deadline_pass'])
     summary['ready_for_new_physical_trial'] = False
-    summary['decision'] = 'Target-bound simulation validation passed; timing gate failed. No new trial.'
+    summary['decision'] = (
+        'Retained trace passes revised timing limits; fresh robot preflight and exact final approval remain.'
+        if summary['timing_gate_passed'] else
+        'Target-bound simulation validation passed; timing gate failed. No new trial.')
     summary['limitations'] = ('Ideal simulated state/ACK clocks and host-only timing; no physical '
         'transport test. Historical rejected-step slew is unverified. Model/firmware saturation '
         'equivalence is not established. A short simulated walk is not goal completion.')
