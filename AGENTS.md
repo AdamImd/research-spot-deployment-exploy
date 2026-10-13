@@ -218,3 +218,15 @@ exercised X/Y/yaw inputs and completed the front-arm command path, then stopped 
 or measured-position stop. OFF/lease return6.023s and fault-free postcheck confirmed.
 See records/relic-joystick-five-minute-20261013. No retry; five-minute endurance
 not completed, moving-arm robustness unqualified. Latest authorization consumed.
+
+Adam subsequently requested arm tracking be ignored for compliant manipulation
+and a single operator-start command. New arm_tracking_guard=observe with an
+explicit reason affects arm/gripper tracking only (reference, previous-command
+and proposed-command error). Mobile-arm arm_motion_guard remains enforce;
+position/speed, measured/requested/coupled torque, target bounds/slew, leg tracking,
+body/timing/tablet guards remain. Defaults enforce tracking. Crossing masks and
+measured/reference values are recorded, including compact recordings. Preparation
+does not execute physical motion. tools/run_joystick_bundle.py defaults to showing
+the profile; a human --execute invocation confirms current named operators,
+tablet and reviewed rig/arm/shutdown workspace, repeats preflight, runs once and
+records postcheck/compact data. Unique output per invocation, no automatic retry.

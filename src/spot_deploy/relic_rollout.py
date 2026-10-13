@@ -31,6 +31,7 @@ class ReLICRollout:
         self.phase = "uninitialized"
         self.policy_samples = 0
         self.last_arm_motion_observation = None
+        self.last_arm_tracking_observation = None
         self.last_leg_position_observation = None
         self.motion = None
         if self.manifest.task == 'walking':
@@ -79,6 +80,10 @@ class ReLICRollout:
             self.record.event('arm_motion_mode', mode='observe',
                               reason=self.envelope.arm_motion_reason,
                               torque_limits_enforced=True, arm_targets_held=True)
+        if getattr(self.guard, 'observe_arm_tracking', False):
+            self.record.event('arm_tracking_mode', mode='observe',
+                              reason=self.envelope.arm_tracking_reason,
+                              measured_position_speed_torque_enforced=True)
         if self.guard.observe_leg_positions:
             self.record.event('leg_position_mode', mode='observe',
                               reason=self.envelope.leg_position_reason,
@@ -214,6 +219,12 @@ class ReLICRollout:
             target[12:] = self.policy.arm_command
         command = self.guard.command(target, state, now, robot_now, policy_at, inference_s,
                                      feedforward=feedforward)
+        tracking = getattr(self.guard, 'arm_tracking_observation', None)
+        if tracking is not None and tracking != self.last_arm_tracking_observation:
+            self.record.event('arm_tracking_observation', **tracking,
+                              positions=state.positions[12:], reference=target[12:].tolist(),
+                              monotonic_s=now)
+            self.last_arm_tracking_observation = tracking.copy()
         rate_observation = getattr(self.guard, 'command_rate_observation', None)
         if rate_observation is not None:
             self.record.event('command_rate_observation',

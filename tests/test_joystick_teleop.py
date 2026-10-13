@@ -136,6 +136,73 @@ def test_mobile_guard_does_not_relax_arm_or_legacy_contract(mobile, state):
         Guard(mobile, env)
 
 
+def compliant_guard_inputs(mobile, state):
+    env = load(ROOT/'fixtures/relic-direct-simulation/envelope.json', Envelope)
+    values = env.model_dump()
+    values.update(arm_tracking_guard='observe',
+                  arm_tracking_reason='Operator: compliant manipulation')
+    env = Envelope.model_validate(values)
+    env.tracking_error_max[12:] = [.15]*7
+    target = np.asarray(state.positions).copy()
+    target[12:] = mobile.teleop.arm_waypoints[-1]
+    current = state.model_copy(deep=True)
+    current.positions = target.tolist()
+    current.positions[14] += .16
+    current.velocities = [0.]*19
+    current.loads = [0.]*19
+    return env, target, current
+
+
+def test_compliant_arm_tracking_continues_but_default_stops(mobile, state):
+    env, target, current = compliant_guard_inputs(mobile, state)
+    enforced = env.model_copy(update={'arm_tracking_guard': 'enforce', 'arm_tracking_reason': None})
+    ordinary = Guard(mobile, enforced)
+    ordinary.set_arm_reference(target[12:])
+    with pytest.raises(ContractError, match='outside commanded pose'):
+        ordinary.check_state(current, current.received_monotonic_s, current.robot_time_s)
+    guard = Guard(mobile, env)
+    guard.set_arm_reference(target[12:])
+    for i in range(121):
+        sample = current.model_copy(update={
+            'received_monotonic_s': current.received_monotonic_s+i*.005,
+            'robot_time_s': current.robot_time_s+i*.005})
+        guard.command(target, sample, sample.received_monotonic_s,
+                      sample.robot_time_s, sample.received_monotonic_s, 0)
+    assert guard.motion_joint_count == 19 and guard.tracking_joint_count == 12
+    assert guard.arm_tracking_observation['reference_indices'] == [2]
+    assert guard.arm_tracking_observation['measured_tracking_indices'] == [2]
+    assert guard.arm_tracking_observation['command_tracking_indices'] == [2]
+    values = env.model_dump()
+    values['arm_tracking_reason'] = None
+    with pytest.raises(ValueError, match='operator reason'):
+        Envelope.model_validate(values)
+
+
+@pytest.mark.parametrize('violation,match', [
+    ('position', 'measured joint position'), ('speed', 'measured joint velocity'),
+    ('load', 'measured joint velocity or load'),
+    ('pd', 'predicted PD-plus-feedforward'), ('leg_tracking', 'command tracking error'),
+])
+def test_compliant_arm_keeps_other_stops(mobile, state, violation, match):
+    env, target, current = compliant_guard_inputs(mobile, state)
+    if violation == 'position':
+        current.positions[14] = env.position_max[14]+.01
+    elif violation == 'speed':
+        current.velocities[16] = env.velocity_max[16]+.01
+    elif violation == 'load':
+        current.loads[14] = env.load_max[14]+1
+    elif violation == 'pd':
+        env.load_max[14] = 1
+    else:
+        env.tracking_error_max[0] = .01
+        current.positions[0] += .02
+    guard = Guard(mobile, env)
+    guard.set_arm_reference(target[12:])
+    with pytest.raises(ContractError, match=match):
+        guard.command(target, current, current.received_monotonic_s,
+                      current.robot_time_s, current.received_monotonic_s, 0)
+
+
 def test_real_graph_three_axes_moving_arm_parity(mobile, state):
     path = ROOT/'policies/relic-exploy-standing/manifest.json'
     policy = make_policy(check_artifacts(path, mobile), mobile, path)

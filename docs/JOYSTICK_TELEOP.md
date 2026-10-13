@@ -67,6 +67,16 @@ position, speed, tracking, load and command bounds; the old harness observation
 exception cannot be used to authorize moving the arm. Torque/timing thresholds are
 read from the separately reviewed envelope, never replaced by this input script.
 
+For an explicitly requested compliant manipulation profile, set
+`arm_tracking_guard=observe` and provide `arm_tracking_reason` in the reviewed
+envelope. This logs all seven arm/gripper reference and target tracking crossings
+instead of stopping for them. Measured arm position/speed, requested and measured
+torque (including coupled motor limits), command bounds/slew, leg tracking, timing,
+body and tablet guards still enforce. `arm_motion_guard` stays `enforce`; the
+broader legacy harness exception remains incompatible with this mobile-arm task.
+Default arm tracking remains enforced. Mode and crossing events are included in
+the compact recording as well as the original state/action/command recording.
+
 ## Run the preview or prepare a candidate
 
 From the repository, using the existing locked Python 3.12 UV environment:
@@ -130,3 +140,19 @@ cannot extend an already bound 60-second manifest. The longer session needs a
 new bound one-trial review; the completed 60-second run is historical evidence.
 There are no retries. On error or expiry, shutdown may move the arm/body; review
 that path as well. Tablet emergency stopping remains the independent operator's job.
+
+For an operator-started session from a frozen reviewed bundle:
+
+```bash
+uv run --no-sync python tools/run_joystick_bundle.py --bundle local/REVIEWED --execute
+```
+
+Without `--execute` it only displays the profile. Supplying `--execute` confirms
+that Adam and Minghao (or the supplied `--operator`/`--safety-operator`) are ready
+with the functioning tablet and reviewed travelling rig/arm/shutdown clearance.
+The command performs fresh preflight, creates a unique `runs/joystick-operator-*`
+recording, runs the bound duration, then checks motors off and creates a compact
+recording. Ctrl-C requests the controller's native shutdown. It never retries.
+Evidence must match the frozen source/configuration and remain within its reviewed
+validity; source changes require a new bundle. Preparation and the default display
+do not authorize agent-initiated physical motion.
