@@ -137,3 +137,10 @@ keeps activation blocked: the accepted host speed cap, body-speed headroom,
 guarded joint speeds, goal stopping and renewed bound evidence remain unresolved.
 The operator requires a separate explicit approval immediately before any
 physical deployment. Preparation never grants that approval.
+
+The [tapered 0.30 m/s proof-of-concept trial preparation](../records/relic-walk030-poc-20261012/README.md)
+supersedes the earlier constant-profile selection. The accepted host schema now
+allows an explicitly bound request up to 0.30 m/s; live envelope/evidence guards
+still apply. Short travel is operator-accepted as proof of concept, with actual
+distance and normal timeout/shutdown recorded rather than claiming goal success.
+Exact proposed operating caps and final physical approval remain separate.

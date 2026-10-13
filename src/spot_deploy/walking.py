@@ -11,7 +11,7 @@ from .policy import rotation
 
 class WalkingPlan(StrictModel):
     distance_m: float = Field(gt=0, le=1)
-    max_speed_m_s: float = Field(gt=0, le=.15)
+    max_speed_m_s: float = Field(gt=0, le=.3)
     acceleration_m_s2: float = Field(gt=0, le=.2)
     tolerance_m: float = Field(gt=0, le=.03)
     max_lateral_m: float = Field(gt=0, le=.15)

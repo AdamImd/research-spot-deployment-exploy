@@ -166,6 +166,29 @@ def test_nonzero_exploy_velocity_matches_independent_raw_actor_and_joint_mapping
             p.evaluate(state,previous,velocity_command=invalid)
 
 
+def test_reviewed_point_three_request_uses_normal_adapter_and_retains_plan_bound(state, plan):
+    from spot_deploy.relic_policy import ReLICPolicy, joint_targets
+    path = ROOT / 'policies/relic-exploy-standing/manifest.json'
+    reviewed = WalkingPlan.model_validate(plan.model_dump() | {'max_speed_m_s': .3})
+    data = load_manifest(path).model_dump()
+    data.update(task='walking', walking=reviewed.model_dump())
+    m = ExployReLICManifest.model_validate(data)
+    p = make_policy(check_artifacts(path, m), m, path)
+    p.initialize_height({'height_m': .52, 'foot_contacts': [1] * 4})
+    reference = ReLICPolicy(ROOT / 'simulation/source/relic/relic/assets/spot/pretrained/policy.onnx')
+    previous = np.zeros(12, np.float32)
+    target, _, obs, action = p.evaluate(state, previous, velocity_command=[.3, 0, 0])
+    expected = observation(state, m.arm_stowed_positions, previous, .52, [.3, 0, 0])
+    raw = reference.session.run(['actions'], {'obs': expected[None]})[0][0]
+    np.testing.assert_allclose(obs[0], expected, atol=2e-7, rtol=0)
+    np.testing.assert_allclose(action, raw, atol=1e-5, rtol=0)
+    np.testing.assert_allclose(target, joint_targets(raw, m.arm_stowed_positions), atol=2e-6)
+    with pytest.raises(ContractError, match='walking plan'):
+        p.evaluate(state, previous, velocity_command=[.301, 0, 0])
+    with pytest.raises(ValidationError):
+        WalkingPlan.model_validate(plan.model_dump() | {'max_speed_m_s': .301})
+
+
 def test_walk_requires_distinct_evidence_gates(tmp_path, plan):
     from spot_deploy.readiness import report
     manifest = tmp_path/'manifest.json'
