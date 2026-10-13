@@ -119,7 +119,8 @@ def run(args):
         unguarded = getattr(args, 'no_guards', False)
         if unguarded:
             from spot_deploy.simulation_diagnostic import SimulationDiagnosticRollout
-            core = SimulationDiagnosticRollout(policy, envelope, log)
+            core = SimulationDiagnosticRollout(policy, envelope, log,
+                forward_speed=args.simulation_forward_speed, speed_profile=args.simulation_speed_profile)
         else:
             core = ReLICRollout(policy, envelope, log)
         state, _ = sdk_state(backend, 0., 0)
@@ -149,6 +150,8 @@ def run(args):
                       mujoco_substeps=args.mujoco_substeps,
                       initial_root_height_offset_m=args.initial_height_offset,
                       physics_diagnostics=args.physics_diagnostics,
+                      simulation_forward_speed_m_s=args.simulation_forward_speed,
+                      simulation_speed_profile=args.simulation_speed_profile,
                       simulation_joint_names=list(backend.contract.names),
                       guard_mode=('disabled-simulation-diagnostic' if unguarded else 'enforced'),
                       seed=101, hardware_access=False, manifest=manifest.model_dump(),
@@ -345,6 +348,10 @@ def main():
                         help='Hold one 200 Hz PD torque across finer physics steps (diagnostic only)')
     parser.add_argument('--initial-height-offset', type=float, choices=[0., 2.], default=0.,
                         help='Two-metre air probe: retain original torso-height request and initial targets')
+    parser.add_argument('--simulation-forward-speed', type=float,
+                        help='Offline-only forward request override in (0,1] m/s; manifest unchanged')
+    parser.add_argument('--simulation-speed-profile', choices=['taper', 'constant'], default='taper',
+                        help='Constant profile retains acceleration/goal stop but removes near-goal taper')
     parser.add_argument('--no-guards', action='store_true',
                         help='Simulation-only diagnostic: disable operating stops, continue after falls; '
                              'retain physical saturation and integrity checks. Never qualifies hardware.')
@@ -361,6 +368,12 @@ def main():
         parser.error('native actuator audit requires Isaac')
     if (args.mujoco_substeps != 1 or args.initial_height_offset) and not args.no_guards:
         parser.error('physics interventions require the explicit unguarded diagnostic mode')
+    if (args.simulation_forward_speed is not None or args.simulation_speed_profile != 'taper'):
+        if not args.no_guards:
+            parser.error('speed overrides require the explicit unguarded simulation mode')
+        if (args.simulation_forward_speed is None or not np.isfinite(args.simulation_forward_speed)
+                or not 0 < args.simulation_forward_speed <= 1):
+            parser.error('simulation speed must be finite and within (0,1] m/s')
     args.output.mkdir(parents=True, exist_ok=False)
     app = None
     try:

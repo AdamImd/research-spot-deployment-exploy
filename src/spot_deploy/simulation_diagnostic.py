@@ -20,9 +20,26 @@ class DiagnosticChecks:
 
 
 class DiagnosticTravel(DiagnosticChecks, ForwardTravel):
-    def __init__(self, plan, record):
+    def __init__(self, plan, record, forward_speed=None, speed_profile='taper'):
         super().__init__(plan, record)
         self.violations = set()
+        if speed_profile not in ('taper', 'constant'):
+            raise ContractError('unknown simulation speed profile')
+        if forward_speed is not None and (not np.isfinite(forward_speed) or not 0 < forward_speed <= 1):
+            raise ContractError('simulation forward speed must be finite and within (0,1] m/s')
+        if speed_profile != 'taper' and forward_speed is None:
+            raise ContractError('constant simulation profile requires an explicit speed')
+        self.forward_speed, self.speed_profile = forward_speed, speed_profile
+        if forward_speed is not None:
+            record.event('simulation_speed_override', forward_speed_m_s=forward_speed,
+                         profile=speed_profile, manifest_unchanged=True, hardware_access=False)
+
+    def _desired_speed(self, remaining):
+        if self.forward_speed is None:
+            return super()._desired_speed(remaining)
+        if self.speed_profile == 'constant':
+            return self.forward_speed if remaining > 0 else 0.
+        return min(self.forward_speed, max(0., remaining) * .8)
 
 
 class DiagnosticCommands:
@@ -75,7 +92,7 @@ class DiagnosticCommands:
 
 
 class SimulationDiagnosticRollout(DiagnosticChecks, ReLICRollout):
-    def __init__(self, policy, envelope, record):
+    def __init__(self, policy, envelope, record, forward_speed=None, speed_profile='taper'):
         if envelope.scope != 'simulation':
             raise ContractError('unguarded diagnostics require simulation scope')
         if policy.manifest.relic.preparation.kind != 'direct':
@@ -83,8 +100,10 @@ class SimulationDiagnosticRollout(DiagnosticChecks, ReLICRollout):
         super().__init__(policy, envelope, record)
         self.violations = set()
         self.guard = DiagnosticCommands(self.manifest, envelope, record)
+        if (forward_speed is not None or speed_profile != 'taper') and not self.motion:
+            raise ContractError('simulation speed override requires a walking task')
         if self.motion:
-            self.motion = DiagnosticTravel(self.manifest.walking, record)
+            self.motion = DiagnosticTravel(self.manifest.walking, record, forward_speed, speed_profile)
         record.event('unguarded_simulation', hardware_access=False, hardware_qualified=False,
                      retained='finite data, parity, held arm, ACK/history, physical actuator saturation')
 

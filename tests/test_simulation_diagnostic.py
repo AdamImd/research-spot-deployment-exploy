@@ -87,3 +87,29 @@ def test_demands_separate_prefall_peaks_and_reorder_joints(relic_envelope):
     assert report['all_samples']['fl_hx']['speed_rad_s']['peak_abs'] == 40
     assert report['before_first_fall']['fl_hx']['speed_rad_s']['peak_abs'] == 9
     assert report['first_fall_proxy_s'] == 2 and not report['hardware_qualified']
+
+
+def test_faster_profile_preserves_acceleration_initial_hold_and_distance_stop(state, plan):
+    travel = DiagnosticTravel(plan, Log(), forward_speed=.3, speed_profile='constant')
+    travel.latch(posed(state, 0))
+    travel.activate(10)
+    commands = []
+    for tick in range(1, 1401):
+        t = tick*.005
+        commands.append(travel.update(posed(state, t), 10+t)[0])
+    assert max(commands[:int(plan.initial_hold_s/.005)-1]) == 0
+    assert max(abs(np.diff(commands))) <= plan.acceleration_m_s2*.005+1e-12
+    assert commands[-1] == pytest.approx(.3)
+    assert travel.update(posed(state, 7.005, x=plan.distance_m-.01), 17.005)[0] == 0
+    assert plan.max_speed_m_s <= .15  # Original reviewed manifest is never rewritten.
+
+
+def test_taper_override_and_invalid_simulation_speeds(plan):
+    assert DiagnosticTravel(plan, Log(), forward_speed=.3)._desired_speed(.08) == pytest.approx(.064)
+    assert DiagnosticTravel(plan, Log(), forward_speed=.3, speed_profile='constant')._desired_speed(.08) == .3
+    assert DiagnosticTravel(plan, Log(), forward_speed=.3, speed_profile='constant')._desired_speed(-.08) == 0
+    for value in [0, -1, 1.1, np.nan, np.inf]:
+        with pytest.raises(ContractError, match='simulation forward speed'):
+            DiagnosticTravel(plan, Log(), forward_speed=value)
+    with pytest.raises(ContractError, match='explicit speed'):
+        DiagnosticTravel(plan, Log(), speed_profile='constant')

@@ -164,3 +164,14 @@ collision mesh's transformed bounds against the referenced URDF collision vertic
 The [physics attribution record](records/relic-physics-attribution-20261012/README.md)
 isolates ground contact, friction/integration and gripper self-contact, with an
 independent actuator audit and measured impact of the repaired mesh alias.
+
+### Faster requests in simulation
+
+Use `tools/simulate_relic.py --no-guards --simulation-forward-speed 0.3` to override
+only the simulation's forward request maximum. The original manifest and live
+walking contract retain their limits. Default `--simulation-speed-profile taper`
+keeps the distance-dependent slowdown; `constant` retains the acceleration ramp,
+initial hold and immediate zero request inside the goal tolerance, while removing
+the near-goal taper. The policy still predicts targets at 50 Hz; commands remain
+200 Hz with unchanged weights/gains. Configuration and events identify the
+separate override. Requested base speed is distinct from measured robot speed.
