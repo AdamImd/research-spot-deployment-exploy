@@ -9,7 +9,7 @@ from pydantic import model_validator
 from .contracts import JOINTS, ContractError, artifact_path, sha256
 from .exploy_policy import ExploySettings, ExployReLICManifest, ExployReLICPolicy, INPUT_SIZES, META_KEY
 from .leg_ik import LegPositionIK
-from .simulation_demo import ThreeLegPlan, ThreeLegSequence, smoothstep, mix_entry, DemoTargetSlew
+from .simulation_demo import ThreeLegPlan, ThreeLegSequence, smoothstep, DemoTargetSlew
 
 BASE_GRAPH_SHA = '1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8'
 
@@ -31,6 +31,7 @@ class SelectedLegManifest(ExployReLICManifest):
     def selected_contract(self):
         if (self.demo.kind != 'front-left-cartesian-ik' or self.demo.return_blend_s != 2
                 or self.demo.entry_blend_s != 0 or self.demo.target_slew_rad_s != 1
+                or self.demo.support_transfer_s != 0
                 or self.demo.duration_s >= 60 or self.relic.preparation.kind != 'direct'):
             raise ValueError('live demo requires front-left IK, native raw history,1rad/s target limiter and2s return blend')
         return self
@@ -83,12 +84,6 @@ class SelectedLegPolicy(ExployReLICPolicy):
         from time import monotonic
         start = monotonic()
         target, _, obs, action = super().evaluate(state, previous, velocity_command)
-        if self.sequence.phase == 'three-leg-handover':
-            values = super().inputs(state, previous, velocity_command)
-            values['torso_command'] = np.asarray(self.sequence.torso_command(self.body_height),dtype=np.float32)[None]
-            values['leg_command'] = np.zeros((1,12),dtype=np.float32)
-            four_target, _, _, four_raw = self._evaluate_inputs(values, start)
-            target, action = mix_entry(self.sequence, four_target, four_raw, target, action)
         if self.sequence.phase == 'four-foot-handover':
             p = self.manifest.demo
             begin = p.initial_hold_s+p.support_transfer_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s

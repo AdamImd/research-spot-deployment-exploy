@@ -34,7 +34,7 @@ def prepare(base_manifest, graph, plan_path, output):
     configuration = dict(demo=plan.model_dump(), composition=composition,
         base_export=json.loads(artifact_path(base_manifest,base.exploy.export_record_file).read_text()),
         input_order='pinned base graph native names', target_order='SDK',
-        entry_blend=f'{plan.entry_blend_s:g}-second quintic targets AND raw actions; same previous ACK vector; overlap slow Cartesian lift',
+        entry_controller='single native actor; target slew1rad/s; native raw ACK history; no catch-up',
         return_blend='two-second quintic on selected-leg output; zero native leg command; raw ACK history unchanged')
     atomic_json(output/'configuration.json',configuration)
     record = dict(composition, configuration_sha256=sha256(output/'configuration.json'),

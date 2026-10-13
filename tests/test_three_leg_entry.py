@@ -35,7 +35,7 @@ def test_entry_is_continuous_with_four_foot_command_and_keeps_history_input(stat
     assert policy.sequence.phase=='lifting'
 
 
-def test_entry_unloads_foot_continuously_while_mode_blends(state):
+def test_slow_lift_path_remains_continuous_during_entry(state):
     state.positions=DEFAULT_Q.astype(float).tolist()
     base=baseline()
     plan=load(ROOT/'configs/relic-three-leg-front-left-ik.json',ThreeLegPlan)
@@ -52,7 +52,6 @@ def test_entry_unloads_foot_continuously_while_mode_blends(state):
     assert seq.target_body_m[2]>start[2]
     seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+2)
     assert seq.phase=='lifting'
-    seq.update(state,(plan.initial_hold_s+plan.support_transfer_s)+plan.entry_blend_s+1)
     assert np.linalg.norm(seq.target_body_m-start)>0
     assert plan.duration_s==46
 
