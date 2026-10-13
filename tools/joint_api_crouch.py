@@ -73,6 +73,8 @@ class ReferenceGuard(Guard):
             raise ContractError('arm observation mode requires a ReLIC leg controller')
         self.envelope = envelope
         self.observe_arm_motion = False
+        self.observe_leg_positions = False
+        self.leg_position_observation = None
         self.motion_joint_count = 19
         self.arm_motion_observation = None
         self.manifest = SimpleNamespace(
