@@ -87,6 +87,15 @@ def main():
             'tablet, the rig following and path clear? This will power motors and move Spot.',
         'approval_required': 'Ask immediately before activation, after all gates pass; no automatic launch',
     })
+    atomic_json(args.output / 'recording-template.json', {
+        'status': 'template_only_no_robot_connection',
+        'command': ['uv', 'run', '--no-sync', 'python', 'tools/record_rollout.py',
+            '--run', 'APPROVED_TRIAL_RUN', '--output', 'NEW_COMPACT_RECORDING',
+            '--manifest', 'FINAL_APPROVED_MANIFEST', '--state-hz', '0'],
+        'scope': 'All unique sampled robot states, policy actions and commands; gzip JSONL',
+        'includes': 'Frozen origin/goal, raw actions/ACKs, measured state and targets for PD-offset analysis',
+        'note': 'Run after a completed or failed trial; never replace the raw safety log',
+    })
     (args.output / 'REVIEW.md').write_text(
         '# 0.30 m/s walking hardware review\n\n'
         'Review only. No activation command is supplied. manifest.review.json is intentionally '

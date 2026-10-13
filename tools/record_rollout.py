@@ -30,7 +30,7 @@ FIELDS = {
     "height_latched": ("height_m", "source", "robot_time_s", "foot_contacts"),
     "first_failure": ("error_type", "reason", "error"),
     "cleanup_failure": ("reason", "error"),
-    'walk_origin': ('odom_position_m', 'yaw_rad', 'robot_time_s', 'plan', 'source',
+    'walk_origin': ('odom_position_m', 'goal_odom_position_m', 'yaw_rad', 'robot_time_s', 'plan', 'source',
                     'reference_frame', 'distance_formula'),
     'walk_progress': ('phase', 'forward_m', 'lateral_m', 'heading_error_rad', 'remaining_m',
                       'speed_m_s', 'requested_forward_m_s', 'odom_position_m', 'robot_time_s'),

@@ -58,7 +58,8 @@ link/button or that the named operators are in position.
 
 ## Local bundle, recording and final approval
 
-Local review: `local/relic-walking-deployment-review-20261012-001/review/`.
+Local final review: `local/relic-walking-deployment-review-20261012-002/review/`.
+The earlier001 review and validation are preserved separately.
 Includes copied policy artifacts and `manifest.review.json`, selected trial
 parameters, unchanged hardware envelope, model/payload checks, input hashes,
 simulated speed/distance failures, empty evidence and `activation.json`.
@@ -68,7 +69,8 @@ renaming it is not an approval or a working live controller.
 Record the full raw robot state, issued targets, raw actions/ACK history, requested
 and measured speed, frozen origin/goal, joint speeds/PD target offsets, estimated
 PD torque, stream/ACK/expiry timing and shutdown result. After a trial use
-`tools/record_rollout.py` for a gzip robot/action archive. Videos are optional;
+`tools/record_rollout.py` for a gzip robot/action archive with `--state-hz 0`,
+retaining every unique sampled state and the explicit goal. Videos are optional;
 this review follows the selected robot-data/action recording scope.
 
 Before the final question: resolve profile support and stopping/speed qualification,
@@ -90,7 +92,7 @@ are committed. Reproduce with the frozen local inputs and a fresh output:
 
 ```bash
 uv run --no-sync python records/relic-walking-hardware-review-20261012/prepare_review.py \
-  --reference-bundle local/relic-walking-deployment-review-20261012-001/reference-bundle \
+  --reference-bundle local/relic-walking-deployment-review-20261012-002/reference-bundle \
   --preflight runs/walking-preflight-20261012-001/preflight \
   --simulation-summary records/relic-faster-sim-20261012/result-summary.json \
   --output local/NEW-REVIEW
