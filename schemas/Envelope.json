@@ -325,7 +325,7 @@
     },
     "max_duration_s": {
       "exclusiveMinimum": 0,
-      "maximum": 60,
+      "maximum": 300,
       "title": "Max Duration S",
       "type": "number"
     },

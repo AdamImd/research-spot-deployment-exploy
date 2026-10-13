@@ -206,7 +206,7 @@ class Envelope(StrictModel):
     command_ttl_s: Positive
     shutdown_timeout_s: Positive
     transition_s: float = Field(ge=0, allow_inf_nan=False)
-    max_duration_s: float = Field(gt=0, le=60)
+    max_duration_s: float = Field(gt=0, le=300)
     min_battery_percent: float = Field(gt=0, le=100)
 
     @model_validator(mode="after")

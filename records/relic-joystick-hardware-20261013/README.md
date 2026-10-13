@@ -64,9 +64,8 @@ Raw supervisor/trial/postcheck/compact files:
 
 One locomotion-input commissioning session completed cleanly. Moving-arm hardware
 behavior and five-minute endurance remain unverified. Adam subsequently requested
-a five-minute repeat. The plan cap increases to 300 seconds with a separate
+a five-minute repeat. The plan and envelope caps increase to 300 seconds with a separate
 five-minute example; the default stays 60 seconds. Only duration validation and
-documentation change; controls, policy and arm path are unchanged. Nine existing
-joystick tests and targeted Ruff passed after the duration-cap change. Prepare a new
+documentation change; controls, policy and arm path are unchanged. The targeted joystick, contract and deployment checks passed after the duration-cap changes. Prepare a new
 bound 300-second envelope/manifest and obtain the requested immediately-before-run
 confirmation. No automatic repeat or blanket hardware qualification follows.

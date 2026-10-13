@@ -123,7 +123,7 @@ uv run --no-sync python tools/joystick_relic.py run \
 The wrapper delegates to `spot-deploy joystick`; both use the same readiness gates,
 fresh preflight, native stand, watchdogs, recording, bounded shutdown and lease
 return. Default duration is the exact manifest duration (60 seconds in the example).
-The plan supports at most 300 seconds. For an operator-requested five-minute
+The plan and envelope duration contracts support at most 300 seconds. For an operator-requested five-minute
 session, prepare with `examples/joystick-relic-arm-five-minute.json` and review a
 hardware envelope with the same 300-second maximum. A live duration override
 cannot extend an already bound 60-second manifest. The longer session needs a
