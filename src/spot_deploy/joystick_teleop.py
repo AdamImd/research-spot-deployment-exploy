@@ -1,6 +1,7 @@
 """Bounded USB motion input and reversible arm path; no robot or SDK capability."""
 from dataclasses import dataclass
 from typing import Literal
+import time
 
 import numpy as np
 from pydantic import Field, model_validator
@@ -109,6 +110,30 @@ class JoystickInput:
 
     def close(self):
         self.link.close()
+
+    def reset_after_native_stand(self):
+        """Discard the unconsumed power/stand queue; never resume an active link.
+
+        Reopening gets a fresh kernel snapshot, not replayed button edges. Held
+        enable/trigger INIT events cannot enable or toggle; a fresh release/press
+        with centered axes is required. The physical device must stay identical.
+        """
+        identity = self.link.identity
+        self.link.close()
+        self.link = JoystickLink(self.plan.device)
+        try:
+            if self.link.identity != identity:
+                raise ContractError('joystick changed during native stand; restart required')
+            self.buttons = {}
+            self.enabled = self.released = False
+            self.last_at = None
+            sample = self.poll(time.monotonic())
+            if sample.enabled or sample.toggle or any(sample.velocity):
+                raise ContractError('invalid joystick startup reset')
+            self.last_at = None
+        except BaseException:
+            self.link.close()
+            raise
 
 
 class ArmPath:

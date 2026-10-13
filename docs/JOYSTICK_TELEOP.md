@@ -36,6 +36,12 @@ Idle joydev devices emit no events: availability is checked by ioctl, not inferr
 from the time since the last stick movement. Physical signs still need preview
 verification by moving the actual stick before commissioning.
 
+The live link is checked before power-on, then reopened immediately after native
+stand to discard the unread kernel event queue accumulated during blocking startup.
+The physical device identity must remain identical. Fresh INIT snapshots never
+enable or toggle; release/center and press enable after standing. Once active,
+event loss/resynchronization still stops the session; there is no automatic resume.
+
 ## Arm behavior
 
 The example contains an intermediate folded clearance waypoint and a front pose.
@@ -153,6 +159,8 @@ with the functioning tablet and reviewed travelling rig/arm/shutdown clearance.
 The command performs fresh preflight, creates a unique `runs/joystick-operator-*`
 recording, runs the bound duration, then checks motors off and creates a compact
 recording. Ctrl-C requests the controller's native shutdown. It never retries.
+Failures print their recorded reason and any blocking robot fault directly in the
+terminal, followed by the motors-off confirmation when available.
 Evidence must match the frozen source/configuration and remain within its reviewed
 validity; source changes require a new bundle. Preparation and the default display
 do not authorize agent-initiated physical motion.

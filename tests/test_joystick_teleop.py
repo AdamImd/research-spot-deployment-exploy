@@ -87,6 +87,39 @@ def test_finish_and_disconnect(plan):
         source.poll(.01)
 
 
+def test_native_stand_discards_queue_and_requires_new_enable(plan, monkeypatch):
+    import spot_deploy.joystick_teleop as teleop
+    old, fresh = FakeLink(), FakeLink()
+    old.identity = fresh.identity = (1, 2, 3)
+    source = JoystickInput(plan, old)
+    source.enabled = source.released = True
+    source.buttons = {0: False, 1: True}
+    # Stale pre-stand input would fault if read; it must be discarded entirely.
+    old.poll = lambda: (_ for _ in ()).throw(ContractError('resynchronization'))
+    fresh.events = [ButtonEvent(i, i in (0, 1), True) for i in range(12)]
+    monkeypatch.setattr(teleop, 'JoystickLink', lambda _: fresh)
+    monkeypatch.setattr(teleop.time, 'monotonic', lambda: 10.)
+    source.reset_after_native_stand()
+    assert old.closed and not fresh.closed
+    assert not source.enabled and not source.released and source.last_at is None
+    assert not source.poll(10.005).toggle
+    fresh.events = [ButtonEvent(0, False), ButtonEvent(1, False)]
+    source.poll(10.01)
+    fresh.events = [ButtonEvent(1, True), ButtonEvent(0, True)]
+    assert source.poll(10.015).toggle
+
+
+def test_native_stand_device_replacement_still_stops(plan, monkeypatch):
+    import spot_deploy.joystick_teleop as teleop
+    old, fresh = FakeLink(), FakeLink()
+    old.identity, fresh.identity = (1, 2, 3), (1, 4, 5)
+    source = JoystickInput(plan, old)
+    monkeypatch.setattr(teleop, 'JoystickLink', lambda _: fresh)
+    with pytest.raises(ContractError, match='changed during native stand'):
+        source.reset_after_native_stand()
+    assert old.closed and fresh.closed
+
+
 def test_arm_path_pause_reverse_and_speed(mobile):
     arm = ArmPath(mobile.arm_stowed_positions, mobile.teleop)
     original = arm.reference.copy()

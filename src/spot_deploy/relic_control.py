@@ -66,8 +66,19 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         control.acquire()
         worker = threading.Thread(target=health_monitor, name="relic-health", daemon=True)
         worker.start()
-        control.native_stand(stop)
+        try:
+            control.native_stand(stop)
+        except BaseException:
+            # A health failure can cancel power/stand. Preserve its original
+            # cause instead of replacing it with generic cancellation text.
+            check_error()
+            raise
         check_error()
+        reset_input = getattr(teleop_source, 'reset_after_native_stand', None)
+        if reset_input is not None:
+            reset_input()
+            record.event('joystick_startup_reset', pre_policy_events_discarded=True,
+                         fresh_neutral_enable_required=True)
         height = reader.read_body_height()
         first = reader.start_stream(duration + reader.config.rpc_timeout_s + 5)
         core.initialize(first, height, time.monotonic(), reader.robot_now())

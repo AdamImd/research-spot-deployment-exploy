@@ -20,6 +20,29 @@ from spot_deploy.relic_contract import load_manifest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def failure_reason(directory):
+    """Read bounded diagnostics already recorded by the controller."""
+    result = directory/'result.json'
+    if not result.is_file():
+        return 'See stage log; no result record was produced.'
+    data = json.loads(result.read_text())
+    reason = data.get('error') or 'Stage did not complete; inspect result.json.'
+    events = directory/'events.jsonl'
+    if events.is_file():
+        blocking = []
+        with events.open() as stream:
+            for line in stream:
+                event = json.loads(line)
+                if event.get('event') == 'health' and event.get('blocking_faults'):
+                    blocking = event['blocking_faults']
+        if blocking:
+            descriptions = [f"{f.get('name', 'robot fault')} (code {f.get('code')}): "
+                            + str(f.get('message', '')).replace('\n', ' ')[:500]
+                            for f in blocking]
+            reason += '\nRobot fault: '+'; '.join(descriptions)
+    return reason
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bundle', type=Path, required=True)
@@ -93,6 +116,7 @@ def main(argv=None):
         code = call('preflight', preflight+['--output', str(out/'preflight')], 25)
         if code or interrupted:
             (out/'STATUS').write_text('preflight_failed_or_cancelled\n')
+            print('Preflight failed: '+failure_reason(out/'preflight'), flush=True)
             return code or 1
         (out/'STATUS').write_text('trial_running\n')
         code = call('trial', prefix+['joystick', '--manifest', str(manifest),
@@ -100,6 +124,8 @@ def main(argv=None):
             '--evidence', str(bundle/'evidence.json'), '--duration', str(plan.teleop.duration_s),
             '--operator', args.operator, '--safety-operator', args.safety_operator,
             '--output', str(out/'trial'), '--execute'], plan.teleop.duration_s+90)
+        if code:
+            print('Trial stopped: '+failure_reason(out/'trial'), flush=True)
         post = call('postcheck', preflight+['--output', str(out/'postcheck')], 25)
         result_file = out/'postcheck/result.json'
         off = result_file.is_file() and json.loads(result_file.read_text()).get(
@@ -118,6 +144,8 @@ def main(argv=None):
         (out/'STATUS').write_text(status+'\n')
         if not off:
             print('Motors-off unconfirmed: use the tablet E-stop.', flush=True)
+        else:
+            print('Motors off confirmed by postcheck.', flush=True)
         print(f'{status}; recording: {out}', flush=True)
         return 0 if status == 'completed' else 1
     finally:

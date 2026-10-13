@@ -230,3 +230,13 @@ does not execute physical motion. tools/run_joystick_bundle.py defaults to showi
 the profile; a human --execute invocation confirms current named operators,
 tablet and reviewed rig/arm/shutdown workspace, repeats preflight, runs once and
 records postcheck/compact data. Unique output per invocation, no automatic retry.
+
+Operator run20261013-154632 stopped after native stand on joystick INIT
+resynchronization: the link was opened before a blocking power/stand step and its
+queue overflowed while unread. The startup fix reopens the identical device
+after native stand, discards queued edges and resets the neutral-enable latch.
+No held/INIT enable or trigger may activate motion. Active-session queue loss,
+device replacement and polling timeout remain stops. Launcher now prints failure
+reasons and blocking robot faults; native power cancellation preserves the first
+health-worker error. The earlier operator run145858 reported CPU over-temperature
+and clean motors-off/lease shutdown; that fault is never bypassed by this fix.
