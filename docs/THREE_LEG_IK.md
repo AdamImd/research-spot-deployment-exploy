@@ -104,3 +104,12 @@ cap; angular speed was 1.061006 rad/s. Target steps/rates remained <=0.02 rad /
 1 rad/s. Motors OFF and lease return confirmed in 5.015 s; fault-free passive
 postcheck passed. No full sequence or hardware qualification; approval consumed,
 no retry. See records/relic-three-leg-angular2-hardware-20261012.
+
+Saved-data analysis of the cap2 trial identifies a load-transfer mismatch: FL knee
+PD estimate falls21.42to7.29Nm as its virtual target approaches the initial measured
+IK pose, while all-leg limiting leaves other-leg target gaps up to1.022rad. Model
+COM tripod margin starts-4.5cm versus-0.9cm in the previous successful simulation;
+only simulation shifts inside in the first0.4s. Foot forces/harness loads are not
+recorded, so this is a leading mechanism, not uniquely established causality.
+See records/relic-three-leg-tip-analysis-20261013 for reproducible saved-data analysis.
+No controller or guard change, new simulation, or physical motion was made.
