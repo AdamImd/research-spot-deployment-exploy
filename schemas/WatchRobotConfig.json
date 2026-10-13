@@ -89,6 +89,27 @@
         }
       ],
       "default": null
+    },
+    "fault_policy": {
+      "default": "all-block",
+      "enum": [
+        "all-block",
+        "known-payload-info-observe"
+      ],
+      "title": "Fault Policy",
+      "type": "string"
+    },
+    "fault_policy_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fault Policy Reason"
     }
   },
   "required": [

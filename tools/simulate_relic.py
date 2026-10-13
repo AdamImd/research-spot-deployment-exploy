@@ -195,12 +195,12 @@ def run(args):
                 state, sim = sdk_state(backend, t, key)
                 began = time.monotonic()
                 count = core.policy_samples
-                if demo:
-                    previous_phase = demo.sequence.phase
-                    demo.update(state,t)
-                    if demo.sequence.phase != previous_phase:
-                        log.event('demo_phase',phase=demo.sequence.phase,simulation_time_s=t)
                 try:
+                    if demo:
+                        previous_phase = demo.sequence.phase
+                        demo.update(state,t)
+                        if demo.sequence.phase != previous_phase:
+                            log.event('demo_phase',phase=demo.sequence.phase,simulation_time_s=t)
                     command = core.command(state, 10 + t, 1000 + t)
                 except ContractError as exc:
                     reason, failure = ("integrity_stop" if unguarded else "guard_stop"), str(exc)
@@ -224,6 +224,10 @@ def run(args):
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
                     target = backend.contract.targets(action, ref_command)
+                    if demo and demo.sequence.phase == 'four-foot-handover':
+                        sdk_target = np.empty(19)
+                        sdk_target[inverse] = target
+                        target = demo.return_blend(sdk_target)[inverse]
                     max_obs_error = max(max_obs_error,
                                         float(np.max(np.abs(obs - recorded["observations"]))))
                     max_action_error = max(max_action_error,

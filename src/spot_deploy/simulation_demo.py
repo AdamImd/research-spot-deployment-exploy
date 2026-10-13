@@ -46,6 +46,7 @@ class ThreeLegPlan(StrictModel):
     hold_s: float = Field(ge=2, le=10)
     lower_s: float = Field(ge=2, le=10)
     final_hold_s: float = Field(ge=5, le=20)
+    return_blend_s: float = Field(default=0, ge=0, le=5)
     lifted_positions: list[float] | None = Field(default=None, min_length=3, max_length=3)
     cartesian_path: CartesianLegPath | None = None
     min_clearance_m: float = Field(gt=0, le=.15)
@@ -66,7 +67,7 @@ class ThreeLegPlan(StrictModel):
     def duration_s(self):
         return sum(getattr(self, k) for k in ('initial_hold_s', 'lift_s', 'hold_s',
                                             'lower_s', 'final_hold_s')) + (
-            self.cartesian_path.duration_s if self.cartesian_path else 0.)
+            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s
 
 
 def smoothstep(alpha):
@@ -100,7 +101,9 @@ class ThreeLegSequence:
             self.phase, self.leg, self.target_body_m = 'four-foot-initial', None, None
             return
         if elapsed >= lower_end:
-            self.phase, self.leg, self.target_body_m = 'four-foot-final', None, None
+            self.phase = ('four-foot-handover' if elapsed < lower_end+p.return_blend_s
+                          else 'four-foot-final')
+            self.leg, self.target_body_m = None, None
             return
         if self.start is None:
             self.start = finite(np.asarray(state.positions)[self.ids], 3).copy()
@@ -237,6 +240,22 @@ class SimulationThreeLegPolicy:
     def update(self, state, elapsed):
         self.command = self.sequence.update(state, elapsed)
 
+    def return_blend(self, target):
+        """Blend only the selected-leg OUTPUT after native mode switches to zero.
+
+        Raw actions/history and all other targets remain unchanged. This is a
+        return handoff, not a startup fade or altered observation/history rule.
+        """
+        if self.sequence.phase != 'four-foot-handover':
+            return target
+        p = self.sequence.plan
+        begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+        alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
+        target = np.asarray(target).copy()
+        ids = self.sequence.ids
+        target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)
+        return target
+
     def kinematic_record(self, state):
         if self.ik is None or self.sequence.leg is None:
             return {}
@@ -254,6 +273,7 @@ class SimulationThreeLegPolicy:
             action, obs, target = self.selected_session.run(['actions','obs',TARGET],values)
             target = finite(target[0],19).astype(float)
             target[12:] = self.manifest.arm_stowed_positions
+            target = self.return_blend(target)
             return target, monotonic()-began, obs, finite(action[0],12)
         obs = observation(state, self.manifest.arm_stowed_positions, previous, self.body_height)
         obs[19:31] = self.command
@@ -262,6 +282,7 @@ class SimulationThreeLegPolicy:
         target[12:] = self.manifest.arm_stowed_positions
         if self.sequence.leg:
             target[self.sequence.ids] = self.sequence.pose
+        target = self.return_blend(target)
         return target, monotonic()-began, obs[None], action
 
 
