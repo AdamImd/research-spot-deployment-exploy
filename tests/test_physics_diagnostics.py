@@ -146,3 +146,21 @@ def test_dynamics_plot_labels_both_actuator_modes(tmp_path, limited):
     plots(rows, config, {'reason': 'completed'}, tmp_path)
     assert (tmp_path/'dynamics.png').stat().st_size > 1000
     assert (tmp_path/'dynamics.pdf').stat().st_size > 1000
+
+
+def test_torque_analysis_accounts_for_float32_state_without_hiding_clipping():
+    import runpy
+    root = Path(__file__).parents[1]
+    bound_fn = runpy.run_path(str(root/'records/relic-three-leg-native-recovery-20261013/analyze.py'))['pd_roundoff_bound']
+    rng = np.random.default_rng(101)
+    q, dq = rng.uniform(-3., 3., (2, 1000, 19))
+    logged_q, logged_dq = q.astype(np.float32), dq.astype(np.float32)
+    kp, kd = np.full(19, 120.), np.full(19, 5.)
+    target = np.zeros(19)
+    demand = kp*(target-logged_q)-kd*logged_dq
+    applied = kp*(target-q)-kd*dq
+    bound = bound_fn(logged_q, logged_dq, kp, kd)
+    assert np.all(np.abs(demand-applied) <= bound+1e-12)
+    assert not np.any(np.abs(demand-applied) > bound+1e-5)
+    applied[0, 0] = demand[0, 0]-.01
+    assert np.abs(demand[0, 0]-applied[0, 0]) > bound[0, 0]+1e-5

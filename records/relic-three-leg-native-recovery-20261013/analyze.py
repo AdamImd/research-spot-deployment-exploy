@@ -16,6 +16,14 @@ def summary_values(values):
     )
 
 
+def pd_roundoff_bound(q, dq, kp, kd):
+    """Bound PD error from logged float32 state versus simulator float64 state."""
+    return 0.5 * (
+        np.abs(np.spacing(np.asarray(q, dtype=np.float32))).astype(float) * np.asarray(kp)
+        + np.abs(np.spacing(np.asarray(dq, dtype=np.float32))).astype(float) * np.asarray(kd)
+    )
+
+
 def main(run, output):
     import matplotlib
 
@@ -34,7 +42,16 @@ def main(run, output):
     assert demand.shape == applied.shape == (len(dt), 19)
     assert np.isfinite(demand).all() and np.isfinite(applied).all()
     # Applied torque in the next recorded state belongs to the preceding 5ms command.
-    saturation = np.abs(demand - applied) > 1e-5
+    names = [n.replace("arm_", "arm0_") for n in config["simulation_joint_names"]]
+    ids = [names.index(n) for n in JOINTS]
+    roundoff = pd_roundoff_bound(
+        np.array([r["q"] for r in rows])[:-1, ids],
+        np.array([r["dq"] for r in rows])[:-1, ids],
+        config["manifest"]["gains"]["kp"],
+        config["manifest"]["gains"]["kd"],
+    )
+    difference = np.abs(demand - applied)
+    saturation = difference > roundoff + 1e-5
     hips = [i for i, n in enumerate(JOINTS[:12]) if not n.endswith("_kn")]
     unlimited = config.get("actuator_torque_limits") is False
     if unlimited:
@@ -107,6 +124,14 @@ def main(run, output):
         actuator_torque_limits=not unlimited,
         alignment="demand[k] vs preceding_applied[k+1]; 5ms interval",
         saturation_difference_threshold_Nm=1e-5,
+        recording_precision=dict(
+            state_dtype="float32",
+            simulator_state_dtype="float64",
+            rule="abs(request-applied) > half-ULP(q)*kp + half-ULP(dq)*kd + 1e-5 Nm",
+            max_raw_difference_Nm=float(difference.max()),
+            raw_pairs_above_1e_5=int((difference > 1e-5).sum()),
+            max_excess_above_roundoff_bound_Nm=float((difference - roundoff).max()),
+        ),
         foot_loaded_diagnostic_threshold_N=5,
         joint_torque=joint_stats,
         body=dict(
