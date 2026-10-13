@@ -216,3 +216,56 @@ def test_walking_deviation_persists_but_stale_pose_stops_immediately(state):
     bad.body_pose_robot_time_s = 999.0
     with pytest.raises(ContractError, match="stale"):
         stale.update(bad, 10.005)
+
+
+def test_saved_simulator_audit_accepts_completed_marker_and_rejects_modified_data(
+    tmp_path, envelope, fixture_path
+):
+    import hashlib
+    import json
+    import runpy
+    from pathlib import Path
+    from spot_deploy.contracts import JOINTS
+
+    audit = runpy.run_path(str(Path(__file__).parents[1] / "tools/audit_physical_limits.py"))["run"]
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "configuration.json").write_text(json.dumps({"simulation_joint_names": list(JOINTS)}))
+    rows = [
+        dict(
+            trial_time=t,
+            q=[0.0] * 19,
+            dq=[0.0] * 19,
+            positions=[0.0] * 19,
+            feedforward=[0.0] * 19,
+            preceding_applied_torque_Nm=([3.0] + [0.0] * 18 if t < 0.01 else [0.0] * 19),
+            root_quaternion_wxyz=[1.0, 0.0, 0.0, 0.0],
+            position=[0.0, 0.0, 0.5],
+            linear_velocity=[0.0] * 3,
+            angular_velocity=[0.0] * 3,
+        )
+        for t in [0.0, 0.005, 0.01]
+    ]
+    data = source / "rollout.jsonl"
+    data.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    (source / "COMPLETE.json").write_text(
+        json.dumps(
+            dict(
+                status="completed",
+                artifacts={
+                    p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in source.glob("*.json*")
+                },
+            )
+        )
+    )
+    env = persistent(envelope).model_copy(update={"scope": "simulation"})
+    env_path = tmp_path / "envelope.json"
+    env_path.write_text(env.model_dump_json())
+    result = audit(source, fixture_path / "manifest.json", env_path, tmp_path / "audit")
+    assert result["passed"] and result["samples_checked"] == 3
+    assert result["crossings_started"] == 1 and result["crossings_recovered"] == 1
+    assert result["max_recovered_duration_s"] == pytest.approx(0.01)
+    data.write_text(data.read_text() + "\n")
+    with pytest.raises(ValueError, match="integrity"):
+        audit(source, fixture_path / "manifest.json", env_path, tmp_path / "bad-audit")

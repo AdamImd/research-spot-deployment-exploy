@@ -16,7 +16,7 @@ from spot_deploy.safety import Guard
 
 
 def run(source, manifest, envelope, output):
-    if not verify_run(source):
+    if not verify_run(source, status="completed"):
         raise ValueError("source recording failed integrity verification")
     env = load(envelope, Envelope)
     if env.scope != "simulation":
