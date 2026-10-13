@@ -1,4 +1,4 @@
-# Front-left Cartesian IK demo — preparation only
+# Front-left Cartesian IK demo — deployment review
 
 Adam requested the unchanged ReLIC controller on three legs, with the fourth
 moving by IK ahead of Spot. Use the previously selected front-left leg. The
@@ -11,7 +11,7 @@ joints remain actor controlled; the arm stays held. No rewards or retraining.
 
 ## Sequence and reference frame
 
-`configs/relic-three-leg-front-left-ik.json` defines a44second plan:
+`configs/relic-three-leg-front-left-ik.json` defines a46second plan:
 
 | Phase | Seconds | Action |
 |---|---:|---|
@@ -20,6 +20,7 @@ joints remain actor controlled; the arm stays held. No rewards or retraining.
 | Three-leg hold | 3 | First waypoint |
 | IK movement | 12 | Four3second quintic segments around an8cm square |
 | Lower/return | 6 | Cartesian return to the latched foot location |
+| Return handoff | 2 | Zero leg command; quintic blend of front-left output to actor |
 | Four-foot final | 12 | Zero leg command, actor controls all legs |
 
 The square is in the body x-z plane at y=+0.22m, x=0.53…0.61m and
@@ -61,7 +62,7 @@ records support review without a physical rollout.
 Use a standing baseline and a SIMULATION-scoped envelope. A walking manifest is
 rejected. The same `--three-leg-plan configs/relic-three-leg-front-left-ik.json`
 argument works with `tools/simulate_relic.py` in MuJoCo or IsaacLab. Require a duration
-covering the44second sequence; the existing60second protocol retains the final
+covering the46second sequence; the existing60second protocol retains the final
 standing window. Do not route this adapter to the live CLI or pretend the old
 Exploy graph accepts selected-leg commands. The prior joint-pose three-leg runs
 stopped at mode activation in both simulators; this new IK sequence does not fix
