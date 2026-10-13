@@ -101,7 +101,9 @@ def video(rows,config,result,source,output,fps):
     model.vis.global_.offheight=480
     data=mj.MjData(model)
     names=config['simulation_joint_names']
-    ids=[mj.mj_name2id(model,mj.mjtObj.mjOBJ_JOINT,n) for n in names]
+    # Planned trajectories use canonical SDK arm0_* names; the native mesh
+    # replay URDF uses arm_*. Dynamics recordings already use native names.
+    ids=[mj.mj_name2id(model,mj.mjtObj.mjOBJ_JOINT,n.replace('arm0_','arm_',1)) for n in names]
     if min(ids)<0:
         raise ValueError('Replay model joint mismatch')
     qids=model.jnt_qposadr[ids]
