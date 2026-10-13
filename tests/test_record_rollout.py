@@ -43,7 +43,8 @@ def test_preserve_all_actions_commands_and_exact_policy_states(tmp_path):
             events.append(dict(event="policy", state=sample, observations=[9]*84,
                                raw_actions=[i]*12, targets=[i+.1]*19, inference_s=.001))
         events.append(dict(event="command", state=sample, key=i, positions=[i+.1]*19,
-                           feedforward=[0]*19, end_robot_time_s=sample['robot_time_s']+.03))
+                           feedforward=[0]*19, end_robot_time_s=sample['robot_time_s']+.03,
+                           guard_monotonic_s=sample['received_monotonic_s']))
     events.append(dict(event="route", password="not copied"))
     (source / "events.jsonl").write_text(''.join(json.dumps(e)+'\n' for e in events))
     complete(source)
@@ -57,6 +58,7 @@ def test_preserve_all_actions_commands_and_exact_policy_states(tmp_path):
     assert [e['raw_actions'] for e in policies]==[[i]*12 for i in range(0,20,4)]
     assert policies[1]['state']==state(100.02)
     assert commands[-1]['state_last_command_key']==3
+    assert commands[-1]['guard_monotonic_s']==state(100+19*.005)['received_monotonic_s']
     assert not any(e['event']=='route' or 'observations' in e for e in captured)
     assert not any('state' in e for e in commands)
 

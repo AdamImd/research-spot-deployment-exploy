@@ -1,0 +1,362 @@
+{
+  "analysis_tool_sha256": "426b5e3b89d47654f9cf479280e0522be5048fe854c4a8b84936453b9b5eb32c",
+  "automatic_retries": false,
+  "benchmark_analysis_tool_sha256": "7fff86cfcb1b038550bd6695f6172f67e0c040609359c3d9d1cbcb8b6b599cdb",
+  "decision": "Target-bound simulation validation passed; timing gate failed. No new trial.",
+  "envelope_sha256": "e3d8e281df59d40e421eeeb8fc0f1cfbc5162e2d34241b4d3af7d80495db7a47",
+  "execution_commit": "cc44fb88c81d9f5f503c47e3c29133b5e5161f3b",
+  "guard_mode": "enforced",
+  "hardware_access": false,
+  "leg_tracking_error_max_rad": [
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0
+  ],
+  "limitations": "Ideal simulated state/ACK clocks and host-only timing; no physical transport test. Historical rejected-step slew is unverified. Model/firmware saturation equivalence is not established. A short simulated walk is not goal completion.",
+  "measured_angle_limits_changed": false,
+  "new_physical_trial": false,
+  "physical_policy_qualified": false,
+  "prewarm_inferences": 100,
+  "ready_for_new_physical_trial": false,
+  "seed": 101,
+  "stages": {
+    "hardware-replay": {
+      "complete_sha256": "8db923a5617b60320a00dc66c432240ea4a97562502becdce0e7f682cb47bdae",
+      "envelope_sha256": "e3d8e281df59d40e421eeeb8fc0f1cfbc5162e2d34241b4d3af7d80495db7a47",
+      "hardware_access": false,
+      "issued_command_exact_guard_times": 0,
+      "issued_command_timing_basis": "legacy finish proxy",
+      "limitations": "Recorded states only. Legacy finish timestamps cannot prove exact live scheduling/slew; the rejected-step timing interval is unverified when guard starts are missing. Fresh guarded simulations and timing validation are separate gates. Does not predict future physical motion or transport timing.",
+      "manifest_sha256": "26491eefd0d0a4b4dc2f72ec51caa45520431abaf03ccffcd94cfe5480682c78",
+      "mixed_clock_rejected_peak_rate_rad_s": 100.1775752159038,
+      "new_physical_trial": false,
+      "passed": true,
+      "previously_rejected_prediction_numeric_guards_pass": true,
+      "previously_rejected_prediction_timing_verified": false,
+      "raw_complete_sha256": "1be78df4a81012fd915c9863ed2e93bca5dee04b3b9be3fd676f716db8c1fbf0",
+      "recorded_commands_checked": 1135,
+      "result_sha256": "8347da105da8c2c9bbfb80ce807cf3cf045d4e9c858253a72a1114e03534b06b",
+      "targets_clipped_by_host": false
+    },
+    "isaaclab-stand": {
+      "complete_sha256": "b2fcaf6fafcf4355ce8e0786b33911ab99bfe7d1dee2691b4f6322ec30f9c139",
+      "failure": null,
+      "first_fall_proxy_s": null,
+      "guard_mode": "enforced",
+      "late_window_metrics": {
+        "angular_speed_p95_rad_s": 0.0007185181667378766,
+        "height_span_m": 3.635883331298828e-06,
+        "joint_speed_p95_rad_s": 0.07015116512775421,
+        "linear_speed_p95_m_s": 0.000145207969625958,
+        "max_tilt_deg": 0.6170725127222179,
+        "mean_height_m": 0.4833253589288882,
+        "min_height_m": 0.48332327604293823,
+        "planar_speed_p95_m_s": 5.497748694312984e-05,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.0006345281556881239
+      },
+      "max_observation_error": 1.1175870895385742e-08,
+      "max_raw_action_error": 9.5367431640625e-07,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "policy_duration_s": 60.0,
+      "policy_samples": 3001,
+      "real_time_factor": 1.2836417823286677,
+      "reason": "completed",
+      "result_sha256": "cc21570aed51fc4dd81906f675a472e30810a37eca76e2d5e1b5eef079934b28",
+      "stable_final_window": true,
+      "trial_duration_s": 60.0,
+      "walking_completed": null
+    },
+    "isaaclab-walk": {
+      "complete_sha256": "242b0e3167ae5ab1588199dd20f85062cc6bd27d16329e39c81cc117203ec681",
+      "failure": null,
+      "first_fall_proxy_s": null,
+      "guard_mode": "enforced",
+      "late_window_metrics": {
+        "angular_speed_p95_rad_s": 0.005526081072659102,
+        "height_span_m": 0.004997193813323975,
+        "joint_speed_p95_rad_s": 0.07083827257156372,
+        "linear_speed_p95_m_s": 0.005303229252959661,
+        "max_tilt_deg": 2.8313062460655725,
+        "mean_height_m": 0.5022207413954117,
+        "min_height_m": 0.5012720823287964,
+        "planar_speed_p95_m_s": 0.004836912946979961,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.11892361402577643
+      },
+      "max_observation_error": 1.1175870895385742e-08,
+      "max_raw_action_error": 1.1920928955078125e-06,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "policy_duration_s": 20.0,
+      "policy_samples": 1001,
+      "real_time_factor": 1.2539770157605556,
+      "reason": "completed",
+      "result_sha256": "de0a09b4e7bbc33b932adc3634c244164af09a8fd39391e614f762d0d99e4a80",
+      "stable_final_window": true,
+      "trial_duration_s": 20.0,
+      "walking": {
+        "forward_m": 0.6878338923722584,
+        "heading_error_rad": -0.08609801277504377,
+        "lateral_m": -0.0038137025465489168,
+        "remaining_m": 0.06216610762774155,
+        "speed_m_s": 9.646076782867535e-05
+      },
+      "walking_completed": false
+    },
+    "mujoco-stand": {
+      "complete_sha256": "ce1efe9f990756f92a95b5ac6d3f95fa2b780e60a27e10b4f29dc739c68bd417",
+      "failure": null,
+      "first_fall_proxy_s": null,
+      "guard_mode": "enforced",
+      "late_window_metrics": {
+        "angular_speed_p95_rad_s": 1.1411322332076869e-06,
+        "height_span_m": 1.043081283569336e-06,
+        "joint_speed_p95_rad_s": 1.8545033526606858e-06,
+        "linear_speed_p95_m_s": 3.632637539890046e-07,
+        "max_tilt_deg": 0.9297802047789073,
+        "mean_height_m": 0.47819124259750945,
+        "min_height_m": 0.47819072008132935,
+        "planar_speed_p95_m_s": 3.1286704057096964e-07,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.0
+      },
+      "max_observation_error": 3.725290298461914e-09,
+      "max_raw_action_error": 7.152557373046875e-07,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "policy_duration_s": 60.0,
+      "policy_samples": 3001,
+      "real_time_factor": 5.934602730649648,
+      "reason": "completed",
+      "result_sha256": "d168416a6085189e03c654798c32a706b10eabc7d54ad14ee449794bc146968e",
+      "stable_final_window": true,
+      "trial_duration_s": 60.0,
+      "walking_completed": null
+    },
+    "mujoco-walk": {
+      "complete_sha256": "0f96b8bcad6ce18e76c3d81a5d27a730727bce8244969308029e1896c378473f",
+      "failure": null,
+      "first_fall_proxy_s": null,
+      "guard_mode": "enforced",
+      "late_window_metrics": {
+        "angular_speed_p95_rad_s": 0.005646616090613302,
+        "height_span_m": 0.004825770854949951,
+        "joint_speed_p95_rad_s": 0.01757703348994255,
+        "linear_speed_p95_m_s": 0.004450372447344813,
+        "max_tilt_deg": 3.0830547569031377,
+        "mean_height_m": 0.4990409561123388,
+        "min_height_m": 0.4980708956718445,
+        "planar_speed_p95_m_s": 0.004066890056757939,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.11128491247725245
+      },
+      "max_observation_error": 5.960464477539063e-08,
+      "max_raw_action_error": 7.152557373046875e-07,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "policy_duration_s": 20.0,
+      "policy_samples": 1001,
+      "real_time_factor": 5.743196389233307,
+      "reason": "completed",
+      "result_sha256": "834f771cd19b53ddf813754698efbe7dff313051b8b74927f0d463738fe632d5",
+      "stable_final_window": true,
+      "trial_duration_s": 20.0,
+      "walking": {
+        "forward_m": 0.6893919760899639,
+        "heading_error_rad": -0.07817145709423828,
+        "lateral_m": 0.003771684203402545,
+        "remaining_m": 0.06060802391003606,
+        "speed_m_s": 4.655463453317202e-05
+      },
+      "walking_completed": false
+    },
+    "timing": {
+      "command_hz": 199.93448213176845,
+      "command_samples": 3998,
+      "complete_sha256": "a8ebcdb1fdf718541821e6bd05ac1ad0f08a696716808406989df49ecb6f59e2",
+      "failure": null,
+      "live_command_gap_pass": true,
+      "live_computation_deadline_pass": false,
+      "live_inference_deadline_pass": true,
+      "max_raw_action_error": 0.0,
+      "missed_releases": 2,
+      "observed_5ms_gate": false,
+      "original_timing": {
+        "core_s": {
+          "budget_s": 0.005,
+          "max_s": 0.005271861329674721,
+          "over_budget": 1,
+          "p50_s": 0.00043360842391848564,
+          "p95_s": 0.0008367590839043258,
+          "p999_s": 0.001324959692079587,
+          "p99_s": 0.0009787476481869816,
+          "samples": 3998
+        },
+        "deadline_response_s": {
+          "budget_s": 0.005,
+          "max_s": 0.005771494470536709,
+          "over_budget": 2,
+          "p50_s": 0.0006294201593846083,
+          "p95_s": 0.0010438853409141296,
+          "p999_s": 0.003478803629055652,
+          "p99_s": 0.0012459482997655856,
+          "samples": 3998
+        },
+        "gap_s": {
+          "budget_s": 0.02,
+          "max_s": 0.010107739828526974,
+          "over_budget": 0,
+          "p50_s": 0.004978193901479244,
+          "p95_s": 0.005434558074921369,
+          "p999_s": 0.007280328305438151,
+          "p99_s": 0.005564337093383074,
+          "samples": 3997
+        },
+        "inference_s": {
+          "budget_s": 0.02,
+          "max_s": 0.0004836348816752434,
+          "over_budget": 0,
+          "p50_s": 0.00022180890664458275,
+          "p95_s": 0.0003433969104662536,
+          "p999_s": 0.00045974289951845946,
+          "p99_s": 0.00039386614691466087,
+          "samples": 1000
+        },
+        "log_encode_s": {
+          "max_s": 0.00463699409738183,
+          "p50_s": 9.927712380886078e-05,
+          "p95_s": 0.00011594707611948251,
+          "p999_s": 0.00032444519782458454,
+          "p99_s": 0.0001387312868610024,
+          "samples": 3998
+        },
+        "production_s": {
+          "budget_s": 0.005,
+          "max_s": 0.005418584682047367,
+          "over_budget": 2,
+          "p50_s": 0.0005664648488163948,
+          "p95_s": 0.0009753367630764839,
+          "p999_s": 0.003421763561666044,
+          "p99_s": 0.0011424896446987985,
+          "samples": 3998
+        },
+        "release_lateness_s": {
+          "max_s": 0.0021698246710002422,
+          "p50_s": 5.9955986216664314e-05,
+          "p95_s": 7.256579119712115e-05,
+          "p999_s": 0.0006131736431271611,
+          "p99_s": 0.00011283743660896474,
+          "samples": 3998
+        },
+        "state_decode_s": {
+          "max_s": 9.925197809934616e-05,
+          "p50_s": 3.1881965696811676e-05,
+          "p95_s": 4.0193973109126075e-05,
+          "p999_s": 8.563986700028259e-05,
+          "p99_s": 4.7102961689233765e-05,
+          "samples": 3998
+        }
+      },
+      "policy_samples": 1000,
+      "reason": "completed",
+      "result_sha256": "6d8d11cba87e9d71d11a48eae9c49e523384ee2231b860ea429eb1df57b7c02f",
+      "timing": {
+        "core_s": {
+          "budget_s": 0.005,
+          "max_s": 0.005271861329674721,
+          "over_budget": 1,
+          "p50_s": 0.00043360842391848564,
+          "p95_s": 0.0008367590839043258,
+          "p999_s": 0.001324959692079587,
+          "p99_s": 0.0009787476481869816,
+          "samples": 3998
+        },
+        "deadline_response_s": {
+          "budget_s": 0.005,
+          "max_s": 0.005771494470536709,
+          "over_budget": 2,
+          "p50_s": 0.0006294201593846083,
+          "p95_s": 0.0010438853409141296,
+          "p999_s": 0.003478803629055652,
+          "p99_s": 0.0012459482997655856,
+          "samples": 3998
+        },
+        "gap_s": {
+          "budget_s": 0.015,
+          "max_s": 0.010107739828526974,
+          "over_budget": 0,
+          "p50_s": 0.004978193901479244,
+          "p95_s": 0.005434558074921369,
+          "p999_s": 0.007280328305438151,
+          "p99_s": 0.005564337093383074,
+          "samples": 3997
+        },
+        "inference_s": {
+          "budget_s": 0.005,
+          "max_s": 0.0004836348816752434,
+          "over_budget": 0,
+          "p50_s": 0.00022180890664458275,
+          "p95_s": 0.0003433969104662536,
+          "p999_s": 0.00045974289951845946,
+          "p99_s": 0.00039386614691466087,
+          "samples": 1000
+        },
+        "log_encode_s": {
+          "max_s": 0.00463699409738183,
+          "p50_s": 9.927712380886078e-05,
+          "p95_s": 0.00011594707611948251,
+          "p999_s": 0.00032444519782458454,
+          "p99_s": 0.0001387312868610024,
+          "samples": 3998
+        },
+        "production_s": {
+          "budget_s": 0.005,
+          "max_s": 0.005418584682047367,
+          "over_budget": 2,
+          "p50_s": 0.0005664648488163948,
+          "p95_s": 0.0009753367630764839,
+          "p999_s": 0.003421763561666044,
+          "p99_s": 0.0011424896446987985,
+          "samples": 3998
+        },
+        "release_lateness_s": {
+          "max_s": 0.0021698246710002422,
+          "p50_s": 5.9955986216664314e-05,
+          "p95_s": 7.256579119712115e-05,
+          "p999_s": 0.0006131736431271611,
+          "p99_s": 0.00011283743660896474,
+          "samples": 3998
+        },
+        "state_decode_s": {
+          "max_s": 9.925197809934616e-05,
+          "p50_s": 3.1881965696811676e-05,
+          "p95_s": 4.0193973109126075e-05,
+          "p999_s": 8.563986700028259e-05,
+          "p99_s": 4.7102961689233765e-05,
+          "samples": 3998
+        }
+      },
+      "timing_trace_sha256": "de0f048c7fecc6b83560847099bc2f1264f93c50bd6aa0df70609f20bf988b7f"
+    }
+  },
+  "timing_gate_passed": false,
+  "virtual_hip_target_rad": [
+    -3.0,
+    3.0
+  ],
+  "virtual_knee_target_rad": [
+    -3.0,
+    0.0
+  ]
+}

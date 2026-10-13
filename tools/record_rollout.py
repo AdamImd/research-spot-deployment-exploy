@@ -17,7 +17,8 @@ from spot_deploy.records import atomic_json, source_identity, utcnow
 MAX_LINE = 256_000
 PREDICTIONS = {"policy", "shadow_sample", "replay_sample", "demo_prediction"}
 FIELDS = {
-    "command": ("key", "positions", "feedforward", "end_robot_time_s", "phase"),
+    "command": ("key", "positions", "feedforward", "end_robot_time_s", "phase",
+                "guard_monotonic_s"),
     "policy_ack": ("command_key", "state_key", "raw_actions"),
     "relic_initialized": ("height", "requested_height_m", "previous_actions", "endpoint"),
     "relic_phase": ("phase",), "stock_phase": ("phase",),

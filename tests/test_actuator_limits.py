@@ -81,6 +81,25 @@ def test_measured_and_requested_loads_use_current_knee_pose(manifest, envelope, 
     Guard(manifest, env).command(target, sample, 100., 1000., 100., .001)
 
 
+def test_virtual_knee_target_beyond_table_still_uses_measured_angle(manifest, envelope, state):
+    data = manufacturer_envelope(envelope).model_dump()
+    data['command_position_min'] = data['position_min'].copy()
+    data['command_position_max'] = data['position_max'].copy()
+    for i in KNEE_INDICES:
+        data['command_position_min'][i], data['command_position_max'][i] = -3., 0.
+    env = Envelope.model_validate(data)
+    manifest.gains.kp = [60.] * 19
+    sample = state.model_copy(update={'positions': pose(-2.6).tolist()})
+    target = np.array(sample.positions)
+    target[2] = -3.
+    assert Guard(manifest, env).command(target, sample, 100., 1000., 100., .001).positions[2] == -3.
+    # Broad virtual targets never extend the manufacturer table for actual angles.
+    measured = sample.model_copy(deep=True)
+    measured.positions[2] = -2.8
+    with pytest.raises(ContractError, match='measured joint position'):
+        Guard(manifest, env).check_state(measured, 100., 1000.)
+
+
 def test_feedforward_coupling_and_tighter_application_caps(manifest, envelope, state):
     env = manufacturer_envelope(envelope)
     sample = state.model_copy(update={"positions": pose().tolist()})

@@ -89,6 +89,8 @@ class Guard:
         arm = np.array(manifest.arm_stowed_positions)
         if np.any(arm < envelope.position_min[12:]) or np.any(arm > envelope.position_max[12:]):
             raise ContractError("arm stow target exceeds position envelope")
+        if np.any(arm < envelope.command_lower[12:]) or np.any(arm > envelope.command_upper[12:]):
+            raise ContractError("arm stow target exceeds command position envelope")
 
     def check_actuator_load(self, positions, loads, context):
         if self.envelope.actuator_limit_profile:
@@ -165,7 +167,7 @@ class Guard:
         target = np.asarray(targets)
         if target.shape != (19,) or not np.isfinite(target).all():
             raise ContractError("command must contain nineteen finite positions")
-        if np.any(target < env.position_min) or np.any(target > env.position_max):
+        if np.any(target < env.command_lower) or np.any(target > env.command_upper):
             raise ContractError("command position limit")
         n = self.motion_joint_count
         if np.any(np.abs(target[:n] - state.positions[:n]) > env.tracking_error_max[:n]):
