@@ -173,3 +173,10 @@ Three physical episodes recovered5/5/15ms, none triggered500ms stop. Native OFF/
 lease return7.021s and fault-free postcheck confirmed. Adam requested an unchanged
 repeat, saying "We jumped the gun"; no source/envelope change or offline tests.
 Record: records/relic-three-leg-expiry50-20261013. Previous approval consumed.
+
+The separately approved unchanged repeat completed the47s schedule:2350policy
+samples,9397commands, full lift/hold/IK/lower/handover/final-fourfeet phases.
+Seven timer crossings all recovered (max30ms); no stop. OFF/lease return6.015s
+and fault-free postcheck confirmed. See records/relic-three-leg-expiry50-repeat-20261013.
+One completed commissioning attempt, not blanket hardware/contact-load or IK
+tracking qualification. Approval consumed; no automatic further physical trial.
