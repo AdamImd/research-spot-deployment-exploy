@@ -1,0 +1,10 @@
+{
+  "source_commit": "79aaf279facca7911863a49dfce93dd6d88b4b98",
+  "pytest_passed": 478,
+  "ruff_passed": true,
+  "prior_failure": "First full suite found missing leg-observation attributes in two legacy guard adapters; initialized explicit enforcement/None and preserved failure logs.",
+  "simulation_source_commit": "96501f8644cce15fa911c8d97dec3debbbece6f8",
+  "physics_repeated_for_legacy_guard_fix": false,
+  "hardware_access": false,
+  "hardware_qualified": false
+}
