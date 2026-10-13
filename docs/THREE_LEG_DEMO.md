@@ -1,5 +1,10 @@
 # Front-left lift, hold and return — simulation preparation
 
+For the new body-frame foot-position IK square ahead of Spot, see
+[THREE_LEG_IK.md](THREE_LEG_IK.md) and
+`configs/relic-three-leg-front-left-ik.json`. The same simulation-only wrapper
+accepts this plan; the joint-space plan below remains available unchanged.
+
 Adam requested a front-left leg lift, hold, then return to four feet. This tool
 prepares and records that sequence offline; it cannot activate Spot. The raw
 released actor, all PD gains and action scaling are unchanged. The existing

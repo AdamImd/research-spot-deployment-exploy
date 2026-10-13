@@ -212,7 +212,7 @@ def run(args):
                         log.event('demo_prediction',simulation_time_s=t,
                                   phase=demo.sequence.phase,leg_command=demo.command.tolist(),
                                   targets=recorded['targets'], raw_actions=recorded['raw_actions'],
-                                  state=state.model_dump())
+                                  state=state.model_dump(), **demo.kinematic_record(state))
                     obs = backend.contract.observation(sim, ref_command,
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
@@ -239,6 +239,8 @@ def run(args):
                                + command.feedforward).tolist(),
                            **{k: v.tolist() for k, v in sim.items()},
                            positions=list(command.positions), feedforward=list(command.feedforward))
+                if demo:
+                    row.update(demo.kinematic_record(state))
                 if args.physics_diagnostics:
                     from spot_relic_sim.physics_diagnostics import contacts
                     row['physics_diagnostic'] = contacts(backend)
@@ -310,7 +312,8 @@ def run(args):
             result['three_leg_demo']['passed'] = bool(reason == 'completed'
                 and result['stable_final_window']
                 and result['three_leg_demo']['pose_sequence_finished']
-                and result['three_leg_demo']['clearance_proxy_passed'])
+                and result['three_leg_demo']['clearance_proxy_passed']
+                and result['three_leg_demo']['ik_tracking_passed'] is not False)
         if unguarded and rows:
             from spot_deploy.simulation_diagnostic import demand_summary
             result['demands'] = demand_summary(rows, config)

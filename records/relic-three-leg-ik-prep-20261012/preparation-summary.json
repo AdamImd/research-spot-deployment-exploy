@@ -1,0 +1,40 @@
+{
+  "plan": {
+    "actor_executed": false,
+    "duration_s": 44.0,
+    "frames": 8801,
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "limitations": "Planned joint kinematics only: no balance, contact-load, collision or robustness qualification.",
+    "max_ik_solve_residual_m": 0.00019999724531821883,
+    "model_sha256": "3c2cfa652e66ce803f132606f4bde308b4f55bfcfdeae193e9346ba1c93dabe4",
+    "physics_executed": false,
+    "reason": "kinematic-plan-only",
+    "selected_leg_peak_planned_speed_rad_s": 0.2719461917877197
+  },
+  "video": {
+    "frames": 2201,
+    "fps": 50,
+    "recorded_duration_s": 44.0,
+    "source_reason": "kinematic-plan-only",
+    "new_dynamics": false,
+    "hardware_access": false,
+    "source_complete_sha256": "fce21294d01fa44b0721a07633cb081795cedf7d2ed0cb7636829b6cf385255e",
+    "source_trajectory_sha256": "588deafa35dc3fc3a256e1870b3ca32821779c26d380331ee2b7dafb56b64c42",
+    "visual_manifest_sha256": "ad2d1526ab1b7973ac4df8e0c4a9801b32da1480126851c110fdada485017689",
+    "visual_model_sha256": "8f48175bae62fa1f9b12f3dc59dc728c7796cfe881fe9d0a7cdd24f792972912"
+  },
+  "plan_execution_commit": "86c10d1294d7522947053bb97cc2a9a6fa2ef7f2",
+  "render_execution_commit": "774191f8d9fab15839129a6651511e48a1620b9b",
+  "configuration_sha256": "780e1b03a84f9fd95c96ee104fffe80d8b52b07cf44c4cf0f4f81648dd695b7e",
+  "plan_complete_sha256": "fce21294d01fa44b0721a07633cb081795cedf7d2ed0cb7636829b6cf385255e",
+  "video_complete_sha256": "9a8d95a7637c308ef3f37dd840ce597b4f81a6c7bf576667657ce92c9d7b4fa6",
+  "environment": "locked UV Python3.12; NumPy2.2.6, MuJoCo3.3.7; CPU2 and GPU0 EGL visual render only; no paid compute",
+  "first_failure": "Campaign001 renderer failed on canonical SDKarm0 versus nativeURDFarm joint naming; preserved. Primary repaired renderer; campaign002 reused unchanged verifiedplan and completed. No repeatedIK/physics.",
+  "policy_weights_changed": false,
+  "dynamics_rehearsal_run": false,
+  "offline_test_suite_run": false,
+  "physical_demo_authorized": false,
+  "hardware_qualified": false,
+  "remaining": "Three-leg RL stability/contact/collision/timing assessment and selectedleg Exploy/live contract not validated; existing nineinput graph cannot dispatch this demo."
+}
