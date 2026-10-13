@@ -35,3 +35,28 @@ rig/fault review remains necessary before physical3leg demonstration.
 
 See docs/THREE_LEG_IK.md and configs/relic-three-leg-front-left-ik.json. Use fresh
 run directories, frozen source/model/config/capture hashes; never overwrite failures.
+
+## Preparation artifacts
+
+Clean source86c10d1 generated the44second kinematic plan with8801 samples at200Hz.
+Max planned IK residual0.199997mm; peak planned selected-leg speed0.27195rad/s.
+No actor, physics or hardware executed; other legs/body stay fixed for visualization.
+Campaign001 renderer failed on SDKarm0/nativearm naming. That failed run is retained.
+Primary repaired only the replay mapping and links at774191f; campaign002 reused
+that SAME plan, producing2201 visual-mesh frames at50fps (encoded44.02seconds),
+with explicit kinematic/noRL/no-dynamics labels and body-frame path/joint plots.
+No automatic retries or extra tests/physics were added.
+
+[Preparation summary](preparation-summary.json) binds source/config/model/input/
+trajectory/completion/render hashes. [Fault explanation](fault-explanation.json)
+retains the exact text/severity and read-only source without identity/endpoint.
+Kinematic FK/IK feasibility is not three-leg support/balance qualification, and
+there was no fresh RL transition test. Published weights are unchanged; the
+standing nine-input Exploy graph still lacks selected-leg command semantics.
+
+Private full artifacts: runs/relic-three-leg-ik-preparation-20261012-001/plan/;
+render/plot/video: runs/relic-three-leg-ik-preparation-20261012-002/video/.
+Supervised durable contracts/logs remain in those parentrun directories and
+ignored local/relic-three-leg-ik-preparation-20261012-{001,002}/. Reproduce the
+kinematic artifacts using the commands in docs/THREE_LEG_IK.md; public fixtures
+suffice. No robot credentials, tests, policy inference or physics are needed.

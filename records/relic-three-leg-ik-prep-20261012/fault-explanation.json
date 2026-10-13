@@ -1,0 +1,25 @@
+{
+  "fault": {
+    "attributes": [],
+    "code": 9,
+    "error_message": "Center of mass estimated right of expected. Payload configuration may be inaccurate.",
+    "name": "payload.fault",
+    "severity": 1,
+    "status": "faults"
+  },
+  "severity_name": "SEVERITY_INFO",
+  "observed_recorded_at": "2026-10-13T03:11:56.373643+00:00",
+  "diagnostic_sha256": "97334d9ad1e99796ab79c437056566aa1c0ead934f1f1e2d3b2c4ecb4e7cfc39",
+  "source": "read-only RobotStateClient full-state query",
+  "robot_commands": 0,
+  "faults_cleared": false,
+  "relic_fault_policy_changed": false,
+  "meaning": "Robot reports estimated center of mass to the right of its expected payload mass distribution. ReLIC host aborts on any active fault including INFO.",
+  "root_cause_proven": false,
+  "possible_contributors": [
+    "payload mass/COM configuration",
+    "arm pose or model mismatch",
+    "external harness loading"
+  ],
+  "official_definition": "https://raw.githubusercontent.com/boston-dynamics/spot-sdk/v5.0.1/protos/bosdyn/api/robot_state.proto"
+}
