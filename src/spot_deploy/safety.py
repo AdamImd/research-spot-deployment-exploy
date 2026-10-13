@@ -70,7 +70,7 @@ class Guard:
         self.last_sent = None
         self.key = 0
         self.command_rate_observation = None
-        if (envelope.command_rate_guard == "observe"
+        if (envelope.command_rate_guard == "observe" and envelope.scope != "simulation"
                 and (getattr(manifest, "adapter", None) != "relic-exploy-leg"
                      or manifest.task != "three-leg-demo")):
             raise ContractError("command rate observation requires the selected-leg demo")

@@ -83,6 +83,9 @@ def test_target_rate_observation_requires_explicit_reason_and_selected_demo(mani
         'command_rate_guard':'observe','command_rate_reason':'Adam requests unfiltered demo targets'})
     with pytest.raises(ContractError, match='selected-leg demo'):
         Guard(manifest,env)
+    # Offline wrappers retain a standing manifest; exercise the same target-rate
+    # observation envelope without granting this exception to hardware standing.
+    Guard(manifest,env.model_copy(update={'scope':'simulation'}))
 
 
 def test_unfiltered_target_rate_still_enforces_gap_speed_and_torque(manifest, envelope, state):
