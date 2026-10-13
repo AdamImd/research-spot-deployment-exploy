@@ -40,10 +40,10 @@ verification by moving the actual stick before commissioning.
 
 The example contains an intermediate folded clearance waypoint and a front pose.
 Final six arm angles in SDK order (SH0, SH1, EL0, EL1, WR0, WR1) are
-`[0, -1.5, 2.0, 0, -0.5, 0]` radians. The gripper stays at its initial stow target.
+`[0, -2.0, 2.4, 0, -0.4, 0]` radians. The gripper stays at its initial stow target.
 Pinned model forward kinematics puts the final wrist approximately
-`[0.706, 0, 0.398] m` from the body origin, with the finger-link origin at
-`[0.823, 0, 0.413] m`. These are model positions, not measured hardware clearance.
+`[0.552, 0, 0.408] m` from the body origin, with the finger-link origin at
+`[0.669, 0, 0.423] m`. These are model positions, not measured hardware clearance.
 
 Each segment uses a quintic trajectory with zero endpoint velocity/acceleration,
 minimum four seconds and maximum 0.5 rad/s per arm joint. Another trigger press
