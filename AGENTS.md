@@ -138,3 +138,11 @@ completed/no fall/stable. Three physical episodes recovered5/10/15ms (five timer
 entries due redundant torque checks). Recorded119ms core outlier would violate
 unchanged live10ms computation gate; no live timing qualification or physicalapproval.
 Current draft: local/relic-three-leg-persistence500-preparation-20261013-001.
+
+The subsequent operator-selected latency draft includes communication/stale data:
+500ms computation, gap, ACK and health budgets;505ms TTL/state/policy age for one
+command-tick margin. See records/relic-three-leg-latency500-20261013. This changes
+host timing thresholds only; the119ms outlier is retained, not a timing pass.
+Nominal50/200Hz rates and all other physical settings remain. Final exact approval
+must disclose that the last target may remain valid for about half a second.
+No physical approval is supplied by this draft or its motors-off preflight.
