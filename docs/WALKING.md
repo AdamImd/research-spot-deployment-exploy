@@ -47,6 +47,13 @@ body pitch/height from forward distance. Body x is forward; see the
 [official frame reference](https://dev.bostondynamics.com/docs/concepts/geometry_and_frames.html).
 This is robot odometry, with its drift limitations, not independent metrology.
 
+The heading is sampled from the current post-stand state, not the orientation at
+boot or the odometry frame's x-axis. `walk_origin` records the explicit
+`goal_odom_position_m`: current position plus distance times
+`[cos(current_yaw), sin(current_yaw), 0]`. It is a fixed goal for that attempt;
+turning during travel does not move the goal. The zero-velocity hold precedes
+forward travel, and the same captured heading is used to measure progress.
+
 After the initial hold, request `min(0.10, 0.8 * remaining_distance)` m/s with
 bounded acceleration. At the distance tolerance request zero immediately.
 Require measured planar velocity below 0.03 m/s for one continuous second before
@@ -124,3 +131,9 @@ complete 0.75 m. A separately approved fl_hy tracking-cap comparison (0.4 to
 unchanged knee-speed bound after 0.3408 m. Hardware limits remain unchanged.
 See ../records/relic-walking-onset-20261012/README.md for the PD-offset review,
 foot/body displacement, exact rejected states, 200 fps replay and scope.
+
+The subsequent [0.30 m/s hardware preparation review](../records/relic-walking-hardware-review-20261012/README.md)
+keeps activation blocked: the accepted host speed cap, body-speed headroom,
+guarded joint speeds, goal stopping and renewed bound evidence remain unresolved.
+The operator requires a separate explicit approval immediately before any
+physical deployment. Preparation never grants that approval.

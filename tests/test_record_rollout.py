@@ -151,3 +151,14 @@ def test_walking_pose_velocity_and_distance_are_preserved():
     progress = projector.project(dict(event='walk_progress',forward_m=.75,lateral_m=.01,
         phase='completed',speed_m_s=.01,requested_forward_m_s=0), 2)[0]
     assert progress['forward_m'] == .75 and progress['phase'] == 'completed'
+
+
+def test_current_heading_goal_survives_compact_recording():
+    event = dict(event='walk_origin', odom_position_m=[1, 2, .52],
+        goal_odom_position_m=[1, 2.75, .52], yaw_rad=1.5707963267948966,
+        robot_time_s=100., reference_frame='initial gravity-aligned body')
+    row = recorder.Projector(0).project(event, 1)[0]
+    assert row['goal_odom_position_m'] == event['goal_odom_position_m']
+    assert row['odom_position_m'] == event['odom_position_m']
+    assert row['yaw_rad'] == event['yaw_rad']
+    assert row['robot_time_s'] == event['robot_time_s']
