@@ -105,8 +105,19 @@ class ControlSpot:
     def check_stream(self):
         if self.future.done():
             # Even STATUS_OK is unexpected while the bounded controller is still running.
-            self.future.result()
-            raise ContractError("command stream ended unexpectedly")
+            response = self.future.result()
+            status = int(response.status)
+            try:
+                status_name = response.Status.Name(status)
+            except ValueError:
+                status_name = "UNRECOGNIZED_STATUS"
+            # Preserve protocol diagnostics, without logging raw server text or headers
+            # that may contain robot identity or echoed request details.
+            header_error = int(response.header.error.code)
+            raise ContractError(
+                f"command stream ended unexpectedly: {status_name} ({status}); "
+                f"header error code {header_error}"
+            )
 
     def active(self):
         from bosdyn.api import basic_command_pb2
