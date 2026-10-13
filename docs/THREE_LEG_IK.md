@@ -145,3 +145,12 @@ model-derived root placement0.447903m. It stopped5.02s at lift entry on predicte
 FR HX49.921Nm above44.88Nm. The100fps/502frame video preserves this partial failure;
 no full tripod/IK completion or hardware qualification. See
 records/relic-three-leg-unfiltered-video-20261013. No physical access/retry.
+
+The subsequent user-requested native recovery diagnostic used --no-guards once,
+retaining actuator saturation and all integrity checks. The full47s sequence passed
+with no fall, complete IK/return and stable final standing. FR HX49.921Nm demand
+saturated at45Nm for one5ms interval; FR knee speed-dependent torque clipping
+lasted20ms. Max pitch4.350degrees, angular1.537rad/s,
+IK square p951.901cm. Three supporting feet stayed loaded throughout hold/IK.
+See records/relic-three-leg-native-recovery-20261013 and its100fps video. This is
+simulation evidence only; hardware guards/approval remain unchanged.

@@ -50,6 +50,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   command_rate_guard=observe with a reason disables the target-slew stop only for
   selected-leg commissioning and records crossings. Default remains enforce.
   Existing smoothed dynamics evidence does not qualify this new profile.
+  A subsequent47s unfiltered --no-guards MuJoCo diagnostic completed the full
+  sequence and stable final standing without a fall; FR HX saturated45Nm for5ms.
+  See records/relic-three-leg-native-recovery-20261013. This is simulation-only
+  evidence and does not qualify firmware saturation or authorize physical motion.
   Retain measured speed, torque, attitude, timing and tablet stop checks. No
   physical activation is authorized by preparing this candidate; fresh exact
   one-trial approval and operator/setup confirmation are required before execution.

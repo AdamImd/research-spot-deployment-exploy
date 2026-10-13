@@ -1,0 +1,89 @@
+{
+  "objective": "One47s unfiltered native transition recovery diagnostic with operating guards observation-only; retain actuator saturation, physics and integrity; render100fps",
+  "mode": "launch-and-collect",
+  "cwd": "/home/adam/repos/research/research-spot-exploy-public",
+  "host": "cs-u-rpm-dt-03",
+  "commit": "5f1346811757599e6ea40c93bd1608f95b559417",
+  "simulation_commit": "5f1346811757599e6ea40c93bd1608f95b559417",
+  "run_directory": "runs/relic-three-leg-native-recovery-20261013-001",
+  "resources": "CPU2; GPU0 EGL rendering only; no paid resources",
+  "seed": 101,
+  "max_duration_s": 300,
+  "success": "One recorded run and100fps video; scientific PASS requires no fall proxy, full three-leg/IK/return sequence and existing final-standing checks. Runtime completion alone is not success.",
+  "stop": "Nonfinite/integrity/infrastructure errors stop and preserve partial artifacts. Operating guard crossings and fall proxies are recorded, not terminated. No retry, guard/source/parameter changes, or physical access.",
+  "authority": "Offline only; no robot SDK/client/network/motor/lease/estop access",
+  "retry": "none",
+  "stages": [
+    {
+      "name": "rollout",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "tools/simulate_relic.py",
+        "--simulation-source",
+        "simulation",
+        "--capture",
+        "local/relic-three-leg-unfiltered-video-20261013-001/capture",
+        "--manifest",
+        "local/relic-firmware-leg-angles-20261012-001/standing-candidate/manifest.json",
+        "--envelope",
+        "local/relic-three-leg-unfiltered-video-20261013-001/simulation-envelope.json",
+        "--backend",
+        "mujoco",
+        "--duration",
+        "47",
+        "--prewarm-inference",
+        "100",
+        "--mujoco-noslip-iterations",
+        "10",
+        "--three-leg-plan",
+        "configs/relic-three-leg-front-left-ik-unfiltered.json",
+        "--three-leg-graph",
+        "local/relic-three-leg-unfiltered-preparation-20261013-001/candidate/policy.onnx",
+        "--physics-diagnostics",
+        "--output",
+        "runs/relic-three-leg-native-recovery-20261013-001/rollout",
+        "--initial-root-height-m",
+        "0.44790276786489125",
+        "--no-guards"
+      ],
+      "timeout_s": 120,
+      "environment": {
+        "OMP_NUM_THREADS": "2"
+      }
+    },
+    {
+      "name": "video",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "tools/render_relic_demo.py",
+        "--run",
+        "runs/relic-three-leg-native-recovery-20261013-001/rollout",
+        "--output",
+        "runs/relic-three-leg-native-recovery-20261013-001/video",
+        "--fps",
+        "100"
+      ],
+      "timeout_s": 150,
+      "environment": {
+        "OMP_NUM_THREADS": "2",
+        "MUJOCO_GL": "egl",
+        "CUDA_VISIBLE_DEVICES": "0"
+      }
+    }
+  ],
+  "initialization": "Latest recorded pre-entry hardware standing pose; model-derived root0.44790276786489125m; zero simulated velocity/history; seed101; same5s policy hold",
+  "measurement_contract": {
+    "sampling_hz": 200,
+    "requested_vs_applied": "row[k].pd_torque_Nm aligns with row[k+1].preceding_applied_torque_Nm",
+    "saturation_difference_threshold_Nm": 1e-05,
+    "loaded_foot_diagnostic_threshold_N": 5.0,
+    "fall_failure": "Any first_fall_proxy_s != null fails transition even if later recovered",
+    "validation": "Existing three_leg_demo.passed and stable_final_window must both pass, plus no fall"
+  }
+}

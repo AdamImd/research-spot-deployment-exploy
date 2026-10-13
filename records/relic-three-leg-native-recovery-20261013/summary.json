@@ -1,0 +1,2091 @@
+{
+  "scientific_transition_passed": true,
+  "execution_completed": true,
+  "result": {
+    "compute_max_s": 0.10270466702058911,
+    "compute_p99_s": 0.0010356712155044079,
+    "demands": {
+      "all_samples": {
+        "arm0_el0": {
+          "measured_position_max_rad": 3.152045249938965,
+          "measured_position_min_rad": 3.1335396766662598,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.484001492978539,
+            "peak_time_s": 5.105,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -3.484001492978539
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.4839930534362793,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -3.4839930534362793
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.9942824840545654,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.9942824840545654
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.01888751983642578,
+            "peak_time_s": 5.125,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.01888751983642578
+          },
+          "target_max_rad": 3.133157730102539,
+          "target_min_rad": 3.133157730102539,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_el1": {
+          "measured_position_max_rad": 1.5568904876708984,
+          "measured_position_min_rad": 1.5547020435333252,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.22843642198567693,
+            "peak_time_s": 5.065,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.22843642198567693
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.2284369170665741,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.2284369170665741
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.08156242221593857,
+            "peak_time_s": 5.085,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.08156242221593857
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0015125274658203125,
+            "peak_time_s": 5.065,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.0015125274658203125
+          },
+          "target_max_rad": 1.5553779602050781,
+          "target_min_rad": 1.5553779602050781,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_f1x": {
+          "measured_position_max_rad": 0.0034058154560625553,
+          "measured_position_min_rad": -0.008326834999024868,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.4015280217675619,
+            "peak_time_s": 5.11,
+            "reference_bound": 11.31,
+            "samples_exceeding": 0,
+            "signed_peak": -0.4015280217675619
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.40152801901102064,
+            "peak_time_s": 5.105,
+            "reference_bound": 11.31,
+            "samples_exceeding": 0,
+            "signed_peak": -0.40152801901102064
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.0759963989257812,
+            "peak_time_s": 5.105,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 1.0759963989257812
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.009886270854622126,
+            "peak_time_s": 5.125,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.009886270854622126
+          },
+          "target_max_rad": -0.00648045539855957,
+          "target_min_rad": -0.00648045539855957,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_sh0": {
+          "measured_position_max_rad": 0.007576522883027792,
+          "measured_position_min_rad": -0.00881258025765419,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.2575900616799358,
+            "peak_time_s": 5.04,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -1.2575900616799358
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.2575900815427303,
+            "peak_time_s": 5.035,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -1.2575900815427303
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.4255478084087372,
+            "peak_time_s": 5.065,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.4255478084087372
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.008763466030359268,
+            "peak_time_s": 5.115,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": 0.008763466030359268
+          },
+          "target_max_rad": -4.9114227294921875e-05,
+          "target_min_rad": -4.9114227294921875e-05,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_sh1": {
+          "measured_position_max_rad": -3.1126043796539307,
+          "measured_position_min_rad": -3.1445460319519043,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 4.379319765943901,
+            "peak_time_s": 5.255,
+            "reference_bound": 179.78,
+            "samples_exceeding": 0,
+            "signed_peak": 4.379319765943901
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 4.379314661026001,
+            "peak_time_s": 5.25,
+            "reference_bound": 179.78,
+            "samples_exceeding": 0,
+            "signed_peak": 4.379314661026001
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.6216501593589783,
+            "peak_time_s": 5.24,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.6216501593589783
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.028804779052734375,
+            "peak_time_s": 5.265,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": 0.028804779052734375
+          },
+          "target_max_rad": -3.11574125289917,
+          "target_min_rad": -3.11574125289917,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_wr0": {
+          "measured_position_max_rad": 0.019210703670978546,
+          "measured_position_min_rad": -0.009304706007242203,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 2.960832590710731,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -2.960832590710731
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 2.960832580924034,
+            "peak_time_s": 5.055,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -2.960832580924034
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.9499483704566956,
+            "peak_time_s": 5.085,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.9499483704566956
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.018374450504779816,
+            "peak_time_s": 5.065,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.018374450504779816
+          },
+          "target_max_rad": 0.0008362531661987305,
+          "target_min_rad": 0.0008362531661987305,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_wr1": {
+          "measured_position_max_rad": -1.5695538520812988,
+          "measured_position_min_rad": -1.5705002546310425,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.07471727977849257,
+            "peak_time_s": 5.045,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.07471727977849257
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.07471730187535286,
+            "peak_time_s": 5.04,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.07471730187535286
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.02811776101589203,
+            "peak_time_s": 5.085,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.02811776101589203
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0004887580871582031,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.0004887580871582031
+          },
+          "target_max_rad": -1.570042610168457,
+          "target_min_rad": -1.570042610168457,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "fl_hx": {
+          "measured_position_max_rad": 0.2511502206325531,
+          "measured_position_min_rad": 0.11713851243257523,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 11.26916617155075,
+            "peak_time_s": 0.005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -11.26916617155075
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 11.26916617155075,
+            "peak_time_s": 0.0,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -11.26916617155075
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.6301789283752441,
+            "peak_time_s": 5.035,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": 1.6301789283752441
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.1878194361925125,
+            "peak_time_s": 0.0,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.1878194361925125
+          },
+          "target_max_rad": 0.2476319670677185,
+          "target_min_rad": -0.005594857037067413,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 29.768198728562037,
+            "peak_time_s": 5.0,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 29.768198728562037
+          }
+        },
+        "fl_hy": {
+          "measured_position_max_rad": 1.0779061317443848,
+          "measured_position_min_rad": 0.12361685931682587,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 10.37082155121853,
+            "peak_time_s": 0.01,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -10.37082155121853
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 10.370821019634604,
+            "peak_time_s": 0.005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -10.370821019634604
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.7690005898475647,
+            "peak_time_s": 3.93,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.7690005898475647
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.17205971479415894,
+            "peak_time_s": 0.01,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.17205971479415894
+          },
+          "target_max_rad": 0.9937635660171509,
+          "target_min_rad": 0.11819538474082947,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 17.751049995422743,
+            "peak_time_s": 5.0,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 17.751049995422743
+          }
+        },
+        "fl_kn": {
+          "measured_position_max_rad": -1.549684762954712,
+          "measured_position_min_rad": -2.1610324382781982,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 28.666984425217507,
+            "peak_time_s": 0.01,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 28.666984425217507
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 28.666982140392065,
+            "peak_time_s": 0.005,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 28.666982140392065
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.9786134958267212,
+            "peak_time_s": 5.07,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": -1.9786134958267212
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.47638094425201416,
+            "peak_time_s": 0.01,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.47638094425201416
+          },
+          "target_max_rad": -1.211714267730713,
+          "target_min_rad": -2.169912815093994,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 61.182928085328456,
+            "peak_time_s": 5.0,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -61.182928085328456
+          }
+        },
+        "fr_hx": {
+          "measured_position_max_rad": 0.3253069519996643,
+          "measured_position_min_rad": -0.11445175856351852,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": 5.025,
+            "peak_abs": 45.0,
+            "peak_time_s": 5.025,
+            "reference_bound": 44.88,
+            "samples_exceeding": 1,
+            "signed_peak": 45.0
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": 5.0200000000000005,
+            "peak_abs": 49.92131480388343,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 1,
+            "signed_peak": 49.92131480388343
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": 5.035,
+            "peak_abs": 13.824084281921387,
+            "peak_time_s": 5.04,
+            "reference_bound": 12.0,
+            "samples_exceeding": 2,
+            "signed_peak": 13.824084281921387
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.8720809374935925,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.8720809374935925
+          },
+          "target_max_rad": 0.8702065348625183,
+          "target_min_rad": -0.12671366333961487,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 117.8606688976313,
+            "peak_time_s": 5.04,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -117.8606688976313
+          }
+        },
+        "fr_hy": {
+          "measured_position_max_rad": 1.1349730491638184,
+          "measured_position_min_rad": 0.8345429301261902,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 25.455237541842273,
+            "peak_time_s": 5.045,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -25.455237541842273
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 25.455237686634064,
+            "peak_time_s": 5.04,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -25.455237686634064
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 11.185308456420898,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -11.185308456420898
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.4522506594657898,
+            "peak_time_s": 5.04,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.4522506594657898
+          },
+          "target_max_rad": 1.0119614601135254,
+          "target_min_rad": 0.6234636902809143,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 60.57425737380034,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 60.57425737380034
+          }
+        },
+        "fr_kn": {
+          "measured_position_max_rad": -1.7022819519042969,
+          "measured_position_min_rad": -2.072089433670044,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 77.176862819917,
+            "peak_time_s": 5.12,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 77.176862819917
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 77.17686170339584,
+            "peak_time_s": 5.115,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 77.17686170339584
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.793732643127441,
+            "peak_time_s": 5.025,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": -15.793732643127441
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.244800865650177,
+            "peak_time_s": 5.115,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 1.244800865650177
+          },
+          "target_max_rad": -0.6880627274513245,
+          "target_min_rad": -2.4390928745269775,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 165.64552783963475,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -165.64552783963475
+          }
+        },
+        "hl_hx": {
+          "measured_position_max_rad": 0.29605332016944885,
+          "measured_position_min_rad": 0.12073385715484619,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 26.864369916334656,
+            "peak_time_s": 5.04,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -26.864369916334656
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 26.864369809627533,
+            "peak_time_s": 5.035,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -26.864369809627533
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.199207305908203,
+            "peak_time_s": 5.105,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": 3.199207305908203
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.42294979095458984,
+            "peak_time_s": 5.035,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.42294979095458984
+          },
+          "target_max_rad": 0.3350047171115875,
+          "target_min_rad": -0.2765582501888275,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 55.7734891772183,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 55.7734891772183
+          }
+        },
+        "hl_hy": {
+          "measured_position_max_rad": 1.152916669845581,
+          "measured_position_min_rad": 0.7271471619606018,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.278579380913106,
+            "peak_time_s": 32.025,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.278579380913106
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.278577624354511,
+            "peak_time_s": 32.02,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.278577624354511
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 4.31664514541626,
+            "peak_time_s": 5.125,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -4.31664514541626
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.254491925239563,
+            "peak_time_s": 32.02,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.254491925239563
+          },
+          "target_max_rad": 1.1912258863449097,
+          "target_min_rad": 0.7455903887748718,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 37.19816207885161,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 37.19816207885161
+          }
+        },
+        "hl_kn": {
+          "measured_position_max_rad": -1.488439917564392,
+          "measured_position_min_rad": -1.7934902906417847,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 34.56198046180998,
+            "peak_time_s": 3.96,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 34.56198046180998
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 34.56198102235794,
+            "peak_time_s": 3.955,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 34.56198102235794
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 2.441415786743164,
+            "peak_time_s": 5.165,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": 2.441415786743164
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.5725932121276855,
+            "peak_time_s": 0.8150000000000001,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.5725932121276855
+          },
+          "target_max_rad": -1.0964876413345337,
+          "target_min_rad": -1.6789076328277588,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 97.06950187681588,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -97.06950187681588
+          }
+        },
+        "hr_hx": {
+          "measured_position_max_rad": -0.05525372177362442,
+          "measured_position_min_rad": -0.23128017783164978,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 17.011346035639935,
+            "peak_time_s": 5.125,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 17.011346035639935
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 17.01134616136551,
+            "peak_time_s": 5.12,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 17.01134616136551
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.2491939067840576,
+            "peak_time_s": 5.07,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -1.2491939067840576
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.2776920944452286,
+            "peak_time_s": 5.135,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.2776920944452286
+          },
+          "target_max_rad": 0.14348646998405457,
+          "target_min_rad": -0.20284321904182434,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 34.91291552781513,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 34.91291552781513
+          }
+        },
+        "hr_hy": {
+          "measured_position_max_rad": 1.2351332902908325,
+          "measured_position_min_rad": 1.034571886062622,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.794819917909498,
+            "peak_time_s": 5.025,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.794819917909498
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.794820249080658,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.794820249080658
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.5523427724838257,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -1.5523427724838257
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.26182013750076294,
+            "peak_time_s": 36.955,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.26182013750076294
+          },
+          "target_max_rad": 1.3458161354064941,
+          "target_min_rad": 0.8467360734939575,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 73.53358268737949,
+            "peak_time_s": 5.04,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -73.53358268737949
+          }
+        },
+        "hr_kn": {
+          "measured_position_max_rad": -1.3829745054244995,
+          "measured_position_min_rad": -1.8709508180618286,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 37.38962661156062,
+            "peak_time_s": 5.16,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 37.38962661156062
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 37.38962495326996,
+            "peak_time_s": 5.155,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 37.38962495326996
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.321511745452881,
+            "peak_time_s": 5.04,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": 3.321511745452881
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.6056654453277588,
+            "peak_time_s": 5.155,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.6056654453277588
+          },
+          "target_max_rad": -1.0550813674926758,
+          "target_min_rad": -1.8786592483520508,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 38.95530700682985,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 38.95530700682985
+          }
+        }
+      },
+      "before_first_fall": {
+        "arm0_el0": {
+          "measured_position_max_rad": 3.152045249938965,
+          "measured_position_min_rad": 3.1335396766662598,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.484001492978539,
+            "peak_time_s": 5.105,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -3.484001492978539
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.4839930534362793,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -3.4839930534362793
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.9942824840545654,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.9942824840545654
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.01888751983642578,
+            "peak_time_s": 5.125,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.01888751983642578
+          },
+          "target_max_rad": 3.133157730102539,
+          "target_min_rad": 3.133157730102539,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_el1": {
+          "measured_position_max_rad": 1.5568904876708984,
+          "measured_position_min_rad": 1.5547020435333252,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.22843642198567693,
+            "peak_time_s": 5.065,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.22843642198567693
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.2284369170665741,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.2284369170665741
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.08156242221593857,
+            "peak_time_s": 5.085,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.08156242221593857
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0015125274658203125,
+            "peak_time_s": 5.065,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.0015125274658203125
+          },
+          "target_max_rad": 1.5553779602050781,
+          "target_min_rad": 1.5553779602050781,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_f1x": {
+          "measured_position_max_rad": 0.0034058154560625553,
+          "measured_position_min_rad": -0.008326834999024868,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.4015280217675619,
+            "peak_time_s": 5.11,
+            "reference_bound": 11.31,
+            "samples_exceeding": 0,
+            "signed_peak": -0.4015280217675619
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.40152801901102064,
+            "peak_time_s": 5.105,
+            "reference_bound": 11.31,
+            "samples_exceeding": 0,
+            "signed_peak": -0.40152801901102064
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.0759963989257812,
+            "peak_time_s": 5.105,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 1.0759963989257812
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.009886270854622126,
+            "peak_time_s": 5.125,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.009886270854622126
+          },
+          "target_max_rad": -0.00648045539855957,
+          "target_min_rad": -0.00648045539855957,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_sh0": {
+          "measured_position_max_rad": 0.007576522883027792,
+          "measured_position_min_rad": -0.00881258025765419,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.2575900616799358,
+            "peak_time_s": 5.04,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -1.2575900616799358
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.2575900815427303,
+            "peak_time_s": 5.035,
+            "reference_bound": 89.89,
+            "samples_exceeding": 0,
+            "signed_peak": -1.2575900815427303
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.4255478084087372,
+            "peak_time_s": 5.065,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.4255478084087372
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.008763466030359268,
+            "peak_time_s": 5.115,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": 0.008763466030359268
+          },
+          "target_max_rad": -4.9114227294921875e-05,
+          "target_min_rad": -4.9114227294921875e-05,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_sh1": {
+          "measured_position_max_rad": -3.1126043796539307,
+          "measured_position_min_rad": -3.1445460319519043,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 4.379319765943901,
+            "peak_time_s": 5.255,
+            "reference_bound": 179.78,
+            "samples_exceeding": 0,
+            "signed_peak": 4.379319765943901
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 4.379314661026001,
+            "peak_time_s": 5.25,
+            "reference_bound": 179.78,
+            "samples_exceeding": 0,
+            "signed_peak": 4.379314661026001
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.6216501593589783,
+            "peak_time_s": 5.24,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.6216501593589783
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.028804779052734375,
+            "peak_time_s": 5.265,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": 0.028804779052734375
+          },
+          "target_max_rad": -3.11574125289917,
+          "target_min_rad": -3.11574125289917,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_wr0": {
+          "measured_position_max_rad": 0.019210703670978546,
+          "measured_position_min_rad": -0.009304706007242203,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 2.960832590710731,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -2.960832590710731
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 2.960832580924034,
+            "peak_time_s": 5.055,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -2.960832580924034
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.9499483704566956,
+            "peak_time_s": 5.085,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.9499483704566956
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.018374450504779816,
+            "peak_time_s": 5.065,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.018374450504779816
+          },
+          "target_max_rad": 0.0008362531661987305,
+          "target_min_rad": 0.0008362531661987305,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "arm0_wr1": {
+          "measured_position_max_rad": -1.5695538520812988,
+          "measured_position_min_rad": -1.5705002546310425,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.07471727977849257,
+            "peak_time_s": 5.045,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.07471727977849257
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.07471730187535286,
+            "peak_time_s": 5.04,
+            "reference_bound": 23.23,
+            "samples_exceeding": 0,
+            "signed_peak": -0.07471730187535286
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.02811776101589203,
+            "peak_time_s": 5.085,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.02811776101589203
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0004887580871582031,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 0.05,
+            "samples_exceeding": 0,
+            "signed_peak": -0.0004887580871582031
+          },
+          "target_max_rad": -1.570042610168457,
+          "target_min_rad": -1.570042610168457,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.0,
+            "peak_time_s": 0.0,
+            "reference_bound": 1.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.0
+          }
+        },
+        "fl_hx": {
+          "measured_position_max_rad": 0.2511502206325531,
+          "measured_position_min_rad": 0.11713851243257523,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 11.26916617155075,
+            "peak_time_s": 0.005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -11.26916617155075
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 11.26916617155075,
+            "peak_time_s": 0.0,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -11.26916617155075
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.6301789283752441,
+            "peak_time_s": 5.035,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": 1.6301789283752441
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.1878194361925125,
+            "peak_time_s": 0.0,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.1878194361925125
+          },
+          "target_max_rad": 0.2476319670677185,
+          "target_min_rad": -0.005594857037067413,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 29.768198728562037,
+            "peak_time_s": 5.0,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 29.768198728562037
+          }
+        },
+        "fl_hy": {
+          "measured_position_max_rad": 1.0779061317443848,
+          "measured_position_min_rad": 0.12361685931682587,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 10.37082155121853,
+            "peak_time_s": 0.01,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -10.37082155121853
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 10.370821019634604,
+            "peak_time_s": 0.005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -10.370821019634604
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.7690005898475647,
+            "peak_time_s": 3.93,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.7690005898475647
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.17205971479415894,
+            "peak_time_s": 0.01,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.17205971479415894
+          },
+          "target_max_rad": 0.9937635660171509,
+          "target_min_rad": 0.11819538474082947,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 17.751049995422743,
+            "peak_time_s": 5.0,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 17.751049995422743
+          }
+        },
+        "fl_kn": {
+          "measured_position_max_rad": -1.549684762954712,
+          "measured_position_min_rad": -2.1610324382781982,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 28.666984425217507,
+            "peak_time_s": 0.01,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 28.666984425217507
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 28.666982140392065,
+            "peak_time_s": 0.005,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 28.666982140392065
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.9786134958267212,
+            "peak_time_s": 5.07,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": -1.9786134958267212
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.47638094425201416,
+            "peak_time_s": 0.01,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.47638094425201416
+          },
+          "target_max_rad": -1.211714267730713,
+          "target_min_rad": -2.169912815093994,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 61.182928085328456,
+            "peak_time_s": 5.0,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -61.182928085328456
+          }
+        },
+        "fr_hx": {
+          "measured_position_max_rad": 0.3253069519996643,
+          "measured_position_min_rad": -0.11445175856351852,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": 5.025,
+            "peak_abs": 45.0,
+            "peak_time_s": 5.025,
+            "reference_bound": 44.88,
+            "samples_exceeding": 1,
+            "signed_peak": 45.0
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": 5.0200000000000005,
+            "peak_abs": 49.92131480388343,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 1,
+            "signed_peak": 49.92131480388343
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": 5.035,
+            "peak_abs": 13.824084281921387,
+            "peak_time_s": 5.04,
+            "reference_bound": 12.0,
+            "samples_exceeding": 2,
+            "signed_peak": 13.824084281921387
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.8720809374935925,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.8720809374935925
+          },
+          "target_max_rad": 0.8702065348625183,
+          "target_min_rad": -0.12671366333961487,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 117.8606688976313,
+            "peak_time_s": 5.04,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -117.8606688976313
+          }
+        },
+        "fr_hy": {
+          "measured_position_max_rad": 1.1349730491638184,
+          "measured_position_min_rad": 0.8345429301261902,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 25.455237541842273,
+            "peak_time_s": 5.045,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -25.455237541842273
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 25.455237686634064,
+            "peak_time_s": 5.04,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -25.455237686634064
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 11.185308456420898,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -11.185308456420898
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.4522506594657898,
+            "peak_time_s": 5.04,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.4522506594657898
+          },
+          "target_max_rad": 1.0119614601135254,
+          "target_min_rad": 0.6234636902809143,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 60.57425737380034,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 60.57425737380034
+          }
+        },
+        "fr_kn": {
+          "measured_position_max_rad": -1.7022819519042969,
+          "measured_position_min_rad": -2.072089433670044,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 77.176862819917,
+            "peak_time_s": 5.12,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 77.176862819917
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 77.17686170339584,
+            "peak_time_s": 5.115,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 77.17686170339584
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.793732643127441,
+            "peak_time_s": 5.025,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": -15.793732643127441
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.244800865650177,
+            "peak_time_s": 5.115,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 1.244800865650177
+          },
+          "target_max_rad": -0.6880627274513245,
+          "target_min_rad": -2.4390928745269775,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 165.64552783963475,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -165.64552783963475
+          }
+        },
+        "hl_hx": {
+          "measured_position_max_rad": 0.29605332016944885,
+          "measured_position_min_rad": 0.12073385715484619,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 26.864369916334656,
+            "peak_time_s": 5.04,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -26.864369916334656
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 26.864369809627533,
+            "peak_time_s": 5.035,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": -26.864369809627533
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.199207305908203,
+            "peak_time_s": 5.105,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": 3.199207305908203
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.42294979095458984,
+            "peak_time_s": 5.035,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.42294979095458984
+          },
+          "target_max_rad": 0.3350047171115875,
+          "target_min_rad": -0.2765582501888275,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 55.7734891772183,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 55.7734891772183
+          }
+        },
+        "hl_hy": {
+          "measured_position_max_rad": 1.152916669845581,
+          "measured_position_min_rad": 0.7271471619606018,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.278579380913106,
+            "peak_time_s": 32.025,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.278579380913106
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.278577624354511,
+            "peak_time_s": 32.02,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.278577624354511
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 4.31664514541626,
+            "peak_time_s": 5.125,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -4.31664514541626
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.254491925239563,
+            "peak_time_s": 32.02,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.254491925239563
+          },
+          "target_max_rad": 1.1912258863449097,
+          "target_min_rad": 0.7455903887748718,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 37.19816207885161,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 37.19816207885161
+          }
+        },
+        "hl_kn": {
+          "measured_position_max_rad": -1.488439917564392,
+          "measured_position_min_rad": -1.7934902906417847,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 34.56198046180998,
+            "peak_time_s": 3.96,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 34.56198046180998
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 34.56198102235794,
+            "peak_time_s": 3.955,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 34.56198102235794
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 2.441415786743164,
+            "peak_time_s": 5.165,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": 2.441415786743164
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.5725932121276855,
+            "peak_time_s": 0.8150000000000001,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.5725932121276855
+          },
+          "target_max_rad": -1.0964876413345337,
+          "target_min_rad": -1.6789076328277588,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 97.06950187681588,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -97.06950187681588
+          }
+        },
+        "hr_hx": {
+          "measured_position_max_rad": -0.05525372177362442,
+          "measured_position_min_rad": -0.23128017783164978,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 17.011346035639935,
+            "peak_time_s": 5.125,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 17.011346035639935
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 17.01134616136551,
+            "peak_time_s": 5.12,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 17.01134616136551
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.2491939067840576,
+            "peak_time_s": 5.07,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -1.2491939067840576
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.2776920944452286,
+            "peak_time_s": 5.135,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.2776920944452286
+          },
+          "target_max_rad": 0.14348646998405457,
+          "target_min_rad": -0.20284321904182434,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 34.91291552781513,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 34.91291552781513
+          }
+        },
+        "hr_hy": {
+          "measured_position_max_rad": 1.2351332902908325,
+          "measured_position_min_rad": 1.034571886062622,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.794819917909498,
+            "peak_time_s": 5.025,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.794819917909498
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 15.794820249080658,
+            "peak_time_s": 5.0200000000000005,
+            "reference_bound": 44.88,
+            "samples_exceeding": 0,
+            "signed_peak": 15.794820249080658
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 1.5523427724838257,
+            "peak_time_s": 5.0600000000000005,
+            "reference_bound": 12.0,
+            "samples_exceeding": 0,
+            "signed_peak": -1.5523427724838257
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.26182013750076294,
+            "peak_time_s": 36.955,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": -0.26182013750076294
+          },
+          "target_max_rad": 1.3458161354064941,
+          "target_min_rad": 0.8467360734939575,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 73.53358268737949,
+            "peak_time_s": 5.04,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": -73.53358268737949
+          }
+        },
+        "hr_kn": {
+          "measured_position_max_rad": -1.3829745054244995,
+          "measured_position_min_rad": -1.8709508180618286,
+          "preceding_applied_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 37.38962661156062,
+            "peak_time_s": 5.16,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 37.38962661156062
+          },
+          "requested_PD_Nm": {
+            "first_exceedance_s": null,
+            "peak_abs": 37.38962495326996,
+            "peak_time_s": 5.155,
+            "reference_bound": 113.236015,
+            "samples_exceeding": 0,
+            "signed_peak": 37.38962495326996
+          },
+          "speed_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 3.321511745452881,
+            "peak_time_s": 5.04,
+            "reference_bound": 24.0,
+            "samples_exceeding": 0,
+            "signed_peak": 3.321511745452881
+          },
+          "target_error_rad": {
+            "first_exceedance_s": null,
+            "peak_abs": 0.6056654453277588,
+            "peak_time_s": 5.155,
+            "reference_bound": 2.0,
+            "samples_exceeding": 0,
+            "signed_peak": 0.6056654453277588
+          },
+          "target_max_rad": -1.0550813674926758,
+          "target_min_rad": -1.8786592483520508,
+          "target_slew_rad_s": {
+            "first_exceedance_s": null,
+            "peak_abs": 38.95530700682985,
+            "peak_time_s": 5.1000000000000005,
+            "reference_bound": 200.0,
+            "samples_exceeding": 0,
+            "signed_peak": 38.95530700682985
+          }
+        }
+      },
+      "fall_proxy": "body height <0.25 m or tilt >0.9 rad; recorded without stopping",
+      "first_fall_proxy_s": null,
+      "hardware_qualified": false,
+      "interpretation": "Observed simulated demands; not safe hardware limits",
+      "max_body_angular_speed_rad_s": 1.5371663528283255,
+      "max_body_linear_speed_m_s": 0.30751210655820765,
+      "max_body_tilt_rad": 0.07936615496873856,
+      "min_body_height_m": 0.43564701080322266,
+      "physical_saturation_retained": true
+    },
+    "failure": null,
+    "first_fall_proxy_s": null,
+    "guard_mode": "disabled-simulation-diagnostic",
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "late_window_metrics": {
+      "angular_speed_p95_rad_s": 0.00012546236898978766,
+      "height_span_m": 4.628300666809082e-05,
+      "joint_speed_p95_rad_s": 0.0007748439093120396,
+      "linear_speed_p95_m_s": 0.0002220207523352805,
+      "max_tilt_deg": 0.8862489012383302,
+      "mean_height_m": 0.4952480991830354,
+      "min_height_m": 0.4952455759048462,
+      "planar_speed_p95_m_s": 0.00021938082536715538,
+      "samples": 2001,
+      "span_s": 10.0,
+      "tilt_span_deg": 0.00464890422554571
+    },
+    "loop_wall_s": 13.750044547952712,
+    "max_observation_error": 5.960464477539063e-08,
+    "max_raw_action_error": 3.814697265625e-06,
+    "max_target_error_rad": 2.384185791015625e-07,
+    "policy_duration_s": 47.0,
+    "policy_samples": 2351,
+    "real_time_factor": 3.4181707438175524,
+    "reason": "completed",
+    "stable_final_window": true,
+    "three_leg_demo": {
+      "clearance_proxy_passed": true,
+      "final_four_feet_near_floor_fraction": 1.0,
+      "geometric_three_leg_fraction": 1.0,
+      "hardware_qualified": false,
+      "hold_samples": 3000,
+      "ik_motion_samples": 2400,
+      "ik_tracking_passed": true,
+      "passed": true,
+      "pose_sequence_finished": true,
+      "support_evidence": "foot clearance geometry only; foot forces/loaded contacts not measured"
+    },
+    "timing": {
+      "core_s": {
+        "max_s": 0.10270516760647297,
+        "over_5ms": 2,
+        "p50_s": 0.0006187348626554012,
+        "p99_s": 0.001035862136632204
+      },
+      "parity_s": {
+        "max_s": 0.00045078108087182045,
+        "over_5ms": 0,
+        "p50_s": 1.601874828338623e-07,
+        "p99_s": 0.00031158188357949257
+      },
+      "physics_s": {
+        "max_s": 0.00029285578057169914,
+        "over_5ms": 0,
+        "p50_s": 0.00014513125643134117,
+        "p99_s": 0.00016752304509282112
+      },
+      "recording_s": {
+        "max_s": 0.06857540598139167,
+        "over_5ms": 2,
+        "p50_s": 0.00047351419925689697,
+        "p99_s": 0.0005488414317369461
+      },
+      "state_s": {
+        "max_s": 0.0010100309737026691,
+        "over_5ms": 0,
+        "p50_s": 0.00012257695198059082,
+        "p99_s": 0.00015327613800764084
+      },
+      "total_s": {
+        "max_s": 0.10372298397123814,
+        "over_5ms": 6,
+        "p50_s": 0.0014012772589921951,
+        "p99_s": 0.002115878276526928
+      }
+    },
+    "trial_duration_s": 47.0,
+    "walking": null,
+    "walking_completed": null
+  },
+  "source_commit": null,
+  "sampling_hz": 200,
+  "alignment": "demand[k] vs preceding_applied[k+1]; 5ms interval",
+  "saturation_difference_threshold_Nm": 1e-05,
+  "foot_loaded_diagnostic_threshold_N": 5,
+  "joint_torque": [
+    {
+      "joint": "fl_hx",
+      "requested_peak_abs_Nm": 11.26916617155075,
+      "applied_peak_abs_Nm": 11.26916617155075,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "fl_hy",
+      "requested_peak_abs_Nm": 10.370821019634604,
+      "applied_peak_abs_Nm": 10.37082155121853,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "fl_kn",
+      "requested_peak_abs_Nm": 28.666982140392065,
+      "applied_peak_abs_Nm": 28.666984425217507,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "fr_hx",
+      "requested_peak_abs_Nm": 49.92131480388343,
+      "applied_peak_abs_Nm": 45.0,
+      "saturation_duration_s": 0.004999999999999893,
+      "entry_saturation_duration_s": 0.004999999999999893
+    },
+    {
+      "joint": "fr_hy",
+      "requested_peak_abs_Nm": 25.455237686634064,
+      "applied_peak_abs_Nm": 25.455237541842273,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "fr_kn",
+      "requested_peak_abs_Nm": 77.17686170339584,
+      "applied_peak_abs_Nm": 77.176862819917,
+      "saturation_duration_s": 0.019999999999999574,
+      "entry_saturation_duration_s": 0.019999999999999574
+    },
+    {
+      "joint": "hl_hx",
+      "requested_peak_abs_Nm": 26.864369809627533,
+      "applied_peak_abs_Nm": 26.864369916334656,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "hl_hy",
+      "requested_peak_abs_Nm": 15.278577624354511,
+      "applied_peak_abs_Nm": 15.278579380913106,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "hl_kn",
+      "requested_peak_abs_Nm": 34.56198102235794,
+      "applied_peak_abs_Nm": 34.56198046180998,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "hr_hx",
+      "requested_peak_abs_Nm": 17.01134616136551,
+      "applied_peak_abs_Nm": 17.011346035639935,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "hr_hy",
+      "requested_peak_abs_Nm": 15.794820249080658,
+      "applied_peak_abs_Nm": 15.794819917909498,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "hr_kn",
+      "requested_peak_abs_Nm": 37.38962495326996,
+      "applied_peak_abs_Nm": 37.38962661156062,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "arm0_sh0",
+      "requested_peak_abs_Nm": 1.2575900815427303,
+      "applied_peak_abs_Nm": 1.2575900616799358,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "arm0_sh1",
+      "requested_peak_abs_Nm": 4.379314661026001,
+      "applied_peak_abs_Nm": 4.379319765943901,
+      "saturation_duration_s": 16.069999999999908,
+      "entry_saturation_duration_s": 0.8799999999999981
+    },
+    {
+      "joint": "arm0_el0",
+      "requested_peak_abs_Nm": 3.4839930534362793,
+      "applied_peak_abs_Nm": 3.484001492978539,
+      "saturation_duration_s": 11.819999999999936,
+      "entry_saturation_duration_s": 0.8650000000000002
+    },
+    {
+      "joint": "arm0_el1",
+      "requested_peak_abs_Nm": 0.2284369170665741,
+      "applied_peak_abs_Nm": 0.22843642198567693,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "arm0_wr0",
+      "requested_peak_abs_Nm": 2.960832580924034,
+      "applied_peak_abs_Nm": 2.960832590710731,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "arm0_wr1",
+      "requested_peak_abs_Nm": 0.07471730187535286,
+      "applied_peak_abs_Nm": 0.07471727977849257,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    },
+    {
+      "joint": "arm0_f1x",
+      "requested_peak_abs_Nm": 0.40152801901102064,
+      "applied_peak_abs_Nm": 0.4015280217675619,
+      "saturation_duration_s": 0.0,
+      "entry_saturation_duration_s": 0.0
+    }
+  ],
+  "body": {
+    "max_abs_roll_deg": 3.068602203238426,
+    "max_abs_pitch_deg": 4.3496256339765385,
+    "max_angular_speed_rad_s": 1.5371663528283255,
+    "entry_max_abs_roll_deg": 3.068602203238426,
+    "entry_max_abs_pitch_deg": 4.3496256339765385,
+    "entry_max_angular_speed_rad_s": 1.5371663528283255
+  },
+  "foot_contacts": [
+    {
+      "leg": "fl",
+      "normal_force_N": {
+        "min": 0.0,
+        "max": 151.61114060841476,
+        "p95": 91.69126375873917
+      },
+      "hold_loaded_fraction": 0.0
+    },
+    {
+      "leg": "fr",
+      "normal_force_N": {
+        "min": 0.0,
+        "max": 325.69653433597597,
+        "p95": 209.1923701610479
+      },
+      "hold_loaded_fraction": 1.0
+    },
+    {
+      "leg": "hl",
+      "normal_force_N": {
+        "min": 0.0,
+        "max": 143.60928988322598,
+        "p95": 113.1415902060674
+      },
+      "hold_loaded_fraction": 1.0
+    },
+    {
+      "leg": "hr",
+      "normal_force_N": {
+        "min": 0.0,
+        "max": 149.50224034861984,
+        "p95": 86.6808012686482
+      },
+      "hold_loaded_fraction": 1.0
+    }
+  ],
+  "ik_motion_error_m": {
+    "min": 0.014204181306431795,
+    "max": 0.019087631724019172,
+    "p95": 0.019006435039201935
+  },
+  "observed_guard_crossings": [
+    {
+      "reason": "predicted PD-plus-feedforward load limit",
+      "simulation_time_s": null,
+      "monotonic_s": 15.02
+    },
+    {
+      "reason": "measured joint velocity or load limit",
+      "simulation_time_s": null,
+      "monotonic_s": 15.025
+    }
+  ],
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "input_sha256": {
+    "result.json": "a06c0661a6264c782a3493ea49b9cef2d7256aeeccc09208f444c3c4f18e2bd9",
+    "rollout.jsonl": "611ea1f5273e38fcc48a4fe964db1801949ec7b1289e7eab1498d5861f6e2936",
+    "configuration.json": "b64ee341087716cd56f28ba2ce650afc62c50582e2c89b9b4eca4bfc29814391",
+    "COMPLETE.json": "3eb980b63484608eea84989a14792dde3361f9bdfaf1760022a7ddc6219cc4fa"
+  },
+  "guard_crossings_deduplicated_by_reason": true,
+  "video": {
+    "artifacts": {
+      "dynamics.pdf": "a053b371c07c9e306dcd1e90ae79c861e765220c3b317387fc2bed8e005350cf",
+      "dynamics.png": "d460252e75391ac7e45e7680c9a5bdd757da7aed9c0bec1999eb928d599210ff",
+      "ffmpeg.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "replay.mp4": "05866db7bb0aaa0e664590d2c710d3b92cc2b446168bfa66e37c49de848a7c50"
+    },
+    "fps": 100,
+    "frames": 4701,
+    "hardware_access": false,
+    "new_dynamics": false,
+    "recorded_duration_s": 47.0,
+    "source_complete_sha256": "3eb980b63484608eea84989a14792dde3361f9bdfaf1760022a7ddc6219cc4fa",
+    "source_reason": "completed",
+    "source_trajectory_sha256": "611ea1f5273e38fcc48a4fe964db1801949ec7b1289e7eab1498d5861f6e2936",
+    "status": "completed",
+    "tool_sha256": "1bbf93870587723ef52b5b889b6ff539d3019a12515abd2f112f99e94d522465",
+    "visual_manifest_sha256": "54b1c8da81eb9b8df6f0c622768ff427aff1bd0390eca160e1100d84a77702ea",
+    "visual_model_sha256": "726bbf608d5eccb3631f217f17cd79e140a55aa1d426be34f17afd0038e57acd",
+    "visual_restoration_tool_sha256": "c2ff8951836522ec4ee466c345a46168ac0850fa9d0eeb7cecb68f2de9477e20"
+  },
+  "analysis_artifacts": {
+    "aligned_metrics.npz": "26b01d99759165a0394039782c411d3e662a2686402eb482fb366ffa97ed6491",
+    "entry-torques.pdf": "076b3b3563286a62af856b348ab40948ff614f98a21a77b6177ea734b391a2b4",
+    "entry-torques.png": "df0bbe2e1eea446d98273866eedb922f57bd37d75589b0eecfd23b27ab6dfb17",
+    "recovery.pdf": "31056a8ff4886ed5059992011de41d0788605d7a5b2c2e9dc7759bf17e988918",
+    "recovery.png": "7d175a9487f45fcafa0527658a2903b61bfddddf75bba86abc1a370594fdbf52"
+  }
+}
