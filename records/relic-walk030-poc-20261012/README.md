@@ -117,3 +117,57 @@ Campaign contract/supervisor: `local/relic-walk030-poc-20261012-001/{contract.js
 Durable tmux of the campaign name completed all stages. CPU OMP 2, GPU 0 Kit only,
 600 s maximum/$0 budget, no recovery. Sanitized observations/hashes are in
 `result-summary.json`; raw robot/preflight/input files remain ignored.
+
+## Authorized physical trial outcome
+
+Adam explicitly approved the final exact caps, one attempt, Adam/Minghao and
+following rig/clear path/functioning tablet setup. Approval and frozen manifest/
+envelope hashes are in the local final-approval record. A newly collected
+exact-candidate motors-off preflight and approval-bound deployment check passed.
+No additional approval, retries, fault clearing, lease takeover or E-stop writes.
+
+One physical attempt at clean commit `ed1b407e1a48d51ed54a74b0966e20766da78ae0`
+ran about 5.660 s of active policy before **command position limit** stopped it.
+Native standing preceded direct activation with measured initial height 0.518284 m,
+four reported foot contacts and zero initial raw actions. The goal was latched
+from this current post-stand pose/heading. Distance at last emitted command state:
+**0.208716 m forward, -0.036347 m lateral**; rejected-state forward 0.209334 m. These
+are robot odometry measurements before shutdown, not independent metrology or
+a claim of final resting displacement. Nominal 0.75 m goal was not reached.
+
+Recorded 284 predictions include one rejected sample; 283 action-history ACKs and
+1135 issued joint commands. Maximum requested forward velocity 0.266500 m/s,
+maximum inference 0.720 ms, command gap 5.968 ms, issued-state peak leg speed 2.363 rad/s.
+The position guard stopped before the request reached its 0.30 m/s maximum.
+
+| Rejected joint | Target (rad) | Measured (rad) | Approved trial target range (rad) | Exceedance (rad) | Estimated PD torque (N·m) |
+|---|---:|---:|---|---:|---:|
+| Front-left knee | -2.174256 | -1.640778 | [-2.10, -0.80] | 0.074256 | -31.9855 |
+| Front-right knee | -0.746815 | -1.739241 | [-2.10, -0.80] | 0.053185 | 59.3999 |
+
+These are the unchanged trial position bounds, not an assertion of manufacturer
+full travel ratings. Both measured angles were inside the range. The last
+prediction is recorded before Guard.command rejects it; neither target was sent.
+Torque values are estimates using unchanged gains/zero feedforward and observed
+velocity; they are not independent torque measurements. The first failed check
+was target position; no broader safety pass of this rejected prediction is claimed.
+
+Native shutdown confirms motors OFF and lease returned, no cleanup errors,
+6.0255 s total within the approved 10 s allowance. Passive read-only postcheck passed
+with motors off and zero active faults. **No retry occurred.** This is a stopped
+trial, not a successful goal or merely an accepted normal shortfall/timeout.
+
+Raw run: `runs/relic-walk030-poc-hardware-20261012-001`. Supervisor: same prefix
+`hardware-supervisor-20261012-001`, durable tmux `relic-walk030-poc-hardware-20261012-001`.
+Compact: `runs/relic-walk030-poc-compact-20261012-001/rollout.jsonl.gz`, 1,045,161
+bytes, complete capture with raw source status failed preserved. Postcheck:
+`runs/relic-walk030-poc-postcheck-20261012-001`. Raw, compact and postcheck
+completion/artifact hashes verified. `hardware-result-summary.json` stores
+sanitized derived measurements, rejected targets, per-joint issued PD offsets/
+torque estimates and verification hashes. Raw robot poses/identities stay local.
+
+With frozen private inputs/logs present, regenerate the derived record from repo
+root using `uv run --no-sync python records/relic-walk030-poc-20261012/summarize_hardware.py`.
+No robot connection or commands are used by this analysis. Review the knee
+target-angle envelope and actual-policy dynamics before any newly authorized
+attempt; no position bounds were widened after this stop.
