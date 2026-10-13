@@ -89,3 +89,10 @@ old evidence even though nominal duration is again47s. No physical rerun is part
 of this fix. Known system payload.fault code9 severity1 INFO may be observation-only
 only with explicit robot-profile policy/reason; preserve raw faults/messages, block
 all other faults or incomplete counts, and never clear faults automatically.
+
+The newly requested smoothed physical trial (October12) verified commanded target
+steps<=0.02rad and rates<=1rad/s on hardware, including a~0.000016rad initial mode
+step. It stopped~5.34s on body angular speed1.0047rad/s above1rad/s, shortly after
+lift began; no completedthreeleg/IKsquare is claimed. Shutdown/OFF/lease confirmed
+5.015s; passivepostcheck faultfree. No retry/limit change. This approval is consumed.
+See records/relic-three-leg-smoothed-hardware-20261012 and compact recording.
