@@ -122,6 +122,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     record.event("command", key=command.key, positions=list(command.positions),
                                  feedforward=list(command.feedforward), phase=core.phase,
                                  end_robot_time_s=command.end_robot_time_s, monotonic_s=finished,
+                                 guard_monotonic_s=now,
                                  state=state.model_dump())
                     with lock:
                         shared["last_emit"] = finished

@@ -48,5 +48,9 @@ of exact firmware response outside its kinematic limits.
 Validate the actual recorded failed prediction and full guarded normal-core
 simulations before a new trial. Preserve new measured-angle/torque/tracking stops;
 do not call accepting this old prediction a successful physical rollout.
+New command events include `guard_monotonic_s` (computation start) separately from
+`monotonic_s` (finish), both preserved by compact recording. Historical recordings
+without the former cannot prove an exact rejected-step slew interval; the audit
+reports that limitation rather than mixing start and finish clocks.
 The operator requires a separate exact approval immediately before another
 physical attempt; the prior one-attempt authorization has been used.

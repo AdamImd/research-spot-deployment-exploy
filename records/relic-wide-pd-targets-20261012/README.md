@@ -38,10 +38,25 @@ guard, retained tracking/PD torque/slew, and evaluating manufacturer torque at
 measured knee angle despite a virtual target outside the table.
 
 `audit_hardware.py` verifies failed raw-record integrity and replays all 1135
-issued command/state samples plus the rejected prediction through the proposed
-guard. It preserves actual recorded policy age/inference where present, checks
-targets are not clipped, and does not claim further physical movement or new
-transport timing. Raw inputs remain ignored; public results contain hashes/counts.
+issued command/state samples through the proposed guard using recorded finish
+timestamps as a legacy timing proxy. The rejected prediction passes numeric
+guards only: its exact slew/scheduling interval cannot be reconstructed because
+the previous command's computation-start timestamp was not recorded. It preserves
+recorded policy age/inference and previous-target measured tracking, checks targets
+are not clipped, and does not claim new physical motion or exact transport timing.
+New command records include `guard_monotonic_s`, preserved in compact recordings,
+for exact future start-to-start audits. Raw inputs remain ignored; public results
+contain hashes/counts.
+
+The preserved validation attempt `runs/relic-wide-pd-targets-validation-20261012-001`
+passed 470 tests/Ruff/demo, then stopped before simulations in the historical
+audit. It compared the rejected policy START to the previous command FINISH:
+0.459933 rad / 4.591180 ms = 100.1776 rad/s against 100 rad/s. Only 8.153 microseconds
+separate that mixed-clock interval from the minimum allowed interval; the previous
+computation duration is unknown, so this cannot establish a real slew violation
+or an exact pass. The corrected audit labels this timing gap explicitly. The live
+100 rad/s slew guard is unchanged; fresh guarded simulation/benchmark gates still
+apply. No bounds were widened in response to this audit failure.
 
 Run full tests/Ruff/demo, the recorded audit, both fresh 20 s guarded walking
 rollouts and both 60 s guarded standing rollouts under the new target bounds.
