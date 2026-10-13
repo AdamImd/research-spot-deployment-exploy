@@ -78,3 +78,22 @@ simulation-scoped and cannot authorize hardware.
 See [results](../records/manufacturer-limits-20261009/RESULTS.md). Final deployment
 still uses a fresh motors-off preflight, the final bound candidate and the existing
 supervised activation path. No motor activation occurs during this update.
+
+## Separate requested leg PD torque (operator-selected draft)
+
+`leg_requested_torque_max` optionally bounds the absolute **predicted leg
+PD-plus-feedforward demand** before firmware saturation, in N·m, for all 12 leg
+joints. It requires `leg_requested_torque_reason` and the manufacturer profile.
+Adam selected **75 N·m requested demand only** on 2026-10-13. This is an operator
+operating cap, not a new manufacturer rating or a firmware configuration change.
+The default is null, preserving the existing shared limits.
+
+With this option, `load_max` and the position-dependent manufacturer knee table
+still bound measured torque; hips retain 44.88 N·m. Measured knee angles must stay
+inside the table domain. Arm torque and SH1/EL0 coupling checks, feedforward-only
+limits, and all other guards are unchanged. The command is still a position target
+with the original gains: this option rejects excessive predictions; it does not
+clip the target or guarantee the firmware applies the predicted torque.
+
+The local 75 N·m envelope is a preparation draft. It requires a newly bound bundle,
+fresh motors-off preflight and exact trial confirmation before physical execution.

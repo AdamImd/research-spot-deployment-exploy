@@ -384,7 +384,7 @@ def test_walking_orchestrator_completion_and_timeout_cleanup(
         progress = None
         count = 0
 
-        def __init__(self, *args):
+        def __init__(self, *args, **kwargs):
             pass
 
         def latch(self, *args):
@@ -420,3 +420,20 @@ def test_walking_orchestrator_completion_and_timeout_cleanup(
                   Log(), lambda c,*a:c)
     assert control.calls[-1] == 'close'
     assert not control.worker.is_alive()
+
+def test_activation_enables_persistence_but_startup_is_immediate(relic_manifest,relic_envelope,state):
+    from test_relic_rollout import FakeReLIC, sample
+    from test_control_loop import Log
+    from spot_deploy.relic_rollout import ReLICRollout
+    from test_physical_limits import persistent
+    env=persistent(relic_envelope)
+    log=Log()
+    core=ReLICRollout(FakeReLIC(relic_manifest),env,log)
+    with pytest.raises(ContractError):
+        core.initialize(sample(state,0).model_copy(update={'linear_velocity_odom':[9.,0.,0.]}),{},10.,1000.)
+    core=ReLICRollout(FakeReLIC(relic_manifest),env,log)
+    core.initialize(sample(state,0),{'height_m':.52,'foot_contacts':[1]*4},10.,1000.)
+    assert not core.guard.physical_limits.enabled
+    core.activate(10.)
+    assert core.guard.physical_limits.enabled
+    assert any(event[0]=='physical_limit_persistence' for event in log.events)

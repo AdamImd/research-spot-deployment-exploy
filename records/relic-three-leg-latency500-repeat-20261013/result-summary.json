@@ -1,0 +1,38 @@
+{
+  "approval_consumed": true,
+  "automatic_retry": false,
+  "command_expiry_from_state_s": [
+    0.505000114440918,
+    0.505000114440918
+  ],
+  "failure": {
+    "error": "command stream ended unexpectedly: STATUS_TOO_DISTANT (5); header error code 1",
+    "error_type": "ContractError"
+  },
+  "full_sequence_completed": false,
+  "hardware_qualified": false,
+  "header_error_code": 1,
+  "interpretation": "The protocol reports that the command end time is too far in the future.505ms state-relative expiry was recorded; exact firmware ceiling is not established. No policy predictions occurred.",
+  "native_stand_completed": true,
+  "offline_tests_run": false,
+  "policy_predictions": 0,
+  "postcheck": {
+    "active_fault_count": 0,
+    "motors_off": true,
+    "passed": true,
+    "tablet_stop_ready": true
+  },
+  "raw_and_compact_integrity_verified": true,
+  "recorded_preparation_commands": 2,
+  "requested_duration_s": 47,
+  "shutdown": {
+    "elapsed_s": 6.0192143288441,
+    "errors": [],
+    "lease_returned": true,
+    "motors_off_confirmed": true,
+    "within_shutdown_budget": true
+  },
+  "source_commit": "a2888381ad7fd207b7884eb1b6425c7ea34dbe2a",
+  "stream_status": "STATUS_TOO_DISTANT",
+  "stream_status_code": 5
+}

@@ -53,7 +53,8 @@ def plots(rows, config, result, output):
     axes[2,0].set_xlabel('Recorded simulation time (s)')
     axes[2,1].set_xlabel('Recorded simulation time (s)')
     figure.suptitle(f"ReLIC simulation: {config['backend']} · {result['reason']} · {config.get('guard_mode', 'enforced')}\n"
-                   'Original gains and weights; foot clearance does not measure support load')
+                   + ('UNLIMITED ACTUATOR TORQUE · simulation only' if config.get('actuator_torque_limits') is False
+                    else 'Original gains and weights; foot clearance does not measure support load'))
     figure.savefig(output/'dynamics.png',dpi=160)
     figure.savefig(output/'dynamics.pdf')
     plt.close(figure)
@@ -155,6 +156,8 @@ def video(rows,config,result,source,output,fps):
                                 else 'Recorded visual-mesh replay · simulation only')
                     if config.get('kinematic_plan_only'):
                         subtitle = 'IK plan · body/support legs fixed · no RL or dynamics'
+                    if config.get('actuator_torque_limits') is False:
+                        subtitle = 'UNLIMITED ACTUATOR TORQUE · simulation only'
                     if config.get('simulation_forward_speed_m_s') is not None:
                         subtitle = (f"UNGUARDED · {config['simulation_forward_speed_m_s']:.2f} m/s max request"
                                     f" · {config['simulation_speed_profile']}")

@@ -1,0 +1,119 @@
+{
+  "objective": "Verify continuous500ms physical stop semantics with full tests, saved unlimited-rollout guard audits, and one60s unlimited-actuator guarded simulation",
+  "mode": "launch-and-collect",
+  "cwd": "/home/adam/repos/research/research-spot-exploy-public",
+  "host": "cs-u-rpm-dt-03",
+  "commit": "f719d107f3ed51eaf4b73c9a62e3fbe3867aaf9a",
+  "simulation_commit": "f719d107f3ed51eaf4b73c9a62e3fbe3867aaf9a",
+  "run_directory": "runs/relic-three-leg-persistence500-validation-20261013-004",
+  "resources": "CPU2; noGPU, no paid compute",
+  "seed": 101,
+  "max_duration_s": 360,
+  "success": "Full suite and demo pass. Saved-data immediate audit records stop;500ms audit and60s simulation report outcomes. Scientific pass requires nofall, complete sequence, stable final standing; do not silently skip sustained crossings.",
+  "stop": "Stop at nonzero stage exit or timeout; preserve artifacts and failures. Simulation must enforce operating guards with500ms persistence and immediate integrity/timing. No automatic retries or scientific/source/config changes. No robot or network access.",
+  "authority": "Offline only; no robot SDK/client/network/motor/lease/estop access",
+  "retry": "Primary authorized saved-data audit completion-label repair; prior521tests and demo passed. Targeted audit regression passes. No dynamics have yet run. No retries.",
+  "stages": [
+    {
+      "name": "audit-immediate",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "tools/audit_physical_limits.py",
+        "--run",
+        "runs/relic-three-leg-unlimited-torque-20261013-001/rollout",
+        "--manifest",
+        "local/relic-firmware-leg-angles-20261012-001/standing-candidate/manifest.json",
+        "--envelope",
+        "local/relic-three-leg-persistence500-validation-20261013-001/immediate-simulation-envelope.json",
+        "--output",
+        "runs/relic-three-leg-persistence500-validation-20261013-004/audit-immediate"
+      ],
+      "timeout_s": 40,
+      "environment": {
+        "OMP_NUM_THREADS": "2"
+      }
+    },
+    {
+      "name": "audit-500ms",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "tools/audit_physical_limits.py",
+        "--run",
+        "runs/relic-three-leg-unlimited-torque-20261013-001/rollout",
+        "--manifest",
+        "local/relic-firmware-leg-angles-20261012-001/standing-candidate/manifest.json",
+        "--envelope",
+        "local/relic-three-leg-persistence500-preparation-20261013-001/simulation-envelope.json",
+        "--output",
+        "runs/relic-three-leg-persistence500-validation-20261013-004/audit-500ms"
+      ],
+      "timeout_s": 40,
+      "environment": {
+        "OMP_NUM_THREADS": "2"
+      }
+    },
+    {
+      "name": "simulation",
+      "command": [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        "tools/simulate_relic.py",
+        "--simulation-source",
+        "simulation",
+        "--capture",
+        "local/relic-three-leg-unfiltered-video-20261013-001/capture",
+        "--manifest",
+        "local/relic-firmware-leg-angles-20261012-001/standing-candidate/manifest.json",
+        "--envelope",
+        "local/relic-three-leg-persistence500-preparation-20261013-001/simulation-envelope.json",
+        "--backend",
+        "mujoco",
+        "--duration",
+        "60",
+        "--prewarm-inference",
+        "100",
+        "--mujoco-noslip-iterations",
+        "10",
+        "--three-leg-plan",
+        "configs/relic-three-leg-front-left-ik-unfiltered.json",
+        "--three-leg-graph",
+        "local/relic-three-leg-unfiltered-preparation-20261013-001/candidate/policy.onnx",
+        "--physics-diagnostics",
+        "--output",
+        "runs/relic-three-leg-persistence500-validation-20261013-004/simulation",
+        "--initial-root-height-m",
+        "0.44790276786489125",
+        "--no-actuator-torque-limits"
+      ],
+      "timeout_s": 120,
+      "environment": {
+        "OMP_NUM_THREADS": "2"
+      }
+    }
+  ],
+  "initialization": "Latest recorded pre-entry hardware standing pose; model-derived root0.44790276786489125m; zero simulated velocity/history; seed101; same5s policy hold",
+  "measurement_contract": {
+    "persistence_s": 0.5,
+    "strict_comparison": ">",
+    "no_actuator_torque_limits": true,
+    "operating_guards": "enforced",
+    "state_and_command_period_s": 0.005,
+    "failure": "anyfall or sustained operating limit is a failed physical rehearsal; do not treat runtime completion alone as acceptance"
+  },
+  "expected_artifacts": [
+    "audit-immediate/result.json",
+    "audit-500ms/result.json",
+    "simulation/result.json",
+    "COMPLETE.json"
+  ],
+  "prior_failed_attempt": "runs/relic-three-leg-persistence500-validation-20261013-003",
+  "validation_evidence": "runs/relic-three-leg-persistence500-validation-20261013-003/validation.log (521passed); demo.log exit0; current source adds only completion-label fix and targeted audit test"
+}

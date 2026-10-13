@@ -102,6 +102,48 @@
       "title": "Return Blend S",
       "type": "number"
     },
+    "entry_blend_s": {
+      "default": 0,
+      "maximum": 5,
+      "minimum": 0,
+      "title": "Entry Blend S",
+      "type": "number"
+    },
+    "support_transfer_s": {
+      "default": 0,
+      "maximum": 6,
+      "minimum": 0,
+      "title": "Support Transfer S",
+      "type": "number"
+    },
+    "support_roll_rad": {
+      "default": 0,
+      "maximum": 0.15,
+      "minimum": -0.15,
+      "title": "Support Roll Rad",
+      "type": "number"
+    },
+    "support_pitch_rad": {
+      "default": 0,
+      "maximum": 0.15,
+      "minimum": -0.15,
+      "title": "Support Pitch Rad",
+      "type": "number"
+    },
+    "target_slew_rad_s": {
+      "anyOf": [
+        {
+          "maximum": 2,
+          "minimum": 0.1,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Slew Rad S"
+    },
     "lifted_positions": {
       "anyOf": [
         {

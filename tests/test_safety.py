@@ -76,6 +76,37 @@ def test_predicted_load(manifest, envelope, state):
         issue(Guard(manifest, envelope), state, targets=[0.1] * 12 + [0] * 7)
 
 
+def test_target_rate_observation_requires_explicit_reason_and_selected_demo(manifest, envelope):
+    with pytest.raises(ValidationError, match='operator reason'):
+        Envelope.model_validate(envelope.model_dump() | {'command_rate_guard':'observe'})
+    env=Envelope.model_validate(envelope.model_dump() | {
+        'command_rate_guard':'observe','command_rate_reason':'Adam requests unfiltered demo targets'})
+    with pytest.raises(ContractError, match='selected-leg demo'):
+        Guard(manifest,env)
+    # Offline wrappers retain a standing manifest; exercise the same target-rate
+    # observation envelope without granting this exception to hardware standing.
+    Guard(manifest,env.model_copy(update={'scope':'simulation'}))
+
+
+def test_unfiltered_target_rate_still_enforces_gap_speed_and_torque(manifest, envelope, state):
+    manifest=manifest.model_copy(update={'adapter':'relic-exploy-leg','task':'three-leg-demo'})
+    env=Envelope.model_validate(envelope.model_dump() | {
+        'command_rate_guard':'observe','command_rate_reason':'Adam requests unfiltered demo targets'})
+    guard=Guard(manifest,env)
+    issue(guard,state)
+    target=[.1]*12+[0.]*7
+    command=issue(guard,state,targets=target,now=100.01)
+    assert command.positions==tuple(target)
+    assert guard.command_rate_observation['indices']==list(range(12))
+    with pytest.raises(ContractError,match='scheduling'):
+        issue(guard,state,now=100.1,policy_at=100.1)
+    with pytest.raises(ContractError,match='velocity'):
+        Guard(manifest,env).check_state(state.model_copy(update={'velocities':[3.]*19}),100.,1000.)
+    manifest.gains.kp=[100.]*19
+    with pytest.raises(ContractError,match='predicted'):
+        issue(Guard(manifest,env),state,targets=target)
+
+
 def separated_positions(envelope):
     data = envelope.model_dump()
     data['position_min'][0], data['position_max'][0] = -.1, .1

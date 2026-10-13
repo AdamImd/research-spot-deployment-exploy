@@ -22,6 +22,9 @@ class DiagnosticChecks:
 
 
 class DiagnosticTravel(DiagnosticChecks, ForwardTravel):
+    def _physical_check(self, violations, now, message):
+        self._operating_check(not np.any(violations), message)
+
     def __init__(self, plan, record, forward_speed=None, speed_profile='taper'):
         super().__init__(plan, record)
         self.violations = set()
@@ -80,6 +83,8 @@ class DiagnosticCommands:
         self.violations = set()
         self.key = 0
         self.observe_arm_motion = False
+        self.observe_leg_positions = False
+        self.leg_position_observation = None
         self.motion_joint_count = 19
         self.arm_motion_observation = None
 
@@ -163,7 +168,9 @@ def demand_summary(rows, config):
             for label, values, bound in (
                     ('speed_rad_s', v[:, j], env['velocity_max'][j]),
                     ('target_error_rad', error[:, j], env['tracking_error_max'][j]),
-                    ('requested_PD_Nm', requested[:, j], env['load_max'][j]),
+                    ('requested_PD_Nm', requested[:, j],
+                     env.get('leg_requested_torque_max') if j < 12 and env.get('leg_requested_torque_max')
+                     is not None else env['load_max'][j]),
                     ('preceding_applied_Nm', applied[:, j], env['load_max'][j]),
                     ('target_slew_rad_s', slew[:, j], env['command_rate_max'][j])):
                 peak = int(np.argmax(np.abs(values[:end])))

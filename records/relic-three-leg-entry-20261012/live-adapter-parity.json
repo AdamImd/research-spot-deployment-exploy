@@ -1,0 +1,14 @@
+{
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "history_after_discarded_warmup_zero": true,
+  "max_errors": {
+    "observations": 0.0,
+    "raw_actions": 0.0,
+    "targets": 0.0
+  },
+  "max_evaluation_s": 0.0003788629546761513,
+  "passed": true,
+  "physics_executed": false,
+  "samples": 3001
+}

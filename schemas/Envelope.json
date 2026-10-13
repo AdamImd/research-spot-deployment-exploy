@@ -92,6 +92,50 @@
       "title": "Load Max",
       "type": "array"
     },
+    "leg_requested_torque_max": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Leg Requested Torque Max"
+    },
+    "leg_requested_torque_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Leg Requested Torque Reason"
+    },
+    "physical_limit_persistence_s": {
+      "default": 0.0,
+      "maximum": 0.5,
+      "minimum": 0,
+      "title": "Physical Limit Persistence S",
+      "type": "number"
+    },
+    "physical_limit_persistence_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Physical Limit Persistence Reason"
+    },
     "actuator_limit_profile": {
       "anyOf": [
         {
@@ -135,6 +179,27 @@
       "minItems": 19,
       "title": "Command Rate Max",
       "type": "array"
+    },
+    "command_rate_guard": {
+      "default": "enforce",
+      "enum": [
+        "enforce",
+        "observe"
+      ],
+      "title": "Command Rate Guard",
+      "type": "string"
+    },
+    "command_rate_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Command Rate Reason"
     },
     "max_roll_rad": {
       "exclusiveMinimum": 0,

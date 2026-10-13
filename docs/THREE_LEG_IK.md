@@ -1,131 +1,179 @@
-# Front-left Cartesian IK demo — deployment review
+# Front-left Cartesian IK demo
 
-Adam requested the unchanged ReLIC controller on three legs, with the fourth
-moving by IK ahead of Spot. Use the previously selected front-left leg. The
-existing nine-input standing Exploy graph fixes the leg command at zero and
-cannot represent this demo; its live standing/walking paths remain untouched.
-`SimulationThreeLegPolicy` uses the SAME released actor weights, inserts the
-selected leg's absolute three-joint command into the native84D observation and
-overrides only those three output targets, matching native ReLIC. Other nine leg
-joints remain actor controlled; the arm stays held. No rewards or retraining.
+Use one unchanged released ReLIC actor through the ten-input selected-leg Exploy
+graph. The selected front-left leg follows body-frame position IK; the other nine
+leg joints remain actor controlled and the arm stays held. Body x points forward,
+y left, z up. Input native joint order and SDK output joint order are independently
+verified. No retraining, gain changes or local E-stop bridge. Manufacturer tablet
+is the E-stop authority. Initial raw history iszero and updates only after ACK.
 
-## Sequence and reference frame
+## Current sequence and command smoothing
 
-`configs/relic-three-leg-front-left-ik.json` defines a46second plan:
-
-| Phase | Seconds | Action |
+| Phase | Seconds | Behavior |
 |---|---:|---|
-| Four-foot standing | 5 | Zero leg command |
-| Lift/reach | 6 | Quintic Cartesian path from latched actual foot to first waypoint |
-| Three-leg hold | 3 | First waypoint |
-| IK movement | 12 | Four3second quintic segments around an8cm square |
-| Lower/return | 6 | Cartesian return to the latched foot location |
-| Return handoff | 2 | Zero leg command; quintic blend of front-left output to actor |
-| Four-foot final | 12 | Zero leg command, actor controls all legs |
+| Four-foot initial | 5 | Native direct policy startup; no new startup fade |
+| Lift/reach | 6 | Quintic Cartesian lift from latched current foot to first waypoint |
+| Three-leg hold | 3 | Hold first waypoint |
+| IK square | 12 | Four3s quintic segments |
+| Lower | 6 | Return to latched foot position |
+| Four-foot return handoff | 2 | Selected-leg output blend back to actor |
+| Four-foot final | 12 | All feet under actor control |
 
-The square is in the body x-z plane at y=+0.22m, x=0.53…0.61m and
-z=-0.28…-0.20m. Body x points forward, y left, z up. It follows CURRENT body
-orientation rather than boot/odom axes; body translation/rotation does not turn
-it into a world-fixed target. Positions refer to the foot-link/ball center, not the
-bottom of the foot or a requested foot orientation. The 3DOF leg provides position
-IK only. If a world-fixed target is desired, that needs an explicit different frame.
+Total46s; future live margin1s gives47s. The8cm square uses body-frame foot-center
+waypoints x0.53…0.61m, y0.22m, z−0.28…−0.20m. It follows current body orientation,
+not boot/odom axes.3DOF position IK provides no foot orientation constraint.
 
-IK uses the manifest-hashed URDF chain and analytic translational Jacobian,
-previous solution seed, bounded damped least squares, a **0.02rad joint-angle
-margin** inside model bounds, and0.2mm solve tolerance. It rejects unreachable or
-near-singular targets rather than silently clipping the Cartesian target. Planned
-selected-leg command speed is capped at0.8rad/s; actual tracking tolerance is3cm
-(p95 in the IK-motion phase). IK model bounds are geometry bounds, not approved
-hardware operating limits. The actor's other joints still use the envelope guards.
+At mode entry, raw actor targets can change abruptly; we do not claim those raw
+predictions are smoother. `target_slew_rad_s=1` bounds the12 leg virtual targets
+ACTUALLY commanded after the initial four-foot phase through finalhold. Initialize
+from the preceding four-foot command. Exact mode-entry increment iszero; later
+increments are atmost0.02rad per50Hz prediction, including after a delayed tick
+(no catch-up). Arm targets unchanged. Preserve the actor's ORIGINAL raw output
+for ACK-owned previous-action history; do not replace history with joint angles,
+filtered target offsets or an unused alternate actor branch. Record raw proposals
+and limited commands separately. This is explicit target postprocessing. Existing
+manufacturer torque, measured state/body, deadline, ACK and TTL guards still apply;
+a slew limiter is not torque or hardware qualification.
 
-## Review the intended motion without physics
+IK uses the manifest-hashed URDF, bounded damped least squares, analytic3x3 Jacobian,
+previous seed,0.02rad geometry margin and0.2mm solve tolerance. Planned selected-leg
+IK speed max0.8rad/s; commanded target rate max1rad/s. Required motion tracking p95
+<=3cm. Reject unreachable/singular paths instead of silently clipping Cartesian
+requests. Model geometry bounds are distinct from approved hardware envelopes.
 
-```bash
-uv run --no-sync python tools/prepare_three_leg_ik.py \
-  --plan configs/relic-three-leg-front-left-ik.json \
-  --manifest policies/relic-exploy-standing/manifest.json \
-  --capture fixtures/standing-capture --output runs/front-left-ik-plan-NEW
-MUJOCO_GL=egl uv run --no-sync python tools/render_relic_demo.py \
-  --run runs/front-left-ik-plan-NEW --output runs/front-left-ik-video-NEW --fps 50
-```
+## Evidence and failures
 
-The artifact is a kinematic
-plan: body and other legs held fixed, no actor execution, contact solver, `mj_step`
-or robot connection. Video labels preserve this distinction. It illustrates foot
-workspace and joint movement, NOT successful RL balance or physical clearance.
-Visuals use the full restored model meshes. The cyan marker is the desired foot
-center. `ik-plan.png/pdf`, video, trajectory, model/source/input hashes and completion
-records support review without a physical rollout.
+Original kinematic previews had no actor or physics. The first guarded dynamics
+return stopped32s on90.98Nm flHX demand; the operator-approved2s return blend fixed
+that simulator handoff. One subsequent physical attempt stopped5s at entry on
+46.42Nm FRHX demand against44.88Nm; rejected command was not sent. Shutdown/OFF and
+lease return confirmed5.017s; no fault/physical lift or retry claimed. See
+records/relic-three-leg-hardware-20261012.
 
-## Offline dynamics entry point when separately requested
+Smooth dual-actor entry blends (foot held, overlapping lift, slower4s transfer)
+and a support lean still crossed the body angular-speed cap in recorded-pose
+simulations. These failed experiments are preserved; they are NOT enabled in the
+live contract. Analysis exposed~0.35rad knee target changes per20ms inside their
+feedback loops. The final single-actor bounded-command method passed guarded60s
+MuJoCo runs from BOTH the recorded physical pre-entry joint pose and the earlier
+standing capture. Full lift/square/return/final-standing and clearance checks passed.
+Max post-entry target step0.02rad; body angular peaks0.878/0.918rad/s below1rad/s.
+IK tracking p95~1.92/1.91cm. Independent native observation/raw-action parity passed;
+live adapter matched all3,001 recorded physical-pose-case predictions exactly.
 
-Use a standing baseline and a SIMULATION-scoped envelope. A walking manifest is
-rejected. The same `--three-leg-plan configs/relic-three-leg-front-left-ik.json`
-argument works with `tools/simulate_relic.py` in MuJoCo or IsaacLab. Require a duration
-covering the46second sequence; the existing60second protocol retains the final
-standing window. Do not route this adapter to the live CLI or pretend the old
-Exploy graph accepts selected-leg commands. The prior joint-pose three-leg runs
-stopped at mode activation in both simulators; this new IK sequence does not fix
-or qualify that transition by construction. Do not claim stability without a run.
+Recorded-pose simulation root placement0.442334m is URDF stancefoot ground alignment,
+not a measured physical floor height. Original torso-height request0.518528m was
+retained independently; simulator starts withzero velocities/history. MuJoCo results
+are not Isaac/hardware qualification; nominal5ms wall-clock misses remain in logs.
+See records/relic-three-leg-entry-20261012 for source commits, protocol and results.
 
-Record Cartesian target/measured foot coordinates, IK residual/tracking errors,
-all joint targets/measurements/torques, previous raw-action acknowledgements,
-height/tilt and contact data. Existing clearance geometry is a proxy only, not
-proof the three support feet carry load. Return-to-four-feet, IK tracking and final
-standing must pass separately. Physics/collision/support-force review and a new
-selected-leg Exploy export/live contract/stop review are still needed before a
-physical demonstration. The current payload COM INFO warning also needs an
-explicit live fault-policy review; it has not been silently cleared or ignored.
+## Reproduction and deployment review
 
-## Selected-leg graph under preparation (2026-10-12)
+`tools/export_relic_selected_leg.py` builds the ten-input graph from the pinned
+native Exploy observation subgraph and unchanged ONNX actor. Original nine-input
+standing graph remains unchanged. Package a distinct schema4 relic-exploy-leg /
+task=three-leg-demo candidate with `tools/prepare_selected_leg_candidate.py`.
 
-`tools/export_relic_selected_leg.py` composes the pinned Exploy native observation
-subgraph with the unchanged released ONNX actor and a new `leg_command` input.
-The graph uses `relic-exploy-leg-v1`, 12 SDK-order leg commands, SDK-order19targets,
-and a front-left override only. A zero command means four-foot mode. The original
-standing graph is unchanged. `tools/simulate_relic.py --three-leg-graph PATH`
-can rehearse this graph offline with `--three-leg-plan`; it is not a live adapter.
-Adam approved one guarded dynamics rehearsal before physical deployment review.
-See records/relic-three-leg-live-prep-20261012. Live support must not be activated
-or inferred from structural/numeric parity alone.
+`tools/simulate_relic.py --three-leg-plan configs/relic-three-leg-front-left-ik.json
+--three-leg-graph PATH` rehearses the new graph offline using a standing baseline
+and simulation envelope. `--initial-root-height-m` changes only simulated placement,
+not the torso-height input. `tools/verify_selected_leg_adapter.py` compares a live
+adapter against an existing recording without physics/robot IO. The separate live
+adapter never dispatches the simulation wrapper.
 
-The separately explicit robot-profile `fault_policy=known-payload-info-observe`
-with `fault_policy_reason` permits only system `payload.fault` code9 severity1.
-Original counts/details/messages remain recorded; all other faults or incomplete
-fault detail counts still block. This does not clear or acknowledge firmware faults.
+CLI `three-leg` requires complete bound three_leg_sequence/three_leg_clearance
+review, exact plan duration+1s, current motors-off preflight, two named operators,
+rig/foot/arm clearance, functioning tablet and NEW exact physical approval. The
+previous physical authorization is consumed; changed source/profile invalidate its
+old evidence even though nominal duration is again47s. No physical rerun is part
+of this fix. Known system payload.fault code9 severity1 INFO may be observation-only
+only with explicit robot-profile policy/reason; preserve raw faults/messages, block
+all other faults or incomplete counts, and never clear faults automatically.
 
-## Guarded rehearsal and live preparation
+The newly requested smoothed physical trial (October12) verified commanded target
+steps<=0.02rad and rates<=1rad/s on hardware, including a~0.000016rad initial mode
+step. It stopped~5.34s on body angular speed1.0047rad/s above1rad/s, shortly after
+lift began; no completedthreeleg/IKsquare is claimed. Shutdown/OFF/lease confirmed
+5.015s; passivepostcheck faultfree. No retry/limit change. This approval is consumed.
+See records/relic-three-leg-smoothed-hardware-20261012 and compact recording.
 
-The original handoff stopped at32s: fl_hx target1.721rad against actual0.205rad
-requested90.98Nm, exceeding44.88Nm. Lift/hold/IK tracking passed; no complete
-return was demonstrated. Adam approved a2s quintic return OUTPUT blend from the
-last selected-leg IK pose to the current actor target, while the native leg
-command switches to zero. Weights, gains, raw ACK history and startup are unchanged.
-The updated plan is46s (plus1s live margin). A newly approved60s guarded MuJoCo
-rehearsal completed the entire sequence and passed final standing/IK/clearance
-checks. See records/relic-three-leg-live-prep-20261012. This is one simulator result,
-not hardware qualification or Isaac verification. Recorded wall-clock outliers
-remain; the same computation/command deadlines still stop physical execution.
+The subsequent one-trial review increased only measured body angular speed to
+2 rad/s, with no offline tests. The recorded attempt stopped at 5.485 s during
+lift on pitch 0.179495 rad (10.284 degrees) above the retained 10-degree attitude
+cap; angular speed was 1.061006 rad/s. Target steps/rates remained <=0.02 rad /
+1 rad/s. Motors OFF and lease return confirmed in 5.015 s; fault-free passive
+postcheck passed. No full sequence or hardware qualification; approval consumed,
+no retry. See records/relic-three-leg-angular2-hardware-20261012.
 
-Schema4 `relic-exploy-leg`, task `three-leg-demo`, is a distinct live contract.
-It verifies the pinned base graph input joint order separately from SDK-order
-outputs. `three-leg` requires the full46s sequence plus1s margin, bound additional
-`three_leg_sequence` and `three_leg_clearance` evidence, fresh preflight, two named
-operators and explicit execution. `stand`/`walk` reject this task. The live adapter
-matched all3,001 retained rehearsal predictions exactly. It is a separate adapter;
-the simulation wrapper is never dispatched to hardware. Initialization and
-ACK-owned action history remain zero/unchanged. Demo telemetry retains Cartesian
-IK targets, actual foot coordinates, tracking errors and phase/leg commands.
+Saved-data analysis of the cap2 trial identifies a load-transfer mismatch: FL knee
+PD estimate falls21.42to7.29Nm as its virtual target approaches the initial measured
+IK pose, while all-leg limiting leaves other-leg target gaps up to1.022rad. Model
+COM tripod margin starts-4.5cm versus-0.9cm in the previous successful simulation;
+only simulation shifts inside in the first0.4s. Foot forces/harness loads are not
+recorded, so this is a leading mechanism, not uniquely established causality.
+See records/relic-three-leg-tip-analysis-20261013 for reproducible saved-data analysis.
+No controller or guard change, new simulation, or physical motion was made.
 
-Package with `tools/prepare_selected_leg_candidate.py`; frozen preparation uses
-`prepare-deployment`. Selected-leg candidates are deployment review inputs until
-robot, rig/workspace, tablet and final exact one-trial approval are current.
+## Unfiltered commissioning draft (October 13)
 
-The ONE approved physical commissioning attempt (October12) stopped at the first
-mode-entry prediction around5s. FRHX requested46.42Nm above44.88Nm; the rejected
-command was not transmitted, so no physical leg lift/IK square was demonstrated.
-Same-state offline replay with zero leg command requests10.17Nm, identifying the
-mode-entry jump. This is distinct from the simulator's fixed return transient.
-Shutdown confirmed OFF/lease return in5.017s; passive postcheck faultfree. Recording
-is preserved and no retry occurred. See records/relic-three-leg-hardware-20261012.
-The physical approval is consumed; further motion requires a new exact approval.
+`configs/relic-three-leg-front-left-ik-unfiltered.json` preserves the 46-second
+sequence but sets `target_slew_rad_s=null`. The live adapter returns the native
+actor/IK/return-blend proposals without the demo target-rate filter. Weights,
+gains, raw ACK-owned action history, six-second IK lift/lower and two-second
+return blend are unchanged. The historical smoothed configuration is retained.
+
+The corresponding explicit hardware draft uses `command_rate_guard=observe`
+with an operator reason. This stops neither on nor filters virtual target rates;
+it records `command_rate_mode` and crossing `command_rate_observation` events,
+also preserved in lightweight recordings. `command_rate_max` is then only a
+reference for those observations. Default enforcement remains unchanged for
+all existing profiles; observation mode is restricted to the selected-leg demo.
+Measured speed, torque, finite virtual targets, attitude, scheduling/ACK/expiry
+and tablet stop remain enforced. The IK trajectory feasibility speed check is
+retained; it does not clip the actor's corrective targets.
+
+The new profile can emit abrupt virtual target changes at mode entry. Removal
+of smoothing does not establish weight transfer or fix the measured support
+margin. Prior guarded dynamics and adapter evidence for the smoothed profile
+must not be relabeled as proof for this candidate. Preparation and software
+checks do not authorize physical motion; require a fresh motors-off preflight,
+exact bound review and human confirmation immediately before any new trial.
+
+The requested unfiltered video rehearsal (October13) ran once from the latest
+recorded settled hardware joint pose with zero simulated velocity/history and
+model-derived root placement0.447903m. It stopped5.02s at lift entry on predicted
+FR HX49.921Nm above44.88Nm. The100fps/502frame video preserves this partial failure;
+no full tripod/IK completion or hardware qualification. See
+records/relic-three-leg-unfiltered-video-20261013. No physical access/retry.
+
+The subsequent user-requested native recovery diagnostic used --no-guards once,
+retaining actuator saturation and all integrity checks. The full47s sequence passed
+with no fall, complete IK/return and stable final standing. FR HX49.921Nm demand
+saturated at45Nm for one5ms interval; FR knee speed-dependent torque clipping
+lasted20ms. Max pitch4.350degrees, angular1.537rad/s,
+IK square p951.901cm. Three supporting feet stayed loaded throughout hold/IK.
+See records/relic-three-leg-native-recovery-20261013 and its100fps video. This is
+simulation evidence only; hardware guards/approval remain unchanged.
+
+### Ideal unlimited-torque diagnostic
+
+`tools/simulate_relic.py --no-guards --no-actuator-torque-limits --backend mujoco`
+explicitly disables hip/arm effort clipping and both knee position-dependent and
+speed-dependent torque clipping. It retains finite-value checks, native action
+history, contact physics and model joint constraints. Ordinary `--no-guards`
+continues to retain actuator saturation. Isaac Lab rejects the new option.
+Configuration, model metadata, video and plots label the ideal unlimited-torque
+mode. This is a diagnostic of unconstrained PD dynamics, not hardware capability.
+The 47-second sequence, seed 101, recorded standing pose, zero initial velocities,
+unchanged actor/gains and two-second return blend provide the paired comparison
+with `records/relic-three-leg-native-recovery-20261013`.
+
+The [unlimited-torque result](../records/relic-three-leg-unlimited-torque-20261013/README.md)
+completed 47 s and recovered with unchanged weights/gains, no fall, loaded support
+feet and stable final standing. Peak requested knee torque was 75.85 N·m; peak
+applied hip torque was 49.92 N·m. These cross the proposed requested/measured
+hardware bounds; this ideal-actuator diagnostic does not qualify a physical trial.
+
+[Physical-limit persistence](PHYSICAL_LIMIT_PERSISTENCE.md) now supports a reviewed
+500 ms continuous window with 75 N·m requested torque. Unlimited actuator torque
+is independent of `--no-guards`, allowing an enforced persistence rehearsal.

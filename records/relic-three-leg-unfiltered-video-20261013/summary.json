@@ -1,0 +1,26 @@
+{
+  "source_commit": "a5fad50cfc91be5f39dc5436dc71670c16c868b2",
+  "backend": "mujoco",
+  "seed": 101,
+  "requested_duration_s": 47,
+  "recorded_trial_duration_s": 5.0200000000000005,
+  "reason": "guard_stop",
+  "failure": "predicted PD-plus-feedforward load limit",
+  "guard_detail": {
+    "joint": "fr_hx",
+    "estimated_PD_torque_Nm": 49.92131480388343,
+    "limit_Nm": 44.88
+  },
+  "target_filter": null,
+  "command_rate_guard": "observe",
+  "stable_final_window": false,
+  "max_observation_error": 1.862645149230957e-09,
+  "max_raw_action_error": 7.152557373046875e-07,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "video_fps": 100,
+  "video_frames": 502,
+  "video_sha256": "a491a0833f54465c70a928c4cf88e22cae28baea58ea88f82327f2633b13adc7",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "automatic_retry": false
+}

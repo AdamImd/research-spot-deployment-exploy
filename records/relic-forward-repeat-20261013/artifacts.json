@@ -1,0 +1,9 @@
+{
+  "local/relic-forward-repeat-20261013-001/final-approval.json": "2a6895a1f5f34dffcce98c1c0573627c51c0edcc9134cd59b298132653a2b108",
+  "local/relic-forward-repeat-20261013-001/hardware-contract.json": "0bd5b639932c6d1d130a7b0dda5e0d6cac63374b1d3eddb5132a5e1898e6bfdd",
+  "runs/relic-forward-repeat-hardware-20261013-001/compact/COMPLETE.json": "0d5bf69c1a72b8d808ddb564f4f790e26c3862d6a53d46022d41fb895dfe81f4",
+  "runs/relic-forward-repeat-hardware-20261013-001/postcheck/COMPLETE.json": "222e16f397b1f0bbf74a20a9f2d792719b91a925b65de489170630b687386fae",
+  "runs/relic-forward-repeat-hardware-20261013-001/trial/COMPLETE.json": "ad2fe419a33679ee4f23424e38c7a2e816da6cad74e7202f6f4f0316f858d505",
+  "runs/relic-forward-repeat-hardware-20261013-001/trial/events.jsonl": "0bdd6255dcbbd7962e3cf2389a7251a81329946312ac0655c036268677e307dd",
+  "runs/relic-forward-repeat-hardware-20261013-001/trial/result.json": "0204769d643e6bcbe11cc44a214ec726c674e4916a1a51c27ea25b125ba76d73"
+}

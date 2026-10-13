@@ -28,11 +28,35 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   at zero; do not pretend it supports a selected lifted leg or dispatch the offline
   adapter to hardware. The new schema4 relic-exploy-leg / task=three-leg-demo uses
   an explicit ten-input graph and separate live adapter. CLI three-leg requires
-  complete bound three_leg_sequence / three_leg_clearance evidence, exact47s
-  duration for the46s plan, tablet stop, two operators and new one-trial approval.
-  Its two-second return OUTPUT blend is distinct from startup; do not alter weights,
-  gains or raw ACK history. MuJoCo60s passed after preserving the original32s
+  complete bound three_leg_sequence / three_leg_clearance evidence, exact plan.duration_s+1
+  duration (currently47s for46s withtarget-rate limit), tablet stop, two operators and new one-trial approval.
+  The smoothed profile uses one native actor and target_slew_rad_s=1 for all12leg
+  targets afterinitialfour-foot phase through finalhold. First exact entry
+  incrementzero, laterincrements<=.02rad/50Hztick, no catch-up. Preserve native
+  raw ACKed history and weights/gains. Raw proposals and limitedcommands differ
+  and must both be recorded. Two-second return output blend remains. Failed
+  dualactor/supportlean experiments are offline-only, not enabled inlivecontract.
+  Current plan46s/live47s; previous physical approval is consumed. Two60s guarded
+  MuJoCo runs passed, fromrecordedphysicalpose andearlierbaseline. A smoothed
+  hardwaretrialverified targetlimiting, butstopped5.34s on1.0047rad/s bodyangular
+  speed against1rad/s; OFF/lease returnconfirmed. No fulltripod qualification;
+  Latest cap2rad/s physical attempt stopped5.485s onpitch10.284degrees
+  against10degrees; OFF/lease returnconfirmed5.015s. No tests/retries forcapchange;
+  latest physicalapprovalconsumed. See records/relic-three-leg-angular2-hardware-20261012
+  and records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
   torque stop; other simulator/hardware qualification remains separate.
+  The new configs/relic-three-leg-front-left-ik-unfiltered.json draft sets
+  target_slew_rad_s=null. Live adapter accepts that explicit unfiltered profile;
+  command_rate_guard=observe with a reason disables the target-slew stop only for
+  selected-leg commissioning and records crossings. Default remains enforce.
+  Existing smoothed dynamics evidence does not qualify this new profile.
+  A subsequent47s unfiltered --no-guards MuJoCo diagnostic completed the full
+  sequence and stable final standing without a fall; FR HX saturated45Nm for5ms.
+  See records/relic-three-leg-native-recovery-20261013. This is simulation-only
+  evidence and does not qualify firmware saturation or authorize physical motion.
+  Retain measured speed, torque, attitude, timing and tablet stop checks. No
+  physical activation is authorized by preparing this candidate; fresh exact
+  one-trial approval and operator/setup confirmation are required before execution.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
 
@@ -81,3 +105,85 @@ When available, delegate execution to `long_run_executor_luna` with exact comman
 commit, resources, success/stop criteria and no automatic retry. Otherwise use a
 local persistent process and durable logs. No paid compute is authorized by this
 file. No external messaging or automatic physical activation is authorized.
+
+## Torque diagnostics and requested-demand draft (2026-10-13)
+
+MuJoCo's explicit `--no-actuator-torque-limits` removes
+all actuator clipping while retaining contact physics/integrity. Default simulated
+actuators are unchanged. Unlimited dynamics are not hardware evidence.
+`leg_requested_torque_max` plus an operator reason separately caps the predicted
+12-leg PD-plus-feedforward demand; Adam selected 75 N·m for a hardware draft.
+Measured manufacturer, arm/coupling, feedforward and knee-table-domain checks stay
+unchanged. No new physical approval; rebind source and preflight before review.
+The paired unlimited-torque47s diagnostic completed/recovered; see
+records/relic-three-leg-unlimited-torque-20261013. Requested knee peak75.85Nm
+exceeds the new75Nm draft, and measured hip torque/speed also cross retained
+bounds. No physical approval or hardware qualification. Video and precision-aware
+analysis were repaired from saved data without rerunning dynamics.
+
+## Physical-limit persistence draft (2026-10-13)
+
+Adam selected physical_limit_persistence_s=0.5 for all physical operating limits:
+continuous per-limit/per-joint violation must be strictly longer than500ms.
+Recovery resets that timer; impulses do not accumulate. Default0 remains immediate.
+See docs/PHYSICAL_LIMIT_PERSISTENCE.md for scope, endpoint knee-table checking,
+recorded events and immediate checks. ReLIC enables the window at activation;
+startup/handover qualification, data/transport, health/tablet and trial deadlines
+stay immediate. Unlimited MuJoCo actuators can now run with persistence guards
+enforced; --no-guards remains a separate explicit operating-stop diagnostic.
+No physical approval; keep historical evidence and rebind before exact approval.
+Validation is recorded in records/physical-limit-persistence-20261013:521fulltests
+passed, saved47s500ms audit passed, and one60s guarded unlimited-actuator simulation
+completed/no fall/stable. Three physical episodes recovered5/10/15ms (five timer
+entries due redundant torque checks). Recorded119ms core outlier would violate
+unchanged live10ms computation gate; no live timing qualification or physicalapproval.
+Current draft: local/relic-three-leg-persistence500-preparation-20261013-001.
+
+The subsequent operator-selected latency draft includes communication/stale data:
+500ms computation, gap, ACK and health budgets;505ms TTL/state/policy age for one
+command-tick margin. See records/relic-three-leg-latency500-20261013. This changes
+host timing thresholds only; the119ms outlier is retained, not a timing pass.
+Nominal50/200Hz rates and all other physical settings remain. Final exact approval
+must disclose that the last target may remain valid for about half a second.
+No physical approval is supplied by this draft or its motors-off preflight.
+
+The subsequently approved ONE latency500 hardware attempt is consumed:
+records/relic-three-leg-latency500-hardware-20261013. Native stand completed;
+two preparation commands, zero policy predictions, then command stream ended
+unexpectedly. Stream response status was discarded, so server cause is unknown.
+OFF/lease return confirmed5.017s; fault-free motors-off postcheck passed.
+No retry. Next diagnosis should preserve stream response status; do not infer
+a confirmed expiry rejection or claim three-leg success.
+
+The separately approved repeat added protocol-status reporting (no offline tests)
+and now confirms STATUS_TOO_DISTANT(5) for505ms expiry; no policy predictions.
+See records/relic-three-leg-latency500-repeat-20261013. Exact firmware ceiling is
+unknown. Native OFF/lease return confirmed6.019s, fault-free postcheck. Repeat
+approval consumed; do not run this505ms expiry configuration again unchanged.
+
+The next draft follows the official firmware-matched SDK5.0.1 example:50ms TTL,
+45ms command-gap/ACK limits. See records/relic-three-leg-expiry50-20261013.
+This fixes end-time rejection only;500ms compute/stall tolerance is not achieved
+with the synchronous producer and50ms firmware expiry. No offline tests requested;
+new exact physical approval remains required before the proposed repeat.
+
+The50ms expiry trial reached lifting with290policy predictions, then stopped on
+"joint control no longer processing" at~5.8s; no saved specific feedback cause.
+Three physical episodes recovered5/5/15ms, none triggered500ms stop. Native OFF/
+lease return7.021s and fault-free postcheck confirmed. Adam requested an unchanged
+repeat, saying "We jumped the gun"; no source/envelope change or offline tests.
+Record: records/relic-three-leg-expiry50-20261013. Previous approval consumed.
+
+The separately approved unchanged repeat completed the47s schedule:2350policy
+samples,9397commands, full lift/hold/IK/lower/handover/final-fourfeet phases.
+Seven timer crossings all recovered (max30ms); no stop. OFF/lease return6.015s
+and fault-free postcheck confirmed. See records/relic-three-leg-expiry50-repeat-20261013.
+One completed commissioning attempt, not blanket hardware/contact-load or IK
+tracking qualification. Approval consumed; no automatic further physical trial.
+
+Latest approved forward repeat walked0.715016m (goal0.75,tolerance0.02), lateral
+0.029140m, then20s timeout before goal-and-settle completion.1000policy samples/
+4001commands. Short proof-of-concept scope accepted; retain raw failed status.
+OFF/lease return7.018s; postcheck passed with known payload.fault9 INFO only.
+No offline tests/retry. Record: records/relic-forward-repeat-20261013. Approval
+consumed; no further physical motion authorized automatically.

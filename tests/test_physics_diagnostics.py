@@ -96,3 +96,71 @@ def test_collision_assets_do_not_alias_visual_meshes_and_match_source_bounds(tmp
         np.testing.assert_allclose(np.max(actual, axis=0), np.max(expected, axis=0), atol=1e-6, rtol=0)
         collision_checks += 1
     assert collision_checks >= 14
+
+
+def test_unlimited_torque_bypasses_all_clipping_but_retains_integrity(tmp_path, monkeypatch):
+    instance = backend(tmp_path, monkeypatch)
+    q = instance.data.qpos[instance.qids].copy()
+    instance.data.qvel[instance.dids] = -20.
+    target = q + 5.
+    requested = instance.kp * 5. + instance.kd * 20.
+    bounded = instance.torque(target)
+    assert np.all(np.abs(bounded) <= np.abs(requested))
+    assert np.all(bounded[instance.knees] != requested[instance.knees])
+    instance.torque_limits = False
+    np.testing.assert_allclose(instance.torque(target), requested, rtol=0, atol=1e-10)
+    assert instance.metadata()['actuator_torque_limits'] is False
+    with pytest.raises(ValueError, match='nineteen finite'):
+        instance.torque(np.full(19, np.nan))
+    instance.data.qvel[instance.dids[0]] = np.inf
+    with pytest.raises(ValueError, match='nonfinite actuator'):
+        instance.torque(target)
+
+
+def test_unlimited_torque_requires_mujoco(tmp_path):
+    extra = ['--no-guards', '--backend', 'isaaclab']
+    import subprocess
+    import sys
+    root = Path(__file__).parents[1]
+    command = [sys.executable, str(root/'tools/simulate_relic.py'),
+               '--simulation-source', str(root/'simulation'), '--capture', str(tmp_path),
+               '--manifest', 'unused', '--envelope', 'unused', '--backend', 'mujoco',
+               '--output', str(tmp_path/'output'), '--no-actuator-torque-limits', *extra]
+    result = subprocess.run(command, capture_output=True, text=True)
+    assert result.returncode == 2
+    assert 'unlimited actuator torque requires MuJoCo' in result.stderr
+    assert not (tmp_path/'output').exists()
+
+
+@pytest.mark.parametrize('limited', [True, False])
+def test_dynamics_plot_labels_both_actuator_modes(tmp_path, limited):
+    import runpy
+    from spot_deploy.contracts import JOINTS
+    root = Path(__file__).parents[1]
+    plots = runpy.run_path(str(root/'tools/render_relic_demo.py'))['plots']
+    rows = [dict(trial_time=t, q=[0.]*19, dq=[0.]*19, positions=[0.]*19,
+                 height=.5, tilt=0., feet=[[0., 0., .036]]*4, pd_torque_Nm=[0.]*19)
+            for t in [0., .005]]
+    config = dict(backend='mujoco', simulation_joint_names=list(JOINTS),
+                  envelope={'velocity_max': [1.]*19}, actuator_torque_limits=limited)
+    plots(rows, config, {'reason': 'completed'}, tmp_path)
+    assert (tmp_path/'dynamics.png').stat().st_size > 1000
+    assert (tmp_path/'dynamics.pdf').stat().st_size > 1000
+
+
+def test_torque_analysis_accounts_for_float32_state_without_hiding_clipping():
+    import runpy
+    root = Path(__file__).parents[1]
+    bound_fn = runpy.run_path(str(root/'records/relic-three-leg-native-recovery-20261013/analyze.py'))['pd_roundoff_bound']
+    rng = np.random.default_rng(101)
+    q, dq = rng.uniform(-3., 3., (2, 1000, 19))
+    logged_q, logged_dq = q.astype(np.float32), dq.astype(np.float32)
+    kp, kd = np.full(19, 120.), np.full(19, 5.)
+    target = np.zeros(19)
+    demand = kp*(target-logged_q)-kd*logged_dq
+    applied = kp*(target-q)-kd*dq
+    bound = bound_fn(logged_q, logged_dq, kp, kd)
+    assert np.all(np.abs(demand-applied) <= bound+1e-12)
+    assert not np.any(np.abs(demand-applied) > bound+1e-5)
+    applied[0, 0] = demand[0, 0]-.01
+    assert np.abs(demand[0, 0]-applied[0, 0]) > bound[0, 0]+1e-5

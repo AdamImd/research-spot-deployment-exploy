@@ -7,6 +7,7 @@ from pydantic import Field, model_validator
 
 from .contracts import ContractError, StrictModel
 from .policy import rotation
+from .physical_limits import PhysicalLimits
 
 
 class WalkingPlan(StrictModel):
@@ -35,8 +36,9 @@ class WalkingPlan(StrictModel):
 
 
 class ForwardTravel:
-    def __init__(self, plan, record):
+    def __init__(self, plan, record, *, physical_limits=None):
         self.plan, self.record = plan, record
+        self.physical_limits = physical_limits or PhysicalLimits(event=record.event)
         self.origin = self.started_at = self.last_at = self.last_pose_time = None
         self.last_position = None
         self.settled_at = None
@@ -53,6 +55,9 @@ class ForwardTravel:
 
     def _desired_speed(self, remaining):
         return min(self.plan.max_speed_m_s, max(0., remaining) * .8)
+
+    def _physical_check(self, violations, now, message):
+        self.physical_limits.check(violations, now, message)
 
     def pose(self, state):
         p, stamp = state.body_position_odom, state.body_pose_robot_time_s
@@ -99,11 +104,11 @@ class ForwardTravel:
         x, y = self.axes @ (p[:2] - self.origin[:2])
         heading = math.atan2(math.sin(yaw - self.yaw), math.cos(yaw - self.yaw))
         remaining = self.plan.distance_m - x
-        self._operating_check(abs(y) <= self.plan.max_lateral_m
-                              and abs(heading) <= self.plan.max_heading_rad,
+        self._physical_check([abs(y) > self.plan.max_lateral_m,
+                              abs(heading) > self.plan.max_heading_rad], now,
                               'walking lateral or heading deviation limit')
-        self._operating_check(-self.plan.tolerance_m <= x
-                              <= self.plan.distance_m + self.plan.tolerance_m,
+        self._physical_check([x < -self.plan.tolerance_m,
+                              x > self.plan.distance_m + self.plan.tolerance_m], now,
                               'walking backwards or overshoot limit')
         elapsed, dt = now - self.started_at, now - self.last_at
         old_phase = self.phase
@@ -112,7 +117,7 @@ class ForwardTravel:
                               'walking distance timeout')
         if self.completed:
             desired = 0.
-            self._operating_check(abs(remaining) <= self.plan.tolerance_m,
+            self._physical_check(abs(remaining) > self.plan.tolerance_m, now,
                                   'walking final position drift')
         elif elapsed < self.plan.initial_hold_s:
             desired = 0.

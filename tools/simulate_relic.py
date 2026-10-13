@@ -20,7 +20,7 @@ from spot_deploy.records import atomic_json, runtime_packages, verify_run
 from spot_deploy.relic_contract import load_manifest, make_policy
 from spot_deploy.relic_policy import ROOT_COM_B
 from spot_deploy.relic_rollout import ReLICRollout
-from spot_deploy.simulation_demo import ThreeLegPlan, SimulationThreeLegPolicy, demo_metrics
+from spot_deploy.simulation_demo import ThreeLegPlan, SimulationThreeLegPolicy, demo_metrics, DemoTargetSlew
 
 
 class Log:
@@ -59,6 +59,9 @@ def sdk_state(backend, t, key):
 
 
 def run(args):
+    unlimited = getattr(args, 'no_actuator_torque_limits', False)
+    if unlimited and args.backend != 'mujoco':
+        raise ValueError('unlimited actuator torque requires MuJoCo')
     if not verify_run(args.capture):
         raise ValueError("capture failed integrity verification")
     sys.path[:0] = [str(args.simulation_source), str(args.simulation_source / "tools")]
@@ -106,7 +109,7 @@ def run(args):
         if args.backend == "mujoco":
             from spot_relic_sim.mujoco_backend import MujocoBackend
             backend = MujocoBackend(Contract.load(args.simulation_source / "configs/articulation.json"),
-                                    args.output / "model", scenario)
+                                    args.output / "model", scenario, torque_limits=not unlimited)
             backend.model.opt.noslip_iterations = args.mujoco_noslip_iterations
             backend.model.opt.timestep = dt / args.mujoco_substeps
         else:
@@ -114,7 +117,9 @@ def run(args):
             backend = IsaacBackend(args.output / "model", scenario,
                                    device=args.physics_device, headless=True,
                                    diagnostics=args.physics_diagnostics)
-        initialize_captured(backend, initial, height["height_m"] + args.initial_height_offset,
+        root_height = (height['height_m'] if args.initial_root_height_m is None
+                       else args.initial_root_height_m)
+        initialize_captured(backend, initial, root_height + args.initial_height_offset,
                             nominal_arm=False)
         if args.physics_diagnostics:
             from spot_relic_sim.physics_diagnostics import model_snapshot
@@ -140,6 +145,7 @@ def run(args):
         core.activate(10.)
         inverse = [JOINTS.index(n.replace("arm_", "arm0_")) for n in backend.contract.names]
         reference_policy = Policy()
+        reference_slew = DemoTargetSlew()
         ref_command = SimCommand(arm=np.asarray(manifest.arm_stowed_positions, dtype=np.float32),
                                 torso=np.array([0., 0., policy.body_height], dtype=np.float32))
         rows, reason, failure = [], "completed", None
@@ -155,6 +161,8 @@ def run(args):
                       mujoco_noslip_iterations=args.mujoco_noslip_iterations,
                       mujoco_substeps=args.mujoco_substeps,
                       initial_root_height_offset_m=args.initial_height_offset,
+                      initial_root_height_m=root_height,
+                      torso_height_request_m=height['height_m'],
                       physics_diagnostics=args.physics_diagnostics,
                       simulation_forward_speed_m_s=args.simulation_forward_speed,
                       simulation_speed_profile=args.simulation_speed_profile,
@@ -172,7 +180,9 @@ def run(args):
                                         if demo else 'bound deployment adapter'),
                       baseline_manifest_used_for_numeric_guards_only=bool(demo),
                       stock_stand_simulated=False, acknowledgements="ideal, one command tick later",
-                      physics_actuators="released simulated effort saturation; hardware equivalence unverified")
+                      actuator_torque_limits=not unlimited,
+                      physics_actuators=("unlimited ideal PD torque; simulation only" if unlimited else
+                                         "released simulated effort saturation; hardware equivalence unverified"))
         atomic_json(args.output / "configuration.json", config)
         atomic_json(args.output / "run.json", {"mode": "relic-simulation", "hardware_access": False})
         atomic_json(args.output / "source.json", {
@@ -212,22 +222,38 @@ def run(args):
                 if core.policy_samples != count:
                     recorded = log.last_policy
                     ref_command.velocity = np.asarray(recorded['velocity_command'], dtype=np.float32)
+                    ref_command.torso = np.asarray(recorded['observations'][31:34],dtype=np.float32)
                     if demo:
                         ref_command.leg = demo.sequence.leg
                         ref_command.leg_pose = demo.sequence.pose.copy()
                         recorded['leg_command'] = demo.command.tolist()
                         log.event('demo_prediction',simulation_time_s=t,
                                   phase=demo.sequence.phase,leg_command=demo.command.tolist(),
+                                  proposed_targets=demo.proposed_targets.tolist(),
+                                  target_slew_rad_s=demo.sequence.plan.target_slew_rad_s,
                                   targets=recorded['targets'], raw_actions=recorded['raw_actions'],
                                   state=state.model_dump(), **demo.kinematic_record(state))
                     obs = backend.contract.observation(sim, ref_command,
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
                     target = backend.contract.targets(action, ref_command)
+                    if demo and demo.sequence.phase == 'three-leg-handover':
+                        from spot_deploy.simulation_demo import mix_entry
+                        four_command = SimCommand(arm=ref_command.arm,torso=ref_command.torso,
+                                                  velocity=ref_command.velocity)
+                        four_obs = backend.contract.observation(sim,four_command,
+                            np.asarray(recorded['observations'][-12:]))
+                        four_raw = reference_policy(four_obs)
+                        four_target = backend.contract.targets(four_raw,four_command)
+                        target, action = mix_entry(demo.sequence,four_target,four_raw,target,action)
                     if demo and demo.sequence.phase == 'four-foot-handover':
                         sdk_target = np.empty(19)
                         sdk_target[inverse] = target
                         target = demo.return_blend(sdk_target)[inverse]
+                    if demo:
+                        sdk_target = np.empty(19)
+                        sdk_target[inverse] = target
+                        target = reference_slew.apply(demo.sequence,sdk_target)[inverse]
                     max_obs_error = max(max_obs_error,
                                         float(np.max(np.abs(obs - recorded["observations"]))))
                     max_action_error = max(max_action_error,
@@ -267,7 +293,12 @@ def run(args):
                     first_fall_s = t
                     log.event('first_fall_proxy', simulation_time_s=t,
                               height_m=row['height'], tilt_rad=row['tilt'])
-                terminal = fall and not unguarded
+                terminal = False
+                if not unguarded:
+                    try:
+                        core.guard.physical_limits.check(fall, 10+t, 'simulation fall proxy')
+                    except ContractError:
+                        terminal = True
                 if terminal:
                     reason = "fall"
                 # Equivalent PD+feedforward before the same simulated saturation;
@@ -367,6 +398,8 @@ def main():
                         help='Hold one 200 Hz PD torque across finer physics steps (diagnostic only)')
     parser.add_argument('--initial-height-offset', type=float, choices=[0., 2.], default=0.,
                         help='Two-metre air probe: retain original torso-height request and initial targets')
+    parser.add_argument('--initial-root-height-m', type=float,
+                        help='Explicit model-estimated placement height; retain captured torso-height request')
     parser.add_argument('--simulation-forward-speed', type=float,
                         help='Offline-only forward request override in (0,1] m/s; manifest unchanged')
     parser.add_argument('--simulation-speed-profile', choices=['taper', 'constant'], default='taper',
@@ -374,8 +407,15 @@ def main():
     parser.add_argument('--no-guards', action='store_true',
                         help='Simulation-only diagnostic: disable operating stops, continue after falls; '
                              'retain physical saturation and integrity checks. Never qualifies hardware.')
+    parser.add_argument('--no-actuator-torque-limits', action='store_true',
+                        help='MuJoCo diagnostic: disable ALL actuator effort and knee '
+                             'position/speed torque clipping; retain finite checks and contact physics.')
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
+    if args.no_actuator_torque_limits and args.backend != 'mujoco':
+        parser.error('unlimited actuator torque requires MuJoCo')
+    if args.initial_root_height_m is not None and not .25 <= args.initial_root_height_m <= .8:
+        parser.error('initial root height must be in[.25,.8]m')
     if args.backend == "mujoco" and args.physics_device != "cpu":
         parser.error("this MuJoCo backend uses CPU physics")
     if args.policy_device == "cuda":

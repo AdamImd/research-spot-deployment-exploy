@@ -1,0 +1,11 @@
+{
+  "command_entry_jump_rad": 0.0,
+  "fr_hx_requested_pd_Nm": 10.170494054909796,
+  "original_rejected_fr_hx_Nm": 46.42310637747869,
+  "native_raw_output_preserved": true,
+  "raw_actor_jump_remains": true,
+  "history_input_unchanged": true,
+  "weights_and_gains_unchanged": true,
+  "hardware_access": false,
+  "physics_executed": false
+}

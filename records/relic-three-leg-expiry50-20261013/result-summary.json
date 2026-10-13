@@ -1,0 +1,118 @@
+{
+  "approval_consumed": true,
+  "automatic_retry": false,
+  "failure": {
+    "error": "joint control no longer processing",
+    "error_type": "ContractError"
+  },
+  "full_sequence_completed": false,
+  "hardware_qualified": false,
+  "integrity_verified": true,
+  "issued_commands": 1162,
+  "native_stand_completed": true,
+  "offline_tests_run": false,
+  "phases_observed": [
+    "four-foot-initial",
+    "lifting"
+  ],
+  "physical_limit_events": [
+    {
+      "duration_s": 0.5,
+      "event": "physical_limit_persistence",
+      "monotonic_s": 2318278.152624465,
+      "reason": "Adam requests stops only after a continuous violation longer than500ms for all physical operating limits; transport, data validity, tablet, faults and startup gates stay immediate.",
+      "semantics": "continuous per-limit/per-joint; strict greater-than; reset on recovery",
+      "time": "2026-10-13T18:23:39.606802+00:00"
+    },
+    {
+      "elapsed_s": 0.0,
+      "event": "physical_limit_started",
+      "index": 3,
+      "limit": "measured joint velocity",
+      "monotonic_s": 2318283.222620718,
+      "persistence_s": 0.5,
+      "reason": "measured joint velocity or load limit",
+      "since_s": 2318283.222620718,
+      "time": "2026-10-13T18:23:44.676879+00:00",
+      "value": 12.303450584411621
+    },
+    {
+      "elapsed_s": 0.0050011589191854,
+      "event": "physical_limit_recovered",
+      "index": 3,
+      "limit": "measured joint velocity",
+      "monotonic_s": 2318283.227621877,
+      "persistence_s": 0.5,
+      "reason": "measured joint velocity or load limit",
+      "since_s": 2318283.222620718,
+      "time": "2026-10-13T18:23:44.681873+00:00",
+      "value": 11.433394432067871
+    },
+    {
+      "elapsed_s": 0.0,
+      "event": "physical_limit_started",
+      "index": 1,
+      "limit": "body speed limit",
+      "monotonic_s": 2318283.257621123,
+      "persistence_s": 0.5,
+      "reason": "body speed limit",
+      "since_s": 2318283.257621123,
+      "time": "2026-10-13T18:23:44.711975+00:00",
+      "value": 2.0821716982350837
+    },
+    {
+      "elapsed_s": 0.0,
+      "event": "physical_limit_started",
+      "index": 5,
+      "limit": "measured load: manufacturer joint torque limit",
+      "monotonic_s": 2318283.262620558,
+      "persistence_s": 0.5,
+      "reason": "measured load: manufacturer joint torque limit",
+      "since_s": 2318283.262620558,
+      "time": "2026-10-13T18:23:44.716935+00:00",
+      "value": 107.96233367919922
+    },
+    {
+      "elapsed_s": 0.005004525184631348,
+      "event": "physical_limit_recovered",
+      "index": 5,
+      "limit": "measured load: manufacturer joint torque limit",
+      "monotonic_s": 2318283.267625083,
+      "persistence_s": 0.5,
+      "reason": "measured load: manufacturer joint torque limit",
+      "since_s": 2318283.262620558,
+      "time": "2026-10-13T18:23:44.721948+00:00",
+      "value": 85.75045776367188
+    },
+    {
+      "elapsed_s": 0.01500657107681036,
+      "event": "physical_limit_recovered",
+      "index": 1,
+      "limit": "body speed limit",
+      "monotonic_s": 2318283.272627694,
+      "persistence_s": 0.5,
+      "reason": "body speed limit",
+      "since_s": 2318283.257621123,
+      "time": "2026-10-13T18:23:44.726990+00:00",
+      "value": 1.7271181982129649
+    }
+  ],
+  "policy_acks": 289,
+  "policy_prediction_span_s": 5.78000637376681,
+  "policy_predictions": 290,
+  "postcheck": {
+    "active_fault_count": 0,
+    "motors_off": true,
+    "passed": true,
+    "tablet_stop_ready": true
+  },
+  "requested_duration_s": 47,
+  "shutdown": {
+    "elapsed_s": 7.02144897216931,
+    "errors": [],
+    "lease_returned": true,
+    "motors_off_confirmed": true,
+    "within_shutdown_budget": true
+  },
+  "source_commit": "cc853566f76d949c2f902fc88bbf8c98f3e5e179"
+}

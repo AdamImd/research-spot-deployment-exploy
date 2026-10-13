@@ -167,12 +167,21 @@ class Envelope(StrictModel):
     command_position_max: Vector19 | None = None
     velocity_max: Vector19
     load_max: Vector19
+    # Explicit pre-saturation leg demand cap; never changes measured/arm limits.
+    leg_requested_torque_max: Positive | None = None
+    leg_requested_torque_reason: str | None = None
+    physical_limit_persistence_s: float = Field(default=0., ge=0, le=.5, allow_inf_nan=False)
+    physical_limit_persistence_reason: str | None = None
     actuator_limit_profile: Literal["spot-sdk-5.0.1"] | None = None
     # Omission preserves legacy min(per-joint) behavior. An explicit global
     # backstop does not replace the host's tighter per-joint speed checks.
     sdk_velocity_safety_limit: Positive | None = None
     tracking_error_max: Vector19
     command_rate_max: Vector19
+    # Explicit commissioning option: record target-rate crossings without stopping.
+    # Measured-speed, command gap/expiry and torque checks remain independent.
+    command_rate_guard: Literal["enforce", "observe"] = "enforce"
+    command_rate_reason: str | None = None
     max_roll_rad: Positive
     max_pitch_rad: Positive
     max_linear_speed: Positive
@@ -202,6 +211,23 @@ class Envelope(StrictModel):
 
     @model_validator(mode="after")
     def check(self):
+        if self.physical_limit_persistence_s > 0:
+            if (not self.physical_limit_persistence_reason
+                    or not self.physical_limit_persistence_reason.strip()):
+                raise ValueError('physical limit persistence requires an operator reason')
+        elif self.physical_limit_persistence_reason is not None:
+            raise ValueError('physical limit persistence reason requires a nonzero duration')
+        if self.leg_requested_torque_max is not None:
+            if (not self.actuator_limit_profile or not self.leg_requested_torque_reason
+                    or not self.leg_requested_torque_reason.strip()):
+                raise ValueError('requested leg torque cap requires manufacturer profile and operator reason')
+        elif self.leg_requested_torque_reason is not None:
+            raise ValueError('requested leg torque reason requires an explicit cap')
+        if self.command_rate_guard == "observe":
+            if not self.command_rate_reason or not self.command_rate_reason.strip():
+                raise ValueError("command rate observation requires an operator reason")
+        elif self.command_rate_reason is not None:
+            raise ValueError("command rate reason requires observation mode")
         if self.arm_motion_guard == "observe":
             if not self.arm_motion_reason or not self.arm_motion_reason.strip():
                 raise ValueError("arm observation mode requires an operator reason")

@@ -1,0 +1,265 @@
+{
+  "source_commit": "f719d107f3ed51eaf4b73c9a62e3fbe3867aaf9a",
+  "full_suite_source": "2f582d622d01cd2a09fa86ddb578c6b8cf30e089",
+  "full_suite_passed": 521,
+  "after_audit_fix_targeted_passed": 29,
+  "physical_approval": false,
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "immediate_audit": {
+    "crossings_recovered": 0,
+    "crossings_started": 1,
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "max_recovered_duration_s": 0.0,
+    "new_dynamics": false,
+    "passed": false,
+    "pending_at_end": [
+      {
+        "index": 3,
+        "limit": "measured joint load",
+        "since_s": 15.025
+      }
+    ],
+    "physical_limit_persistence_s": 0.0,
+    "samples_checked": 1005,
+    "source_complete_sha256": "6d7ab2875841bb06cc9519cdeb28d154909de44e87ade3eee59fa64cd94f58ee",
+    "stopped": {
+      "reason": "measured joint velocity or load limit",
+      "time_s": 5.025
+    },
+    "through_time_s": 5.025,
+    "timing": "ideal replay clock and zero inference duration; no live scheduling qualification"
+  },
+  "persistence_audit": {
+    "crossings_recovered": 5,
+    "crossings_started": 5,
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "max_recovered_duration_s": 0.015000000000000568,
+    "new_dynamics": false,
+    "passed": true,
+    "pending_at_end": [],
+    "physical_limit_persistence_s": 0.5,
+    "samples_checked": 9401,
+    "source_complete_sha256": "6d7ab2875841bb06cc9519cdeb28d154909de44e87ade3eee59fa64cd94f58ee",
+    "stopped": null,
+    "through_time_s": 47.0,
+    "timing": "ideal replay clock and zero inference duration; no live scheduling qualification"
+  },
+  "simulation": {
+    "compute_max_s": 0.11936528002843261,
+    "compute_p99_s": 0.001026984304189682,
+    "failure": null,
+    "first_fall_proxy_s": null,
+    "guard_mode": "enforced",
+    "hardware_access": false,
+    "hardware_qualified": false,
+    "late_window_metrics": {
+      "angular_speed_p95_rad_s": 3.0216876405776005e-06,
+      "height_span_m": 4.470348358154297e-07,
+      "joint_speed_p95_rad_s": 1.015031011775136e-05,
+      "linear_speed_p95_m_s": 3.7051285351421687e-06,
+      "max_tilt_deg": 0.8329824970572222,
+      "mean_height_m": 0.4947945317407062,
+      "min_height_m": 0.4947943687438965,
+      "planar_speed_p95_m_s": 3.7007957874945985e-06,
+      "samples": 2001,
+      "span_s": 10.0,
+      "tilt_span_deg": 0.0004699490314086117
+    },
+    "loop_wall_s": 17.038255321793258,
+    "max_observation_error": 5.960464477539063e-08,
+    "max_raw_action_error": 3.814697265625e-06,
+    "max_target_error_rad": 2.384185791015625e-07,
+    "policy_duration_s": 60.0,
+    "policy_samples": 3001,
+    "real_time_factor": 3.5214873158553575,
+    "reason": "completed",
+    "stable_final_window": true,
+    "three_leg_demo": {
+      "clearance_proxy_passed": true,
+      "final_four_feet_near_floor_fraction": 1.0,
+      "geometric_three_leg_fraction": 1.0,
+      "hardware_qualified": false,
+      "hold_samples": 3000,
+      "ik_motion_samples": 2400,
+      "ik_tracking_passed": true,
+      "passed": true,
+      "pose_sequence_finished": true,
+      "support_evidence": "foot clearance geometry only; foot forces/loaded contacts not measured"
+    },
+    "timing": {
+      "core_s": {
+        "max_s": 0.11936559109017253,
+        "over_5ms": 3,
+        "p50_s": 0.0005819937214255333,
+        "p99_s": 0.0010271542705595493
+      },
+      "parity_s": {
+        "max_s": 0.0005556130781769753,
+        "over_5ms": 0,
+        "p50_s": 1.6996636986732483e-07,
+        "p99_s": 0.0003101588226854801
+      },
+      "physics_s": {
+        "max_s": 0.0002897190861403942,
+        "over_5ms": 0,
+        "p50_s": 0.00013817660510540009,
+        "p99_s": 0.00016261497512459755
+      },
+      "recording_s": {
+        "max_s": 0.06252481509000063,
+        "over_5ms": 1,
+        "p50_s": 0.0004279869608581066,
+        "p99_s": 0.0005488111637532711
+      },
+      "state_s": {
+        "max_s": 0.018551685381680727,
+        "over_5ms": 1,
+        "p50_s": 0.00012398883700370789,
+        "p99_s": 0.0001546577550470829
+      },
+      "total_s": {
+        "max_s": 0.12038850737735629,
+        "over_5ms": 5,
+        "p50_s": 0.00134341511875391,
+        "p99_s": 0.002101318910717964
+      }
+    },
+    "trial_duration_s": 60.0,
+    "walking": null,
+    "walking_completed": null
+  },
+  "physical_events": [
+    {
+      "event": "physical_limit_persistence",
+      "time": "2026-10-13T15:07:07.100449+00:00",
+      "monotonic_s": 10.0,
+      "duration_s": 0.5,
+      "reason": "Adam requests stops only after a continuous violation longer than500ms for all physical operating limits; transport, data validity, tablet, faults and startup gates stay immediate.",
+      "semantics": "continuous per-limit/per-joint; strict greater-than; reset on recovery"
+    },
+    {
+      "event": "physical_limit_started",
+      "time": "2026-10-13T15:07:08.354353+00:00",
+      "limit": "measured joint load",
+      "index": 3,
+      "reason": "measured joint velocity or load limit",
+      "monotonic_s": 15.025,
+      "persistence_s": 0.5,
+      "value": 49.92131477708581,
+      "since_s": 15.025,
+      "elapsed_s": 0.0
+    },
+    {
+      "event": "physical_limit_started",
+      "time": "2026-10-13T15:07:08.354428+00:00",
+      "limit": "measured load: manufacturer joint torque limit",
+      "index": 3,
+      "reason": "measured load: manufacturer joint torque limit",
+      "monotonic_s": 15.025,
+      "persistence_s": 0.5,
+      "value": 49.92131477708581,
+      "since_s": 15.025,
+      "elapsed_s": 0.0
+    },
+    {
+      "event": "physical_limit_recovered",
+      "time": "2026-10-13T15:07:08.355827+00:00",
+      "limit": "measured joint load",
+      "index": 3,
+      "reason": "measured joint velocity or load limit",
+      "monotonic_s": 15.030000000000001,
+      "persistence_s": 0.5,
+      "value": 40.05840339194713,
+      "since_s": 15.025,
+      "elapsed_s": 0.005000000000000782
+    },
+    {
+      "event": "physical_limit_recovered",
+      "time": "2026-10-13T15:07:08.355899+00:00",
+      "limit": "measured load: manufacturer joint torque limit",
+      "index": 3,
+      "reason": "measured load: manufacturer joint torque limit",
+      "monotonic_s": 15.030000000000001,
+      "persistence_s": 0.5,
+      "value": 40.05840339194713,
+      "since_s": 15.025,
+      "elapsed_s": 0.005000000000000782
+    },
+    {
+      "event": "physical_limit_started",
+      "time": "2026-10-13T15:07:08.357191+00:00",
+      "limit": "measured joint velocity",
+      "index": 3,
+      "reason": "measured joint velocity or load limit",
+      "monotonic_s": 15.035,
+      "persistence_s": 0.5,
+      "value": 12.801621437072754,
+      "since_s": 15.035,
+      "elapsed_s": 0.0
+    },
+    {
+      "event": "physical_limit_recovered",
+      "time": "2026-10-13T15:07:08.360592+00:00",
+      "limit": "measured joint velocity",
+      "index": 3,
+      "reason": "measured joint velocity or load limit",
+      "monotonic_s": 15.045,
+      "persistence_s": 0.5,
+      "value": 8.768129348754883,
+      "since_s": 15.035,
+      "elapsed_s": 0.009999999999999787
+    },
+    {
+      "event": "physical_limit_started",
+      "time": "2026-10-13T15:07:08.379027+00:00",
+      "limit": "predicted PD-plus-feedforward load limit",
+      "index": 5,
+      "reason": "predicted PD-plus-feedforward load limit",
+      "monotonic_s": 15.105,
+      "persistence_s": 0.5,
+      "value": 75.35379070043564,
+      "since_s": 15.105,
+      "elapsed_s": 0.0
+    },
+    {
+      "event": "physical_limit_started",
+      "time": "2026-10-13T15:07:08.379141+00:00",
+      "limit": "predicted PD-plus-feedforward load: manufacturer joint torque limit",
+      "index": 5,
+      "reason": "predicted PD-plus-feedforward load: manufacturer joint torque limit",
+      "monotonic_s": 15.105,
+      "persistence_s": 0.5,
+      "value": 75.35379070043564,
+      "since_s": 15.105,
+      "elapsed_s": 0.0
+    },
+    {
+      "event": "physical_limit_recovered",
+      "time": "2026-10-13T15:07:08.383496+00:00",
+      "limit": "predicted PD-plus-feedforward load limit",
+      "index": 5,
+      "reason": "predicted PD-plus-feedforward load limit",
+      "monotonic_s": 15.120000000000001,
+      "persistence_s": 0.5,
+      "value": 72.50042062997818,
+      "since_s": 15.105,
+      "elapsed_s": 0.015000000000000568
+    },
+    {
+      "event": "physical_limit_recovered",
+      "time": "2026-10-13T15:07:08.383605+00:00",
+      "limit": "predicted PD-plus-feedforward load: manufacturer joint torque limit",
+      "index": 5,
+      "reason": "predicted PD-plus-feedforward load: manufacturer joint torque limit",
+      "monotonic_s": 15.120000000000001,
+      "persistence_s": 0.5,
+      "value": 72.50042062997818,
+      "since_s": 15.105,
+      "elapsed_s": 0.015000000000000568
+    }
+  ],
+  "qualification_note": "Ideal simulator clock does not enforce full live computation deadline. Observed119.366ms core outlier atsim52.475s would fail live10ms gate. No timing limits relaxed."
+}

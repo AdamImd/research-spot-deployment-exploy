@@ -1,0 +1,52 @@
+{
+  "kind": "front-left-cartesian-ik",
+  "leg": "fl",
+  "initial_hold_s": 5.0,
+  "lift_s": 6.0,
+  "hold_s": 3.0,
+  "lower_s": 6.0,
+  "final_hold_s": 12.0,
+  "cartesian_path": {
+    "frame": "body",
+    "waypoints_m": [
+      [
+        0.53,
+        0.22,
+        -0.28
+      ],
+      [
+        0.61,
+        0.22,
+        -0.28
+      ],
+      [
+        0.61,
+        0.22,
+        -0.2
+      ],
+      [
+        0.53,
+        0.22,
+        -0.2
+      ],
+      [
+        0.53,
+        0.22,
+        -0.28
+      ]
+    ],
+    "segment_s": 3.0,
+    "max_joint_speed_rad_s": 0.8,
+    "max_tracking_error_m": 0.03
+  },
+  "min_clearance_m": 0.05,
+  "support_clearance_max_m": 0.015,
+  "min_hold_fraction": 0.9,
+  "foot_radius_m": 0.036,
+  "return_blend_s": 2.0,
+  "entry_blend_s": 0.0,
+  "support_transfer_s": 0.0,
+  "support_roll_rad": 0.0,
+  "support_pitch_rad": 0.0,
+  "target_slew_rad_s": null
+}

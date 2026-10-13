@@ -141,3 +141,47 @@ def test_selected_configuration_uses_manufacturer_profile():
     assert env.actuator_limit_profile == "spot-sdk-5.0.1"
     assert env.load_max == list(MAX_LOADS)
     assert env.max_duration_s == 10 and env.transition_s == 0
+
+
+def test_requested_leg_cap_preserves_measured_feedforward_arm_and_domain(manifest, envelope, state):
+    env = Envelope.model_validate(manufacturer_envelope(envelope).model_dump() | dict(
+        leg_requested_torque_max=75., leg_requested_torque_reason='Operator approved demand only'))
+    manifest.gains.kp = [60.] * 19
+    sample = state.model_copy(update={'positions': pose(-2.78).tolist(), 'loads': [0.] * 19})
+    # Both hip and weak-position knee may request 75; measured bounds are independent.
+    target = np.array(sample.positions)
+    target[:2] += 1.25
+    target[2] += 1.25
+    Guard(manifest, env).command(target, sample, 100., 1000., 100., .001)
+    target[0] += .001
+    with pytest.raises(ContractError, match='predicted PD-plus-feedforward load limit'):
+        Guard(manifest, env).command(target, sample, 100., 1000., 100., .001)
+    for joint, value in [(0, 44.89), (2, 42.)]:
+        measured = sample.model_copy(deep=True)
+        measured.loads[joint] = value
+        with pytest.raises(ContractError, match='measured.*load'):
+            Guard(manifest, env).check_state(measured, 100., 1000.)
+    ff = np.zeros(19)
+    ff[0] = 50.
+    with pytest.raises(ContractError, match='feedforward'):
+        Guard(manifest, env).command(sample.positions, sample, 100., 1000., 100., .001, ff)
+    for joint, value in [(15, 24.), (13, 160.)]:
+        demand = np.zeros(19)
+        demand[joint] = value
+        with pytest.raises(ValueError, match='manufacturer'):
+            check_torque(sample.positions, demand, leg_requested_max=75.)
+    with pytest.raises(ValueError, match='outside manufacturer torque table'):
+        check_torque(pose(-3.), np.zeros(19), leg_requested_max=75.)
+
+
+@pytest.mark.parametrize('change', [
+    {'leg_requested_torque_max': 75.},
+    {'leg_requested_torque_reason': 'reason'},
+    {'leg_requested_torque_max': float('inf'), 'leg_requested_torque_reason': 'reason'},
+    {'leg_requested_torque_max': 0., 'leg_requested_torque_reason': 'reason'},
+    {'leg_requested_torque_max': 75., 'leg_requested_torque_reason': 'reason',
+     'actuator_limit_profile': None},
+])
+def test_requested_leg_cap_requires_finite_positive_value_profile_and_reason(envelope, change):
+    with pytest.raises(ValidationError):
+        Envelope.model_validate(manufacturer_envelope(envelope).model_dump() | change)

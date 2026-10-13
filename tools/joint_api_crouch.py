@@ -69,10 +69,16 @@ class ReferenceGuard(Guard):
     """Reuse numeric state/command guards without a fictitious RL manifest/handover."""
 
     def __init__(self, initial, config, envelope, feedforward):
+        from spot_deploy.physical_limits import PhysicalLimits
+
         if envelope.arm_motion_guard != 'enforce':
             raise ContractError('arm observation mode requires a ReLIC leg controller')
         self.envelope = envelope
+        self.physical_limits = PhysicalLimits(envelope.physical_limit_persistence_s)
+        self.physical_limits.enabled = False
         self.observe_arm_motion = False
+        self.observe_leg_positions = False
+        self.leg_position_observation = None
         self.motion_joint_count = 19
         self.arm_motion_observation = None
         self.manifest = SimpleNamespace(
@@ -84,7 +90,8 @@ class ReferenceGuard(Guard):
             raise ContractError('reference period exceeds command gap limit')
         if np.any(np.abs(feedforward) > envelope.load_max):
             raise ContractError('baseline feedforward exceeds limits')
-        self.check_actuator_load(initial, feedforward, 'baseline feedforward')
+        self.check_actuator_load(initial, feedforward, 'baseline feedforward', 0.)
+        self.physical_limits.enabled = True
 
 
 class Samples:

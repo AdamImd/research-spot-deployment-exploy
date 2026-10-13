@@ -79,10 +79,11 @@ def convert_model(output):
 
 
 class MujocoBackend:
-    def __init__(self, contract, output, scenario, physics_dt=DT):
+    def __init__(self, contract, output, scenario, physics_dt=DT, *, torque_limits=True):
         if not np.isfinite(physics_dt) or not 0 < physics_dt <= DT:
             raise ValueError("MuJoCo physics step must be positive and at most 5 ms")
         self.contract = contract
+        self.torque_limits = torque_limits
         self.model = mj.MjModel.from_xml_path(str(convert_model(output)))
         self.model.opt.timestep = float(physics_dt)
         self.data = mj.MjData(self.model)
@@ -136,10 +137,18 @@ class MujocoBackend:
         return float(self.data.time)
 
     def torque(self, target):
-        self.history.append(np.asarray(target).copy())
+        target = np.asarray(target, dtype=float)
+        if target.shape != (19,) or not np.isfinite(target).all():
+            raise ValueError("actuator target must contain nineteen finite positions")
+        self.history.append(target.copy())
         target = self.history[max(0, len(self.history) - 1 - self.delay)]
         q, dq = self.data.qpos[self.qids], self.data.qvel[self.dids]
-        torque = np.clip(self.kp * (target - q) - self.kd * dq, -self.limit, self.limit)
+        torque = self.kp * (target - q) - self.kd * dq
+        if not np.isfinite(torque).all():
+            raise ValueError("nonfinite actuator PD torque")
+        if not self.torque_limits:
+            return torque
+        torque = np.clip(torque, -self.limit, self.limit)
         k = self.knees
         limit = np.interp(q[k], self.table[:, 0], self.table[:, 2])
         torque[k] = np.clip(torque[k], -limit, limit)
@@ -159,7 +168,8 @@ class MujocoBackend:
         mj.mj_forward(self.model, self.data)
 
     def metadata(self):
-        return dict(body_names=[mj.mj_id2name(self.model, mj.mjtObj.mjOBJ_BODY, i)
+        return dict(actuator_torque_limits=self.torque_limits,
+                    body_names=[mj.mj_id2name(self.model, mj.mjtObj.mjOBJ_BODY, i)
                                 for i in range(1, self.model.nbody)],
                     body_mass=self.model.body_mass[1:].tolist(),
                     total_mass=float(self.model.body_mass.sum()),
