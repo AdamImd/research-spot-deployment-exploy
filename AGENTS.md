@@ -180,3 +180,10 @@ Seven timer crossings all recovered (max30ms); no stop. OFF/lease return6.015s
 and fault-free postcheck confirmed. See records/relic-three-leg-expiry50-repeat-20261013.
 One completed commissioning attempt, not blanket hardware/contact-load or IK
 tracking qualification. Approval consumed; no automatic further physical trial.
+
+Latest approved forward repeat walked0.715016m (goal0.75,tolerance0.02), lateral
+0.029140m, then20s timeout before goal-and-settle completion.1000policy samples/
+4001commands. Short proof-of-concept scope accepted; retain raw failed status.
+OFF/lease return7.018s; postcheck passed with known payload.fault9 INFO only.
+No offline tests/retry. Record: records/relic-forward-repeat-20261013. Approval
+consumed; no further physical motion authorized automatically.

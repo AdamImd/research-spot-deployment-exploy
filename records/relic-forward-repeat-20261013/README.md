@@ -34,3 +34,36 @@ and motors-off preflight, then obtain the requested exact one-trial confirmation
 with Adam operating, Minghao on the functioning connected tablet, and the attached
 fall-arrest rig able to follow the full clear0.75m floor/arm path. No retries or
 automatic physical activation are authorized by preparation.
+
+## Approved physical result
+
+Adam confirmed one trial with the exact settings and current operator/tablet/
+following-rig/path setup. The attempt ran once from clean commit
+`2723468b816759c61d3475bd1b86be77941c1008`, with no offline tests or retries.
+Native stand completed and the walking policy produced1000predictions and
+4001commands through the20s policy limit.
+
+Latest issued-state robot-frame displacement was **0.715016m forward** and
+**0.029140m lateral**. The goal was0.75m, leaving **0.034984m**; the configured
+tolerance is0.02m. The last logged heading error was about−0.110rad. The record
+retains `walking distance not reached and settled before timeout` and raw failed
+status. The approved scope accepts a short proof-of-concept walk; exact goal-and-
+settle completion and hardware robustness are not claimed.
+
+Distance uses the robot's odom/body transform projected onto the heading latched
+after native standing. It is latest issued-command state displacement, excluding
+subsequent sit/power-off motion, and has no independent metrology confirmation.
+
+Native motors-off/lease return completed in **7.018s**, within10s. Postcheck
+passed with motors off and clear tablet stop states. One active informational
+system `payload.fault`,code9,severity1 was present; this is the exact known
+operator-approved log-only exception, not a new generic fault exemption. No
+fault clearing was performed. Do not infer payload physics from its warning.
+
+Raw failed-run/postcheck completion manifests and compact artifact hashes were
+verified. Full recordings remain in
+`runs/relic-forward-repeat-hardware-20261013-001/{trial,postcheck,compact}`;
+supervisor logs/status are in the parent. See `result-summary.json` and
+`artifacts.json` for numbers/hashes. Private approval/bundle/contract:
+`local/relic-forward-repeat-20261013-001`. Approval consumed; no further trial
+is authorized automatically.

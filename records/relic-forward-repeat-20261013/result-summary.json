@@ -1,0 +1,55 @@
+{
+  "approval_consumed": true,
+  "automatic_retry": false,
+  "failure": {
+    "error": "walking distance not reached and settled before timeout",
+    "error_type": "ContractError"
+  },
+  "final_issued_state_forward_m": 0.7150155259341819,
+  "final_issued_state_lateral_m": 0.029139846304518907,
+  "goal_distance_m": 0.75,
+  "goal_reached": false,
+  "goal_tolerance_m": 0.02,
+  "hardware_qualified": false,
+  "issued_commands": 4001,
+  "last_progress": {
+    "forward_m": 0.715000745824687,
+    "heading_error_rad": -0.10991461307382755,
+    "lateral_m": 0.02918377748856708,
+    "phase": "forward",
+    "remaining_m": 0.03499925417531302,
+    "requested_forward_m_s": 0.027999403340250417,
+    "speed_m_s": 0.004923645405421098
+  },
+  "measurement": "Robot odom/body displacement along latched current post-native-stand heading, latest issued command state; no independent metrology.",
+  "offline_tests_run": false,
+  "outcome": "Measured forward progress; shortfall acceptable under approved commissioning scope. Runtime timed out without meeting goal-and-settle acceptance; preserve failed status.",
+  "physical_limit_events": [],
+  "policy_history_acks": 1000,
+  "policy_predictions": 1000,
+  "postcheck": {
+    "active_fault_count": 1,
+    "fault_details": [
+      {
+        "code": 9,
+        "kind": "system_fault_state",
+        "name": "payload.fault",
+        "severity": 1
+      }
+    ],
+    "motors_off": true,
+    "passed": true,
+    "tablet_ready": true
+  },
+  "recording_integrity_verified": true,
+  "remaining_m": 0.03498447406581806,
+  "requested_duration_s": 20,
+  "shutdown": {
+    "elapsed_s": 7.017709875945002,
+    "errors": [],
+    "lease_returned": true,
+    "motors_off_confirmed": true,
+    "within_shutdown_budget": true
+  },
+  "source_commit": "2723468b816759c61d3475bd1b86be77941c1008"
+}
