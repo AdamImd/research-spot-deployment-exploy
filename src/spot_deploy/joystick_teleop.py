@@ -25,7 +25,7 @@ class JoystickTeleopPlan(StrictModel):
     finish_button: int = Field(ge=0, le=31)
     input_timeout_s: float = Field(gt=.02, le=.25)
     initial_hold_s: float = Field(ge=2, le=10)
-    duration_s: float = Field(gt=5, le=60)
+    duration_s: float = Field(gt=5, le=300)
     # Intermediate clearance poses, then deployed pose, in SDK arm joint order.
     arm_waypoints: list[Vector7] = Field(min_length=1, max_length=5)
     arm_speed_rad_s: float = Field(gt=0, le=.5)

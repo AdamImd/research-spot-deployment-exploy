@@ -198,3 +198,12 @@ Legacy tasks keep held-arm checks. New task requires enforced arm limits, a boun
 path/profile and additional joystick_control/arm_deployment/teleop_clearance evidence.
 No physical run is authorized by implementing or testing this script. Use a new
 reviewed bundle and ask immediately before a physical trial; prior approvals are consumed.
+
+The first approved60s joystick hardware session completed3000policy samples/
+11995commands, clean OFF/lease return6.018s, fault-free postcheck. Native requests
+exercised locomotion; no arm toggle occurred, so moving-arm hardware behavior is
+still unverified. The accepted envelope allows0.01rad measured penetration only
+at SH1 lower/EL0 upper model bounds; arm commands/torque/tracking are unchanged.
+See records/relic-joystick-hardware-20261013. Approval consumed. Adam subsequently
+requested a300s session; plan maximum is now300s, default remains60s. Prepare a
+new duration-bound manifest/envelope and ask immediately before the new trial.
