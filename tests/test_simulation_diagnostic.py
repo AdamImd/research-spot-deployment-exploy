@@ -113,3 +113,36 @@ def test_taper_override_and_invalid_simulation_speeds(plan):
             DiagnosticTravel(plan, Log(), forward_speed=value)
     with pytest.raises(ContractError, match='explicit speed'):
         DiagnosticTravel(plan, Log(), speed_profile='constant')
+
+
+def test_speed_override_reaches_real_graph_without_relaxing_live_adapter(state, plan, relic_envelope):
+    from pathlib import Path
+    from spot_deploy.contracts import check_artifacts
+    from spot_deploy.exploy_policy import ExployReLICManifest
+    from spot_deploy.relic_contract import load_manifest, make_policy
+    from spot_deploy.relic_policy import observation
+    from spot_deploy.simulation_diagnostic import SimulationVelocityPolicy
+    root = Path(__file__).parents[1]
+    path = root/'policies/relic-exploy-standing/manifest.json'
+    data = load_manifest(path).model_dump()
+    data.update(task='walking', walking=plan.model_dump())
+    manifest = ExployReLICManifest.model_validate(data)
+    policy = make_policy(check_artifacts(path, manifest), manifest, path)
+    policy.initialize_height(dict(height_m=.52, foot_contacts=[1]*4))
+    env = relic_envelope.model_copy(update=dict(scope='simulation'))
+    wrapped = SimulationVelocityPolicy(policy, .3, env)
+    previous = np.zeros(12, np.float32)
+    with pytest.raises(ContractError, match='walking plan'):
+        policy.evaluate(state, previous, [.3, 0, 0])
+    target, _, obs, action = wrapped.evaluate(state, previous, [.3, 0, 0])
+    expected = observation(state, manifest.arm_stowed_positions, previous, .52, [.3, 0, 0])
+    np.testing.assert_allclose(obs[0], expected, atol=2e-7, rtol=0)
+    assert np.isfinite(action).all()
+    np.testing.assert_array_equal(target[12:], manifest.arm_stowed_positions)
+    assert policy.manifest.walking.max_speed_m_s == plan.max_speed_m_s
+    np.testing.assert_array_equal(policy.previous_action, previous)
+    for invalid in [[.31, 0, 0], [.2, .01, 0], [.2, 0, .01], [-.2, 0, 0]]:
+        with pytest.raises(ContractError, match='simulation forward'):
+            wrapped.evaluate(state, previous, invalid)
+    with pytest.raises(ContractError, match='simulation scope'):
+        SimulationVelocityPolicy(policy, .3, env.model_copy(update=dict(scope='hardware')))

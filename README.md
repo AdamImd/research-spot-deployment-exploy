@@ -175,3 +175,9 @@ initial hold and immediate zero request inside the goal tolerance, while removin
 the near-goal taper. The policy still predicts targets at 50 Hz; commands remain
 200 Hz with unchanged weights/gains. Configuration and events identify the
 separate override. Requested base speed is distinct from measured robot speed.
+
+The faster diagnostic wraps the Exploy input builder with a separately bounded
+simulation velocity input. The regular policy adapter still rejects requests
+above its bound WalkingPlan. All other input transforms, history and output/held-arm
+checks use the same graph and decoder. An integration test sends 0.3 m/s through
+the real graph while confirming the original live adapter still rejects it.

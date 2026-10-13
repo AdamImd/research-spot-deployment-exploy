@@ -4,6 +4,8 @@ Retain finite data, action/ACK semantics, held-arm targets and model physics.
 There is no corresponding option on the hardware command interface.
 """
 
+from time import monotonic
+
 import numpy as np
 
 from .contracts import JOINTS, ContractError
@@ -40,6 +42,33 @@ class DiagnosticTravel(DiagnosticChecks, ForwardTravel):
         if self.speed_profile == 'constant':
             return self.forward_speed if remaining > 0 else 0.
         return min(self.forward_speed, max(0., remaining) * .8)
+
+
+class SimulationVelocityPolicy:
+    """Offline Exploy wrapper with a separate bound on the velocity input only."""
+    def __init__(self, policy, maximum, envelope):
+        from .exploy_policy import ExployReLICPolicy
+        if envelope.scope != 'simulation' or not isinstance(policy, ExployReLICPolicy):
+            raise ContractError('speed-input override requires simulation scope and Exploy policy')
+        if policy.manifest.task != 'walking' or not np.isfinite(maximum) or not 0 < maximum <= 1:
+            raise ContractError('invalid simulation walking speed override')
+        self.policy, self.maximum = policy, maximum
+
+    def __getattr__(self, name):
+        return getattr(self.policy, name)
+
+    def evaluate(self, state, previous, velocity_command=None):
+        from .relic_policy import finite
+        start = monotonic()
+        velocity = finite([0., 0., 0.] if velocity_command is None else velocity_command, 3)
+        if (velocity[1] != 0 or velocity[2] != 0
+                or not 0 <= velocity[0] <= self.maximum+1e-7):
+            raise ContractError('velocity outside explicit simulation forward override')
+        # Preserve every normal state/height/history transform and output check.
+        # The base adapter still validates its original manifest for live calls.
+        inputs = self.policy.inputs(state, previous, [0., 0., 0.])
+        inputs['velocity_command'] = velocity[None]
+        return self.policy._evaluate_inputs(inputs, start)
 
 
 class DiagnosticCommands:

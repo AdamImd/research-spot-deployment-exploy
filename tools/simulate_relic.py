@@ -74,6 +74,9 @@ def run(args):
         raise ValueError("duration must include preparation and remain within envelope")
     policy = make_policy(check_artifacts(args.manifest, manifest), manifest, args.manifest,
                          device=args.policy_device)
+    if args.simulation_forward_speed is not None:
+        from spot_deploy.simulation_diagnostic import SimulationVelocityPolicy
+        policy = SimulationVelocityPolicy(policy, args.simulation_forward_speed, envelope)
     demo = None
     if getattr(args, 'three_leg_plan', None):
         plan = load(args.three_leg_plan, ThreeLegPlan)
