@@ -120,3 +120,12 @@ IK targets, actual foot coordinates, tracking errors and phase/leg commands.
 Package with `tools/prepare_selected_leg_candidate.py`; frozen preparation uses
 `prepare-deployment`. Selected-leg candidates are deployment review inputs until
 robot, rig/workspace, tablet and final exact one-trial approval are current.
+
+The ONE approved physical commissioning attempt (October12) stopped at the first
+mode-entry prediction around5s. FRHX requested46.42Nm above44.88Nm; the rejected
+command was not transmitted, so no physical leg lift/IK square was demonstrated.
+Same-state offline replay with zero leg command requests10.17Nm, identifying the
+mode-entry jump. This is distinct from the simulator's fixed return transient.
+Shutdown confirmed OFF/lease return in5.017s; passive postcheck faultfree. Recording
+is preserved and no retry occurred. See records/relic-three-leg-hardware-20261012.
+The physical approval is consumed; further motion requires a new exact approval.
