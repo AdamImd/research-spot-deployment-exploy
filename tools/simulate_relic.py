@@ -59,6 +59,9 @@ def sdk_state(backend, t, key):
 
 
 def run(args):
+    unlimited = getattr(args, 'no_actuator_torque_limits', False)
+    if unlimited and (args.backend != 'mujoco' or not args.no_guards):
+        raise ValueError('unlimited actuator torque requires MuJoCo and --no-guards')
     if not verify_run(args.capture):
         raise ValueError("capture failed integrity verification")
     sys.path[:0] = [str(args.simulation_source), str(args.simulation_source / "tools")]
@@ -106,7 +109,7 @@ def run(args):
         if args.backend == "mujoco":
             from spot_relic_sim.mujoco_backend import MujocoBackend
             backend = MujocoBackend(Contract.load(args.simulation_source / "configs/articulation.json"),
-                                    args.output / "model", scenario)
+                                    args.output / "model", scenario, torque_limits=not unlimited)
             backend.model.opt.noslip_iterations = args.mujoco_noslip_iterations
             backend.model.opt.timestep = dt / args.mujoco_substeps
         else:
@@ -177,7 +180,9 @@ def run(args):
                                         if demo else 'bound deployment adapter'),
                       baseline_manifest_used_for_numeric_guards_only=bool(demo),
                       stock_stand_simulated=False, acknowledgements="ideal, one command tick later",
-                      physics_actuators="released simulated effort saturation; hardware equivalence unverified")
+                      actuator_torque_limits=not unlimited,
+                      physics_actuators=("unlimited ideal PD torque; simulation only" if unlimited else
+                                         "released simulated effort saturation; hardware equivalence unverified"))
         atomic_json(args.output / "configuration.json", config)
         atomic_json(args.output / "run.json", {"mode": "relic-simulation", "hardware_access": False})
         atomic_json(args.output / "source.json", {
@@ -397,8 +402,13 @@ def main():
     parser.add_argument('--no-guards', action='store_true',
                         help='Simulation-only diagnostic: disable operating stops, continue after falls; '
                              'retain physical saturation and integrity checks. Never qualifies hardware.')
+    parser.add_argument('--no-actuator-torque-limits', action='store_true',
+                        help='MuJoCo diagnostic with --no-guards: disable ALL actuator effort and knee '
+                             'position/speed torque clipping; retain finite checks and contact physics.')
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
+    if args.no_actuator_torque_limits and (args.backend != 'mujoco' or not args.no_guards):
+        parser.error('unlimited actuator torque requires MuJoCo and --no-guards')
     if args.initial_root_height_m is not None and not .25 <= args.initial_root_height_m <= .8:
         parser.error('initial root height must be in[.25,.8]m')
     if args.backend == "mujoco" and args.physics_device != "cpu":

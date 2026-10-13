@@ -102,12 +102,13 @@ class Guard:
         if np.any(arm < envelope.command_lower[12:]) or np.any(arm > envelope.command_upper[12:]):
             raise ContractError("arm stow target exceeds command position envelope")
 
-    def check_actuator_load(self, positions, loads, context):
+    def check_actuator_load(self, positions, loads, context, *, requested=False):
         if self.envelope.actuator_limit_profile:
             from .actuator_limits import check_torque
 
             try:
-                check_torque(positions, loads)
+                check_torque(positions, loads, leg_requested_max=(
+                    self.envelope.leg_requested_torque_max if requested else None))
             except ValueError as exc:
                 raise ContractError(f"{context}: {exc}") from exc
 
@@ -196,10 +197,13 @@ class Guard:
             - np.asarray(self.manifest.gains.kd) * state.velocities
             + feedforward
         )
-        if np.any(np.abs(torque) > env.load_max):
+        requested_limits = np.array(env.load_max)
+        if env.leg_requested_torque_max is not None:
+            requested_limits[:12] = env.leg_requested_torque_max
+        if not np.isfinite(torque).all() or np.any(np.abs(torque) > requested_limits):
             raise ContractError("predicted PD-plus-feedforward load limit")
         self.check_actuator_load(state.positions, feedforward, "feedforward")
-        self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load")
+        self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load", requested=True)
         if not np.allclose(target[12:], self.manifest.arm_stowed_positions, rtol=0, atol=1e-9):
             raise ContractError("leg-only policy attempted arm movement")
         if self.last_sent is not None:

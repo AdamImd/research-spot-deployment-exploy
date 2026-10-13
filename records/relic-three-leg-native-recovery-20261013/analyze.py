@@ -36,7 +36,11 @@ def main(run, output):
     # Applied torque in the next recorded state belongs to the preceding 5ms command.
     saturation = np.abs(demand - applied) > 1e-5
     hips = [i for i, n in enumerate(JOINTS[:12]) if not n.endswith("_kn")]
-    assert np.max(np.abs(applied[:, hips])) <= 45.0 + 1e-5
+    unlimited = config.get("actuator_torque_limits") is False
+    if unlimited:
+        assert not saturation.any(), "Unlimited actuator torque did not match requested demand"
+    else:
+        assert np.max(np.abs(applied[:, hips])) <= 45.0 + 1e-5
     w, x, y, z = np.array([r["root_quaternion_wxyz"] for r in rows]).T
     roll = np.arctan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y))
     pitch = np.arcsin(np.clip(2 * (w * y - z * x), -1, 1))
@@ -100,6 +104,7 @@ def main(run, output):
         result=result,
         source_commit=json.loads((run / "source.json").read_text()).get("commit"),
         sampling_hz=200,
+        actuator_torque_limits=not unlimited,
         alignment="demand[k] vs preceding_applied[k+1]; 5ms interval",
         saturation_difference_threshold_Nm=1e-5,
         foot_loaded_diagnostic_threshold_N=5,
@@ -170,7 +175,12 @@ def main(run, output):
         ax.set_xlabel("Simulation time (s)")
     label = "PASS" if passed else "FAIL"
     fig.suptitle(
-        f"Native unfiltered transition: {label} · simulation only\nOperating stops disabled; actuator saturation retained"
+        f"Native unfiltered transition: {label} · simulation only\n"
+        + (
+            "UNLIMITED ACTUATOR TORQUE"
+            if unlimited
+            else "Operating stops disabled; actuator saturation retained"
+        )
     )
     for ext in ["png", "pdf"]:
         fig.savefig(output / f"recovery.{ext}", dpi=160)

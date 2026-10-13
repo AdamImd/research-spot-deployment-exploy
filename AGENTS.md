@@ -105,3 +105,13 @@ When available, delegate execution to `long_run_executor_luna` with exact comman
 commit, resources, success/stop criteria and no automatic retry. Otherwise use a
 local persistent process and durable logs. No paid compute is authorized by this
 file. No external messaging or automatic physical activation is authorized.
+
+## Torque diagnostics and requested-demand draft (2026-10-13)
+
+MuJoCo's explicit `--no-actuator-torque-limits` requires `--no-guards` and removes
+all actuator clipping while retaining contact physics/integrity. Default simulated
+actuators are unchanged. Unlimited dynamics are not hardware evidence.
+`leg_requested_torque_max` plus an operator reason separately caps the predicted
+12-leg PD-plus-feedforward demand; Adam selected 75 N·m for a hardware draft.
+Measured manufacturer, arm/coupling, feedforward and knee-table-domain checks stay
+unchanged. No new physical approval; rebind source and preflight before review.

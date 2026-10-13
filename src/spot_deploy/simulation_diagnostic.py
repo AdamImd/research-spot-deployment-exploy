@@ -165,7 +165,9 @@ def demand_summary(rows, config):
             for label, values, bound in (
                     ('speed_rad_s', v[:, j], env['velocity_max'][j]),
                     ('target_error_rad', error[:, j], env['tracking_error_max'][j]),
-                    ('requested_PD_Nm', requested[:, j], env['load_max'][j]),
+                    ('requested_PD_Nm', requested[:, j],
+                     env.get('leg_requested_torque_max') if j < 12 and env.get('leg_requested_torque_max')
+                     is not None else env['load_max'][j]),
                     ('preceding_applied_Nm', applied[:, j], env['load_max'][j]),
                     ('target_slew_rad_s', slew[:, j], env['command_rate_max'][j])):
                 peak = int(np.argmax(np.abs(values[:end])))

@@ -92,6 +92,31 @@
       "title": "Load Max",
       "type": "array"
     },
+    "leg_requested_torque_max": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Leg Requested Torque Max"
+    },
+    "leg_requested_torque_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Leg Requested Torque Reason"
+    },
     "actuator_limit_profile": {
       "anyOf": [
         {

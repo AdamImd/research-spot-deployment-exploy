@@ -167,6 +167,9 @@ class Envelope(StrictModel):
     command_position_max: Vector19 | None = None
     velocity_max: Vector19
     load_max: Vector19
+    # Explicit pre-saturation leg demand cap; never changes measured/arm limits.
+    leg_requested_torque_max: Positive | None = None
+    leg_requested_torque_reason: str | None = None
     actuator_limit_profile: Literal["spot-sdk-5.0.1"] | None = None
     # Omission preserves legacy min(per-joint) behavior. An explicit global
     # backstop does not replace the host's tighter per-joint speed checks.
@@ -206,6 +209,12 @@ class Envelope(StrictModel):
 
     @model_validator(mode="after")
     def check(self):
+        if self.leg_requested_torque_max is not None:
+            if (not self.actuator_limit_profile or not self.leg_requested_torque_reason
+                    or not self.leg_requested_torque_reason.strip()):
+                raise ValueError('requested leg torque cap requires manufacturer profile and operator reason')
+        elif self.leg_requested_torque_reason is not None:
+            raise ValueError('requested leg torque reason requires an explicit cap')
         if self.command_rate_guard == "observe":
             if not self.command_rate_reason or not self.command_rate_reason.strip():
                 raise ValueError("command rate observation requires an operator reason")

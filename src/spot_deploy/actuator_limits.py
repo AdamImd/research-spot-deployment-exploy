@@ -132,12 +132,17 @@ def torque_limits(positions):
     return limits
 
 
-def check_torque(positions, loads):
+def check_torque(positions, loads, *, leg_requested_max=None):
     """Raise on a violation; never saturate or change a command."""
     torque = np.asarray(loads, dtype=float)
     if torque.shape != (19,) or not np.isfinite(torque).all():
         raise ValueError("manufacturer torque limits require nineteen finite loads")
-    if np.any(np.abs(torque) > torque_limits(positions)):
+    limits = torque_limits(positions)  # Always retain finite state and knee table domain.
+    if leg_requested_max is not None:
+        if not np.isfinite(leg_requested_max) or leg_requested_max <= 0:
+            raise ValueError('requested leg torque cap must be finite and positive')
+        limits[:12] = leg_requested_max
+    if np.any(np.abs(torque) > limits):
         raise ValueError("manufacturer joint torque limit")
     # qdot = J * motor_qdot implies motor_tau = J.T * joint_tau.
     if abs(torque[13] - torque[14]) > COUPLED_MOTOR_TORQUE:

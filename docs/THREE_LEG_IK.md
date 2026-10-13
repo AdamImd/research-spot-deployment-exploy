@@ -154,3 +154,16 @@ lasted20ms. Max pitch4.350degrees, angular1.537rad/s,
 IK square p951.901cm. Three supporting feet stayed loaded throughout hold/IK.
 See records/relic-three-leg-native-recovery-20261013 and its100fps video. This is
 simulation evidence only; hardware guards/approval remain unchanged.
+
+### Ideal unlimited-torque diagnostic
+
+`tools/simulate_relic.py --no-guards --no-actuator-torque-limits --backend mujoco`
+explicitly disables hip/arm effort clipping and both knee position-dependent and
+speed-dependent torque clipping. It retains finite-value checks, native action
+history, contact physics and model joint constraints. Ordinary `--no-guards`
+continues to retain actuator saturation. Isaac Lab rejects the new option.
+Configuration, model metadata, video and plots label the ideal unlimited-torque
+mode. This is a diagnostic of unconstrained PD dynamics, not hardware capability.
+The 47-second sequence, seed 101, recorded standing pose, zero initial velocities,
+unchanged actor/gains and two-second return blend provide the paired comparison
+with `records/relic-three-leg-native-recovery-20261013`.
