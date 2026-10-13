@@ -134,8 +134,11 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
 
     def evaluate(self, state, previous, velocity_command=None):
         start = monotonic()
-        action, obs, target = self.runner.session.run(["actions", "obs", TARGET],
-                                                     self.inputs(state, previous, velocity_command))
+        return self._evaluate_inputs(self.inputs(state, previous, velocity_command), start)
+
+    def _evaluate_inputs(self, inputs, start):
+        """Decode one validated graph step; input builders own command contracts."""
+        action, obs, target = self.runner.session.run(["actions", "obs", TARGET], inputs)
         action, obs = finite(action[0], 12), finite(obs[0], 84)
         target = finite(target[0], 19)[self.sdk_from_graph].astype(float)
         # Preserve the exact held-arm values in SDK packets, as the original

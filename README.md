@@ -164,3 +164,26 @@ collision mesh's transformed bounds against the referenced URDF collision vertic
 The [physics attribution record](records/relic-physics-attribution-20261012/README.md)
 isolates ground contact, friction/integration and gripper self-contact, with an
 independent actuator audit and measured impact of the repaired mesh alias.
+
+### Faster requests in simulation
+
+Use `tools/simulate_relic.py --no-guards --simulation-forward-speed 0.3` to override
+only the simulation's forward request maximum. The original manifest and live
+walking contract retain their limits. Default `--simulation-speed-profile taper`
+keeps the distance-dependent slowdown; `constant` retains the acceleration ramp,
+initial hold and immediate zero request inside the goal tolerance, while removing
+the near-goal taper. The policy still predicts targets at 50 Hz; commands remain
+200 Hz with unchanged weights/gains. Configuration and events identify the
+separate override. Requested base speed is distinct from measured robot speed.
+
+The faster diagnostic wraps the Exploy input builder with a separately bounded
+simulation velocity input. The regular policy adapter still rejects requests
+above its bound WalkingPlan. All other input transforms, history and output/held-arm
+checks use the same graph and decoder. An integration test sends 0.3 m/s through
+the real graph while confirming the original live adapter still rejects it.
+
+The [faster-request experiment](records/relic-faster-sim-20261012/README.md)
+records four 60-second runs: both engines stay upright at a 0.3 m/s maximum
+request. The taper still stalls near 0.69 m; constant requests pass the 0.75 m
+goal but settle at 0.81–0.82 m. Accurate stopping remains unresolved. These are
+simulation results with unchanged weights/gains, not hardware qualification.

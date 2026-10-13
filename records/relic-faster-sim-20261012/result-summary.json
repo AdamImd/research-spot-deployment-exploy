@@ -1,0 +1,296 @@
+{
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "request_m_s": 0.3,
+  "cells": {
+    "mujoco-taper": {
+      "recording": "runs/relic-faster-sim-20261012-002/mujoco-taper",
+      "complete_sha256": "3906017332586a90e30b3948aef924760f349c5a3c6759766d35433f84b6bdae",
+      "rollout_sha256": "75824b9ccacf8c02f16608a3135ad3a7b8fb428e5e3c8e8a776a877d63dcd540",
+      "source_sha256": "06a4e767dd23aab0d3df3993856b2b8e23d312cde2989157d6d59d7064fe30b3",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "manifest_file_sha256": "9576b6019e20c722f246ee9961c32f4aee7600fb507d8275d5bf1c0f791989a8",
+      "policy_samples": 3001,
+      "state_samples": 12001,
+      "requested_forward_max_m_s": 0.2944999999999985,
+      "actual_forward_peak_m_s": 0.3315646709551342,
+      "actual_forward_median_when_request_ge025_m_s": 0.26804333443671435,
+      "final_forward_m": 0.689398659555169,
+      "maximum_forward_m": 0.7107161684405289,
+      "first_within_goal_tolerance_s": null,
+      "completion_s": null,
+      "walking_completed": false,
+      "final_within_goal_tolerance": false,
+      "stable_final_window": true,
+      "first_fall_proxy_s": null,
+      "late_window": {
+        "angular_speed_p95_rad_s": 5.407978070950107e-07,
+        "height_span_m": 8.940696716308594e-08,
+        "joint_speed_p95_rad_s": 8.393200801037892e-07,
+        "linear_speed_p95_m_s": 1.0889963237890994e-07,
+        "max_tilt_deg": 2.9727576605345982,
+        "mean_height_m": 0.4981312883877266,
+        "min_height_m": 0.49813124537467957,
+        "planar_speed_p95_m_s": 9.028879044863558e-08,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.0
+      },
+      "max_raw_action_error": 7.152557373046875e-07,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "configuration": {
+        "speed_override": 0.3,
+        "profile": "taper",
+        "acceleration": 0.1,
+        "initial_hold": 3.0,
+        "noslip": 10,
+        "seed": 101,
+        "providers": [
+          "CPUExecutionProvider"
+        ]
+      },
+      "peak_leg_demands": {
+        "speed_rad_s": {
+          "joint": "fr_kn",
+          "peak_abs": 11.243614196777344
+        },
+        "target_error_rad": {
+          "joint": "fr_kn",
+          "peak_abs": 0.8295273184776306
+        },
+        "requested_PD_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 50.11256568878889
+        },
+        "preceding_applied_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 50.112566752516116
+        }
+      },
+      "leg_speed_reference_exceedances": {
+        "fl_hy": 7,
+        "fr_hy": 16,
+        "fr_kn": 6
+      }
+    },
+    "mujoco-constant": {
+      "recording": "runs/relic-faster-sim-20261012-002/mujoco-constant",
+      "complete_sha256": "889ac745d014b3114e5f474f89a0c858698d257b4a78e7dbca58cf888c452cf7",
+      "rollout_sha256": "0535e4bdd0a205afe7c9d0474ac866afbaacc82df15e6e69c0c3c10d66ee806e",
+      "source_sha256": "06a4e767dd23aab0d3df3993856b2b8e23d312cde2989157d6d59d7064fe30b3",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "manifest_file_sha256": "9576b6019e20c722f246ee9961c32f4aee7600fb507d8275d5bf1c0f791989a8",
+      "policy_samples": 3001,
+      "state_samples": 12001,
+      "requested_forward_max_m_s": 0.3,
+      "actual_forward_peak_m_s": 0.34513908155028755,
+      "actual_forward_median_when_request_ge025_m_s": 0.2870923597499978,
+      "final_forward_m": 0.8171737823808101,
+      "maximum_forward_m": 0.8172064424436606,
+      "first_within_goal_tolerance_s": 7.13,
+      "completion_s": null,
+      "walking_completed": false,
+      "final_within_goal_tolerance": false,
+      "stable_final_window": true,
+      "first_fall_proxy_s": null,
+      "late_window": {
+        "angular_speed_p95_rad_s": 6.757720183715657e-07,
+        "height_span_m": 2.980232238769531e-07,
+        "joint_speed_p95_rad_s": 1.1630280596364173e-06,
+        "linear_speed_p95_m_s": 2.1394767207143008e-07,
+        "max_tilt_deg": 1.0187560118796055,
+        "mean_height_m": 0.4826658994987093,
+        "min_height_m": 0.4826657772064209,
+        "planar_speed_p95_m_s": 1.9859856503682156e-07,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.0
+      },
+      "max_raw_action_error": 9.5367431640625e-07,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "configuration": {
+        "speed_override": 0.3,
+        "profile": "constant",
+        "acceleration": 0.1,
+        "initial_hold": 3.0,
+        "noslip": 10,
+        "seed": 101,
+        "providers": [
+          "CPUExecutionProvider"
+        ]
+      },
+      "peak_leg_demands": {
+        "speed_rad_s": {
+          "joint": "fr_kn",
+          "peak_abs": 11.243614196777344
+        },
+        "target_error_rad": {
+          "joint": "fr_kn",
+          "peak_abs": 0.834703266620636
+        },
+        "requested_PD_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 50.30079942941666
+        },
+        "preceding_applied_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 50.30079644346533
+        }
+      },
+      "leg_speed_reference_exceedances": {
+        "fl_hy": 7,
+        "fr_hy": 27,
+        "fr_kn": 7
+      }
+    },
+    "isaaclab-taper": {
+      "recording": "runs/relic-faster-sim-20261012-002/isaaclab-taper",
+      "complete_sha256": "1d95e15d2c404f7eebb71713f1f698e1fad9a6c09c561b4a33219d51eb86dd73",
+      "rollout_sha256": "d7fc60cb255a3ffcebc1ebeaf66425065243fe5b13414f33167934bcb87f25ea",
+      "source_sha256": "31d87af25f9181506538cad5d58cd9f668e67a16e652e19d3ed6bf7b340dcba3",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "manifest_file_sha256": "9576b6019e20c722f246ee9961c32f4aee7600fb507d8275d5bf1c0f791989a8",
+      "policy_samples": 3001,
+      "state_samples": 12001,
+      "requested_forward_max_m_s": 0.3,
+      "actual_forward_peak_m_s": 0.3369629302514565,
+      "actual_forward_median_when_request_ge025_m_s": 0.26529476587251655,
+      "final_forward_m": 0.6878413497832815,
+      "maximum_forward_m": 0.7109896750876434,
+      "first_within_goal_tolerance_s": null,
+      "completion_s": null,
+      "walking_completed": false,
+      "final_within_goal_tolerance": false,
+      "stable_final_window": true,
+      "first_fall_proxy_s": null,
+      "late_window": {
+        "angular_speed_p95_rad_s": 0.0004296918011816029,
+        "height_span_m": 2.086162567138672e-06,
+        "joint_speed_p95_rad_s": 0.06252433359622955,
+        "linear_speed_p95_m_s": 0.0001713563414713327,
+        "max_tilt_deg": 2.713248493929911,
+        "mean_height_m": 0.5013143620093068,
+        "min_height_m": 0.5013131499290466,
+        "planar_speed_p95_m_s": 0.00010930381713265834,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.00028858994782625873
+      },
+      "max_raw_action_error": 1.1920928955078125e-06,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "configuration": {
+        "speed_override": 0.3,
+        "profile": "taper",
+        "acceleration": 0.1,
+        "initial_hold": 3.0,
+        "noslip": 0,
+        "seed": 101,
+        "providers": [
+          "CPUExecutionProvider"
+        ]
+      },
+      "peak_leg_demands": {
+        "speed_rad_s": {
+          "joint": "fr_kn",
+          "peak_abs": 10.50801944732666
+        },
+        "target_error_rad": {
+          "joint": "fr_kn",
+          "peak_abs": 0.8322484493255615
+        },
+        "requested_PD_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 50.50731025636196
+        },
+        "preceding_applied_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 50.50730895996094
+        }
+      },
+      "leg_speed_reference_exceedances": {
+        "fl_hy": 7,
+        "fr_hy": 18,
+        "fr_kn": 11
+      }
+    },
+    "isaaclab-constant": {
+      "recording": "runs/relic-faster-sim-20261012-002/isaaclab-constant",
+      "complete_sha256": "f92e7a733c63f45f7f6d59e8972e8c15e1e12d1f2de7d4ec9dbadd069df09fca",
+      "rollout_sha256": "b5f8b8ea05ec9e1ba3bd50228b759cc57719115aa561e782940120d7fd0669d1",
+      "source_sha256": "31d87af25f9181506538cad5d58cd9f668e67a16e652e19d3ed6bf7b340dcba3",
+      "policy_sha256": "1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8",
+      "manifest_file_sha256": "9576b6019e20c722f246ee9961c32f4aee7600fb507d8275d5bf1c0f791989a8",
+      "policy_samples": 3001,
+      "state_samples": 12001,
+      "requested_forward_max_m_s": 0.3,
+      "actual_forward_peak_m_s": 0.3452843538999041,
+      "actual_forward_median_when_request_ge025_m_s": 0.28637569123861883,
+      "final_forward_m": 0.8078670454397606,
+      "maximum_forward_m": 0.8078675740123271,
+      "first_within_goal_tolerance_s": 7.21,
+      "completion_s": 8.445,
+      "walking_completed": true,
+      "final_within_goal_tolerance": false,
+      "stable_final_window": true,
+      "first_fall_proxy_s": null,
+      "late_window": {
+        "angular_speed_p95_rad_s": 0.0003314977262332494,
+        "height_span_m": 3.3080577850341797e-06,
+        "joint_speed_p95_rad_s": 0.04734541103243828,
+        "linear_speed_p95_m_s": 0.00015486900631850334,
+        "max_tilt_deg": 0.7845948205955995,
+        "mean_height_m": 0.49278371403182764,
+        "min_height_m": 0.4927818775177002,
+        "planar_speed_p95_m_s": 8.304807171190545e-05,
+        "samples": 2001,
+        "span_s": 10.0,
+        "tilt_span_deg": 0.0004989552617032188
+      },
+      "max_raw_action_error": 1.1920928955078125e-06,
+      "max_target_error_rad": 2.384185791015625e-07,
+      "configuration": {
+        "speed_override": 0.3,
+        "profile": "constant",
+        "acceleration": 0.1,
+        "initial_hold": 3.0,
+        "noslip": 0,
+        "seed": 101,
+        "providers": [
+          "CPUExecutionProvider"
+        ]
+      },
+      "peak_leg_demands": {
+        "speed_rad_s": {
+          "joint": "fr_kn",
+          "peak_abs": 10.50801944732666
+        },
+        "target_error_rad": {
+          "joint": "fr_kn",
+          "peak_abs": 0.8779990673065186
+        },
+        "requested_PD_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 53.26288314163685
+        },
+        "preceding_applied_Nm": {
+          "joint": "fr_kn",
+          "peak_abs": 53.262882232666016
+        }
+      },
+      "leg_speed_reference_exceedances": {
+        "fl_hy": 7,
+        "fr_hy": 25,
+        "fr_kn": 13
+      }
+    }
+  },
+  "tested_commit": "e6b0c1650743b60121c15d87a76a85deb4bebf3f",
+  "capture_complete_sha256": "64e7dfb0b82fb08d48f5df6cc322a8da6e24c4b03e0b25cf3f6b5c9d9888dfd8",
+  "envelope_file_sha256": "af457ea41f15d55d837f517d51dcb26c6ce0ee9a27be64beea30db635adf3815",
+  "contract_sha256": "0545f0c7695f7934179c2ea28130e48b6aa427cec0de5203af737052d7da4ef3",
+  "validation": {
+    "pytest_passed": 456,
+    "ruff_exit": 0,
+    "demo_exit": 0
+  }
+}

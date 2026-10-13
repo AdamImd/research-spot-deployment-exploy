@@ -51,6 +51,9 @@ class ForwardTravel:
         if not condition:
             raise ContractError(message)
 
+    def _desired_speed(self, remaining):
+        return min(self.plan.max_speed_m_s, max(0., remaining) * .8)
+
     def pose(self, state):
         p, stamp = state.body_position_odom, state.body_pose_robot_time_s
         if p is None or stamp is None:
@@ -121,7 +124,7 @@ class ForwardTravel:
                 self.settled_at = None
         else:
             self.phase, self.settled_at = 'forward', None
-            desired = min(self.plan.max_speed_m_s, max(0., remaining) * .8)
+            desired = self._desired_speed(remaining)
         if desired == 0.:
             self.velocity = 0.
         else:
