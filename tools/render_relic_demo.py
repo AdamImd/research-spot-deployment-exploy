@@ -113,8 +113,12 @@ def video(rows,config,result,source,output,fps):
                     draw=ImageDraw.Draw(canvas)
                     phase=row.get('demo_phase') or row['phase']
                     draw.text((12,7),f"{config['backend']} · {phase} · t={t:.2f} s",font=font,fill='white')
-                    draw.text((12,30),('UNGUARDED simulation diagnostic' if config.get('guard_mode') == 'disabled-simulation-diagnostic'
-                                               else 'Recorded visual-mesh replay · simulation only'),font=font,fill='white')
+                    subtitle = ('UNGUARDED simulation diagnostic' if config.get('guard_mode') == 'disabled-simulation-diagnostic'
+                                else 'Recorded visual-mesh replay · simulation only')
+                    if config.get('simulation_forward_speed_m_s') is not None:
+                        subtitle = (f"UNGUARDED · {config['simulation_forward_speed_m_s']:.2f} m/s max request"
+                                    f" · {config['simulation_speed_profile']}")
+                    draw.text((12,30),subtitle,font=font,fill='white')
                     draw.text((12,533),f"Run outcome: {result['reason']} · no new dynamics",font=font,fill='white')
                     process.stdin.write(np.asarray(canvas).tobytes())
                 process.stdin.close()
