@@ -138,3 +138,10 @@ margin. Prior guarded dynamics and adapter evidence for the smoothed profile
 must not be relabeled as proof for this candidate. Preparation and software
 checks do not authorize physical motion; require a fresh motors-off preflight,
 exact bound review and human confirmation immediately before any new trial.
+
+The requested unfiltered video rehearsal (October13) ran once from the latest
+recorded settled hardware joint pose with zero simulated velocity/history and
+model-derived root placement0.447903m. It stopped5.02s at lift entry on predicted
+FR HX49.921Nm above44.88Nm. The100fps/502frame video preserves this partial failure;
+no full tripod/IK completion or hardware qualification. See
+records/relic-three-leg-unfiltered-video-20261013. No physical access/retry.
