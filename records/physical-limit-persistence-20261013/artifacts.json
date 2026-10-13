@@ -1,0 +1,11 @@
+{
+  "runs/relic-three-leg-persistence500-validation-20261013-004/audit-immediate/result.json": "f42e1040a5a6b5380a5206a239430fac0f5c4a189e12b56df41e0a3ec44e5c99",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/audit-500ms/result.json": "bc1432b9cbe37ed2938a4d5fa11d2868fdec2c5d64eda18242cbbdb7c80c500e",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/simulation/COMPLETE.json": "14859b0227b82cfdbe918ab1e0dee25c3f8ab94346d9340321e2e4036dab7e5f",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/simulation/result.json": "300bf6dde8788001de94378524a189c19595afe5c98a7cc367016d8ee2a85b8d",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/simulation/source.json": "49ddb294c3b4f20bfda40fa8992da913766346ae05a99983d536c6c254d4849d",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/simulation/configuration.json": "b891e3482444c005107915272ea929f60e369e3957c8dbfb3e045678717fa3b1",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/simulation/rollout.jsonl": "3f3f347a03cb04ef26910222389d1350bd7f301024c4dd13541b1b1642391d7c",
+  "runs/relic-three-leg-persistence500-validation-20261013-004/simulation/events.jsonl": "e848a5ec5fcd9c77794a45bf516fa611f71c570e2087d5a92d20c167aaa5d5e1",
+  "runs/relic-three-leg-persistence500-validation-20261013-003/validation.log": "3d28672475b4e00d25b6b38e08a587ab5c0bfafefd93fb1a3996f370dccd0d90"
+}

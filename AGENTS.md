@@ -132,3 +132,9 @@ startup/handover qualification, data/transport, health/tablet and trial deadline
 stay immediate. Unlimited MuJoCo actuators can now run with persistence guards
 enforced; --no-guards remains a separate explicit operating-stop diagnostic.
 No physical approval; keep historical evidence and rebind before exact approval.
+Validation is recorded in records/physical-limit-persistence-20261013:521fulltests
+passed, saved47s500ms audit passed, and one60s guarded unlimited-actuator simulation
+completed/no fall/stable. Three physical episodes recovered5/10/15ms (five timer
+entries due redundant torque checks). Recorded119ms core outlier would violate
+unchanged live10ms computation gate; no live timing qualification or physicalapproval.
+Current draft: local/relic-three-leg-persistence500-preparation-20261013-001.

@@ -74,3 +74,9 @@ termination, but any observed fall still fails scientific recovery acceptance.
 
 No physical motion is authorized by this change. A new source-bound bundle, fresh
 preflight and the requested exact confirmation remain necessary before a trial.
+
+The [validation record](../records/physical-limit-persistence-20261013/README.md)
+contains the passing47s audit and60s guarded unlimited-actuator simulation.
+The three physical crossing episodes recovered in5,10and15ms. A119ms host compute
+outlier remains separate from these physical impulses and would trip the unchanged
+live10ms deadline; the record does not establish live timing readiness.
