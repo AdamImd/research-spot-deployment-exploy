@@ -224,3 +224,11 @@ def test_new_task_evidence_required_before_robot_or_usb(mobile, tmp_path, monkey
     with pytest.raises(ContractError, match='explicit execution'):
         require_live(mobile, None, None, path, None, None, None, 'Adam', 'Minghao', False, 60)
     assert callable(execute)
+
+
+def test_live_wrapper_rejects_unbound_profile_before_io():
+    import runpy
+    main = runpy.run_path(str(ROOT/'tools/joystick_relic.py'))['main']
+    with pytest.raises(SystemExit) as exc:
+        main(['run', '--profile', 'unbound.json'])
+    assert exc.value.code == 2

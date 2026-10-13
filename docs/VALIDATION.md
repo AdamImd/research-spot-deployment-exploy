@@ -70,3 +70,12 @@ in the public tree. It did not rerun Isaac or qualify hardware timing.
 [parity](../records/public-checkout-validation/parity.json),
 [MuJoCo](../records/public-checkout-validation/mujoco.json). Documentation and
 acceptance-record additions after this commit do not change the executed runtime.
+
+## USB joystick with moving arm, October 13, 2026
+
+The new schema5 task passed530 full-suite tests at `b4dad66`. A more compact default
+front-arm pose (`1a8752a`) completed one guarded60s MuJoCo scripted X/Y/yaw and arm
+out/back sequence with native parity and stable final standing. The earlier extended
+pose's19.24s tracking stop remains recorded. Nine targeted tests also pass after the
+final wrapper-only argument check. See [protocol, failures and measured limits](../records/joystick-arm-20261013/README.md).
+No physical trial, full-speed qualification or harness/collision review was performed.

@@ -37,13 +37,15 @@ def prepare(base, plan, output):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=['preview', 'prepare', 'run'], nargs='?', default='preview')
-    parser.add_argument('--profile', type=Path, default=ROOT/'examples/joystick-relic-arm.json')
+    parser.add_argument('--profile', type=Path)
     parser.add_argument('--manifest', type=Path, default=ROOT/'policies/relic-exploy-standing/manifest.json')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--duration', type=float, default=None)
     # Forward live args to the common gated CLI; never bypass it.
     args, extra = parser.parse_known_args(argv)
     if args.mode == 'run':
+        if args.profile is not None:
+            parser.error('run uses the profile frozen in --manifest; prepare a new candidate to change it')
         from spot_deploy.cli import main as control_main
         manifest = load_manifest(args.manifest)
         if manifest.task != 'joystick-arm' or args.output is None:
@@ -53,7 +55,7 @@ def main(argv=None):
                              '--duration', str(duration), *extra])
     if extra:
         parser.error('unknown arguments: '+ ' '.join(extra))
-    plan = load(args.profile, JoystickTeleopPlan)
+    plan = load(args.profile or ROOT/'examples/joystick-relic-arm.json', JoystickTeleopPlan)
     if args.mode == 'prepare':
         if args.output is None:
             parser.error('prepare needs --output for a new policy directory')
