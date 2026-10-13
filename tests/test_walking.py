@@ -38,6 +38,23 @@ def test_forward_distance_uses_frozen_initial_heading_not_world_x(state, plan):
     assert travel.progress['requested_forward_m_s'] == 0
 
 
+@pytest.mark.parametrize('yaw', [0., math.pi / 2, math.pi, -.7])
+def test_recorded_goal_is_ahead_of_heading_at_latch(state, plan, yaw):
+    log = Log()
+    travel = ForwardTravel(plan, log)
+    current = posed(state, 3, yaw=yaw)
+    travel.latch(current)
+    name, event = log.events[-1]
+    assert name == 'walk_origin'
+    offset = np.array(event['goal_odom_position_m']) - current.body_position_odom
+    forward = np.array([math.cos(yaw), math.sin(yaw), 0.])
+    lateral = np.array([-math.sin(yaw), math.cos(yaw), 0.])
+    assert offset @ forward == pytest.approx(plan.distance_m)
+    assert offset @ lateral == pytest.approx(0., abs=1e-12)
+    assert offset[2] == 0.
+    assert event['robot_time_s'] == current.body_pose_robot_time_s
+
+
 def test_measured_distance_and_stationary_hold_complete_without_time_distance(state, plan):
     log = Log()
     travel = ForwardTravel(plan, log)

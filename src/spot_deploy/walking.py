@@ -78,7 +78,11 @@ class ForwardTravel:
         self.axes = np.array([[math.cos(yaw), math.sin(yaw)],
                               [-math.sin(yaw), math.cos(yaw)]])
         self.phase = 'initial_hold'
+        # Pose is supplied after native standing, not from the robot's boot frame.
+        goal = p.copy()
+        goal[:2] += self.plan.distance_m * self.axes[0]
         self.record.event('walk_origin', odom_position_m=p.tolist(), yaw_rad=yaw,
+            goal_odom_position_m=goal.tolist(),
             robot_time_s=state.body_pose_robot_time_s, plan=self.plan.model_dump(),
             source='robot odom_tform_body', reference_frame='initial gravity-aligned body',
             distance_formula='initial_heading_rotation.T @ (current_odom_xy - initial_odom_xy)')
