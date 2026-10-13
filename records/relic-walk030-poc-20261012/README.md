@@ -81,3 +81,39 @@ lightweight gzip archive retaining all unique sampled states.
 Host `cs-u-rpm-dt-03`, locked CPU ONNX/UV environment; GPU 0 for Isaac Kit only,
 native Isaac overlay, no GPU 1, no paid compute. One Luna owner per bounded durable
 validation run, exact primary-authored command arrays, no retries.
+
+## Completed pre-activation checks
+
+At clean runtime pin `c74bd12b4c70700043c4a0e14b363d75ccee67f8`, campaign
+`runs/relic-walk030-poc-validation-20261012-001` passed 462 tests, Ruff/demo, both
+full 60 s recorded numeric audits, two fresh 20 s guarded normal-core rollouts and
+the 20 s paced host benchmark. The primary verified 4001 state/rollout rows and
+1001 predictions per fresh engine (not 12001 rows, which belong to the 60 s audit).
+MuJoCo/Isaac forward travel 0.689392/0.687834 m, stable final windows, no guard
+stop/fall, goal completion false. Actor target parity max 2.3842e-7 rad.
+
+Timing: 4001 commands, effective 200.043 Hz, no missed releases, observed 5 ms gate
+true. Production max 4.033 ms, inference 0.515 ms, gap 8.403 ms and deadline-response
+4.623 ms. Ideal state/ACK clocks remain a limitation; this is not fresh physical
+command-transport qualification. Raw timing preserves every measured sample.
+
+The fresh exact-candidate motors-off preflight passed with 100% battery, no active
+faults and model/payload/identity/layout/license/robot stop-state checks passing.
+No motion or lease was used. Local package/evidence binding review is prepared
+for one supervised commissioning attempt with older successful stock/standing/
+transport records and new guarded/parity/timing artifacts clearly distinguished.
+Operator-confirmed rig/path/tablet and exact numerical limits remain unverified
+until the final answer; hardware policy qualification remains false.
+
+Pending check and raw preflight: `runs/relic-walk030-poc-pending-check-20261012-001`
+and `runs/relic-walk030-poc-preflight-20261012-001`. Prepared bundle and offline
+binding procedure: `local/relic-walk030-poc-20261012-001/bundle` and
+`bind_review.py` beside it. The exact index/source/config/artifact hashes and
+review limitations are retained locally. Proposed activation argv remains
+withheld until approval; the final command will be one `spot-deploy walk` with
+Adam/Minghao, bound inputs, duration 20 and explicit `--execute`, no retries.
+
+Campaign contract/supervisor: `local/relic-walk030-poc-20261012-001/{contract.json,execute.py}`.
+Durable tmux of the campaign name completed all stages. CPU OMP 2, GPU 0 Kit only,
+600 s maximum/$0 budget, no recovery. Sanitized observations/hashes are in
+`result-summary.json`; raw robot/preflight/input files remain ignored.
