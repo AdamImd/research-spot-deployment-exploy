@@ -182,6 +182,27 @@
       "default": null,
       "title": "Arm Motion Reason"
     },
+    "leg_position_guard": {
+      "default": "enforce",
+      "enum": [
+        "enforce",
+        "observe"
+      ],
+      "title": "Leg Position Guard",
+      "type": "string"
+    },
+    "leg_position_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Leg Position Reason"
+    },
     "max_state_age_s": {
       "exclusiveMinimum": 0,
       "title": "Max State Age S",

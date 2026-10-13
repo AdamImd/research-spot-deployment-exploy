@@ -37,6 +37,11 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
 - Policy rate is 50 Hz; command rate is 200 Hz. No catch-up bursts after a missed tick.
 - Direct startup means zero interpolation duration. Capture initial body height.
 - Preserve pinned weights, graph/manifest hashes, gains and the held arm contract.
+- Measured leg-angle bounds default to enforcement. The operator-selected
+  `leg_position_guard=observe` requires an explicit reason, ReLIC controller,
+  manufacturer torque profile and separate finite virtual target bounds. It logs
+  operating-angle crossings; it does not remove torque, speed, body, tracking,
+  timing or tablet controls. See docs/FIRMWARE_LEG_POSITIONS.md. Never enable by default.
 - The operator-requested harness exception is explicit `arm_motion_guard=observe`
   with a reason in the envelope. See docs/ARM_HARNESS.md. Arm motion is logged;
   all torque limits and held arm commands remain enforced. Never enable it by default.

@@ -1,0 +1,112 @@
+{
+  "command_span_s": 12.933414694853127,
+  "commands": 2588,
+  "compact": {
+    "capture_complete": true,
+    "compressed_bytes": 2399409,
+    "source_status": "failed",
+    "status": "completed"
+  },
+  "compact_complete_sha256": "fbafc5b29f70dc88193093aae6607680ace0f356f00053ee7d61646869851e7e",
+  "envelope_sha256": "498a37413139c0934d2b66eee173104e699cd2df34a0a5e0955224830c13d486",
+  "estimated_torque_note": "PD-plus-feedforward estimate; not independently measured torque",
+  "final_forward_m": 0.6925393989488609,
+  "final_lateral_m": -0.021512461791876183,
+  "first_failure": {
+    "error_type": "ContractError",
+    "reason": "E-stop or robot fault stopped ReLIC"
+  },
+  "hardware_qualified": false,
+  "history_acknowledgements": 646,
+  "initial_body_height_m": 0.5196442326812707,
+  "issued_policy_command_span_s": 12.920003041159362,
+  "last_walking_phase": "forward",
+  "leg_position_guard": "observe",
+  "leg_position_observation_events": 5,
+  "leg_position_observed_joints": [
+    "fr_kn",
+    "hr_kn"
+  ],
+  "max_recorded_core_computation_s": 0.0025073629803955555,
+  "maximum_abs_lateral_m": 0.03590100444049967,
+  "maximum_command_gap_s": 0.008159901015460491,
+  "maximum_forward_m": 0.6925393989488609,
+  "maximum_forward_request_m_s": 0.3,
+  "maximum_inference_s": 0.0005693389102816582,
+  "mode_recorded": true,
+  "nominal_goal_reached": false,
+  "operator_assessment": "Good job, sucess!",
+  "peak_issued_state_leg_speed_rad_s": 9.710928916931152,
+  "per_joint_max_abs_estimated_PD_torque_Nm": [
+    17.827724397182465,
+    20.96370953321457,
+    60.25900594890118,
+    24.455652125179768,
+    25.018218129873276,
+    60.90899417549372,
+    22.446781799197197,
+    16.491884529590607,
+    48.63016386330128,
+    16.673222735524178,
+    14.67747067892924,
+    38.06162244826555,
+    1.043242633342743,
+    3.922213852405548,
+    11.110262882307914,
+    1.5045403183115122,
+    2.1837373971939087,
+    0.4215441644191742,
+    0.5725867462158203
+  ],
+  "per_joint_max_abs_issued_offset_rad": [
+    0.30269163101911545,
+    0.3726087808609009,
+    1.0147843956947327,
+    0.40625329315662384,
+    0.40653157234191895,
+    1.009456992149353,
+    0.3677869699895382,
+    0.2686445116996765,
+    0.8067464828491211,
+    0.26922815293073654,
+    0.24445652961730957,
+    0.6317424774169922,
+    0.005612373352050781,
+    0.02834939956665039,
+    0.002053499221801758,
+    0.014883279800415039,
+    0.00911259651184082,
+    0.001926422119140625,
+    0.012847065925598145
+  ],
+  "physical_execution_commit": "b1fc5a9ea34c453b94905304c86fc4de61b2bba8",
+  "policy_samples": 647,
+  "postcheck": {
+    "active_fault_count": 1,
+    "fault_details": [
+      {
+        "code": 9,
+        "kind": "system_fault_state",
+        "name": "payload.fault",
+        "severity": 1
+      }
+    ],
+    "motors_off": true,
+    "passed": false
+  },
+  "proof_of_concept_accepted_by_operator": true,
+  "qualification_note": "Operator accepts walking proof of concept; raw failed health-stop and incomplete goal are preserved.",
+  "raw_complete_sha256": "26a56d904d316b026c00800be64aedcad71173c5f6c8af940a3024bdf690e2ff",
+  "raw_status": "failed",
+  "recorded_policy_sample_span_s": 12.920003041159362,
+  "reference": "Measured robot odom/body displacement along current post-native-stand heading; no independent metrology",
+  "retry_performed": false,
+  "selected_core_limit_s": 0.01,
+  "shutdown_result": {
+    "elapsed_s": 6.015819374006242,
+    "errors": [],
+    "lease_returned": true,
+    "motors_off_confirmed": true,
+    "within_shutdown_budget": true
+  }
+}

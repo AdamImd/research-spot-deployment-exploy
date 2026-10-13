@@ -182,6 +182,10 @@ class Envelope(StrictModel):
     # Commanded arm targets and all torque limits remain enforced.
     arm_motion_guard: Literal["enforce", "observe"] = "enforce"
     arm_motion_reason: str | None = None
+    # Explicit operator-selected reliance on firmware position saturation.
+    # This affects measured leg-angle operating bounds only, not torque/targets.
+    leg_position_guard: Literal["enforce", "observe"] = "enforce"
+    leg_position_reason: str | None = None
     max_state_age_s: Positive
     max_state_gap_s: Positive
     max_future_skew_s: Positive
@@ -203,6 +207,13 @@ class Envelope(StrictModel):
                 raise ValueError("arm observation mode requires an operator reason")
         elif self.arm_motion_reason is not None:
             raise ValueError("arm motion reason requires observation mode")
+        if self.leg_position_guard == "observe":
+            if not self.leg_position_reason or not self.leg_position_reason.strip():
+                raise ValueError("leg position observation requires an operator reason")
+            if not self.actuator_limit_profile or self.command_position_min is None:
+                raise ValueError("leg position observation requires manufacturer torque and explicit target bounds")
+        elif self.leg_position_reason is not None:
+            raise ValueError("leg position reason requires observation mode")
         if tuple(self.joint_order) != JOINTS:
             raise ValueError("envelope vectors must use canonical SDK joint order")
         if any(lo >= hi for lo, hi in zip(self.position_min, self.position_max)):
