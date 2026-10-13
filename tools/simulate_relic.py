@@ -60,8 +60,8 @@ def sdk_state(backend, t, key):
 
 def run(args):
     unlimited = getattr(args, 'no_actuator_torque_limits', False)
-    if unlimited and (args.backend != 'mujoco' or not args.no_guards):
-        raise ValueError('unlimited actuator torque requires MuJoCo and --no-guards')
+    if unlimited and args.backend != 'mujoco':
+        raise ValueError('unlimited actuator torque requires MuJoCo')
     if not verify_run(args.capture):
         raise ValueError("capture failed integrity verification")
     sys.path[:0] = [str(args.simulation_source), str(args.simulation_source / "tools")]
@@ -293,7 +293,12 @@ def run(args):
                     first_fall_s = t
                     log.event('first_fall_proxy', simulation_time_s=t,
                               height_m=row['height'], tilt_rad=row['tilt'])
-                terminal = fall and not unguarded
+                terminal = False
+                if not unguarded:
+                    try:
+                        core.guard.physical_limits.check(fall, 10+t, 'simulation fall proxy')
+                    except ContractError:
+                        terminal = True
                 if terminal:
                     reason = "fall"
                 # Equivalent PD+feedforward before the same simulated saturation;
@@ -403,12 +408,12 @@ def main():
                         help='Simulation-only diagnostic: disable operating stops, continue after falls; '
                              'retain physical saturation and integrity checks. Never qualifies hardware.')
     parser.add_argument('--no-actuator-torque-limits', action='store_true',
-                        help='MuJoCo diagnostic with --no-guards: disable ALL actuator effort and knee '
+                        help='MuJoCo diagnostic: disable ALL actuator effort and knee '
                              'position/speed torque clipping; retain finite checks and contact physics.')
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    if args.no_actuator_torque_limits and (args.backend != 'mujoco' or not args.no_guards):
-        parser.error('unlimited actuator torque requires MuJoCo and --no-guards')
+    if args.no_actuator_torque_limits and args.backend != 'mujoco':
+        parser.error('unlimited actuator torque requires MuJoCo')
     if args.initial_root_height_m is not None and not .25 <= args.initial_root_height_m <= .8:
         parser.error('initial root height must be in[.25,.8]m')
     if args.backend == "mujoco" and args.physics_device != "cpu":

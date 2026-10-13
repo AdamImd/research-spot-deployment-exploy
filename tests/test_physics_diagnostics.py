@@ -117,8 +117,8 @@ def test_unlimited_torque_bypasses_all_clipping_but_retains_integrity(tmp_path, 
         instance.torque(target)
 
 
-@pytest.mark.parametrize('extra', [[], ['--no-guards', '--backend', 'isaaclab']])
-def test_unlimited_torque_requires_explicit_mujoco_diagnostic(extra, tmp_path):
+def test_unlimited_torque_requires_mujoco(tmp_path):
+    extra = ['--no-guards', '--backend', 'isaaclab']
     import subprocess
     import sys
     root = Path(__file__).parents[1]
@@ -128,7 +128,7 @@ def test_unlimited_torque_requires_explicit_mujoco_diagnostic(extra, tmp_path):
                '--output', str(tmp_path/'output'), '--no-actuator-torque-limits', *extra]
     result = subprocess.run(command, capture_output=True, text=True)
     assert result.returncode == 2
-    assert 'unlimited actuator torque requires MuJoCo and --no-guards' in result.stderr
+    assert 'unlimited actuator torque requires MuJoCo' in result.stderr
     assert not (tmp_path/'output').exists()
 
 

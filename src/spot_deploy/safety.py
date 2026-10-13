@@ -8,6 +8,7 @@ import numpy as np
 
 from .contracts import ContractError, Envelope, Manifest, State
 from .policy import rotation
+from .physical_limits import PhysicalLimits
 
 
 class LatestState:
@@ -61,9 +62,10 @@ class Command:
 
 
 class Guard:
-    def __init__(self, manifest: Manifest, envelope: Envelope):
+    def __init__(self, manifest: Manifest, envelope: Envelope, *, event=None):
         self.manifest = manifest
         self.envelope = envelope
+        self.physical_limits = PhysicalLimits(envelope.physical_limit_persistence_s, event)
         self.last_state_time = None
         self.last_received = None
         self.last_command = None
@@ -102,18 +104,37 @@ class Guard:
         if np.any(arm < envelope.command_lower[12:]) or np.any(arm > envelope.command_upper[12:]):
             raise ContractError("arm stow target exceeds command position envelope")
 
-    def check_actuator_load(self, positions, loads, context, *, requested=False):
+    def check_actuator_load(self, positions, loads, context, now, *, requested=False):
         if self.envelope.actuator_limit_profile:
-            from .actuator_limits import check_torque
+            from .actuator_limits import COUPLED_MOTOR_TORQUE, KNEE_INDICES, KNEE_TABLE, torque_limits
 
-            try:
-                check_torque(positions, loads, leg_requested_max=(
-                    self.envelope.leg_requested_torque_max if requested else None))
-            except ValueError as exc:
-                raise ContractError(f"{context}: {exc}") from exc
+            q, torque = np.asarray(positions, dtype=float), np.asarray(loads, dtype=float)
+            if q.shape != (19,) or torque.shape != (19,) or not np.isfinite([q, torque]).all():
+                raise ContractError(f'{context}: manufacturer torque check requires finite joint data')
+            k = list(KNEE_INDICES)
+            outside = (q[k] < KNEE_TABLE[0, 0]) | (q[k] > KNEE_TABLE[-1, 0])
+            self.physical_limits.check(outside, now, 'knee position outside manufacturer torque table',
+                                       key='measured knee table domain', values=q[k])
+            # During the explicitly requested persistence window use the nearest
+            # endpoint's torque cap. Never extrapolate an unreviewed torque curve.
+            bounded_q = q.copy()
+            bounded_q[k] = np.clip(q[k], KNEE_TABLE[0, 0], KNEE_TABLE[-1, 0])
+            limits = torque_limits(bounded_q)
+            if requested and self.envelope.leg_requested_torque_max is not None:
+                limits[:12] = self.envelope.leg_requested_torque_max
+            self.physical_limits.check(np.abs(torque) > limits, now,
+                f'{context}: manufacturer joint torque limit', values=torque)
+            coupling = abs(torque[13]-torque[14])
+            self.physical_limits.check(coupling > COUPLED_MOTOR_TORQUE, now,
+                f'{context}: manufacturer coupled SH1/EL0 motor torque limit', values=coupling)
 
     def check_state(self, state: State, now: float, robot_now: float):
         env = self.envelope
+        if not np.isfinite([*state.positions, *state.velocities, *state.loads,
+                *state.odom_quaternion_wxyz, *state.linear_velocity_odom,
+                *state.angular_velocity_odom, state.received_monotonic_s,
+                state.robot_time_s, now, robot_now]).all():
+            raise ContractError('nonfinite state or clock')
         if (
             now < state.received_monotonic_s
             or now - state.received_monotonic_s > env.max_state_age_s
@@ -150,27 +171,28 @@ class Guard:
         if self.observe_leg_positions:
             self.leg_position_observation = np.flatnonzero(position_bad[:12]).tolist()
             position_bad[:12] = False
-        if np.any(position_bad):
-            raise ContractError("measured joint position limit")
-        if np.any(np.abs(v[:n]) > env.velocity_max[:n]) or np.any(np.abs(load) > env.load_max):
-            raise ContractError("measured joint velocity or load limit")
-        self.check_actuator_load(q, load, "measured load")
+        self.physical_limits.check(position_bad, now, 'measured joint position limit', values=q[:n])
+        self.physical_limits.check(np.abs(v[:n]) > env.velocity_max[:n], now,
+            'measured joint velocity or load limit', key='measured joint velocity', values=v[:n])
+        self.physical_limits.check(np.abs(load) > env.load_max, now,
+            'measured joint velocity or load limit', key='measured joint load', values=load)
+        self.check_actuator_load(q, load, "measured load", now)
         r = rotation(state)
         roll = np.arctan2(r[2, 1], r[2, 2])
         pitch = np.arcsin(np.clip(-r[2, 0], -1, 1))
-        if abs(roll) > env.max_roll_rad or abs(pitch) > env.max_pitch_rad:
-            raise ContractError("body attitude limit")
-        if (
-            np.linalg.norm(state.linear_velocity_odom) > env.max_linear_speed
-            or np.linalg.norm(state.angular_velocity_odom) > env.max_angular_speed
-        ):
-            raise ContractError("body speed limit")
-        if (not self.observe_arm_motion
-                and np.max(np.abs(q[12:] - self.manifest.arm_stowed_positions)) > env.max_arm_pose_error):
-            raise ContractError("arm is outside registered stowed pose")
+        self.physical_limits.check([abs(roll) > env.max_roll_rad, abs(pitch) > env.max_pitch_rad],
+                                   now, 'body attitude limit', values=[roll, pitch])
+        speeds = [np.linalg.norm(state.linear_velocity_odom), np.linalg.norm(state.angular_velocity_odom)]
+        self.physical_limits.check(np.array(speeds) > [env.max_linear_speed, env.max_angular_speed],
+                                   now, 'body speed limit', values=speeds)
+        if not self.observe_arm_motion:
+            arm_error = np.abs(q[12:] - self.manifest.arm_stowed_positions)
+            self.physical_limits.check(arm_error > env.max_arm_pose_error, now,
+                                       'arm is outside registered stowed pose', values=arm_error)
         if self.last_command is not None:
-            if np.any(np.abs(q[:n] - self.last_command[:n]) > env.tracking_error_max[:n]):
-                raise ContractError("measured joint tracking error")
+            error = np.abs(q[:n] - self.last_command[:n])
+            self.physical_limits.check(error > env.tracking_error_max[:n], now,
+                                       'measured joint tracking error', values=error)
 
     def command(self, targets, state, now, robot_now, policy_at, inference_s, feedforward=None):
         self.check_state(state, now, robot_now)
@@ -182,16 +204,18 @@ class Guard:
         target = np.asarray(targets)
         if target.shape != (19,) or not np.isfinite(target).all():
             raise ContractError("command must contain nineteen finite positions")
-        if np.any(target < env.command_lower) or np.any(target > env.command_upper):
-            raise ContractError("command position limit")
+        self.physical_limits.check((target < env.command_lower) | (target > env.command_upper),
+                                   now, 'command position limit', values=target)
         n = self.motion_joint_count
-        if np.any(np.abs(target[:n] - state.positions[:n]) > env.tracking_error_max[:n]):
-            raise ContractError("command tracking error limit")
+        error = np.abs(target[:n] - state.positions[:n])
+        self.physical_limits.check(error > env.tracking_error_max[:n], now,
+                                   'command tracking error limit', values=error)
         feedforward = np.asarray(self.manifest.gains.feedforward if feedforward is None
                                  else feedforward, dtype=float)
-        if (feedforward.shape != (19,) or not np.isfinite(feedforward).all()
-                or np.any(np.abs(feedforward) > env.load_max)):
+        if feedforward.shape != (19,) or not np.isfinite(feedforward).all():
             raise ContractError("command feedforward exceeds envelope")
+        self.physical_limits.check(np.abs(feedforward) > env.load_max, now,
+                                   'command feedforward exceeds envelope', values=feedforward)
         torque = (
             np.asarray(self.manifest.gains.kp) * (target - state.positions)
             - np.asarray(self.manifest.gains.kd) * state.velocities
@@ -200,10 +224,12 @@ class Guard:
         requested_limits = np.array(env.load_max)
         if env.leg_requested_torque_max is not None:
             requested_limits[:12] = env.leg_requested_torque_max
-        if not np.isfinite(torque).all() or np.any(np.abs(torque) > requested_limits):
-            raise ContractError("predicted PD-plus-feedforward load limit")
-        self.check_actuator_load(state.positions, feedforward, "feedforward")
-        self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load", requested=True)
+        if not np.isfinite(torque).all():
+            raise ContractError('nonfinite predicted PD torque')
+        self.physical_limits.check(np.abs(torque) > requested_limits, now,
+                                   'predicted PD-plus-feedforward load limit', values=torque)
+        self.check_actuator_load(state.positions, feedforward, "feedforward", now)
+        self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load", now, requested=True)
         if not np.allclose(target[12:], self.manifest.arm_stowed_positions, rtol=0, atol=1e-9):
             raise ContractError("leg-only policy attempted arm movement")
         if self.last_sent is not None:
@@ -213,9 +239,10 @@ class Guard:
             rates = (target - self.last_command) / dt
             exceeded = np.flatnonzero(np.abs(rates) > np.asarray(env.command_rate_max))
             self.command_rate_observation = None
+            if env.command_rate_guard == "enforce":
+                self.physical_limits.check(np.abs(rates) > np.asarray(env.command_rate_max), now,
+                                           'command slew limit', values=rates)
             if exceeded.size:
-                if env.command_rate_guard == "enforce":
-                    raise ContractError("command slew limit")
                 self.command_rate_observation = dict(indices=exceeded.tolist(),
                     target_rates_rad_s=rates.tolist(), reference_max=env.command_rate_max)
         self.last_command = target.copy()

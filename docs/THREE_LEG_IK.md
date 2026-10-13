@@ -173,3 +173,7 @@ completed 47 s and recovered with unchanged weights/gains, no fall, loaded suppo
 feet and stable final standing. Peak requested knee torque was 75.85 N·m; peak
 applied hip torque was 49.92 N·m. These cross the proposed requested/measured
 hardware bounds; this ideal-actuator diagnostic does not qualify a physical trial.
+
+[Physical-limit persistence](PHYSICAL_LIMIT_PERSISTENCE.md) now supports a reviewed
+500 ms continuous window with 75 N·m requested torque. Unlimited actuator torque
+is independent of `--no-guards`, allowing an enforced persistence rehearsal.

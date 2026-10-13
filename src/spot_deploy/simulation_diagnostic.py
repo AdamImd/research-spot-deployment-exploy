@@ -22,6 +22,9 @@ class DiagnosticChecks:
 
 
 class DiagnosticTravel(DiagnosticChecks, ForwardTravel):
+    def _physical_check(self, violations, now, message):
+        self._operating_check(not np.any(violations), message)
+
     def __init__(self, plan, record, forward_speed=None, speed_profile='taper'):
         super().__init__(plan, record)
         self.violations = set()

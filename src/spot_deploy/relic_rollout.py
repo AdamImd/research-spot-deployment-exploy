@@ -18,7 +18,9 @@ class ReLICRollout:
         self.spec = self.manifest.relic.preparation
         if envelope.transition_s != self.spec.duration_s:
             raise ContractError("preparation duration and envelope transition differ")
-        self.guard = Guard(self.manifest, envelope)
+        self.guard = Guard(self.manifest, envelope, event=record.event)
+        # Startup qualification is immediate; persistence applies after activation.
+        self.guard.physical_limits.enabled = False
         self.support = policy.support
         self.initial = self.active_at = self.target = self.last_command = None
         self.previous = np.zeros(12, dtype=np.float32)
@@ -33,7 +35,8 @@ class ReLICRollout:
         self.motion = None
         if self.manifest.task == 'walking':
             from .walking import ForwardTravel
-            self.motion = ForwardTravel(self.manifest.walking, record)
+            self.motion = ForwardTravel(self.manifest.walking, record,
+                                        physical_limits=self.guard.physical_limits)
             if self.manifest.walking.max_duration_s > envelope.max_duration_s:
                 raise ContractError('walking timeout exceeds reviewed envelope')
         self.velocity_command = None
@@ -78,6 +81,14 @@ class ReLICRollout:
         if self.initial is None or self.active_at is not None or not np.isfinite(now):
             raise ContractError("invalid or repeated ReLIC activation")
         self.active_at = now
+        limits = getattr(self.guard, 'physical_limits', None)
+        if limits is not None:
+            limits.enabled = True
+        if self.envelope.physical_limit_persistence_s:
+            self.record.event('physical_limit_persistence', monotonic_s=now,
+                duration_s=self.envelope.physical_limit_persistence_s,
+                reason=self.envelope.physical_limit_persistence_reason,
+                semantics='continuous per-limit/per-joint; strict greater-than; reset on recovery')
         if self.motion:
             self.motion.activate(now)
         self.phase = "direct_handover" if self.spec.kind == "direct" else "preparation"

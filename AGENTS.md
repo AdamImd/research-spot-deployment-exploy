@@ -108,7 +108,7 @@ file. No external messaging or automatic physical activation is authorized.
 
 ## Torque diagnostics and requested-demand draft (2026-10-13)
 
-MuJoCo's explicit `--no-actuator-torque-limits` requires `--no-guards` and removes
+MuJoCo's explicit `--no-actuator-torque-limits` removes
 all actuator clipping while retaining contact physics/integrity. Default simulated
 actuators are unchanged. Unlimited dynamics are not hardware evidence.
 `leg_requested_torque_max` plus an operator reason separately caps the predicted
@@ -120,3 +120,15 @@ records/relic-three-leg-unlimited-torque-20261013. Requested knee peak75.85Nm
 exceeds the new75Nm draft, and measured hip torque/speed also cross retained
 bounds. No physical approval or hardware qualification. Video and precision-aware
 analysis were repaired from saved data without rerunning dynamics.
+
+## Physical-limit persistence draft (2026-10-13)
+
+Adam selected physical_limit_persistence_s=0.5 for all physical operating limits:
+continuous per-limit/per-joint violation must be strictly longer than500ms.
+Recovery resets that timer; impulses do not accumulate. Default0 remains immediate.
+See docs/PHYSICAL_LIMIT_PERSISTENCE.md for scope, endpoint knee-table checking,
+recorded events and immediate checks. ReLIC enables the window at activation;
+startup/handover qualification, data/transport, health/tablet and trial deadlines
+stay immediate. Unlimited MuJoCo actuators can now run with persistence guards
+enforced; --no-guards remains a separate explicit operating-stop diagnostic.
+No physical approval; keep historical evidence and rebind before exact approval.

@@ -170,6 +170,8 @@ class Envelope(StrictModel):
     # Explicit pre-saturation leg demand cap; never changes measured/arm limits.
     leg_requested_torque_max: Positive | None = None
     leg_requested_torque_reason: str | None = None
+    physical_limit_persistence_s: float = Field(default=0., ge=0, le=.5, allow_inf_nan=False)
+    physical_limit_persistence_reason: str | None = None
     actuator_limit_profile: Literal["spot-sdk-5.0.1"] | None = None
     # Omission preserves legacy min(per-joint) behavior. An explicit global
     # backstop does not replace the host's tighter per-joint speed checks.
@@ -209,6 +211,12 @@ class Envelope(StrictModel):
 
     @model_validator(mode="after")
     def check(self):
+        if self.physical_limit_persistence_s > 0:
+            if (not self.physical_limit_persistence_reason
+                    or not self.physical_limit_persistence_reason.strip()):
+                raise ValueError('physical limit persistence requires an operator reason')
+        elif self.physical_limit_persistence_reason is not None:
+            raise ValueError('physical limit persistence reason requires a nonzero duration')
         if self.leg_requested_torque_max is not None:
             if (not self.actuator_limit_profile or not self.leg_requested_torque_reason
                     or not self.leg_requested_torque_reason.strip()):
