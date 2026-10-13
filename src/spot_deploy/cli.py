@@ -31,7 +31,7 @@ def parser():
     check.add_argument("--check-estop", action="store_true",
                        help="Read the local bridge status only; no setup, rearm or robot RPC")
     check.add_argument("--output", type=Path, required=True)
-    for name in ("inspect-policy", "replay", "readiness", "preflight", "watch", "shadow", "stand", "walk", "three-leg"):
+    for name in ("inspect-policy", "replay", "readiness", "preflight", "watch", "shadow", "stand", "walk", "three-leg", "joystick"):
         cmd = commands.add_parser(name)
         cmd.add_argument(
             "--output", type=Path, required=True, help="New run directory; never overwritten"
@@ -39,19 +39,19 @@ def parser():
         cmd.add_argument(
             "--manifest",
             type=Path,
-            required=name in ("inspect-policy", "replay", "shadow", "stand", "walk", "three-leg"),
+            required=name in ("inspect-policy", "replay", "shadow", "stand", "walk", "three-leg", "joystick"),
         )
-        cmd.add_argument("--envelope", type=Path, required=name in ("shadow", "stand", "walk", "three-leg"))
+        cmd.add_argument("--envelope", type=Path, required=name in ("shadow", "stand", "walk", "three-leg", "joystick"))
         cmd.add_argument(
-            "--robot", type=Path, required=name in ("preflight", "watch", "shadow", "stand", "walk", "three-leg")
+            "--robot", type=Path, required=name in ("preflight", "watch", "shadow", "stand", "walk", "three-leg", "joystick")
         )
-        if name in ("readiness", "stand", "walk", "three-leg"):
+        if name in ("readiness", "stand", "walk", "three-leg", "joystick"):
             cmd.add_argument("--evidence", type=Path)
         if name == "replay":
             cmd.add_argument("--states", type=Path, required=True)
             cmd.add_argument("--height-record", type=Path,
                              help="Recorded initial height and foot contacts for ReLIC replay")
-        if name in ("watch", "shadow", "stand", "walk", "three-leg"):
+        if name in ("watch", "shadow", "stand", "walk", "three-leg", "joystick"):
             cmd.add_argument(
                 "--duration", type=float, required=True, help="Bounded duration in seconds"
             )
@@ -60,7 +60,7 @@ def parser():
                 "--state-source", choices=("stream", "poll"), default="stream",
                 help="Read-only poll works without streaming entitlement and captures up to one hour",
             )
-        if name in ('stand', 'walk', 'three-leg'):
+        if name in ('stand', 'walk', 'three-leg', 'joystick'):
             cmd.add_argument("--execute", action="store_true")
             cmd.add_argument("--operator", required=True)
             cmd.add_argument("--safety-operator", required=True)
@@ -123,16 +123,19 @@ def execute(args, record):
         (record.directory / "readiness.md").write_text(markdown_report(result))
         return result
 
-    if args.mode in ("watch", "shadow", "stand", "walk", "three-leg"):
+    if args.mode in ("watch", "shadow", "stand", "walk", "three-leg", "joystick"):
         limit = 3600 if args.mode == "watch" and args.state_source == "poll" else 60
         if not 0 < args.duration <= limit:
             raise ContractError(f"duration must be finite and in (0, {limit}] seconds")
-    if args.mode in ('stand', 'walk', 'three-leg'):
+    if args.mode in ('stand', 'walk', 'three-leg', 'joystick'):
         if args.mode == 'walk':
             if not isinstance(manifest, ReLICManifest) or manifest.task != 'walking':
                 raise ContractError('walk requires an explicit ReLIC walking candidate and plan')
             if args.duration != manifest.walking.max_duration_s:
                 raise ContractError('walk duration must equal the reviewed distance timeout')
+        elif args.mode == 'joystick':
+            if manifest.task != 'joystick-arm' or args.duration != manifest.teleop.duration_s:
+                raise ContractError('joystick requires a bound teleop plan and its exact duration')
         elif args.mode == 'three-leg':
             if not isinstance(manifest, ReLICManifest) or manifest.task != 'three-leg-demo':
                 raise ContractError('three-leg requires the explicit selected-leg candidate')
@@ -162,6 +165,22 @@ def execute(args, record):
 
     route = wired_route(config)
     record.event("route", **route)
+    teleop_source = None
+    if args.mode == 'joystick':
+        from .joystick_teleop import JoystickInput
+        import time
+        teleop_source = JoystickInput(manifest.teleop)
+        try:
+            teleop_source.poll(time.monotonic())
+            if any(teleop_source.link.buttons.values()) or any(
+                    abs(teleop_source.link.axes[a.index]) > manifest.teleop.deadzone
+                    for a in manifest.teleop.axes):
+                raise ContractError('center stick and release all buttons before startup')
+            teleop_source.last_at = None  # Native stand precedes the first control tick.
+        except BaseException:
+            teleop_source.close()
+            raise
+        record.event('joystick_device', **teleop_source.link.metadata)
     reader = ReadOnlySpot(config)
     primary_error = None
     try:
@@ -170,7 +189,7 @@ def execute(args, record):
         else:
             reader.connect()
         snapshot = reader.snapshot()
-        checks = validate_snapshot(snapshot, config, manifest, envelope, args.mode in ('stand', 'walk', 'three-leg'))
+        checks = validate_snapshot(snapshot, config, manifest, envelope, args.mode in ('stand', 'walk', 'three-leg', 'joystick'))
         atomic_json(record.directory / "robot-snapshot.json", snapshot)
         if getattr(reader, "robot_urdf", None):
             (record.directory / "robot.urdf").write_text(reader.robot_urdf)
@@ -212,6 +231,7 @@ def execute(args, record):
         from .sdk_control import ControlSpot, command_proto
         from .estop_interlock import HardwareInterlock
 
+        teleop_kwargs = {'teleop_source': teleop_source} if teleop_source else {}
         return stand(
             reader,
             ControlSpot(reader, envelope),
@@ -221,11 +241,14 @@ def execute(args, record):
             record,
             command_proto,
             HardwareInterlock(config) if config.hardware_estop else None,
+            **teleop_kwargs,
         )
     except BaseException as exc:
         primary_error = exc
         raise
     finally:
+        if teleop_source:
+            teleop_source.close()
         try:
             reader.close()
         except BaseException:

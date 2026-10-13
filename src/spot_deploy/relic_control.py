@@ -14,8 +14,8 @@ from .safety import Schedule, bounded_join, percentiles
 from .sdk_read import classify_faults
 
 
-def stand(reader, control, policy, envelope, duration, record, encode, interlock=None):
-    core = ReLICRollout(policy, envelope, record)
+def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None):
+    core = ReLICRollout(policy, envelope, record, teleop_source)
     stop, emitted, lock = threading.Event(), threading.Event(), threading.Lock()
     shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False)
     gaps, acknowledgements = [], []
@@ -131,7 +131,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                         shared["last_emit"] = finished
                     yield encode(command, policy.manifest, envelope)
                     emitted.set()
-                    if core.motion and core.motion.completed:
+                    if (core.motion and core.motion.completed) or (core.teleop and core.teleop.completed):
                         with lock:
                             shared['motion_done'] = True
                     stop.wait(schedule.advance(time.monotonic()))
@@ -207,5 +207,6 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                 policy_samples=core.policy_samples, command_gap_s=percentiles(gaps),
                 command_ack_s=percentiles(acknowledgements), shutdown_confirmed=True,
                 shutdown=shutdown,
-                phase="stopped", duration_s=active_duration if core.motion else duration,
+                phase="stopped", duration_s=active_duration if (core.motion or core.teleop) else duration,
+                joystick=core.teleop.status if core.teleop else None,
                 walking=core.motion.progress if core.motion else None)

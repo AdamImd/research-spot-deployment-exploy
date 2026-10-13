@@ -151,11 +151,15 @@ class ExployReLICPolicy(ReLICDeploymentPolicy):
         target = finite(target[0], 19)[self.sdk_from_graph].astype(float)
         # Preserve the exact held-arm values in SDK packets, as the original
         # adapter does, after confirming the graph produces the same float32 pose.
-        arm = np.asarray(self.manifest.arm_stowed_positions, dtype=np.float32)
+        reference = self.output_arm_reference(inputs)
+        arm = np.asarray(reference, dtype=np.float32)
         if not np.array_equal(target[12:].astype(np.float32), arm):
             raise ContractError("Exploy output changed the held arm command")
-        target[12:] = self.manifest.arm_stowed_positions
+        target[12:] = reference
         return target, monotonic() - start, obs[None], action
+
+    def output_arm_reference(self, inputs):
+        return self.manifest.arm_stowed_positions
 
     def warmup(self):
         values = {k: np.zeros((1, n), dtype=np.float32) for k, n in self.input_sizes.items()}

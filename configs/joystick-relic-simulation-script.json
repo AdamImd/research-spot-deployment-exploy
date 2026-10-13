@@ -1,0 +1,12 @@
+[
+  {"time_s":0, "velocity":[0,0,0], "enabled":false},
+  {"time_s":3.5, "velocity":[0,0,0], "enabled":true, "toggle":true},
+  {"time_s":17, "velocity":[0.15,0,0], "enabled":true},
+  {"time_s":21, "velocity":[-0.10,0,0], "enabled":true},
+  {"time_s":25, "velocity":[0,0.10,0], "enabled":true},
+  {"time_s":28, "velocity":[0,-0.10,0], "enabled":true},
+  {"time_s":31, "velocity":[0,0,0.20], "enabled":true},
+  {"time_s":34, "velocity":[0,0,-0.20], "enabled":true},
+  {"time_s":37, "velocity":[0,0,0], "enabled":true, "toggle":true},
+  {"time_s":50, "velocity":[0,0,0], "enabled":false}
+]

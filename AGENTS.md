@@ -187,3 +187,14 @@ Latest approved forward repeat walked0.715016m (goal0.75,tolerance0.02), lateral
 OFF/lease return7.018s; postcheck passed with known payload.fault9 INFO only.
 No offline tests/retry. Record: records/relic-forward-repeat-20261013. Approval
 consumed; no further physical motion authorized automatically.
+
+## Joystick ReLIC arm task (2026-10-13)
+
+Explicit user scope adds schema5 joystick-arm / spot-arm-mobile; see
+`docs/JOYSTICK_TELEOP.md`. The unchanged nine-input graph accepts moving arm and
+3-axis body velocity commands. Trigger0 toggles arm, thumb1 enables, button3 finishes;
+tablet stays sole E-stop. Do not run the old joystick E-stop bridge alongside it.
+Legacy tasks keep held-arm checks. New task requires enforced arm limits, a bound
+path/profile and additional joystick_control/arm_deployment/teleop_clearance evidence.
+No physical run is authorized by implementing or testing this script. Use a new
+reviewed bundle and ask immediately before a physical trial; prior approvals are consumed.

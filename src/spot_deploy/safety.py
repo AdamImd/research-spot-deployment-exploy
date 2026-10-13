@@ -76,6 +76,10 @@ class Guard:
                 and (getattr(manifest, "adapter", None) != "relic-exploy-leg"
                      or manifest.task != "three-leg-demo")):
             raise ContractError("command rate observation requires the selected-leg demo")
+        self.mobile_arm = manifest.task == 'joystick-arm'
+        self.arm_reference = np.asarray(manifest.arm_stowed_positions, dtype=float)
+        if self.mobile_arm and envelope.arm_motion_guard != 'enforce':
+            raise ContractError('joystick arm control requires enforced arm motion limits')
         self.observe_arm_motion = envelope.arm_motion_guard == "observe"
         if (self.observe_arm_motion
                 and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy", "relic-exploy-leg")):
@@ -103,6 +107,26 @@ class Guard:
             raise ContractError("arm stow target exceeds position envelope")
         if np.any(arm < envelope.command_lower[12:]) or np.any(arm > envelope.command_upper[12:]):
             raise ContractError("arm stow target exceeds command position envelope")
+
+        if self.mobile_arm:
+            from .joystick_teleop import ArmPath
+            path = ArmPath(manifest.arm_stowed_positions, manifest.teleop)
+            points = path.points
+            if (np.any(points < np.array(envelope.position_min)[12:])
+                    or np.any(points > np.array(envelope.position_max)[12:])
+                    or np.any(points < np.array(envelope.command_lower)[12:])
+                    or np.any(points > np.array(envelope.command_upper)[12:])):
+                raise ContractError('arm path exceeds reviewed position envelope')
+            if np.any(np.array(envelope.command_rate_max)[12:18] < manifest.teleop.arm_speed_rad_s):
+                raise ContractError('arm path speed exceeds reviewed target slew envelope')
+
+    def set_arm_reference(self, reference):
+        if not self.mobile_arm:
+            raise ContractError('dynamic arm reference requires joystick-arm task')
+        arm = np.asarray(reference, dtype=float)
+        if arm.shape != (7,) or not np.isfinite(arm).all():
+            raise ContractError('invalid arm command reference')
+        self.arm_reference = arm.copy()
 
     def check_actuator_load(self, positions, loads, context, now, *, requested=False):
         if self.envelope.actuator_limit_profile:
@@ -186,9 +210,10 @@ class Guard:
         self.physical_limits.check(np.array(speeds) > [env.max_linear_speed, env.max_angular_speed],
                                    now, 'body speed limit', values=speeds)
         if not self.observe_arm_motion:
-            arm_error = np.abs(q[12:] - self.manifest.arm_stowed_positions)
+            arm_error = np.abs(q[12:] - self.arm_reference)
             self.physical_limits.check(arm_error > env.max_arm_pose_error, now,
-                                       'arm is outside registered stowed pose', values=arm_error)
+                                       ('arm is outside commanded pose' if self.mobile_arm else
+                                        'arm is outside registered stowed pose'), values=arm_error)
         if self.last_command is not None:
             error = np.abs(q[:n] - self.last_command[:n])
             self.physical_limits.check(error > env.tracking_error_max[:n], now,
@@ -230,7 +255,7 @@ class Guard:
                                    'predicted PD-plus-feedforward load limit', values=torque)
         self.check_actuator_load(state.positions, feedforward, "feedforward", now)
         self.check_actuator_load(state.positions, torque, "predicted PD-plus-feedforward load", now, requested=True)
-        if not np.allclose(target[12:], self.manifest.arm_stowed_positions, rtol=0, atol=1e-9):
+        if not np.allclose(target[12:], self.arm_reference, rtol=0, atol=1e-9):
             raise ContractError("leg-only policy attempted arm movement")
         if self.last_sent is not None:
             dt = now - self.last_sent

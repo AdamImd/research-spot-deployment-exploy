@@ -80,6 +80,14 @@ def run(args):
     if args.simulation_forward_speed is not None:
         from spot_deploy.simulation_diagnostic import SimulationVelocityPolicy
         policy = SimulationVelocityPolicy(policy, args.simulation_forward_speed, envelope)
+    teleop_source = None
+    if args.teleop_script:
+        if manifest.task != 'joystick-arm' or args.no_guards or args.three_leg_plan or args.simulation_forward_speed is not None:
+            raise ValueError('teleop script requires guarded joystick-arm simulation without other overrides')
+        from spot_deploy.joystick_teleop import ScriptedJoystick
+        teleop_source = ScriptedJoystick(json.loads(args.teleop_script.read_text()))
+    elif manifest.task == 'joystick-arm':
+        raise ValueError('joystick-arm simulation requires --teleop-script (no physical USB input)')
     demo = None
     if args.three_leg_graph and not args.three_leg_plan:
         raise ValueError('selected-leg graph requires an explicit offline plan')
@@ -133,7 +141,7 @@ def run(args):
             core = SimulationDiagnosticRollout(policy, envelope, log,
                 forward_speed=args.simulation_forward_speed, speed_profile=args.simulation_speed_profile)
         else:
-            core = ReLICRollout(policy, envelope, log)
+            core = ReLICRollout(policy, envelope, log, teleop_source)
         state, _ = sdk_state(backend, 0., 0)
         # The already-standing capture substitutes for stock stand. A supported
         # command is accepted before activation; no physics advances in this handshake.
@@ -152,7 +160,8 @@ def run(args):
         first_fall_s = None
         max_obs_error = max_action_error = max_target_error = 0.
         compute_times = []
-        config = dict(backend=args.backend, duration_s=args.duration, preparation_s=envelope.transition_s,
+        config = dict(teleop_script=(json.loads(args.teleop_script.read_text()) if args.teleop_script else None),
+                      backend=args.backend, duration_s=args.duration, preparation_s=envelope.transition_s,
                       policy_device=args.policy_device, physics_device=args.physics_device,
                       providers=policy.runner.session.get_providers(),
                       provider_options=policy.runner.session.get_provider_options(),
@@ -221,6 +230,8 @@ def run(args):
                 core_finished = time.monotonic()
                 if core.policy_samples != count:
                     recorded = log.last_policy
+                    if teleop_source:
+                        ref_command.arm = np.asarray(recorded['targets'][12:], dtype=np.float32)
                     ref_command.velocity = np.asarray(recorded['velocity_command'], dtype=np.float32)
                     ref_command.torso = np.asarray(recorded['observations'][31:34],dtype=np.float32)
                     if demo:
@@ -382,6 +393,7 @@ def main():
     parser.add_argument("--duration", type=float, default=60.)
     parser.add_argument("--policy-device", choices=["cpu", "cuda"], default="cpu")
     parser.add_argument("--physics-device", choices=["cpu", "cuda:0"], default="cpu")
+    parser.add_argument("--teleop-script", type=Path, help="Offline joystick script; never reads a USB device")
     parser.add_argument("--prewarm-inference", type=int, choices=[0, 100], default=0,
                         help="Discard zero-input inferences before activation; history stays zero")
     parser.add_argument("--mujoco-noslip-iterations", type=int, choices=[0, 10], default=0,

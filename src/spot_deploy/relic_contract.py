@@ -97,7 +97,10 @@ def load_manifest(path):
     import json
 
     data = json.loads(path.read_text())
-    if data.get('schema_version') == 4:
+    if data.get('schema_version') == 5:
+        from .teleop_policy import TeleopManifest
+        cls = TeleopManifest
+    elif data.get('schema_version') == 4:
         from .selected_leg_policy import SelectedLegManifest
         cls = SelectedLegManifest
     elif data.get("schema_version") == 3:
@@ -110,6 +113,9 @@ def load_manifest(path):
 
 
 def make_policy(path, manifest, manifest_path, **kwargs):
+    if manifest.task == 'joystick-arm':
+        from .teleop_policy import TeleopPolicy
+        return TeleopPolicy(path, manifest, manifest_path, **kwargs)
     if getattr(manifest, 'adapter', None) == 'relic-exploy-leg':
         from .selected_leg_policy import SelectedLegPolicy
         return SelectedLegPolicy(path, manifest, manifest_path, **kwargs)

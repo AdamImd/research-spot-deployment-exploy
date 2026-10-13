@@ -73,3 +73,7 @@ collected by the actual operators through the existing runbook.
 
 Push access requires accepting the GitHub collaborator invitation. Use the user's
 normal GitHub authentication; never place tokens in this repository or agent prompts.
+
+USB ReLIC teleoperation lives in `joystick_teleop.py`, `teleop_policy.py` and
+`tools/joystick_relic.py`; [JOYSTICK_TELEOP.md](JOYSTICK_TELEOP.md) describes the
+new schema5 moving-arm task, offline preview/rehearsal and separate live gates.
