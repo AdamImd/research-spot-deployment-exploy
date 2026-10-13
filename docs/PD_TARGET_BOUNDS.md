@@ -65,5 +65,7 @@ Adam subsequently selected a **10 ms inference/core computation limit**, retaini
 the 200 Hz schedule and accepting the observed nominal misses. The
 [revised trace review](../records/relic-computation-10ms-20261012/README.md) passes
 that selected limit without rerunning or erasing the old 5 ms result. Command-gap
-and ACK limits remain 15 ms; expiry remains 30 ms. This is a new envelope-bound
-proposal, with exact final deployment/current operator confirmation still pending.
+and ACK limits remain 15 ms; expiry remains 30 ms. The subsequently confirmed one
+physical attempt moved about 0.18 m before front-left HY measured speed 6.042 rad/s
+exceeded its 6.0 rad/s cap. Motor shutdown and lease return were confirmed.
+No retry or goal-success claim; that single-use approval is consumed.

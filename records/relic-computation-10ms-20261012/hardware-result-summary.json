@@ -1,0 +1,103 @@
+{
+  "command_span_s": 5.392685124650598,
+  "commands": 1080,
+  "compact": {
+    "capture_complete": true,
+    "compressed_bytes": 999891,
+    "source_status": "failed",
+    "status": "completed"
+  },
+  "compact_complete_sha256": "13e9a6a3c3b6a4f2d5587bce0ca3ab92266c637f172b9abcc1e6e3376749f070",
+  "envelope_sha256": "1c843392b3fee8af9489371aefb20985038981ac87c285a8ab01adbe0b1b8d4d",
+  "estimated_torque_note": "PD-plus-feedforward estimate; not independently measured torque",
+  "final_forward_m": 0.1804349755360042,
+  "final_lateral_m": -0.025502285340378433,
+  "first_failure": {
+    "error_type": "ContractError",
+    "reason": "measured joint velocity or load limit"
+  },
+  "hardware_qualified": false,
+  "history_acknowledgements": 269,
+  "initial_body_height_m": 0.5190491369976216,
+  "issued_policy_command_span_s": 5.384995845146477,
+  "last_walking_phase": "forward",
+  "max_recorded_core_computation_s": 0.0028097513131797314,
+  "maximum_abs_lateral_m": 0.02625578951856403,
+  "maximum_command_gap_s": 0.005840476602315903,
+  "maximum_forward_m": 0.1804349755360042,
+  "maximum_forward_request_m_s": 0.23800084101967503,
+  "maximum_inference_s": 0.0005369666032493114,
+  "measured_guard_violations": [
+    {
+      "actual_rad_s": -6.042350769042969,
+      "bound_rad_s": 6,
+      "joint": "fl_hy",
+      "quantity": "velocity"
+    }
+  ],
+  "nominal_goal_reached": false,
+  "peak_issued_state_leg_speed_rad_s": 5.883044242858887,
+  "per_joint_max_abs_estimated_PD_torque_Nm": [
+    13.44471290091407,
+    17.5790254175663,
+    32.303992537781596,
+    27.580561889335513,
+    19.770051643252373,
+    56.651608631014824,
+    24.193732604384422,
+    14.928256586194038,
+    51.47015252709389,
+    13.485092757127427,
+    11.679239083081484,
+    23.552855126559734,
+    0.7793008200824261,
+    3.3813154101371765,
+    11.129369950265458,
+    1.5114161815154767,
+    0.3370506912469864,
+    0.1250382363796234,
+    0.278652400970459
+  ],
+  "per_joint_max_abs_issued_offset_rad": [
+    0.14142633229494095,
+    0.3156684637069702,
+    0.5385499000549316,
+    0.45911547541618347,
+    0.32474279403686523,
+    0.9423584938049316,
+    0.40001463890075684,
+    0.2608265280723572,
+    0.8518080115318298,
+    0.10600098222494125,
+    0.20955848693847656,
+    0.39726781845092773,
+    0.006121158599853516,
+    0.026874303817749023,
+    0.0012943744659423828,
+    0.014901518821716309,
+    0.001524806022644043,
+    8.249282836914062e-05,
+    0.005368947982788086
+  ],
+  "physical_execution_commit": "2afa4a22ff9ffc63b9da61f8954af1e905bde345",
+  "policy_samples": 270,
+  "postcheck": {
+    "active_fault_count": 0,
+    "motors_off": true,
+    "passed": true
+  },
+  "raw_complete_sha256": "f14aea7c96dc7d75916023e07a8adcf4d440f89b33921bdb2b333fc789f9fad8",
+  "raw_status": "failed",
+  "recorded_policy_sample_span_s": 5.380003657191992,
+  "reference": "Measured robot odom/body displacement along current post-native-stand heading; no independent metrology",
+  "rejected_state_forward_m": 0.1810647846659674,
+  "retry_performed": false,
+  "selected_core_limit_s": 0.01,
+  "shutdown_result": {
+    "elapsed_s": 7.01702567609027,
+    "errors": [],
+    "lease_returned": true,
+    "motors_off_confirmed": true,
+    "within_shutdown_budget": true
+  }
+}

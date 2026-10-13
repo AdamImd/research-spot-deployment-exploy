@@ -39,3 +39,43 @@ this one-attempt profile and current Adam/Minghao, rig/path and tablet readiness
 The deployment command retains its live motors-off preflight and all guards; no
 E-stop registration/rearm, fault clearing, lease takeover or automatic retry.
 This record does not authorize activation by itself or fabricate current health.
+
+## One confirmed physical attempt
+
+Adam subsequently confirmed the exact profile and current Adam/Minghao/tablet/
+following-rig/clear-path setup. Motors-off preflight and bound deployment checks
+passed. One recorded physical attempt ran from clean commit
+`2afa4a22ff9ffc63b9da61f8954af1e905bde345`; no additional simulation or benchmark
+ran and no retry occurred. The requested single-use approval is now consumed.
+
+The policy ran for **5.385 s** before `measured joint velocity or load limit` stopped
+it. The offending sample was **front-left HY velocity -6.04235 rad/s** against the
+selected absolute **6.0 rad/s** cap. No measured-load bound was exceeded in that
+stopping sample. This is a measured-speed stop, not a command-position or 10 ms
+computation stop. Recorded core computation maximum was 2.810 ms; the wider
+bounds do not remove measured-speed protections.
+
+Latest issued-state travel was **0.180435 m** forward, about **-0.026 m** lateral
+along the robot-current post-native-stand heading. The stopping state gives
+0.181065 m forward; the last lower-rate progress record gives 0.1781 m. These
+measurements have distinct timestamps. Maximum request was 0.236 m/s, before the
+0.30 m/s maximum. The 0.75 m goal was not reached. Preserve raw status `failed`;
+do not label a speed-guard stop as accepted shortfall or successful rollout.
+
+Native shutdown confirmed motors OFF and lease return in **7.017 s**, within the
+10-second allowance. Passive postcheck passed with motors off and no active
+faults. Full raw events contain 270 predictions, 269 acknowledged histories and
+1080 issued commands. Compact state/action recording completed at **999,891 bytes**,
+retaining failed source status and `hardware_qualified=false`.
+
+[Hardware summary](hardware-result-summary.json) and
+[analysis script](summarize_hardware.py) preserve hashes and sanitized relative
+measurements. Run from the repository root with:
+
+```bash
+uv run --no-sync python records/relic-computation-10ms-20261012/summarize_hardware.py
+```
+
+Raw inputs remain in ignored `runs/relic-computation-10ms-{hardware,postcheck,compact}-20261012-001/`.
+The supervisor record is `runs/relic-computation-10ms-hardware-supervisor-20261012-001/`.
+Do not expand speed limits or automatically reattempt based on this result.
