@@ -59,6 +59,8 @@ class ThreeLegPlan(StrictModel):
     def mode(self):
         if (self.return_blend_s or self.entry_blend_s) and self.kind != 'front-left-cartesian-ik':
             raise ValueError('return blend requires the Cartesian sequence')
+        if self.entry_blend_s > self.lift_s:
+            raise ValueError('entry blend must finish within lift duration')
         if self.kind == 'front-left-cartesian-ik':
             if self.cartesian_path is None or self.lifted_positions is not None:
                 raise ValueError('IK demo requires a Cartesian path, without a joint-space lifted pose')
@@ -70,7 +72,7 @@ class ThreeLegPlan(StrictModel):
     def duration_s(self):
         return sum(getattr(self, k) for k in ('initial_hold_s', 'lift_s', 'hold_s',
                                             'lower_s', 'final_hold_s')) + (
-            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s + self.entry_blend_s
+            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s
 
 
 def smoothstep(alpha):
@@ -114,7 +116,7 @@ class ThreeLegSequence:
 
     def _cartesian_update(self, state, elapsed, dt, previously_active):
         p, path = self.plan, self.plan.cartesian_path
-        lift_start = p.initial_hold_s+p.entry_blend_s
+        lift_start = p.initial_hold_s
         lift_end = lift_start+p.lift_s
         hold_end = lift_end+p.hold_s
         move_end = hold_end+path.duration_s
@@ -133,10 +135,9 @@ class ThreeLegSequence:
             self.start_body_m = self.ik.forward(self.start)[0]
         self.leg = p.leg
         first = np.asarray(path.waypoints_m[0])
-        if elapsed < lift_start:
-            self.phase, target = 'three-leg-handover', self.start_body_m
-        elif elapsed < lift_end:
-            self.phase = 'lifting'
+        if elapsed < lift_end:
+            self.phase = ('three-leg-handover' if elapsed < lift_start+p.entry_blend_s
+                          else 'lifting')
             a = smoothstep((elapsed-lift_start)/p.lift_s)
             target = self.start_body_m+a*(first-self.start_body_m)
         elif elapsed < hold_end:
@@ -273,7 +274,7 @@ class SimulationThreeLegPolicy:
         if self.sequence.phase != 'four-foot-handover':
             return target
         p = self.sequence.plan
-        begin = p.initial_hold_s+p.entry_blend_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+        begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
         alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
         target = np.asarray(target).copy()
         ids = self.sequence.ids

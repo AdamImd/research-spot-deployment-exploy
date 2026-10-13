@@ -31,3 +31,13 @@ recorded dynamics. Preserve failures, no automatic retry or guard relaxation.
 Ignored raw inputs/candidates/contracts: local/relic-three-leg-entry-20261012-001.
 Raw results: runs/relic-three-leg-entry-20261012-001. Source commit and input/config
 hashes are recorded in the bounded execution contract; no robot clients or motion.
+
+Revision: the initial held-foot entry trial stopped6.585s on angular speed1.2357
+rad/s (linear0.2097m/s), before fullmode/lift. Numerical native parity passed; first
+command continuity held. Baseline skipped; failed recording preserved. The fixed
+foot can constrain body weight transfer. Test an overlapping2s modeblend during
+the first2s of the existing6s Cartesian lift, not a separate foot-down hold. The
+initial Cartesian velocity/acceleration remainzero. The foot can unload as the
+policy shifts support. This restores46s plan/47s margin but does NOT restore the
+consumed physical authorization; changed source/history mixture still requires
+new evidence and finalapproval. No limit changes or automatic retries.

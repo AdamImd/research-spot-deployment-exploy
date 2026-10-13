@@ -35,17 +35,22 @@ def test_entry_is_continuous_with_four_foot_command_and_keeps_history_input(stat
     assert policy.sequence.entry_alpha==0
 
 
-def test_entry_keeps_foot_pose_until_blend_finished_then_lifts(state):
+def test_entry_unloads_foot_continuously_while_mode_blends(state):
     state.positions=DEFAULT_Q.astype(float).tolist()
     base=baseline()
     plan=load(ROOT/'configs/relic-three-leg-front-left-ik.json',ThreeLegPlan)
     ik=LegPositionIK(base.support,base.support_model,'fl')
     seq=ThreeLegSequence(plan,ik)
     start=ik.forward(state.positions[:3])[0]
-    for t in np.linspace(plan.initial_hold_s,plan.initial_hold_s+plan.entry_blend_s,401):
+    seq.update(state,plan.initial_hold_s)
+    np.testing.assert_allclose(seq.target_body_m,start,rtol=0,atol=1e-12)
+    previous=start.copy()
+    for t in np.linspace(plan.initial_hold_s+.005,plan.initial_hold_s+plan.entry_blend_s,400):
         seq.update(state,t)
-        np.testing.assert_allclose(seq.target_body_m,start,rtol=0,atol=1e-12)
+        assert np.linalg.norm(seq.target_body_m-previous)<.001
+        previous=seq.target_body_m.copy()
+    assert seq.target_body_m[2]>start[2]
     assert seq.phase=='lifting'
     seq.update(state,plan.initial_hold_s+plan.entry_blend_s+1)
     assert np.linalg.norm(seq.target_body_m-start)>0
-    assert plan.duration_s==48
+    assert plan.duration_s==46

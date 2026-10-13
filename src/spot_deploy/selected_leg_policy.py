@@ -87,7 +87,7 @@ class SelectedLegPolicy(ExployReLICPolicy):
             target, action = mix_entry(self.sequence, four_target, four_raw, target, action)
         if self.sequence.phase == 'four-foot-handover':
             p = self.manifest.demo
-            begin = p.initial_hold_s+p.entry_blend_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+            begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
             alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
             ids = self.sequence.ids
             target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)
