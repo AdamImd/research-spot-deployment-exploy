@@ -114,7 +114,9 @@ def run(args):
             backend = IsaacBackend(args.output / "model", scenario,
                                    device=args.physics_device, headless=True,
                                    diagnostics=args.physics_diagnostics)
-        initialize_captured(backend, initial, height["height_m"] + args.initial_height_offset,
+        root_height = (height['height_m'] if args.initial_root_height_m is None
+                       else args.initial_root_height_m)
+        initialize_captured(backend, initial, root_height + args.initial_height_offset,
                             nominal_arm=False)
         if args.physics_diagnostics:
             from spot_relic_sim.physics_diagnostics import model_snapshot
@@ -155,6 +157,8 @@ def run(args):
                       mujoco_noslip_iterations=args.mujoco_noslip_iterations,
                       mujoco_substeps=args.mujoco_substeps,
                       initial_root_height_offset_m=args.initial_height_offset,
+                      initial_root_height_m=root_height,
+                      torso_height_request_m=height['height_m'],
                       physics_diagnostics=args.physics_diagnostics,
                       simulation_forward_speed_m_s=args.simulation_forward_speed,
                       simulation_speed_profile=args.simulation_speed_profile,
@@ -224,6 +228,15 @@ def run(args):
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
                     target = backend.contract.targets(action, ref_command)
+                    if demo and demo.sequence.phase == 'three-leg-handover':
+                        from spot_deploy.simulation_demo import mix_entry
+                        four_command = SimCommand(arm=ref_command.arm,torso=ref_command.torso,
+                                                  velocity=ref_command.velocity)
+                        four_obs = backend.contract.observation(sim,four_command,
+                            np.asarray(recorded['observations'][-12:]))
+                        four_raw = reference_policy(four_obs)
+                        four_target = backend.contract.targets(four_raw,four_command)
+                        target, action = mix_entry(demo.sequence,four_target,four_raw,target,action)
                     if demo and demo.sequence.phase == 'four-foot-handover':
                         sdk_target = np.empty(19)
                         sdk_target[inverse] = target
@@ -367,6 +380,8 @@ def main():
                         help='Hold one 200 Hz PD torque across finer physics steps (diagnostic only)')
     parser.add_argument('--initial-height-offset', type=float, choices=[0., 2.], default=0.,
                         help='Two-metre air probe: retain original torso-height request and initial targets')
+    parser.add_argument('--initial-root-height-m', type=float,
+                        help='Explicit model-estimated placement height; retain captured torso-height request')
     parser.add_argument('--simulation-forward-speed', type=float,
                         help='Offline-only forward request override in (0,1] m/s; manifest unchanged')
     parser.add_argument('--simulation-speed-profile', choices=['taper', 'constant'], default='taper',
@@ -376,6 +391,8 @@ def main():
                              'retain physical saturation and integrity checks. Never qualifies hardware.')
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
+    if args.initial_root_height_m is not None and not .25 <= args.initial_root_height_m <= .8:
+        parser.error('initial root height must be in[.25,.8]m')
     if args.backend == "mujoco" and args.physics_device != "cpu":
         parser.error("this MuJoCo backend uses CPU physics")
     if args.policy_device == "cuda":

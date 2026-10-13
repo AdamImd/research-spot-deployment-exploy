@@ -9,7 +9,7 @@ from pydantic import model_validator
 from .contracts import JOINTS, ContractError, artifact_path, sha256
 from .exploy_policy import ExploySettings, ExployReLICManifest, ExployReLICPolicy, INPUT_SIZES, META_KEY
 from .leg_ik import LegPositionIK
-from .simulation_demo import ThreeLegPlan, ThreeLegSequence, smoothstep
+from .simulation_demo import ThreeLegPlan, ThreeLegSequence, smoothstep, mix_entry
 
 BASE_GRAPH_SHA = '1940df208bf9e30e6134eeb71d1c4e67d3a0d66778726507d4886c62eae662e8'
 
@@ -30,8 +30,9 @@ class SelectedLegManifest(ExployReLICManifest):
     @model_validator(mode='after')
     def selected_contract(self):
         if (self.demo.kind != 'front-left-cartesian-ik' or self.demo.return_blend_s != 2
+                or self.demo.entry_blend_s != 2
                 or self.demo.duration_s >= 60 or self.relic.preparation.kind != 'direct'):
-            raise ValueError('live demo requires reviewed front-left Cartesian IK, 2s return blend and direct startup')
+            raise ValueError('live demo requires front-left IK, 2s entry/return transitions and direct startup')
         return self
 
 
@@ -79,16 +80,23 @@ class SelectedLegPolicy(ExployReLICPolicy):
         from time import monotonic
         start = monotonic()
         target, _, obs, action = super().evaluate(state, previous, velocity_command)
+        if self.sequence.phase == 'three-leg-handover':
+            values = super().inputs(state, previous, velocity_command)
+            values['leg_command'] = np.zeros((1,12),dtype=np.float32)
+            four_target, _, _, four_raw = self._evaluate_inputs(values, start)
+            target, action = mix_entry(self.sequence, four_target, four_raw, target, action)
         if self.sequence.phase == 'four-foot-handover':
             p = self.manifest.demo
-            begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+            begin = p.initial_hold_s+p.entry_blend_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
             alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
             ids = self.sequence.ids
             target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)
         return target, monotonic()-start, obs, action
 
     def demo_record(self, state):
-        result = dict(phase=self.sequence.phase, leg_command=self.command.tolist())
+        result = dict(phase=self.sequence.phase, leg_command=self.command.tolist(),
+                      entry_blend_alpha=(self.sequence.entry_alpha
+                                         if self.sequence.phase == 'three-leg-handover' else None))
         if self.sequence.leg:
             measured = self.ik.forward(np.asarray(state.positions)[self.sequence.ids])[0]
             result.update(ik_frame='body', ik_target_body_m=self.sequence.target_body_m.tolist(),

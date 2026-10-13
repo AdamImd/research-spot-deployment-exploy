@@ -11,11 +11,12 @@ joints remain actor controlled; the arm stays held. No rewards or retraining.
 
 ## Sequence and reference frame
 
-`configs/relic-three-leg-front-left-ik.json` defines a46second plan:
+`configs/relic-three-leg-front-left-ik.json` defines a48second plan:
 
 | Phase | Seconds | Action |
 |---|---:|---|
 | Four-foot standing | 5 | Zero leg command |
+| Three-leg mode entry | 2 | Hold selected-foot position; blend four-/three-foot targets and raw actions |
 | Lift/reach | 6 | Quintic Cartesian path from latched actual foot to first waypoint |
 | Three-leg hold | 3 | First waypoint |
 | IK movement | 12 | Four3second quintic segments around an8cm square |
@@ -62,7 +63,7 @@ records support review without a physical rollout.
 Use a standing baseline and a SIMULATION-scoped envelope. A walking manifest is
 rejected. The same `--three-leg-plan configs/relic-three-leg-front-left-ik.json`
 argument works with `tools/simulate_relic.py` in MuJoCo or IsaacLab. Require a duration
-covering the46second sequence; the existing60second protocol retains the final
+covering the48second sequence; the existing60second protocol retains the final
 standing window. Do not route this adapter to the live CLI or pretend the old
 Exploy graph accepts selected-leg commands. The prior joint-pose three-leg runs
 stopped at mode activation in both simulators; this new IK sequence does not fix
@@ -129,3 +130,15 @@ mode-entry jump. This is distinct from the simulator's fixed return transient.
 Shutdown confirmed OFF/lease return in5.017s; passive postcheck faultfree. Recording
 is preserved and no retry occurred. See records/relic-three-leg-hardware-20261012.
 The physical approval is consumed; further motion requires a new exact approval.
+
+## Mode-entry fix (offline validation)
+
+Following the physical5s guard stop, add2s quintic mode entry while holding the
+front-left foot in its latched pose. Run the unchanged graph twice with the same
+state/history: four-foot legcommandzeros and explicit selected-leg pose. Blend all
+leg targets AND raw actions; history advances the mixed raw vector only on ACK.
+Weights/gains/limits stay unchanged. This avoids feeding back an unused branch and
+makes the first emitted transition command exactly match four-foot behavior. The
+selected leg begins its Cartesian lift only after mode entry. New48s plan and49s
+live margin invalidate old47s approval/configuration evidence. No physical retry.
+See records/relic-three-leg-entry-20261012 for protocol, results and limitations.

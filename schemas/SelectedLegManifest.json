@@ -424,6 +424,13 @@
           "title": "Return Blend S",
           "type": "number"
         },
+        "entry_blend_s": {
+          "default": 0,
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Entry Blend S",
+          "type": "number"
+        },
         "lifted_positions": {
           "anyOf": [
             {

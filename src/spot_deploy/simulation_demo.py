@@ -47,6 +47,7 @@ class ThreeLegPlan(StrictModel):
     lower_s: float = Field(ge=2, le=10)
     final_hold_s: float = Field(ge=5, le=20)
     return_blend_s: float = Field(default=0, ge=0, le=5)
+    entry_blend_s: float = Field(default=0, ge=0, le=5)
     lifted_positions: list[float] | None = Field(default=None, min_length=3, max_length=3)
     cartesian_path: CartesianLegPath | None = None
     min_clearance_m: float = Field(gt=0, le=.15)
@@ -56,7 +57,7 @@ class ThreeLegPlan(StrictModel):
 
     @model_validator(mode='after')
     def mode(self):
-        if self.return_blend_s and self.kind != 'front-left-cartesian-ik':
+        if (self.return_blend_s or self.entry_blend_s) and self.kind != 'front-left-cartesian-ik':
             raise ValueError('return blend requires the Cartesian sequence')
         if self.kind == 'front-left-cartesian-ik':
             if self.cartesian_path is None or self.lifted_positions is not None:
@@ -69,7 +70,7 @@ class ThreeLegPlan(StrictModel):
     def duration_s(self):
         return sum(getattr(self, k) for k in ('initial_hold_s', 'lift_s', 'hold_s',
                                             'lower_s', 'final_hold_s')) + (
-            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s
+            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s + self.entry_blend_s
 
 
 def smoothstep(alpha):
@@ -77,7 +78,25 @@ def smoothstep(alpha):
     return a**3 * (10 + a * (-15 + 6*a))
 
 
+def mix_entry(sequence, four_target, four_raw, selected_target, selected_raw):
+    """Mix two unchanged actor evaluations using the SAME acknowledged history.
+
+    Mix raw actions alongside targets so the next ACK reflects this controller's
+    emitted mixture rather than the unused selected-mode branch. Held arm remains
+    identical in both branches; selected-leg override is part of selected_target.
+    """
+    alpha = sequence.entry_alpha
+    return (four_target+alpha*(selected_target-four_target),
+            np.asarray(four_raw+alpha*(selected_raw-four_raw),dtype=np.float32))
+
+
 class ThreeLegSequence:
+    @property
+    def entry_alpha(self):
+        if self.phase != 'three-leg-handover':
+            return 1.
+        return smoothstep((self.last_time-self.plan.initial_hold_s)/self.plan.entry_blend_s)
+
     def __init__(self, plan, ik=None):
         self.plan = plan
         self.start = None
@@ -95,7 +114,8 @@ class ThreeLegSequence:
 
     def _cartesian_update(self, state, elapsed, dt, previously_active):
         p, path = self.plan, self.plan.cartesian_path
-        lift_end = p.initial_hold_s+p.lift_s
+        lift_start = p.initial_hold_s+p.entry_blend_s
+        lift_end = lift_start+p.lift_s
         hold_end = lift_end+p.hold_s
         move_end = hold_end+path.duration_s
         lower_end = move_end+p.lower_s
@@ -113,9 +133,11 @@ class ThreeLegSequence:
             self.start_body_m = self.ik.forward(self.start)[0]
         self.leg = p.leg
         first = np.asarray(path.waypoints_m[0])
-        if elapsed < lift_end:
+        if elapsed < lift_start:
+            self.phase, target = 'three-leg-handover', self.start_body_m
+        elif elapsed < lift_end:
             self.phase = 'lifting'
-            a = smoothstep((elapsed-p.initial_hold_s)/p.lift_s)
+            a = smoothstep((elapsed-lift_start)/p.lift_s)
             target = self.start_body_m+a*(first-self.start_body_m)
         elif elapsed < hold_end:
             self.phase, target = 'three-leg-hold', first
@@ -251,7 +273,7 @@ class SimulationThreeLegPolicy:
         if self.sequence.phase != 'four-foot-handover':
             return target
         p = self.sequence.plan
-        begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+        begin = p.initial_hold_s+p.entry_blend_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
         alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
         target = np.asarray(target).copy()
         ids = self.sequence.ids
@@ -275,8 +297,15 @@ class SimulationThreeLegPolicy:
             action, obs, target = self.selected_session.run(['actions','obs',TARGET],values)
             target = finite(target[0],19).astype(float)
             target[12:] = self.manifest.arm_stowed_positions
+            action = finite(action[0],12)
+            if self.sequence.phase == 'three-leg-handover':
+                values['leg_command'] = np.zeros((1,12),dtype=np.float32)
+                four_raw, four_target = self.selected_session.run(['actions',TARGET],values)
+                four_target = finite(four_target[0],19).astype(float)
+                four_target[12:] = self.manifest.arm_stowed_positions
+                target, action = mix_entry(self.sequence, four_target, four_raw[0], target, action)
             target = self.return_blend(target)
-            return target, monotonic()-began, obs, finite(action[0],12)
+            return target, monotonic()-began, obs, action
         obs = observation(state, self.manifest.arm_stowed_positions, previous, self.body_height)
         obs[19:31] = self.command
         action = finite(self.actor.session.run(['actions'], {'obs':obs[None]})[0][0],12)
@@ -284,6 +313,13 @@ class SimulationThreeLegPolicy:
         target[12:] = self.manifest.arm_stowed_positions
         if self.sequence.leg:
             target[self.sequence.ids] = self.sequence.pose
+        if self.sequence.phase == 'three-leg-handover':
+            four_obs = obs.copy()
+            four_obs[19:31] = 0
+            four_raw = finite(self.actor.session.run(['actions'],{'obs':four_obs[None]})[0][0],12)
+            four_target = joint_targets(four_raw,self.manifest.arm_stowed_positions).astype(float)
+            four_target[12:] = self.manifest.arm_stowed_positions
+            target, action = mix_entry(self.sequence, four_target, four_raw, target, action)
         target = self.return_blend(target)
         return target, monotonic()-began, obs[None], action
 
