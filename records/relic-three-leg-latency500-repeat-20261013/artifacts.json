@@ -1,0 +1,9 @@
+{
+  "local/relic-three-leg-latency500-repeat-20261013-001/final-approval.json": "a7855196abfab434d819f54cd3a76bcec2f60a8c971376907ee8a0b692b2e51e",
+  "local/relic-three-leg-latency500-repeat-20261013-001/hardware-contract.json": "1b90934e64ad4908abc0f75a5c2ef2f5186aa5ebc3bf647db989be0dccfa4791",
+  "runs/relic-three-leg-latency500-repeat-hardware-20261013-001/compact/COMPLETE.json": "f48365a8d6e9f3f04550586b34873509cc824e528cc664d9b8d4e3dc468cf295",
+  "runs/relic-three-leg-latency500-repeat-hardware-20261013-001/postcheck/COMPLETE.json": "a3198d79e850bf382123aa247fda61ca4b969f04bc14068c8839f2881b70e8ab",
+  "runs/relic-three-leg-latency500-repeat-hardware-20261013-001/trial/COMPLETE.json": "fb950c80710d4611842282d38f2aa0c884e5f1448c1bb898cce3da0400e721ab",
+  "runs/relic-three-leg-latency500-repeat-hardware-20261013-001/trial/events.jsonl": "1c2bab9c3fabd8b2a87eabd4d39d7c32048b6c989f95037591aaf6cf816ce349",
+  "runs/relic-three-leg-latency500-repeat-hardware-20261013-001/trial/result.json": "3563cf200f8134579d2afb422cab0792c73e9ef9aa403065a08e9933f7998414"
+}

@@ -154,3 +154,9 @@ unexpectedly. Stream response status was discarded, so server cause is unknown.
 OFF/lease return confirmed5.017s; fault-free motors-off postcheck passed.
 No retry. Next diagnosis should preserve stream response status; do not infer
 a confirmed expiry rejection or claim three-leg success.
+
+The separately approved repeat added protocol-status reporting (no offline tests)
+and now confirms STATUS_TOO_DISTANT(5) for505ms expiry; no policy predictions.
+See records/relic-three-leg-latency500-repeat-20261013. Exact firmware ceiling is
+unknown. Native OFF/lease return confirmed6.019s, fault-free postcheck. Repeat
+approval consumed; do not run this505ms expiry configuration again unchanged.
