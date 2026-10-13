@@ -22,3 +22,14 @@ discarded startup events, held INIT buttons, fresh enable, device replacement,
 fault display and health-cancellation cleanup. Validation is offline; no physical
 activation is part of preparing this fix. Refresh the local reviewed bundle and
 keep the same operator command path after source validation.
+
+Validation source533459a:545tests, Ruff and Exploy demo pass; guarded60s
+MuJoCo completes/no fall/stable final window, parity5.96e-8/9.54e-7/2.38e-7rad.
+No hardware/USB/network access. Derived historical result summaries were generated
+while validation completed; no controller or scientific configuration changes
+were made. Current result/documentation commit does not change validated code.
+
+The recorded resynchronization is consistent with unread queue overflow at the
+startup boundary. Raw joydev bytes were not retained, so a USB/driver reset cannot
+be conclusively excluded; device identity checks and active-session event-loss
+stops remain. No thermal fault exemption or physical retry is performed.

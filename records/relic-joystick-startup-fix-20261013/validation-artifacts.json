@@ -1,0 +1,15 @@
+{
+  "environment": "Existing lockedUV/Python3.12 CPU runtime",
+  "full_tests_passed": 545,
+  "hardware_access": false,
+  "raw_hashes": {
+    "runs/relic-joystick-startup-validation-20261013-001/01-pytest.log": "372f49a860df5dfee1e09e00a47f4a1ff5b508e4de64e0ed47684914c74f72b9",
+    "runs/relic-joystick-startup-validation-20261013-001/02-ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "runs/relic-joystick-startup-validation-20261013-001/03-demo.log": "9e09cc2a2a6b668b942afede408618b5b2d7b759227caf2e485ef99d9fdf37b2",
+    "runs/relic-joystick-startup-validation-20261013-001/simulation/COMPLETE.json": "af009ceab8535cc5966a51ee4cf0c5e79468944f3fcd033b23c81b5cc784e7b9",
+    "runs/relic-joystick-startup-validation-20261013-001/simulation/configuration.json": "90dafffcc6cba9f1e1dd7b27626616fdc424ec6dd87fa80e6c92ba562674a109",
+    "runs/relic-joystick-startup-validation-20261013-001/simulation/result.json": "00adef45b1518d8bbffdd4b25ba34aefd40c5b67fdc81abc2d4c4954c53b297f"
+  },
+  "seed": 101,
+  "validated_source_commit": "533459a"
+}
