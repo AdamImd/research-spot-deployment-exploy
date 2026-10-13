@@ -124,7 +124,8 @@ def execute(args, record):
         return result
 
     if args.mode in ("watch", "shadow", "stand", "walk", "three-leg", "joystick"):
-        limit = 3600 if args.mode == "watch" and args.state_source == "poll" else 60
+        limit = (3600 if args.mode == "watch" and args.state_source == "poll"
+                 else 300 if args.mode == 'joystick' else 60)
         if not 0 < args.duration <= limit:
             raise ContractError(f"duration must be finite and in (0, {limit}] seconds")
     if args.mode in ('stand', 'walk', 'three-leg', 'joystick'):

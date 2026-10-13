@@ -232,3 +232,33 @@ def test_live_wrapper_rejects_unbound_profile_before_io():
     with pytest.raises(SystemExit) as exc:
         main(['run', '--profile', 'unbound.json'])
     assert exc.value.code == 2
+
+
+@pytest.mark.parametrize('mode,duration,expected', [
+    ('joystick', 300, 'readiness sentinel'),
+    ('joystick', 301, 'duration must be finite'),
+    ('shadow', 300, 'duration must be finite'),
+])
+def test_five_minute_cli_reaches_gates_without_robot_io(mobile, tmp_path, monkeypatch,
+                                                       mode, duration, expected):
+    from spot_deploy import cli
+
+    plan = mobile.teleop.model_copy(update={'duration_s': 300})
+    candidate = mobile.model_copy(update={'teleop': plan})
+    env = load(ROOT/'fixtures/relic-direct-simulation/envelope.json', Envelope)
+    monkeypatch.setattr(cli, 'load_manifest', lambda _: candidate)
+    monkeypatch.setattr(cli, 'load', lambda _, cls: env if cls is Envelope else object())
+    monkeypatch.setattr(cli, 'check_artifacts', lambda *_: Path('unused.onnx'))
+    monkeypatch.setattr(cli, 'make_policy', lambda *_: SimpleNamespace(manifest=candidate))
+
+    def readiness(*args):
+        assert args[-1] == 300
+        raise ContractError('readiness sentinel')
+
+    monkeypatch.setattr(cli, 'require_live', readiness)
+    values = [mode, '--manifest', 'unused', '--envelope', 'unused', '--robot', 'unused',
+              '--duration', str(duration), '--output', str(tmp_path/'run')]
+    if mode == 'joystick':
+        values += ['--operator', 'Adam', '--safety-operator', 'Minghao']
+    with pytest.raises(ContractError, match=expected):
+        cli.execute(cli.parser().parse_args(values), SimpleNamespace())
