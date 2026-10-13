@@ -41,3 +41,10 @@ initial Cartesian velocity/acceleration remainzero. The foot can unload as the
 policy shifts support. This restores46s plan/47s margin but does NOT restore the
 consumed physical authorization; changed source/history mixture still requires
 new evidence and finalapproval. No limit changes or automatic retries.
+
+Overlapping2s blend still crossed angular-speed1rad/s at6.49s (002), before full
+selected mode. Preserve this outcome. Next bounded revision slows mode transfer
+to4s, still overlapping the same6s lift and keeping total46s, to allow more time
+for weight redistribution. No torque/speed bound changes, no new random seeds,
+no alternate history method or hidden branch rescaling. Native parity remains
+independent; physical-stance gate must pass before baseline case.

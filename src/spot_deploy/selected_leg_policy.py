@@ -30,9 +30,9 @@ class SelectedLegManifest(ExployReLICManifest):
     @model_validator(mode='after')
     def selected_contract(self):
         if (self.demo.kind != 'front-left-cartesian-ik' or self.demo.return_blend_s != 2
-                or self.demo.entry_blend_s != 2
+                or self.demo.entry_blend_s not in (2,4)
                 or self.demo.duration_s >= 60 or self.relic.preparation.kind != 'direct'):
-            raise ValueError('live demo requires front-left IK, 2s entry/return transitions and direct startup')
+            raise ValueError('live demo requires front-left IK, reviewed2s/4s entry and2s return transitions and direct startup')
         return self
 
 
