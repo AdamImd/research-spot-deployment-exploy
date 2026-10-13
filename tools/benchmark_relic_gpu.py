@@ -35,6 +35,16 @@ def stats(values, budget=None):
     return result
 
 
+def timing_stats(samples, envelope, period_s):
+    """Separate nominal release budgets from the selected live watchdog limits."""
+    budgets = (("core_s", envelope.max_inference_s), ("production_s", period_s),
+               ("deadline_response_s", period_s), ("gap_s", envelope.max_command_gap_s),
+               ("inference_s", envelope.max_inference_s), ("state_decode_s", None),
+               ("log_encode_s", None), ("release_lateness_s", None))
+    return {name: stats([row[name] for row in samples if row[name] is not None], budget)
+            for name, budget in budgets}
+
+
 def audit(policy, observations, checkpoint, device, directory):
     # Timing includes numpy input -> device -> returned numpy output. The first
     # call is retained separately; discarded calls do not touch policy history.
@@ -166,6 +176,7 @@ def run(args):
             record.event("command", key=command.key, positions=list(command.positions),
                          feedforward=list(command.feedforward), phase=core.phase,
                          end_robot_time_s=command.end_robot_time_s, monotonic_s=computed,
+                         guard_monotonic_s=10 + logical_t,
                          state=state.model_dump())
             payload = command_proto(command, manifest, envelope).SerializeToString()
             finished = time.monotonic()
@@ -190,11 +201,7 @@ def run(args):
         for sample in samples:
             stream.write(json.dumps(sample) + "\n")
     atomic_json(args.output / "gc-events.json", events)
-    timing = {name: stats([r[name] for r in samples if r[name] is not None], budget)
-              for name, budget in (("core_s", .005), ("production_s", .005),
-                                   ("deadline_response_s", .005), ("gap_s", .02),
-                                   ("inference_s", .02), ("state_decode_s", None),
-                                   ("log_encode_s", None), ("release_lateness_s", None))}
+    timing = timing_stats(samples, envelope, 1 / manifest.stream_hz)
     gc_pairs, start_gc = [], None
     for event in events:
         if event["phase"] == "start":
@@ -209,6 +216,12 @@ def run(args):
                   timing=timing, cold_inference_s=provider_audit["first_inference_s"],
                   supported_hold_core_s=hold_s, session_setup_s=setup_s,
                   max_raw_action_error=provider_audit["max_raw_action_error"],
+                  observed_command_computation_gate=bool(samples and
+                      timing['core_s']['over_budget'] == 0),
+                  observed_command_gap_gate=bool(samples and
+                      timing['gap_s'] and timing['gap_s']['over_budget'] == 0),
+                  observed_inference_gate=bool(samples and
+                      timing['inference_s'] and timing['inference_s']['over_budget'] == 0),
                   observed_5ms_gate=bool(reason == "completed" and samples and not over
                                         and len(samples) >= round(args.duration * 200)),
                   missed_releases=max(0, round(args.duration * 200) - len(samples)),

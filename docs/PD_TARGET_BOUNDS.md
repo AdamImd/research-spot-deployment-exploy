@@ -54,3 +54,9 @@ without the former cannot prove an exact rejected-step slew interval; the audit
 reports that limitation rather than mixing start and finish clocks.
 The operator requires a separate exact approval immediately before another
 physical attempt; the prior one-attempt authorization has been used.
+
+The [fresh validation record](../records/relic-wide-pd-targets-20261012/README.md)
+reports both guarded 20-second walks and 60-second standing tests passing, with
+the walks still about 6 cm short. Its host benchmark missed the selected 5 ms
+computation deadline once (5.272 ms) and two nominal releases. The proposed bounds
+are prepared; the timing gate has not passed and no second physical trial ran.
