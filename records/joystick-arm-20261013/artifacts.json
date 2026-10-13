@@ -1,0 +1,20 @@
+{
+  "sha256": {
+    "runs/joystick-arm-validation-20261013-003/simulation/COMPLETE.json": "5a11eec91d1b51e016a731f3a5455042e062750d27ea6e43e88ecf1255c06f72",
+    "runs/joystick-arm-validation-20261013-003/simulation/configuration.json": "8c1ec5e1e3063900bf23b44a223f2e532debf4e0c206f4ed30195624afbb0bce",
+    "runs/joystick-arm-validation-20261013-003/simulation/events.jsonl": "ec2518342f3ab83a437e6e00aa244a2e7ce0df1b36bc94d3310ff4da2dae86f4",
+    "runs/joystick-arm-validation-20261013-003/simulation/rollout.jsonl": "acc16437fd30274ff9a14d612b4e4b4fc80e0b0d67dee28e8708ece3b7f37446",
+    "runs/joystick-arm-validation-20261013-002/simulation/COMPLETE.json": "9649f3e2b55dbcadbd26f3f688eba3f2d1c85ed3750327270a370aaee8d5986f",
+    "examples/joystick-relic-arm.json": "7c4c3e069f6ca6bfb37a722deae7ee2e8a3e3d4989cdeebc3398425e0f0f07e1",
+    "configs/joystick-relic-simulation-script.json": "c7506f7ec240061b91ed455efc2e78831fd7c729242260ffa330a1e0fba337da"
+  },
+  "packages": {
+    "spot-deployment": "0.1.0",
+    "numpy": "2.2.6",
+    "onnxruntime": "1.23.2",
+    "onnxruntime-gpu": null,
+    "bosdyn-api": "5.1.1",
+    "bosdyn-client": "5.1.1",
+    "pydantic": "2.12.3"
+  }
+}
