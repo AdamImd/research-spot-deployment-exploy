@@ -1,0 +1,87 @@
+{
+  "compute_max_s": 0.1133298329077661,
+  "compute_p99_s": 0.0009003798477351665,
+  "failure": null,
+  "first_fall_proxy_s": null,
+  "guard_mode": "enforced",
+  "hardware_access": false,
+  "hardware_qualified": false,
+  "late_window_metrics": {
+    "angular_speed_p95_rad_s": 2.5452989671531737e-05,
+    "height_span_m": 1.4007091522216797e-06,
+    "joint_speed_p95_rad_s": 2.2724882001057267e-05,
+    "linear_speed_p95_m_s": 2.7942228933790335e-06,
+    "max_tilt_deg": 0.9308319471893836,
+    "mean_height_m": 0.49157853024652876,
+    "min_height_m": 0.4915775656700134,
+    "planar_speed_p95_m_s": 2.7258155554532685e-06,
+    "samples": 2001,
+    "span_s": 10.0,
+    "tilt_span_deg": 0.0006309387245799279
+  },
+  "loop_wall_s": 15.492994744796306,
+  "max_observation_error": 7.450580596923828e-09,
+  "max_raw_action_error": 3.814697265625e-06,
+  "max_target_error_rad": 2.384185791015625e-07,
+  "policy_duration_s": 60.0,
+  "policy_samples": 3001,
+  "real_time_factor": 3.872718024393085,
+  "reason": "completed",
+  "stable_final_window": true,
+  "three_leg_demo": {
+    "clearance_proxy_passed": true,
+    "final_four_feet_near_floor_fraction": 1.0,
+    "geometric_three_leg_fraction": 1.0,
+    "hardware_qualified": false,
+    "hold_samples": 3000,
+    "ik_motion_samples": 2400,
+    "ik_tracking_passed": true,
+    "passed": true,
+    "pose_sequence_finished": true,
+    "support_evidence": "foot clearance geometry only; foot forces/loaded contacts not measured"
+  },
+  "timing": {
+    "core_s": {
+      "max_s": 0.11333036422729492,
+      "over_5ms": 3,
+      "p50_s": 0.00045843562111258507,
+      "p99_s": 0.000900530256330967
+    },
+    "parity_s": {
+      "max_s": 0.00042207492515444756,
+      "over_5ms": 0,
+      "p50_s": 1.6065314412117004e-07,
+      "p99_s": 0.0002955412492156029
+    },
+    "physics_s": {
+      "max_s": 0.0003535030409693718,
+      "over_5ms": 0,
+      "p50_s": 0.00014174403622746468,
+      "p99_s": 0.0001653502695262432
+    },
+    "recording_s": {
+      "max_s": 0.08791843615472317,
+      "over_5ms": 3,
+      "p50_s": 0.0004290887154638767,
+      "p99_s": 0.0005462151020765305
+    },
+    "state_s": {
+      "max_s": 0.001054747961461544,
+      "over_5ms": 0,
+      "p50_s": 0.00012262724339962006,
+      "p99_s": 0.00015536975115537643
+    },
+    "total_s": {
+      "max_s": 0.11429083021357656,
+      "over_5ms": 7,
+      "p50_s": 0.001219696830958128,
+      "p99_s": 0.0019597159698605537
+    }
+  },
+  "trial_duration_s": 60.0,
+  "walking": null,
+  "walking_completed": null,
+  "rehearsal_source_commit": "7f28ee3f99508c157a427f0f092ec93c8f7aa51b",
+  "sequence_duration_s": 46,
+  "physics_backend": "MuJoCo; no-slip iterations10; diagnostics; seed101"
+}

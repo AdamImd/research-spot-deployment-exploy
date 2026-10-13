@@ -71,17 +71,17 @@ class Guard:
         self.key = 0
         self.observe_arm_motion = envelope.arm_motion_guard == "observe"
         if (self.observe_arm_motion
-                and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")):
+                and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy", "relic-exploy-leg")):
             raise ContractError("arm observation mode requires a ReLIC leg controller")
         self.motion_joint_count = 12 if self.observe_arm_motion else 19
         self.arm_motion_observation = None
         self.observe_leg_positions = envelope.leg_position_guard == "observe"
         self.leg_position_observation = None
         if (self.observe_leg_positions
-                and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")):
+                and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy", "relic-exploy-leg")):
             raise ContractError("leg position observation requires a ReLIC controller")
         if envelope.transition_s == 0:
-            if (getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy")
+            if (getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy", "relic-exploy-leg")
                     or manifest.relic.preparation.kind != "direct"
                     or manifest.relic.preparation.duration_s != 0):
                 raise ContractError("zero transition requires the explicit ReLIC direct-start contract")

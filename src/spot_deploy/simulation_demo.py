@@ -46,6 +46,7 @@ class ThreeLegPlan(StrictModel):
     hold_s: float = Field(ge=2, le=10)
     lower_s: float = Field(ge=2, le=10)
     final_hold_s: float = Field(ge=5, le=20)
+    return_blend_s: float = Field(default=0, ge=0, le=5)
     lifted_positions: list[float] | None = Field(default=None, min_length=3, max_length=3)
     cartesian_path: CartesianLegPath | None = None
     min_clearance_m: float = Field(gt=0, le=.15)
@@ -55,6 +56,8 @@ class ThreeLegPlan(StrictModel):
 
     @model_validator(mode='after')
     def mode(self):
+        if self.return_blend_s and self.kind != 'front-left-cartesian-ik':
+            raise ValueError('return blend requires the Cartesian sequence')
         if self.kind == 'front-left-cartesian-ik':
             if self.cartesian_path is None or self.lifted_positions is not None:
                 raise ValueError('IK demo requires a Cartesian path, without a joint-space lifted pose')
@@ -66,7 +69,7 @@ class ThreeLegPlan(StrictModel):
     def duration_s(self):
         return sum(getattr(self, k) for k in ('initial_hold_s', 'lift_s', 'hold_s',
                                             'lower_s', 'final_hold_s')) + (
-            self.cartesian_path.duration_s if self.cartesian_path else 0.)
+            self.cartesian_path.duration_s if self.cartesian_path else 0.) + self.return_blend_s
 
 
 def smoothstep(alpha):
@@ -100,7 +103,9 @@ class ThreeLegSequence:
             self.phase, self.leg, self.target_body_m = 'four-foot-initial', None, None
             return
         if elapsed >= lower_end:
-            self.phase, self.leg, self.target_body_m = 'four-foot-final', None, None
+            self.phase = ('four-foot-handover' if elapsed < lower_end+p.return_blend_s
+                          else 'four-foot-final')
+            self.leg, self.target_body_m = None, None
             return
         if self.start is None:
             self.start = finite(np.asarray(state.positions)[self.ids], 3).copy()
@@ -169,7 +174,7 @@ class ThreeLegSequence:
 
 class SimulationThreeLegPolicy:
     """Wrap a standing adapter solely inside an offline simulator process."""
-    def __init__(self, baseline, checkpoint, plan):
+    def __init__(self, baseline, checkpoint, plan, selected_leg_graph=None):
         if baseline.manifest.task != 'standing':
             raise ContractError('three-leg demo requires the standing baseline, not a walking task')
         self.baseline = baseline
@@ -182,6 +187,31 @@ class SimulationThreeLegPolicy:
         self.sequence = ThreeLegSequence(plan, self.ik)
         self.manifest, self.support = baseline.manifest, baseline.support
         self.command = np.zeros(12, dtype=np.float32)
+        self.selected_session = None
+        if selected_leg_graph is not None:
+            import json
+            import onnxruntime as ort
+            from .exploy_policy import META_KEY, INPUT_SIZES
+            from .contracts import sha256
+            record = json.loads(selected_leg_graph.with_name('export.json').read_text())
+            if record['policy_sha256'] != sha256(selected_leg_graph):
+                raise ContractError('selected-leg graph differs from its parity record')
+            options = ort.SessionOptions()
+            options.intra_op_num_threads = options.inter_op_num_threads = 1
+            self.selected_session = ort.InferenceSession(str(selected_leg_graph),
+                sess_options=options, providers=['CPUExecutionProvider'])
+            metadata = json.loads(self.selected_session.get_modelmeta().custom_metadata_map[META_KEY])
+            if (metadata['contract'] != 'relic-exploy-leg-v1'
+                    or metadata['joint_names'] != list(JOINTS)
+                    or metadata['selected_leg'] != 'fl'
+                    or record['weights_changed'] or record['parity_samples'] != 64):
+                raise ContractError('selected-leg graph contract/parity mismatch')
+            sizes = dict(INPUT_SIZES, leg_command=12)
+            fields = self.selected_session.get_inputs()
+            if {f.name for f in fields} != set(sizes) or any(
+                f.shape != [1,sizes[f.name]] or f.type != 'tensor(float)' for f in fields):
+                raise ContractError('selected-leg graph input layout mismatch')
+            self.runner = type('Runner', (), {'session':self.selected_session})()
 
     @property
     def body_height(self):
@@ -197,10 +227,36 @@ class SimulationThreeLegPolicy:
         self.command[:] = 0
 
     def warmup(self):
+        if self.selected_session is not None:
+            from .exploy_policy import INPUT_SIZES
+            from .relic_policy import DEFAULT_Q
+            values = {k:np.zeros((1,n),dtype=np.float32) for k,n in dict(INPUT_SIZES,leg_command=12).items()}
+            values['base_quaternion'][0,0] = 1
+            values['joint_positions'][0] = DEFAULT_Q[self.baseline.graph_from_sdk]
+            values['arm_command'][0] = self.manifest.arm_stowed_positions
+            values['torso_command'][0,2] = .55
+            self.selected_session.run(['actions'],values)
+            return
         self.actor.session.run(['actions'], {'obs':np.zeros((1,84),dtype=np.float32)})
 
     def update(self, state, elapsed):
         self.command = self.sequence.update(state, elapsed)
+
+    def return_blend(self, target):
+        """Blend only the selected-leg OUTPUT after native mode switches to zero.
+
+        Raw actions/history and all other targets remain unchanged. This is a
+        return handoff, not a startup fade or altered observation/history rule.
+        """
+        if self.sequence.phase != 'four-foot-handover':
+            return target
+        p = self.sequence.plan
+        begin = p.initial_hold_s+p.lift_s+p.hold_s+p.lower_s+p.cartesian_path.duration_s
+        alpha = smoothstep((self.sequence.last_time-begin)/p.return_blend_s)
+        target = np.asarray(target).copy()
+        ids = self.sequence.ids
+        target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)
+        return target
 
     def kinematic_record(self, state):
         if self.ik is None or self.sequence.leg is None:
@@ -212,6 +268,15 @@ class SimulationThreeLegPolicy:
 
     def evaluate(self, state, previous):
         began = monotonic()
+        if self.selected_session is not None:
+            from .exploy_policy import TARGET
+            values = self.baseline.inputs(state, previous)
+            values['leg_command'] = self.command[None]
+            action, obs, target = self.selected_session.run(['actions','obs',TARGET],values)
+            target = finite(target[0],19).astype(float)
+            target[12:] = self.manifest.arm_stowed_positions
+            target = self.return_blend(target)
+            return target, monotonic()-began, obs, finite(action[0],12)
         obs = observation(state, self.manifest.arm_stowed_positions, previous, self.body_height)
         obs[19:31] = self.command
         action = finite(self.actor.session.run(['actions'], {'obs':obs[None]})[0][0],12)
@@ -219,6 +284,7 @@ class SimulationThreeLegPolicy:
         target[12:] = self.manifest.arm_stowed_positions
         if self.sequence.leg:
             target[self.sequence.ids] = self.sequence.pose
+        target = self.return_blend(target)
         return target, monotonic()-began, obs[None], action
 
 

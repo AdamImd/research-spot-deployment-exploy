@@ -1,4 +1,4 @@
-# Front-left Cartesian IK demo — preparation only
+# Front-left Cartesian IK demo — deployment review
 
 Adam requested the unchanged ReLIC controller on three legs, with the fourth
 moving by IK ahead of Spot. Use the previously selected front-left leg. The
@@ -11,7 +11,7 @@ joints remain actor controlled; the arm stays held. No rewards or retraining.
 
 ## Sequence and reference frame
 
-`configs/relic-three-leg-front-left-ik.json` defines a44second plan:
+`configs/relic-three-leg-front-left-ik.json` defines a46second plan:
 
 | Phase | Seconds | Action |
 |---|---:|---|
@@ -20,6 +20,7 @@ joints remain actor controlled; the arm stays held. No rewards or retraining.
 | Three-leg hold | 3 | First waypoint |
 | IK movement | 12 | Four3second quintic segments around an8cm square |
 | Lower/return | 6 | Cartesian return to the latched foot location |
+| Return handoff | 2 | Zero leg command; quintic blend of front-left output to actor |
 | Four-foot final | 12 | Zero leg command, actor controls all legs |
 
 The square is in the body x-z plane at y=+0.22m, x=0.53…0.61m and
@@ -61,7 +62,7 @@ records support review without a physical rollout.
 Use a standing baseline and a SIMULATION-scoped envelope. A walking manifest is
 rejected. The same `--three-leg-plan configs/relic-three-leg-front-left-ik.json`
 argument works with `tools/simulate_relic.py` in MuJoCo or IsaacLab. Require a duration
-covering the44second sequence; the existing60second protocol retains the final
+covering the46second sequence; the existing60second protocol retains the final
 standing window. Do not route this adapter to the live CLI or pretend the old
 Exploy graph accepts selected-leg commands. The prior joint-pose three-leg runs
 stopped at mode activation in both simulators; this new IK sequence does not fix
@@ -75,3 +76,56 @@ standing must pass separately. Physics/collision/support-force review and a new
 selected-leg Exploy export/live contract/stop review are still needed before a
 physical demonstration. The current payload COM INFO warning also needs an
 explicit live fault-policy review; it has not been silently cleared or ignored.
+
+## Selected-leg graph under preparation (2026-10-12)
+
+`tools/export_relic_selected_leg.py` composes the pinned Exploy native observation
+subgraph with the unchanged released ONNX actor and a new `leg_command` input.
+The graph uses `relic-exploy-leg-v1`, 12 SDK-order leg commands, SDK-order19targets,
+and a front-left override only. A zero command means four-foot mode. The original
+standing graph is unchanged. `tools/simulate_relic.py --three-leg-graph PATH`
+can rehearse this graph offline with `--three-leg-plan`; it is not a live adapter.
+Adam approved one guarded dynamics rehearsal before physical deployment review.
+See records/relic-three-leg-live-prep-20261012. Live support must not be activated
+or inferred from structural/numeric parity alone.
+
+The separately explicit robot-profile `fault_policy=known-payload-info-observe`
+with `fault_policy_reason` permits only system `payload.fault` code9 severity1.
+Original counts/details/messages remain recorded; all other faults or incomplete
+fault detail counts still block. This does not clear or acknowledge firmware faults.
+
+## Guarded rehearsal and live preparation
+
+The original handoff stopped at32s: fl_hx target1.721rad against actual0.205rad
+requested90.98Nm, exceeding44.88Nm. Lift/hold/IK tracking passed; no complete
+return was demonstrated. Adam approved a2s quintic return OUTPUT blend from the
+last selected-leg IK pose to the current actor target, while the native leg
+command switches to zero. Weights, gains, raw ACK history and startup are unchanged.
+The updated plan is46s (plus1s live margin). A newly approved60s guarded MuJoCo
+rehearsal completed the entire sequence and passed final standing/IK/clearance
+checks. See records/relic-three-leg-live-prep-20261012. This is one simulator result,
+not hardware qualification or Isaac verification. Recorded wall-clock outliers
+remain; the same computation/command deadlines still stop physical execution.
+
+Schema4 `relic-exploy-leg`, task `three-leg-demo`, is a distinct live contract.
+It verifies the pinned base graph input joint order separately from SDK-order
+outputs. `three-leg` requires the full46s sequence plus1s margin, bound additional
+`three_leg_sequence` and `three_leg_clearance` evidence, fresh preflight, two named
+operators and explicit execution. `stand`/`walk` reject this task. The live adapter
+matched all3,001 retained rehearsal predictions exactly. It is a separate adapter;
+the simulation wrapper is never dispatched to hardware. Initialization and
+ACK-owned action history remain zero/unchanged. Demo telemetry retains Cartesian
+IK targets, actual foot coordinates, tracking errors and phase/leg commands.
+
+Package with `tools/prepare_selected_leg_candidate.py`; frozen preparation uses
+`prepare-deployment`. Selected-leg candidates are deployment review inputs until
+robot, rig/workspace, tablet and final exact one-trial approval are current.
+
+The ONE approved physical commissioning attempt (October12) stopped at the first
+mode-entry prediction around5s. FRHX requested46.42Nm above44.88Nm; the rejected
+command was not transmitted, so no physical leg lift/IK square was demonstrated.
+Same-state offline replay with zero leg command requests10.17Nm, identifying the
+mode-entry jump. This is distinct from the simulator's fixed return transient.
+Shutdown confirmed OFF/lease return in5.017s; passive postcheck faultfree. Recording
+is preserved and no retry occurred. See records/relic-three-leg-hardware-20261012.
+The physical approval is consumed; further motion requires a new exact approval.

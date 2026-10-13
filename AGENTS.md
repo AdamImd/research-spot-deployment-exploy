@@ -21,18 +21,26 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   operator-requested walking requires task=walking, a bound WalkingPlan, and the
   walking_distance/walking_clearance evidence gates. See docs/WALKING.md. No
   automatic retries, fault clearing or manipulation in the hardware path.
-- Three-leg preparation is simulation-only via tools/simulate_relic.py and
+- Three-leg dynamics rehearsal is offline via tools/simulate_relic.py and
   docs/THREE_LEG_DEMO.md and docs/THREE_LEG_IK.md. tools/prepare_three_leg_ik.py
   creates a body-fixed kinematic preview only, not RL balance evidence.
   The current nine-input Exploy graph fixes leg commands
   at zero; do not pretend it supports a selected lifted leg or dispatch the offline
-  adapter to hardware. Physical three-leg work needs a new export/live contract and review.
+  adapter to hardware. The new schema4 relic-exploy-leg / task=three-leg-demo uses
+  an explicit ten-input graph and separate live adapter. CLI three-leg requires
+  complete bound three_leg_sequence / three_leg_clearance evidence, exact47s
+  duration for the46s plan, tablet stop, two operators and new one-trial approval.
+  Its two-second return OUTPUT blend is distinct from startup; do not alter weights,
+  gains or raw ACK history. MuJoCo60s passed after preserving the original32s
+  torque stop; other simulator/hardware qualification remains separate.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
 
 ## Contracts that must remain explicit
 
-- Nine named state inputs -> 84-value native observation -> 12 raw actions -> 19
+- Standing uses nine named state inputs; selected-leg adds leg_command12.
+  Explicit native input order and SDK output order differ in the selected graph.
+  Native84-value observation -> 12 raw actions -> 19
   position targets. Names, quaternion wxyz, COM velocity and joint mapping matter.
 - Start previous actions at zero. Rollout advances raw-action history only after
   acknowledgement. A warmup output is discarded. Do not add automatic graph memory.

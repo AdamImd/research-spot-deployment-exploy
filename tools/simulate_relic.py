@@ -78,12 +78,15 @@ def run(args):
         from spot_deploy.simulation_diagnostic import SimulationVelocityPolicy
         policy = SimulationVelocityPolicy(policy, args.simulation_forward_speed, envelope)
     demo = None
+    if args.three_leg_graph and not args.three_leg_plan:
+        raise ValueError('selected-leg graph requires an explicit offline plan')
     if getattr(args, 'three_leg_plan', None):
         plan = load(args.three_leg_plan, ThreeLegPlan)
         if plan.duration_s > args.duration:
             raise ValueError('simulation duration cannot end before the three-leg sequence')
         demo = SimulationThreeLegPolicy(policy,
-            args.simulation_source/'source/relic/relic/assets/spot/pretrained/policy.onnx',plan)
+            args.simulation_source/'source/relic/relic/assets/spot/pretrained/policy.onnx',plan,
+            getattr(args, 'three_leg_graph', None))
         policy = demo
     prewarm_times = []
     for _ in range(args.prewarm_inference):
@@ -161,7 +164,11 @@ def run(args):
                       envelope=envelope.model_dump(),
                       initial_state="captured physical standing state; zero simulated velocity",
                       demonstration=demo.sequence.plan.model_dump() if demo else None,
-                      policy_execution=('released raw actor with native selected-leg override'
+                      selected_leg_graph_sha256=(hashlib.sha256(args.three_leg_graph.read_bytes()).hexdigest()
+                                                 if args.three_leg_graph else None),
+                      policy_execution=('selected-leg Exploy observation graph with unchanged released actor'
+                                        if args.three_leg_graph else
+                                        'released raw actor with native selected-leg override'
                                         if demo else 'bound deployment adapter'),
                       baseline_manifest_used_for_numeric_guards_only=bool(demo),
                       stock_stand_simulated=False, acknowledgements="ideal, one command tick later",
@@ -188,12 +195,12 @@ def run(args):
                 state, sim = sdk_state(backend, t, key)
                 began = time.monotonic()
                 count = core.policy_samples
-                if demo:
-                    previous_phase = demo.sequence.phase
-                    demo.update(state,t)
-                    if demo.sequence.phase != previous_phase:
-                        log.event('demo_phase',phase=demo.sequence.phase,simulation_time_s=t)
                 try:
+                    if demo:
+                        previous_phase = demo.sequence.phase
+                        demo.update(state,t)
+                        if demo.sequence.phase != previous_phase:
+                            log.event('demo_phase',phase=demo.sequence.phase,simulation_time_s=t)
                     command = core.command(state, 10 + t, 1000 + t)
                 except ContractError as exc:
                     reason, failure = ("integrity_stop" if unguarded else "guard_stop"), str(exc)
@@ -217,6 +224,10 @@ def run(args):
                                                        np.asarray(recorded["observations"][-12:]))
                     action = reference_policy(obs)
                     target = backend.contract.targets(action, ref_command)
+                    if demo and demo.sequence.phase == 'four-foot-handover':
+                        sdk_target = np.empty(19)
+                        sdk_target[inverse] = target
+                        target = demo.return_blend(sdk_target)[inverse]
                     max_obs_error = max(max_obs_error,
                                         float(np.max(np.abs(obs - recorded["observations"]))))
                     max_action_error = max(max_action_error,
@@ -344,6 +355,8 @@ def main():
                         help="Discard zero-input inferences before activation; history stays zero")
     parser.add_argument("--mujoco-noslip-iterations", type=int, choices=[0, 10], default=0,
                         help="Explicit friction-drift diagnostic; default preserves the baseline")
+    parser.add_argument('--three-leg-graph', type=Path,
+                        help='Offline selected-leg graph with hash-bound native parity record')
     parser.add_argument('--three-leg-plan',type=Path,
                         help='Offline-only raw actor front-left lift/hold/return; never a live manifest')
     parser.add_argument('--physics-diagnostics', action='store_true',

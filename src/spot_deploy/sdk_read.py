@@ -22,7 +22,8 @@ def seconds(timestamp):
 def fault_details(state):
     """Structured severity data; callers retain their own unchanged fault policy."""
     return [dict(kind=kind, name=getattr(fault, 'name', ''), code=getattr(fault, 'code', 0),
-                 severity=int(getattr(fault, 'severity', 0)))
+                 severity=int(getattr(fault, 'severity', 0)),
+                 message=getattr(fault, 'error_message', ''))
             for kind in ('system_fault_state', 'behavior_fault_state', 'service_fault_state')
             for fault in getattr(state, kind).faults]
 
@@ -369,6 +370,22 @@ class ReadOnlySpot:
             raise error
 
 
+def classify_faults(details, total, config):
+    """Retain raw faults; accept only the explicitly reviewed exact INFO variety."""
+    mode = getattr(config, 'fault_policy', 'all-block')
+    accepted, blocking = [], []
+    for fault in details:
+        key = tuple(fault.get(k) for k in ('kind', 'name', 'code', 'severity'))
+        allowed = (mode == 'known-payload-info-observe'
+                   and key == ('system_fault_state', 'payload.fault', 9, 1))
+        (accepted if allowed else blocking).append(fault)
+    # Missing details or an inconsistent count must never bypass a stop.
+    return dict(accepted_faults=accepted, blocking_faults=blocking,
+                fault_details_complete=(len(details) == total),
+                fault_policy_ready=(len(details) == total and not blocking),
+                fault_policy=mode)
+
+
 def validate_snapshot(snapshot, config, manifest=None, envelope=None, for_control=False):
     checks = {
         "identity_firmware": snapshot["identity_matches"],
@@ -379,6 +396,10 @@ def validate_snapshot(snapshot, config, manifest=None, envelope=None, for_contro
         "no_active_faults": snapshot["active_fault_count"] == 0,
         "external_estop_ready": snapshot["estop_ready"],
     }
+    if getattr(config, 'fault_policy', 'all-block') != 'all-block':
+        checks.pop('no_active_faults')
+        checks['reviewed_fault_policy'] = classify_faults(
+            snapshot.get('fault_details', []), snapshot['active_fault_count'], config)['fault_policy_ready']
     if manifest:
         checks["robot_model"] = snapshot["robot_model_sha256"] == manifest.robot_model_sha256
         checks["payload_configuration"] = (
@@ -391,7 +412,7 @@ def validate_snapshot(snapshot, config, manifest=None, envelope=None, for_contro
             # alternative prerequisite, not a claim that a displaced arm is stowed.
             checks.pop('arm_stowed')
             checks['arm_harness_observation'] = (
-                getattr(manifest, 'adapter', None) in ('relic84', 'relic-exploy'))
+                getattr(manifest, 'adapter', None) in ('relic84', 'relic-exploy', 'relic-exploy-leg'))
     if for_control:
         checks["motors_initially_off"] = snapshot["motors_off"]
     return checks

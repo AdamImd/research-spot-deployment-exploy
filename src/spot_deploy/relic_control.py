@@ -11,6 +11,7 @@ import time
 from .contracts import ContractError
 from .relic_rollout import ReLICRollout
 from .safety import Schedule, bounded_join, percentiles
+from .sdk_read import classify_faults
 
 
 def stand(reader, control, policy, envelope, duration, record, encode, interlock=None):
@@ -38,13 +39,15 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             while not stop.is_set():
                 control.heartbeat()
                 health = reader.health()
+                health.update(classify_faults(health.get('fault_details', []),
+                                             health['fault_count'], reader.config))
+                record.event("health", **health)
                 if interlock:
                     interlock.check(health)
-                if not health["estop_ready"] or health["fault_count"]:
+                if not health["estop_ready"] or not health['fault_policy_ready']:
                     raise ContractError("E-stop or robot fault stopped ReLIC")
                 if health["battery_percent"] < envelope.min_battery_percent:
                     raise ContractError("battery below operating envelope")
-                record.event("health", **health)
                 with lock:
                     shared["health_at"] = health["time"]
                     active = shared["active"]

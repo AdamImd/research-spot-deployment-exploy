@@ -44,11 +44,14 @@ def candidate(path):
 
 
 def policy_files(manifest):
-    return {
+    files = {
         manifest.policy_file, manifest.training_config_file,
         manifest.relic.preparation.model_file, manifest.exploy.export_record_file,
         manifest.exploy.configuration_file,
     }
+    if manifest.task == 'three-leg-demo':
+        files.add(manifest.exploy.base_graph_file)
+    return files
 
 
 def hardware_envelope(path, manifest):
@@ -121,6 +124,9 @@ def review_text(manifest):
     gates = {**GATES, HARDWARE_GATE: HARDWARE_DESCRIPTION}
     if manifest.task == "walking":
         gates.update(WALKING_GATES)
+    if manifest.task == 'three-leg-demo':
+        from .readiness import THREE_LEG_GATES
+        gates.update(THREE_LEG_GATES)
     for name, description in gates.items():
         lines.append(f"- `{name}`: {description}. Status: UNVERIFIED; reviewer/artifact: pending.")
     lines += [
@@ -144,7 +150,7 @@ def command_templates(directory, task="standing"):
     inputs = ["--manifest", str(base / "policy/manifest.json"),
               "--envelope", str(base / "envelope.json"), "--robot", str(base / "robot.json")]
     prefix = ["uv", "run", "--no-sync", "spot-deploy"]
-    action = "walk" if task == "walking" else "stand"
+    action = {"walking":"walk", "standing":"stand", "three-leg-demo":"three-leg"}[task]
     return {
         "note": "Argument templates only. Replace uppercase placeholders; run from the repository root.",
         "preflight": prefix + ["preflight", "--manifest", str(base / "policy/manifest.json"),
