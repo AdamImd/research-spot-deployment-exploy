@@ -160,3 +160,9 @@ and now confirms STATUS_TOO_DISTANT(5) for505ms expiry; no policy predictions.
 See records/relic-three-leg-latency500-repeat-20261013. Exact firmware ceiling is
 unknown. Native OFF/lease return confirmed6.019s, fault-free postcheck. Repeat
 approval consumed; do not run this505ms expiry configuration again unchanged.
+
+The next draft follows the official firmware-matched SDK5.0.1 example:50ms TTL,
+45ms command-gap/ACK limits. See records/relic-three-leg-expiry50-20261013.
+This fixes end-time rejection only;500ms compute/stall tolerance is not achieved
+with the synchronous producer and50ms firmware expiry. No offline tests requested;
+new exact physical approval remains required before the proposed repeat.
