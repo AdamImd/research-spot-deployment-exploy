@@ -68,3 +68,23 @@ def test_limiter_bounds_steps_and_does_not_catch_up_after_gap():
     np.testing.assert_allclose(limiter.apply(sequence,np.ones(19)*100)[:12],.02,atol=1e-12)
     sequence.last_time=100.
     np.testing.assert_allclose(limiter.apply(sequence,np.ones(19)*100)[:12],.04,atol=1e-12)
+
+
+def test_unfiltered_entry_preserves_actor_proposals_and_raw_history(state):
+    state.positions=DEFAULT_Q.astype(float).tolist()
+    base=baseline()
+    plan=load(ROOT/'configs/relic-three-leg-front-left-ik-unfiltered.json',ThreeLegPlan)
+    assert plan.target_slew_rad_s is None
+    policy=SimulationThreeLegPolicy(base,ROOT/'simulation/source/relic/relic/assets/spot/pretrained/policy.onnx',plan)
+    policy.initialize_height({'height_m':.52,'foot_contacts':[1]*4})
+    previous=np.linspace(-.2,.3,12,dtype=np.float32)
+    original=previous.copy()
+    policy.update(state,4.98)
+    before=policy.evaluate(state,previous)
+    policy.update(state,5.)
+    entered=policy.evaluate(state,previous)
+    np.testing.assert_array_equal(entered[0],policy.proposed_targets)
+    np.testing.assert_allclose(entered[0][:3],state.positions[:3],atol=1e-6)
+    assert np.max(np.abs(entered[0][:12]-before[0][:12]))>.02
+    np.testing.assert_array_equal(entered[3],policy.actor.session.run(['actions'],{'obs':entered[2]})[0][0])
+    np.testing.assert_array_equal(previous,original)

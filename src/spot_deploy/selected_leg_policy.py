@@ -30,10 +30,10 @@ class SelectedLegManifest(ExployReLICManifest):
     @model_validator(mode='after')
     def selected_contract(self):
         if (self.demo.kind != 'front-left-cartesian-ik' or self.demo.return_blend_s != 2
-                or self.demo.entry_blend_s != 0 or self.demo.target_slew_rad_s != 1
+                or self.demo.entry_blend_s != 0 or self.demo.target_slew_rad_s not in (None, 1)
                 or self.demo.support_transfer_s != 0
                 or self.demo.duration_s >= 60 or self.relic.preparation.kind != 'direct'):
-            raise ValueError('live demo requires front-left IK, native raw history,1rad/s target limiter and2s return blend')
+            raise ValueError('live demo requires front-left IK, native raw history, optional1rad/s limiter and2s return blend')
         return self
 
 
@@ -91,7 +91,8 @@ class SelectedLegPolicy(ExployReLICPolicy):
             ids = self.sequence.ids
             target[ids] = self.sequence.pose+alpha*(target[ids]-self.sequence.pose)
         self.proposed_targets = target.copy()
-        target = self.target_slew.apply(self.sequence,target)
+        if self.manifest.demo.target_slew_rad_s is not None:
+            target = self.target_slew.apply(self.sequence,target)
         return target, monotonic()-start, obs, action
 
     def demo_record(self, state):

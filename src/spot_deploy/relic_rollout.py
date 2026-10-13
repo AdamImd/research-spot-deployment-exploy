@@ -60,6 +60,10 @@ class ReLICRollout:
         self.record.event("relic_initialized", state=state.model_dump(), height=height,
                           requested_height_m=self.policy.body_height,
                           previous_actions=self.previous.tolist(), endpoint=self.endpoint.tolist())
+        if self.envelope.command_rate_guard == 'observe':
+            self.record.event('command_rate_mode', mode='observe',
+                              reason=self.envelope.command_rate_reason,
+                              measured_speed_and_torque_enforced=True)
         if self.guard.observe_arm_motion:
             self.record.event('arm_motion_mode', mode='observe',
                               reason=self.envelope.arm_motion_reason,
@@ -180,6 +184,10 @@ class ReLICRollout:
                 self.record.event("relic_phase", phase=self.phase, monotonic_s=now)
         command = self.guard.command(target, state, now, robot_now, policy_at, inference_s,
                                      feedforward=feedforward)
+        rate_observation = getattr(self.guard, 'command_rate_observation', None)
+        if rate_observation is not None:
+            self.record.event('command_rate_observation',
+                              **rate_observation, monotonic_s=now)
         self.last_command = command
         if new_action is not None:
             self.pending = (command.key, new_action)

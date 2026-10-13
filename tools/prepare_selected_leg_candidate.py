@@ -34,7 +34,9 @@ def prepare(base_manifest, graph, plan_path, output):
     configuration = dict(demo=plan.model_dump(), composition=composition,
         base_export=json.loads(artifact_path(base_manifest,base.exploy.export_record_file).read_text()),
         input_order='pinned base graph native names', target_order='SDK',
-        entry_controller='single native actor; target slew1rad/s; native raw ACK history; no catch-up',
+        entry_controller=('single native actor; unfiltered targets; native raw ACK history'
+            if plan.target_slew_rad_s is None else
+            f'single native actor; target slew{plan.target_slew_rad_s}rad/s; native raw ACK history; no catch-up'),
         return_blend='two-second quintic on selected-leg output; zero native leg command; raw ACK history unchanged')
     atomic_json(output/'configuration.json',configuration)
     record = dict(composition, configuration_sha256=sha256(output/'configuration.json'),

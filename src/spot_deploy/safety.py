@@ -69,6 +69,11 @@ class Guard:
         self.last_command = None
         self.last_sent = None
         self.key = 0
+        self.command_rate_observation = None
+        if (envelope.command_rate_guard == "observe"
+                and (getattr(manifest, "adapter", None) != "relic-exploy-leg"
+                     or manifest.task != "three-leg-demo")):
+            raise ContractError("command rate observation requires the selected-leg demo")
         self.observe_arm_motion = envelope.arm_motion_guard == "observe"
         if (self.observe_arm_motion
                 and getattr(manifest, "adapter", None) not in ("relic84", "relic-exploy", "relic-exploy-leg")):
@@ -201,8 +206,14 @@ class Guard:
             dt = now - self.last_sent
             if dt <= 0 or dt > env.max_command_gap_s:
                 raise ContractError("command scheduling deadline exceeded")
-            if np.any(np.abs(target - self.last_command) > np.asarray(env.command_rate_max) * dt):
-                raise ContractError("command slew limit")
+            rates = (target - self.last_command) / dt
+            exceeded = np.flatnonzero(np.abs(rates) > np.asarray(env.command_rate_max))
+            self.command_rate_observation = None
+            if exceeded.size:
+                if env.command_rate_guard == "enforce":
+                    raise ContractError("command slew limit")
+                self.command_rate_observation = dict(indices=exceeded.tolist(),
+                    target_rates_rad_s=rates.tolist(), reference_max=env.command_rate_max)
         self.last_command = target.copy()
         self.last_sent = now
         self.key += 1

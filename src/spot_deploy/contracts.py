@@ -173,6 +173,10 @@ class Envelope(StrictModel):
     sdk_velocity_safety_limit: Positive | None = None
     tracking_error_max: Vector19
     command_rate_max: Vector19
+    # Explicit commissioning option: record target-rate crossings without stopping.
+    # Measured-speed, command gap/expiry and torque checks remain independent.
+    command_rate_guard: Literal["enforce", "observe"] = "enforce"
+    command_rate_reason: str | None = None
     max_roll_rad: Positive
     max_pitch_rad: Positive
     max_linear_speed: Positive
@@ -202,6 +206,11 @@ class Envelope(StrictModel):
 
     @model_validator(mode="after")
     def check(self):
+        if self.command_rate_guard == "observe":
+            if not self.command_rate_reason or not self.command_rate_reason.strip():
+                raise ValueError("command rate observation requires an operator reason")
+        elif self.command_rate_reason is not None:
+            raise ValueError("command rate reason requires observation mode")
         if self.arm_motion_guard == "observe":
             if not self.arm_motion_reason or not self.arm_motion_reason.strip():
                 raise ValueError("arm observation mode requires an operator reason")

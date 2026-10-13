@@ -30,7 +30,7 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   an explicit ten-input graph and separate live adapter. CLI three-leg requires
   complete bound three_leg_sequence / three_leg_clearance evidence, exact plan.duration_s+1
   duration (currently47s for46s withtarget-rate limit), tablet stop, two operators and new one-trial approval.
-  Current demo uses one native actor and target_slew_rad_s=1 for all12leg
+  The smoothed profile uses one native actor and target_slew_rad_s=1 for all12leg
   targets afterinitialfour-foot phase through finalhold. First exact entry
   incrementzero, laterincrements<=.02rad/50Hztick, no catch-up. Preserve native
   raw ACKed history and weights/gains. Raw proposals and limitedcommands differ
@@ -45,6 +45,14 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   latest physicalapprovalconsumed. See records/relic-three-leg-angular2-hardware-20261012
   and records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
   torque stop; other simulator/hardware qualification remains separate.
+  The new configs/relic-three-leg-front-left-ik-unfiltered.json draft sets
+  target_slew_rad_s=null. Live adapter accepts that explicit unfiltered profile;
+  command_rate_guard=observe with a reason disables the target-slew stop only for
+  selected-leg commissioning and records crossings. Default remains enforce.
+  Existing smoothed dynamics evidence does not qualify this new profile.
+  Retain measured speed, torque, attitude, timing and tablet stop checks. No
+  physical activation is authorized by preparing this candidate; fresh exact
+  one-trial approval and operator/setup confirmation are required before execution.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
 

@@ -113,3 +113,28 @@ only simulation shifts inside in the first0.4s. Foot forces/harness loads are no
 recorded, so this is a leading mechanism, not uniquely established causality.
 See records/relic-three-leg-tip-analysis-20261013 for reproducible saved-data analysis.
 No controller or guard change, new simulation, or physical motion was made.
+
+## Unfiltered commissioning draft (October 13)
+
+`configs/relic-three-leg-front-left-ik-unfiltered.json` preserves the 46-second
+sequence but sets `target_slew_rad_s=null`. The live adapter returns the native
+actor/IK/return-blend proposals without the demo target-rate filter. Weights,
+gains, raw ACK-owned action history, six-second IK lift/lower and two-second
+return blend are unchanged. The historical smoothed configuration is retained.
+
+The corresponding explicit hardware draft uses `command_rate_guard=observe`
+with an operator reason. This stops neither on nor filters virtual target rates;
+it records `command_rate_mode` and crossing `command_rate_observation` events,
+also preserved in lightweight recordings. `command_rate_max` is then only a
+reference for those observations. Default enforcement remains unchanged for
+all existing profiles; observation mode is restricted to the selected-leg demo.
+Measured speed, torque, finite virtual targets, attitude, scheduling/ACK/expiry
+and tablet stop remain enforced. The IK trajectory feasibility speed check is
+retained; it does not clip the actor's corrective targets.
+
+The new profile can emit abrupt virtual target changes at mode entry. Removal
+of smoothing does not establish weight transfer or fix the measured support
+margin. Prior guarded dynamics and adapter evidence for the smoothed profile
+must not be relabeled as proof for this candidate. Preparation and software
+checks do not authorize physical motion; require a fresh motors-off preflight,
+exact bound review and human confirmation immediately before any new trial.

@@ -136,6 +136,27 @@
       "title": "Command Rate Max",
       "type": "array"
     },
+    "command_rate_guard": {
+      "default": "enforce",
+      "enum": [
+        "enforce",
+        "observe"
+      ],
+      "title": "Command Rate Guard",
+      "type": "string"
+    },
+    "command_rate_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Command Rate Reason"
+    },
     "max_roll_rad": {
       "exclusiveMinimum": 0,
       "title": "Max Roll Rad",

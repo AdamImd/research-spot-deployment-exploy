@@ -90,6 +90,8 @@ def review_text(manifest):
         "Optional paired command_position_min/max",
         "bound virtual PD targets separately; omit both to retain the same bounds.",
         "Wider targets do not change measured-angle, torque, tracking, speed or slew guards.",
+        "Selected-leg commissioning may explicitly set command_rate_guard=observe with an operator reason;",
+        "this logs target-rate crossings without filtering or stopping. Default is enforce.",
         "actuator_limit_profile=spot-sdk-5.0.1 adds measured-position knee and coupled-arm limits.",
         "sdk_velocity_safety_limit is the shared robot backstop; host speed limits remain per-joint.",
         "",
