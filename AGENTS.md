@@ -89,7 +89,7 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
 
 ## Validation and handoff
 
-Run `uv sync --locked --group simulation`, then `pytest -q`,
+Run `uv sync --locked --group simulation --group visualization`, then `pytest -q`,
 `ruff check src tests tools` and `python tools/demo_exploy.py` through `uv run --no-sync`.
 For a changed graph, also run the independent parity procedure in EXPLOY.md.
 For controller/simulator changes, use the bounded 60-second simulation protocol.
