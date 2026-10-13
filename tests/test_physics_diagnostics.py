@@ -130,3 +130,19 @@ def test_unlimited_torque_requires_explicit_mujoco_diagnostic(extra, tmp_path):
     assert result.returncode == 2
     assert 'unlimited actuator torque requires MuJoCo and --no-guards' in result.stderr
     assert not (tmp_path/'output').exists()
+
+
+@pytest.mark.parametrize('limited', [True, False])
+def test_dynamics_plot_labels_both_actuator_modes(tmp_path, limited):
+    import runpy
+    from spot_deploy.contracts import JOINTS
+    root = Path(__file__).parents[1]
+    plots = runpy.run_path(str(root/'tools/render_relic_demo.py'))['plots']
+    rows = [dict(trial_time=t, q=[0.]*19, dq=[0.]*19, positions=[0.]*19,
+                 height=.5, tilt=0., feet=[[0., 0., .036]]*4, pd_torque_Nm=[0.]*19)
+            for t in [0., .005]]
+    config = dict(backend='mujoco', simulation_joint_names=list(JOINTS),
+                  envelope={'velocity_max': [1.]*19}, actuator_torque_limits=limited)
+    plots(rows, config, {'reason': 'completed'}, tmp_path)
+    assert (tmp_path/'dynamics.png').stat().st_size > 1000
+    assert (tmp_path/'dynamics.pdf').stat().st_size > 1000

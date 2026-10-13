@@ -53,7 +53,7 @@ def plots(rows, config, result, output):
     axes[2,0].set_xlabel('Recorded simulation time (s)')
     axes[2,1].set_xlabel('Recorded simulation time (s)')
     figure.suptitle(f"ReLIC simulation: {config['backend']} · {result['reason']} · {config.get('guard_mode', 'enforced')}\n"
-                   ('UNLIMITED ACTUATOR TORQUE · simulation only' if config.get('actuator_torque_limits') is False
+                   + ('UNLIMITED ACTUATOR TORQUE · simulation only' if config.get('actuator_torque_limits') is False
                     else 'Original gains and weights; foot clearance does not measure support load'))
     figure.savefig(output/'dynamics.png',dpi=160)
     figure.savefig(output/'dynamics.pdf')
