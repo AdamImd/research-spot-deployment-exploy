@@ -1,8 +1,62 @@
 {
+  "$defs": {
+    "CartesianLegPath": {
+      "additionalProperties": false,
+      "properties": {
+        "frame": {
+          "const": "body",
+          "title": "Frame",
+          "type": "string"
+        },
+        "waypoints_m": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "maxItems": 9,
+          "minItems": 2,
+          "title": "Waypoints M",
+          "type": "array"
+        },
+        "segment_s": {
+          "maximum": 5,
+          "minimum": 2,
+          "title": "Segment S",
+          "type": "number"
+        },
+        "max_joint_speed_rad_s": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Max Joint Speed Rad S",
+          "type": "number"
+        },
+        "max_tracking_error_m": {
+          "exclusiveMinimum": 0,
+          "maximum": 0.05,
+          "title": "Max Tracking Error M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "frame",
+        "waypoints_m",
+        "segment_s",
+        "max_joint_speed_rad_s",
+        "max_tracking_error_m"
+      ],
+      "title": "CartesianLegPath",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "kind": {
-      "const": "front-left-lift-hold-return",
+      "enum": [
+        "front-left-lift-hold-return",
+        "front-left-cartesian-ik"
+      ],
       "title": "Kind",
       "type": "string"
     },
@@ -42,13 +96,32 @@
       "type": "number"
     },
     "lifted_positions": {
-      "items": {
-        "type": "number"
-      },
-      "maxItems": 3,
-      "minItems": 3,
-      "title": "Lifted Positions",
-      "type": "array"
+      "anyOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lifted Positions"
+    },
+    "cartesian_path": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CartesianLegPath"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "min_clearance_m": {
       "exclusiveMinimum": 0,
@@ -83,7 +156,6 @@
     "hold_s",
     "lower_s",
     "final_hold_s",
-    "lifted_positions",
     "min_clearance_m",
     "support_clearance_max_m",
     "min_hold_fraction",

@@ -45,6 +45,8 @@ FIELDS = {
 }
 for _kind in PREDICTIONS:
     FIELDS[_kind] = ("targets", "raw_actions", "inference_s", 'velocity_command', 'leg_command', 'phase')
+FIELDS['demo_prediction'] += ('ik_frame', 'ik_target_body_m', 'ik_measured_body_m',
+                              'ik_solve_residual_m', 'ik_tracking_error_m')
 TIMES = ("time", "monotonic_s", "simulation_time_s")
 
 

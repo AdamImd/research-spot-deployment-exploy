@@ -59,6 +59,30 @@ def plots(rows, config, result, output):
     plt.close(figure)
 
 
+def ik_plan_plots(rows, config, output):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    figure, axes = plt.subplots(1,2,figsize=(11,4),layout='constrained')
+    active = [r for r in rows if r.get('ik_target_body_m') is not None]
+    points = np.array([r['ik_target_body_m'] for r in active])
+    axes[0].plot(points[:,0],points[:,2],label='Lift, square, return')
+    path = np.array(config['demonstration']['cartesian_path']['waypoints_m'])
+    axes[0].plot(path[:,0],path[:,2],'o--',label='Front workspace waypoints')
+    axes[0].set(xlabel='Body-forward x (m)',ylabel='Body-relative z (m)',aspect='equal')
+    for i,name in enumerate(('FL HX','FL HY','FL knee')):
+        axes[1].plot([r['trial_time'] for r in rows],
+                     np.rad2deg([r['q'][i] for r in rows]),label=name)
+    axes[1].set(xlabel='Planned time (s)',ylabel='IK joint target (degrees)')
+    for ax in axes:
+        ax.grid(alpha=.25)
+        ax.legend()
+    figure.suptitle('Kinematic IK plan only · body/other legs fixed · no actor, physics or robot execution')
+    figure.savefig(output/'ik-plan.png',dpi=150)
+    figure.savefig(output/'ik-plan.pdf')
+    plt.close(figure)
+
+
 def video(rows,config,result,source,output,fps):
     import mujoco as mj
     from PIL import Image,ImageDraw,ImageFont
@@ -108,6 +132,18 @@ def video(rows,config,result,source,output,fps):
                     mj.mj_forward(model,data)
                     camera.lookat[:]=[row['position'][0],row['position'][1],.4]
                     renderer.update_scene(data,camera=camera)
+                    target = row.get('ik_target_body_m')
+                    if target is not None:
+                        from spot_deploy.policy import rotation
+                        from types import SimpleNamespace
+                        body_rotation = rotation(SimpleNamespace(
+                            odom_quaternion_wxyz=row['root_quaternion_wxyz']))
+                        marker = renderer.scene.geoms[renderer.scene.ngeom]
+                        mj.mjv_initGeom(marker,mj.mjtGeom.mjGEOM_SPHERE,
+                            np.array([.012,.012,.012]),
+                            np.array(row['position'])+body_rotation@target,
+                            np.eye(3).flatten(),np.array([0.,1.,1.,.8]))
+                        renderer.scene.ngeom += 1
                     canvas=Image.new('RGB',(720,560),(15,22,31))
                     canvas.paste(Image.fromarray(renderer.render()),(0,48))
                     draw=ImageDraw.Draw(canvas)
@@ -115,6 +151,8 @@ def video(rows,config,result,source,output,fps):
                     draw.text((12,7),f"{config['backend']} · {phase} · t={t:.2f} s",font=font,fill='white')
                     subtitle = ('UNGUARDED simulation diagnostic' if config.get('guard_mode') == 'disabled-simulation-diagnostic'
                                 else 'Recorded visual-mesh replay · simulation only')
+                    if config.get('kinematic_plan_only'):
+                        subtitle = 'IK plan · body/support legs fixed · no RL or dynamics'
                     if config.get('simulation_forward_speed_m_s') is not None:
                         subtitle = (f"UNGUARDED · {config['simulation_forward_speed_m_s']:.2f} m/s max request"
                                     f" · {config['simulation_speed_profile']}")
@@ -148,7 +186,10 @@ def main():
     if not rows:
         parser.error('No recorded states to render')
     args.output.mkdir(parents=True,exist_ok=False)
-    plots(rows,config,result,args.output)
+    if config.get('kinematic_plan_only'):
+        ik_plan_plots(rows,config,args.output)
+    else:
+        plots(rows,config,result,args.output)
     count=video(rows,config,result,args.simulation_source,args.output,args.fps)
     probe=subprocess.run(['ffprobe','-v','error','-show_streams','-of','json',
                           str(args.output/'replay.mp4')],capture_output=True,text=True,check=True)

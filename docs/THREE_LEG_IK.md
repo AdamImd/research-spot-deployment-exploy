@@ -1,0 +1,77 @@
+# Front-left Cartesian IK demo — preparation only
+
+Adam requested the unchanged ReLIC controller on three legs, with the fourth
+moving by IK ahead of Spot. Use the previously selected front-left leg. The
+existing nine-input standing Exploy graph fixes the leg command at zero and
+cannot represent this demo; its live standing/walking paths remain untouched.
+`SimulationThreeLegPolicy` uses the SAME released actor weights, inserts the
+selected leg's absolute three-joint command into the native84D observation and
+overrides only those three output targets, matching native ReLIC. Other nine leg
+joints remain actor controlled; the arm stays held. No rewards or retraining.
+
+## Sequence and reference frame
+
+`configs/relic-three-leg-front-left-ik.json` defines a44second plan:
+
+| Phase | Seconds | Action |
+|---|---:|---|
+| Four-foot standing | 5 | Zero leg command |
+| Lift/reach | 6 | Quintic Cartesian path from latched actual foot to first waypoint |
+| Three-leg hold | 3 | First waypoint |
+| IK movement | 12 | Four3second quintic segments around an8cm square |
+| Lower/return | 6 | Cartesian return to the latched foot location |
+| Four-foot final | 12 | Zero leg command, actor controls all legs |
+
+The square is in the body x-z plane at y=+0.22m, x=0.53…0.61m and
+z=-0.28…-0.20m. Body x points forward, y left, z up. It follows CURRENT body
+orientation rather than boot/odom axes; body translation/rotation does not turn
+it into a world-fixed target. Positions refer to the foot-link/ball center, not the
+bottom of the foot or a requested foot orientation. The 3DOF leg provides position
+IK only. If a world-fixed target is desired, that needs an explicit different frame.
+
+IK uses the manifest-hashed URDF chain and analytic translational Jacobian,
+previous solution seed, bounded damped least squares, a **0.02rad joint-angle
+margin** inside model bounds, and0.2mm solve tolerance. It rejects unreachable or
+near-singular targets rather than silently clipping the Cartesian target. Planned
+selected-leg command speed is capped at0.8rad/s; actual tracking tolerance is3cm
+(p95 in the IK-motion phase). IK model bounds are geometry bounds, not approved
+hardware operating limits. The actor's other joints still use the envelope guards.
+
+## Review the intended motion without physics
+
+```bash
+uv run --no-sync python tools/prepare_three_leg_ik.py \
+  --plan configs/relic-three-leg-front-left-ik.json \
+  --manifest policies/relic-exploy-standing/manifest.json \
+  --capture fixtures/standing-capture --output runs/front-left-ik-plan-NEW
+MUJOCO_GL=egl uv run --no-sync python tools/render_relic_demo.py \
+  --run runs/front-left-ik-plan-NEW --output runs/front-left-ik-video-NEW --fps 50
+```
+
+The artifact is a kinematic
+plan: body and other legs held fixed, no actor execution, contact solver, `mj_step`
+or robot connection. Video labels preserve this distinction. It illustrates foot
+workspace and joint movement, NOT successful RL balance or physical clearance.
+Visuals use the full restored model meshes. The cyan marker is the desired foot
+center. `ik-plan.png/pdf`, video, trajectory, model/source/input hashes and completion
+records support review without a physical rollout.
+
+## Offline dynamics entry point when separately requested
+
+Use a standing baseline and a SIMULATION-scoped envelope. A walking manifest is
+rejected. The same `--three-leg-plan configs/relic-three-leg-front-left-ik.json`
+argument works with `tools/simulate_relic.py` in MuJoCo or IsaacLab. Require a duration
+covering the44second sequence; the existing60second protocol retains the final
+standing window. Do not route this adapter to the live CLI or pretend the old
+Exploy graph accepts selected-leg commands. The prior joint-pose three-leg runs
+stopped at mode activation in both simulators; this new IK sequence does not fix
+or qualify that transition by construction. Do not claim stability without a run.
+
+Record Cartesian target/measured foot coordinates, IK residual/tracking errors,
+all joint targets/measurements/torques, previous raw-action acknowledgements,
+height/tilt and contact data. Existing clearance geometry is a proxy only, not
+proof the three support feet carry load. Return-to-four-feet, IK tracking and final
+standing must pass separately. Physics/collision/support-force review and a new
+selected-leg Exploy export/live contract/stop review are still needed before a
+physical demonstration. The current payload COM INFO warning also needs an
+explicit live fault-policy review; it has not been silently cleared or ignored.

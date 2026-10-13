@@ -9,30 +9,64 @@ from typing import Literal
 from time import monotonic
 
 import numpy as np
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .contracts import JOINTS, ContractError, StrictModel
 from .relic_policy import ReLICPolicy, finite, joint_targets, observation
 
 
+class CartesianLegPath(StrictModel):
+    frame: Literal['body']
+    waypoints_m: list[list[float]] = Field(min_length=2, max_length=9)
+    segment_s: float = Field(ge=2, le=5)
+    max_joint_speed_rad_s: float = Field(gt=0, le=1)
+    max_tracking_error_m: float = Field(gt=0, le=.05)
+
+    @model_validator(mode='after')
+    def check(self):
+        for point in self.waypoints_m:
+            xyz = finite(point, 3)
+            if not (.45 <= xyz[0] <= .75 and .10 <= xyz[1] <= .35
+                    and -.40 <= xyz[2] <= -.15):
+                raise ValueError('IK demo waypoints must be in the bounded front-left body workspace')
+        if not np.allclose(self.waypoints_m[0], self.waypoints_m[-1], rtol=0, atol=1e-8):
+            raise ValueError('IK path must return to its first waypoint before lowering')
+        return self
+
+    @property
+    def duration_s(self):
+        return (len(self.waypoints_m)-1)*self.segment_s
+
+
 class ThreeLegPlan(StrictModel):
-    kind: Literal['front-left-lift-hold-return']
+    kind: Literal['front-left-lift-hold-return', 'front-left-cartesian-ik']
     leg: Literal['fl']
     initial_hold_s: float = Field(ge=2, le=10)
     lift_s: float = Field(ge=2, le=10)
     hold_s: float = Field(ge=2, le=10)
     lower_s: float = Field(ge=2, le=10)
     final_hold_s: float = Field(ge=5, le=20)
-    lifted_positions: list[float] = Field(min_length=3, max_length=3)
+    lifted_positions: list[float] | None = Field(default=None, min_length=3, max_length=3)
+    cartesian_path: CartesianLegPath | None = None
     min_clearance_m: float = Field(gt=0, le=.15)
     support_clearance_max_m: float = Field(gt=0, le=.03)
     min_hold_fraction: float = Field(ge=.8, le=1)
     foot_radius_m: float = Field(gt=0, le=.1)
 
+    @model_validator(mode='after')
+    def mode(self):
+        if self.kind == 'front-left-cartesian-ik':
+            if self.cartesian_path is None or self.lifted_positions is not None:
+                raise ValueError('IK demo requires a Cartesian path, without a joint-space lifted pose')
+        elif self.lifted_positions is None or self.cartesian_path is not None:
+            raise ValueError('joint-space demo requires only a lifted pose')
+        return self
+
     @property
     def duration_s(self):
         return sum(getattr(self, k) for k in ('initial_hold_s', 'lift_s', 'hold_s',
-                                            'lower_s', 'final_hold_s'))
+                                            'lower_s', 'final_hold_s')) + (
+            self.cartesian_path.duration_s if self.cartesian_path else 0.)
 
 
 def smoothstep(alpha):
@@ -41,7 +75,7 @@ def smoothstep(alpha):
 
 
 class ThreeLegSequence:
-    def __init__(self, plan):
+    def __init__(self, plan, ik=None):
         self.plan = plan
         self.start = None
         self.phase = 'four-foot-initial'
@@ -49,12 +83,65 @@ class ThreeLegSequence:
         self.pose = np.zeros(3, dtype=np.float32)
         self.last_time = -np.inf
         self.ids = [JOINTS.index(f'{plan.leg}_{axis}') for axis in ('hx', 'hy', 'kn')]
+        self.ik = ik
+        self.target_body_m = None
+        self.ik_residual_m = None
+        self.start_body_m = None
+        if plan.cartesian_path and ik is None:
+            raise ContractError('Cartesian demo requires pinned model IK')
+
+    def _cartesian_update(self, state, elapsed, dt, previously_active):
+        p, path = self.plan, self.plan.cartesian_path
+        lift_end = p.initial_hold_s+p.lift_s
+        hold_end = lift_end+p.hold_s
+        move_end = hold_end+path.duration_s
+        lower_end = move_end+p.lower_s
+        if elapsed < p.initial_hold_s:
+            self.phase, self.leg, self.target_body_m = 'four-foot-initial', None, None
+            return
+        if elapsed >= lower_end:
+            self.phase, self.leg, self.target_body_m = 'four-foot-final', None, None
+            return
+        if self.start is None:
+            self.start = finite(np.asarray(state.positions)[self.ids], 3).copy()
+            self.pose = self.start.copy()
+            self.start_body_m = self.ik.forward(self.start)[0]
+        self.leg = p.leg
+        first = np.asarray(path.waypoints_m[0])
+        if elapsed < lift_end:
+            self.phase = 'lifting'
+            a = smoothstep((elapsed-p.initial_hold_s)/p.lift_s)
+            target = self.start_body_m+a*(first-self.start_body_m)
+        elif elapsed < hold_end:
+            self.phase, target = 'three-leg-hold', first
+        elif elapsed < move_end:
+            self.phase = 'three-leg-ik-motion'
+            segment = min(int((elapsed-hold_end)/path.segment_s), len(path.waypoints_m)-2)
+            a = smoothstep((elapsed-hold_end-segment*path.segment_s)/path.segment_s)
+            begin, end = np.array(path.waypoints_m[segment:segment+2])
+            target = begin+a*(end-begin)
+        else:
+            self.phase = 'lowering'
+            a = smoothstep((elapsed-move_end)/p.lower_s)
+            target = first+a*(self.start_body_m-first)
+        solved, residual = self.ik.solve(target, self.pose)
+        if previously_active and dt > 0 and np.any(
+                np.abs(solved-self.pose) > path.max_joint_speed_rad_s*dt+1e-6):
+            raise ContractError('IK selected-leg command speed exceeded')
+        self.pose, self.target_body_m, self.ik_residual_m = solved, target, residual
 
     def update(self, state, elapsed):
         if not np.isfinite(elapsed) or elapsed < 0 or elapsed < self.last_time:
             raise ContractError('three-leg simulation clock moved backwards')
+        dt, previously_active = elapsed-self.last_time, self.leg is not None
         self.last_time = elapsed
         p = self.plan
+        if p.cartesian_path:
+            self._cartesian_update(state, elapsed, dt, previously_active)
+            command = np.zeros(12, dtype=np.float32)
+            if self.leg:
+                command[self.ids] = self.pose
+            return command
         boundaries = np.cumsum([p.initial_hold_s, p.lift_s, p.hold_s, p.lower_s])
         if elapsed < boundaries[0]:
             self.phase, self.leg = 'four-foot-initial', None
@@ -88,7 +175,11 @@ class SimulationThreeLegPolicy:
         self.baseline = baseline
         self.actor = ReLICPolicy(checkpoint)
         self.runner = self.actor  # Simulator provenance records the actual inference provider.
-        self.sequence = ThreeLegSequence(plan)
+        self.ik = None
+        if plan.cartesian_path:
+            from .leg_ik import LegPositionIK
+            self.ik = LegPositionIK(baseline.support, baseline.support_model, plan.leg)
+        self.sequence = ThreeLegSequence(plan, self.ik)
         self.manifest, self.support = baseline.manifest, baseline.support
         self.command = np.zeros(12, dtype=np.float32)
 
@@ -102,7 +193,7 @@ class SimulationThreeLegPolicy:
     def reset(self):
         self.baseline.reset()
         self.actor.previous_action[:] = 0
-        self.sequence = ThreeLegSequence(self.sequence.plan)
+        self.sequence = ThreeLegSequence(self.sequence.plan, self.ik)
         self.command[:] = 0
 
     def warmup(self):
@@ -110,6 +201,14 @@ class SimulationThreeLegPolicy:
 
     def update(self, state, elapsed):
         self.command = self.sequence.update(state, elapsed)
+
+    def kinematic_record(self, state):
+        if self.ik is None or self.sequence.leg is None:
+            return {}
+        measured, _ = self.ik.forward(np.asarray(state.positions)[self.sequence.ids])
+        return dict(ik_frame='body', ik_target_body_m=self.sequence.target_body_m.tolist(),
+                    ik_measured_body_m=measured.tolist(), ik_solve_residual_m=self.sequence.ik_residual_m,
+                    ik_tracking_error_m=float(np.linalg.norm(measured-self.sequence.target_body_m)))
 
     def evaluate(self, state, previous):
         began = monotonic()
@@ -125,7 +224,7 @@ class SimulationThreeLegPolicy:
 
 def demo_metrics(rows, plan):
     """Geometric evidence is a clearance proxy, never a foot load/contact claim."""
-    hold = [r for r in rows if r['demo_phase']=='three-leg-hold']
+    hold = [r for r in rows if r['demo_phase'] in ('three-leg-hold','three-leg-ik-motion')]
     final = [r for r in rows if r['demo_phase']=='four-foot-final']
     last = [r for r in final if r['trial_time'] >= plan.duration_s-2]
     def clearances(items):
@@ -137,7 +236,13 @@ def demo_metrics(rows, plan):
                         & np.all(c[:,1:] <= plan.support_clearance_max_m,axis=1)))
     final_fraction = (float(np.mean(np.all(clearances(last)
                         <= plan.support_clearance_max_m,axis=1))) if last else 0.)
+    motion = [r for r in rows if r['demo_phase']=='three-leg-ik-motion']
+    ik_passed = None
+    if plan.cartesian_path:
+        errors = [r.get('ik_tracking_error_m',np.inf) for r in motion]
+        ik_passed = bool(errors and np.quantile(errors,.95) <= plan.cartesian_path.max_tracking_error_m)
     return dict(hold_samples=len(hold), geometric_three_leg_fraction=fraction,
+        ik_motion_samples=len(motion), ik_tracking_passed=ik_passed,
         final_four_feet_near_floor_fraction=final_fraction,
         pose_sequence_finished=bool(last and rows[-1]['trial_time'] >= plan.duration_s-1e-8),
         clearance_proxy_passed=bool(fraction >= plan.min_hold_fraction
