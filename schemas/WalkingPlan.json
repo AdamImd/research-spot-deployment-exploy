@@ -9,7 +9,7 @@
     },
     "max_speed_m_s": {
       "exclusiveMinimum": 0,
-      "maximum": 0.15,
+      "maximum": 0.3,
       "title": "Max Speed M S",
       "type": "number"
     },
