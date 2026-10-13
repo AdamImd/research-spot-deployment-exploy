@@ -1,0 +1,113 @@
+{
+  "tested_commit": "36513ba59a7076cbfe096b5dedcfc4efb027e128",
+  "tests_passed": 461,
+  "ruff_exit": 0,
+  "demo_exit": 0,
+  "offline_deployment_check_exit_expected": 1,
+  "activation_approved": false,
+  "hardware_motion_commands": 0,
+  "hardware_qualified": false,
+  "preflight_complete_sha256": "bc08f19ac12ae991ae5858fa2073399ec52f2aa20c1387429582a015ea4b8d3c",
+  "reference_bundle_sha256": "961874621f5177c9f9dde9438e71e28281912ea3ce1040efe252fca9ae876356",
+  "review_complete_sha256": "7ec6ade91d088782175beedcdfb770d52f2dc1de541c489794ff9a728131c1bb",
+  "selected_trial": {
+    "activation_approved": false,
+    "command_hz": 200.0,
+    "estop_authority": "manufacturer tablet; no local E-stop bridge",
+    "gains_changed": false,
+    "goal_formula": "p_goal = p_current + distance * [cos(yaw_current), sin(yaw_current), 0]",
+    "goal_reference": "Current post-native-stand position and yaw latched for this attempt",
+    "hardware_qualified": false,
+    "limits_changed": false,
+    "operators_for_final_confirmation": [
+      "Adam",
+      "Minghao"
+    ],
+    "plan": {
+      "acceleration_m_s2": 0.1,
+      "distance_m": 0.75,
+      "final_hold_s": 1.0,
+      "initial_hold_s": 3.0,
+      "max_duration_s": 20.0,
+      "max_heading_rad": 0.15,
+      "max_lateral_m": 0.1,
+      "max_pose_age_s": 0.02,
+      "max_pose_step_m": 0.025,
+      "max_speed_m_s": 0.3,
+      "min_progress_m": 0.005,
+      "stall_timeout_s": 5.0,
+      "stopped_speed_m_s": 0.03,
+      "tolerance_m": 0.02
+    },
+    "policy_hz": 50.0,
+    "requested_speed_profile": "constant",
+    "startup": "direct, no target fade, zero initial raw actions",
+    "status": "review_only_not_activatable",
+    "weights_changed": false
+  },
+  "checks": {
+    "active_fault_count": 0,
+    "body_speed_limit_m_s": 0.3,
+    "constant_profile_available_on_hardware_path": false,
+    "identity_matches": true,
+    "model_matches_reference_policy": true,
+    "motors_off_at_capture": true,
+    "payload_matches_reference_policy": true,
+    "preflight_fresh_at_activation": "Recollect against final approved manifest immediately before trial",
+    "preflight_recording_verified": true,
+    "selected_plan_contract_invalid_fields": [
+      "max_speed_m_s"
+    ],
+    "selected_request_strictly_below_body_speed_limit": false,
+    "simulations": {
+      "isaaclab-constant": {
+        "final_forward_m": 0.8078670454397606,
+        "final_within_goal_tolerance": false,
+        "first_fall_proxy_s": null,
+        "leg_speed_reference_exceedances": {
+          "fl_hy": 7,
+          "fr_hy": 25,
+          "fr_kn": 13
+        },
+        "stable_final_window": true
+      },
+      "isaaclab-taper": {
+        "final_forward_m": 0.6878413497832815,
+        "final_within_goal_tolerance": false,
+        "first_fall_proxy_s": null,
+        "leg_speed_reference_exceedances": {
+          "fl_hy": 7,
+          "fr_hy": 18,
+          "fr_kn": 11
+        },
+        "stable_final_window": true
+      },
+      "mujoco-constant": {
+        "final_forward_m": 0.8171737823808101,
+        "final_within_goal_tolerance": false,
+        "first_fall_proxy_s": null,
+        "leg_speed_reference_exceedances": {
+          "fl_hy": 7,
+          "fr_hy": 27,
+          "fr_kn": 7
+        },
+        "stable_final_window": true
+      },
+      "mujoco-taper": {
+        "final_forward_m": 0.689398659555169,
+        "final_within_goal_tolerance": false,
+        "first_fall_proxy_s": null,
+        "leg_speed_reference_exceedances": {
+          "fl_hy": 7,
+          "fr_hy": 16,
+          "fr_kn": 6
+        },
+        "stable_final_window": true
+      }
+    },
+    "source_bound_hardware_evidence_current": false,
+    "stop_ready_at_capture": true,
+    "tablet_operator_verification": "Confirm tablet link/button and operator in position at final approval",
+    "walking_distance_qualified": false
+  }
+}

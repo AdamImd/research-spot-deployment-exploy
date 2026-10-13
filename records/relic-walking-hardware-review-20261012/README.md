@@ -59,7 +59,7 @@ link/button or that the named operators are in position.
 ## Local bundle, recording and final approval
 
 Local final review: `local/relic-walking-deployment-review-20261012-002/review/`.
-The earlier001 review and validation are preserved separately.
+The earlier 001 review and validation are preserved separately.
 Includes copied policy artifacts and `manifest.review.json`, selected trial
 parameters, unchanged hardware envelope, model/payload checks, input hashes,
 simulated speed/distance failures, empty evidence and `activation.json`.
@@ -101,3 +101,24 @@ uv run --no-sync python records/relic-walking-hardware-review-20261012/prepare_r
 Host `cs-u-rpm-dt-03`, locked UV Python 3.12/CPU environment, no GPU, no paid compute,
 no retries. Luna owns each bounded persistent validation/preflight process.
 All unresolved gates are reported as such; review completion is not live readiness.
+
+## Completed validation
+
+Final implementation pin: `36513ba59a7076cbfe096b5dedcfc4efb027e128`, clean at
+launch. Campaign `runs/walking-review-validation-20261012-002` completed under
+tmux of the same name: **461 tests passed**, Ruff and offline demo passed,
+reference bundle and selected review package completed, and offline deployment
+check returned exit 1 as expected with `live_ready=false`. All review artifact
+hashes verified; recording template keeps all unique states, activation command
+is null, approval false, hardware qualification false and motion commands zero.
+The prior campaign001 passed 460 tests before the compact goal-field repair and
+is preserved. Final validation repeated because recorder code changed.
+
+Both campaigns used primary-authored exact command arrays, the locked CPU
+environment and a 300 s maximum with no retries. Contracts/supervisors live in
+`local/relic-walking-deployment-review-20261012-{001,002}/`; copied commands, logs,
+exit statuses, PID, STATUS and finish records are in each durable run directory.
+The selected review and prepared candidate remain separate; this expected blocked
+check is not a deployment success. The runtime addition only records the goal:
+no contact/controller/trajectory change or new dynamics experiment was made.
+Sanitized observations and hashes are in `result-summary.json`.
