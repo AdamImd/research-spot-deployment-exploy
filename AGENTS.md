@@ -37,8 +37,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   and must both be recorded. Two-second return output blend remains. Failed
   dualactor/supportlean experiments are offline-only, not enabled inlivecontract.
   Current plan46s/live47s; previous physical approval is consumed. Two60s guarded
-  MuJoCo runs passed, fromrecordedphysicalpose andearlierbaseline; nohardware
-  rerun or qualification. See records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
+  MuJoCo runs passed, fromrecordedphysicalpose andearlierbaseline. A smoothed
+  hardwaretrialverified targetlimiting, butstopped5.34s on1.0047rad/s bodyangular
+  speed against1rad/s; OFF/lease returnconfirmed. No fulltripod qualification;
+  latest physicalapprovalconsumed. See records/relic-three-leg-entry-20261012. MuJoCo60s passed after preserving the original32s
   torque stop; other simulator/hardware qualification remains separate.
 - Keep secrets in environment variables and robot-specific files in ignored `local/`.
   Exclude raw hardware/identity/endpoint records from public commits.
