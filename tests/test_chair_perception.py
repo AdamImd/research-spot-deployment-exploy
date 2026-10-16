@@ -173,3 +173,37 @@ def test_sdk_rejects_mismatched_intrinsics_and_exposure_motion():
     a.shot.transforms_snapshot.child_to_parent_edge_map['camera'].parent_tform_child.position.x = .1
     with pytest.raises(ValueError, match='camera moved'):
         pair_frame('frontleft', a, b)
+
+
+def test_age_is_measured_at_receipt_and_rejected_raw_is_preserved(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    import spot_deploy.perception.cameras as module
+    responses = []
+    for v in module.PAIRS:
+        responses.extend(sdk_pair(v))
+    clock = [100.1]
+
+    def timestamp(_):
+        return SimpleNamespace(seconds=int(clock[0]), nanos=int((clock[0] % 1)*1e9))
+
+    c = module.SpotCameras.__new__(module.SpotCameras)
+    c.timeout, c.last_timestamp = 1, -float('inf')
+    c.client = SimpleNamespace(get_image=lambda *a, **kw: responses)
+    c.robot = SimpleNamespace(time_sync=SimpleNamespace(endpoint=SimpleNamespace(
+        robot_timestamp_from_local_secs=timestamp)))
+    original = module.pair_frame
+
+    def delayed_decode(*args):
+        clock[0] += 1  # Simulate costly first-use decoding without actually sleeping.
+        return original(*args)
+
+    monkeypatch.setattr(module, 'pair_frame', delayed_decode)
+    frames = c.capture(tmp_path/'valid')
+    assert len(frames) == 3
+    assert frames['hand'].metadata['receive_age_s'] == pytest.approx(.1)
+    c.last_timestamp = -float('inf')
+    clock[0] = 101
+    with pytest.raises(ValueError, match='receipt age'):
+        c.capture(tmp_path/'rejected')
+    assert len(list((tmp_path/'rejected').glob('response-*.pb'))) == 6
+    assert (tmp_path/'rejected'/'receipt.json').is_file()

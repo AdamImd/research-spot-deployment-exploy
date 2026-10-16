@@ -1,5 +1,6 @@
 """Read-only image capability. No lease, power, command, gripper or E-stop writers."""
 import io
+import json
 import os
 from pathlib import Path
 import time
@@ -116,22 +117,35 @@ class SpotCameras:
         names = sum(PAIRS.values(), ())
         responses = self.client.get_image([build_image_request(n, image_format=Image.FORMAT_RAW)
                                           for n in names], timeout=self.timeout)
+        # Measure age on receipt, before first-use imports/decoding or disk writes.
+        received = time.monotonic()
+        now = seconds(self.robot.time_sync.endpoint.robot_timestamp_from_local_secs(time.time()))
+        if output:
+            output = Path(output)
+            output.mkdir(parents=True, exist_ok=False)
+            for i, response in enumerate(responses):
+                # Indexed filenames cannot be influenced by an unexpected SDK source name.
+                (output/f'response-{i}.pb').write_bytes(response.SerializeToString())
+            (output/'receipt.json').write_text(json.dumps(dict(robot_receive_time_s=now,
+                sources=[dict(name=r.source.name, timestamp_s=seconds(r.shot.acquisition_time),
+                              age_s=now-seconds(r.shot.acquisition_time)) for r in responses]),
+                indent=2))
         by_name = {x.source.name: x for x in responses}
         if set(by_name) != set(names) or len(responses) != len(names):
             raise ValueError('incomplete or duplicate camera response set')
         frames = {v: pair_frame(v, by_name[c], by_name[d]) for v, (c, d) in PAIRS.items()}
         times = [f.timestamp_s for f in frames.values()]
-        now = seconds(self.robot.time_sync.endpoint.robot_timestamp_from_local_secs(time.time()))
         if max(times)-min(times) > .1 or max(now-t for t in times) > .5 or min(now-t for t in times) < -.05:
-            raise ValueError('camera bundle skew/age exceeds 100/500 ms limits')
+            raise ValueError(f'camera bundle skew={max(times)-min(times):.3f}s, '
+                             f'oldest receipt age={max(now-t for t in times):.3f}s; '
+                             'limits 0.100/0.500s')
         if min(times) <= self.last_timestamp:
             raise ValueError('repeated or reordered capture timestamp')
         self.last_timestamp = min(times)
+        for frame in frames.values():
+            frame.metadata['receive_age_s'] = now-frame.timestamp_s
+            frame.metadata['decode_and_record_s'] = time.monotonic()-received
         if output:
-            output = Path(output)
-            output.mkdir(parents=True, exist_ok=False)
-            for name, response in by_name.items():
-                (output/(name+'.pb')).write_bytes(response.SerializeToString())
             for view, frame in frames.items():
                 frame.save(output/(view+'.npz'))
         return frames

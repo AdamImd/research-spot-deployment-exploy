@@ -165,7 +165,12 @@ def main(argv=None):
                    replay=bool(args.replay), session_started_unix_s=time.time())
     server = None
     try:
-        pipeline.initial_capture()
+        try:
+            pipeline.initial_capture()
+        except Exception as exc:
+            pipeline.event('initial_capture_failed', exception=type(exc).__name__)
+            print('Initial capture rejected; use Capture / track once to request a new bundle.',
+                  flush=True)
         server = ThreadingHTTPServer(('127.0.0.1', args.port), make_handler(pipeline))
         timer = threading.Timer(args.duration, server.shutdown)
         timer.daemon = True

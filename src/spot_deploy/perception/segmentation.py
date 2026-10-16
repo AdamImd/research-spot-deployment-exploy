@@ -20,12 +20,16 @@ class Segmenter:
             from sam2.sam2_image_predictor import SAM2ImagePredictor
             self.torch = torch
             path = Path(checkpoint)
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            if digest != '7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69':
+                raise ValueError('checkpoint must match the pinned official SAM2.1 tiny SHA256')
+            torch.set_num_threads(2)
             self.predictor = SAM2ImagePredictor(build_sam2(
                 'configs/sam2.1/sam2.1_hiera_t.yaml', str(path), device=device,
                 apply_postprocessing=False))
             self.description = dict(backend='SAM2.1-hiera-tiny-image+depth-reprojection',
                                     device=device, torch_version=torch.__version__,
-                                    checkpoint_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+                                    checkpoint_sha256=digest)
 
     def mask(self, rgb, prompt):
         h, w = rgb.shape[:2]

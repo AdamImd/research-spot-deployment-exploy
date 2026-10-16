@@ -39,15 +39,15 @@ CUDA_VISIBLE_DEVICES=1 uv run --project perception --no-sync python \
   -m spot_deploy.perception.server \
   --robot /absolute/path/to/private/robot.json \
   --checkpoint local/chair-perception/models/sam2.1_hiera_tiny.pt \
-  --output runs/chair-session-001
+  --output runs/chair-session-001 --port 8767
 ```
 
 Choose an available GPU; `cuda:0` is relative to CUDA_VISIBLE_DEVICES. CPU is
-available with `--device cpu`, at reduced throughput. Verify the checkpoint hash
+available with `--device cpu`, at reduced throughput. The loader verifies the checkpoint hash
 above before loading. The camera client checks robot serial against RobotConfig.
 Authentication uses only BOSDYN_CLIENT_USERNAME and BOSDYN_CLIENT_PASSWORD.
 
-Open **http://127.0.0.1:8766/**. The server is loopback-only, lasts 30 minutes by
+Open **http://127.0.0.1:8767/** (the command above selects this port). The server is loopback-only, lasts 30 minutes by
 default (`--duration`, maximum two hours), and never starts continuous capture
 until the user checks its box. Use a new output directory each launch.
 
@@ -93,7 +93,7 @@ reported 999 for fronts and 1000 for hand during initial inspection.
 
 Use the **depth acquisition snapshot's odom_T_camera**, including the moving hand
 chain, not a fixed gripper extrinsic or the latest unrelated robot state. Require
-RGB/depth skew ≤80 ms, inter-depth skew ≤100 ms and robot-clock image age ≤500 ms.
+RGB/depth skew ≤80 ms, inter-depth skew ≤100 ms and robot-clock image age at receipt ≤500 ms. The UI shows elapsed snapshot age separately.
 Reject exposure-to-exposure camera displacement >2 cm or rotation >0.05 rad.
 These thresholds are initial perception quality settings, not control deadlines.
 

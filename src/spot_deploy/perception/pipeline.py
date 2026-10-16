@@ -27,6 +27,7 @@ class Pipeline:
         self.last_valid_time = None
         self.status = 'select_chair'
         self.latency = 0.
+        self.last_capture_local_s = None
         self.event('session', segmenter=segmenter.description, voxel_m=voxel_m,
                    frame='odom', units='m', max_tracking_gap_s=5,
                    tracking='current depth reprojection; no temporal accumulation')
@@ -39,14 +40,20 @@ class Pipeline:
         self.sequence += 1
         self.directory = self.output/f'frame-{self.sequence:06d}'
         self.frames = self.cameras.capture(self.directory)
+        self.last_capture_local_s = time.monotonic()
         self.pending = None
         self.masks, self.views = {}, {}
         self.revision += 1
 
     def initial_capture(self):
-        self.capture()
-        self.status = 'select_chair'
-        self.save_cloud()
+        try:
+            self.capture()
+            self.status = 'select_chair'
+        except Exception:
+            self.status = 'capture_error_try_again'
+            raise
+        finally:
+            self.save_cloud()
 
     def preview(self, view, prompt, sequence):
         if sequence != self.sequence or view not in self.frames:
@@ -65,6 +72,7 @@ class Pipeline:
         return self.summary()
 
     def accept(self):
+        start = time.monotonic()
         if self.pending is None:
             raise ValueError('preview a mask first')
         p = self.pending
@@ -75,6 +83,7 @@ class Pipeline:
         anchor = self.cloud.copy()
         self.propagate(anchor, skip=p['view'])
         self.fuse()
+        self.latency = time.monotonic()-start
         self.status = 'selected'
         self.last_valid_time = min(f.timestamp_s for f in self.frames.values())
         self.revision += 1
@@ -160,13 +169,17 @@ class Pipeline:
                             timestamp_s=[f.timestamp_s for f in self.frames.values()])
         write_ply(destination/'chair.ply', self.cloud, self.colors)
         (destination/'summary.json').write_text(json.dumps(self.summary(), indent=2))
-        (self.output/'latest.json').write_text(json.dumps(dict(artifact_directory=destination.name,
-                                                             **self.summary()), indent=2))
+        temporary = self.output/'latest.json.tmp'
+        temporary.write_text(json.dumps(dict(artifact_directory=destination.name,
+                                              **self.summary()), indent=2))
+        temporary.replace(self.output/'latest.json')
 
     def summary(self):
         return dict(sequence=self.sequence, revision=self.revision, status=self.status,
                     points=len(self.cloud), frame='odom', voxel_m=self.voxel_m,
                     inference_and_capture_s=self.latency, views=self.views,
+                    snapshot_age_s=(None if self.last_capture_local_s is None else
+                                    time.monotonic()-self.last_capture_local_s),
                     images={v: dict(width=f.rgb.shape[1], height=f.rgb.shape[0],
                                     timestamp_s=f.timestamp_s, **f.metadata)
                             for v, f in self.frames.items()},
