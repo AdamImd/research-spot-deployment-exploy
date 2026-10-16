@@ -195,3 +195,11 @@ USB preview. Stick X/Y and twist drive ReLIC's body-frame velocity inputs; hold
 thumb button 2 to enable and use trigger button 1 (index 0) to toggle the arm to
 a default front pose. The tablet remains the E-stop. See
 [controls, preparation and commissioning](docs/JOYSTICK_TELEOP.md).
+
+## Chair perception from front and gripper cameras
+
+The independent [chair-selection interface](docs/CHAIR_PERCEPTION.md) uses interactive
+SAM 2 masks, registered Spot depth and capture-time transforms to export a partial
+chair point cloud in odometry coordinates. It includes a three-view browser UI,
+recording/replay and manual polygon fallback. This camera-only tool does not send
+commands to ReLIC or move the robot; its Torch environment is separate in `perception/`.
