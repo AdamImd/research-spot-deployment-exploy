@@ -61,9 +61,7 @@ class Pipeline:
         self.pending = None
         start = time.monotonic()
         mask, score = self.segmenter.mask(self.frames[view].rgb, prompt)
-        xyz, _, quality = masked_cloud(self.frames[view], mask)
-        if len(xyz) < 20:
-            raise ValueError('selected mask has fewer than 20 valid depth samples')
+        _, _, quality = masked_cloud(self.frames[view], mask)
         self.pending = dict(view=view, mask=mask, prompt=prompt, score=score, quality=quality)
         self.revision += 1
         self.latency = time.monotonic()-start
@@ -76,6 +74,9 @@ class Pipeline:
         if self.pending is None:
             raise ValueError('preview a mask first')
         p = self.pending
+        if p['quality']['valid_points'] < 20:
+            raise ValueError('Mask preview is available but this view lacks reliable chair depth; '
+                             'select the same chair in a front view for the initial 3D anchor.')
         self.masks = {p['view']: p['mask']}
         self.views = {p['view']: dict(status='manually_selected', score=p['score'], **p['quality'])}
         self.pending = None
@@ -97,21 +98,25 @@ class Pipeline:
         for view, frame in self.frames.items():
             if view == skip:
                 continue
-            uv = project_visible(anchor, frame)
+            verified = project_visible(anchor, frame)
+            uv = project_visible(anchor, frame, allow_missing_depth=True)
             try:
                 prompt = projected_prompt(uv, frame.depth_m.shape)
                 mask, score = self.segmenter.mask(frame.rgb, prompt)
                 coverage = float(mask[uv[:, 1], uv[:, 0]].mean())
                 xyz, _, quality = masked_cloud(frame, mask)
-                if score < .6 or coverage < .6 or len(xyz) < 20:
-                    raise ValueError('low model score, projected support or valid depth')
+                if score < .6 or coverage < .6:
+                    raise ValueError('low model score or projected support')
                 # A known stationary chair must remain spatially associated. Reject leakage.
                 lo, hi = anchor.min(axis=0)-.25, anchor.max(axis=0)+.25
-                spatial = float(((xyz >= lo) & (xyz <= hi)).all(axis=1).mean())
-                if spatial < .8:
-                    raise ValueError('candidate cloud escaped the selected object region')
+                spatial = (float(((xyz >= lo) & (xyz <= hi)).all(axis=1).mean())
+                           if len(xyz) else 0.)
+                contributes = len(xyz) >= 20 and len(verified) >= 20 and spatial >= .8
                 self.masks[view] = mask
-                self.views[view] = dict(status='propagated_unreviewed', score=score,
+                self.views[view] = dict(status=('propagated_unreviewed' if contributes else
+                                                'mask_only_no_reliable_depth'), score=score,
+                                        contributes_to_cloud=contributes,
+                                        depth_verified_pixels=len(verified),
                                         projected_pixels=len(uv), support_fraction=coverage,
                                         spatial_fraction=spatial, **quality)
                 self.event('propagation', frame=self.sequence, view=view, prompt=prompt,
@@ -151,6 +156,8 @@ class Pipeline:
         points, colors, views = [], [], []
         for i, view in enumerate(PAIRS):
             if view not in self.masks:
+                continue
+            if self.views.get(view, {}).get('contributes_to_cloud') is False:
                 continue
             xyz, rgb, _ = masked_cloud(self.frames[view], self.masks[view])
             points.extend(xyz)

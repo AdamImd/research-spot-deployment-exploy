@@ -207,3 +207,32 @@ def test_age_is_measured_at_receipt_and_rejected_raw_is_preserved(tmp_path, monk
         c.capture(tmp_path/'rejected')
     assert len(list((tmp_path/'rejected').glob('response-*.pb'))) == 6
     assert (tmp_path/'rejected'/'receipt.json').is_file()
+
+
+def test_missing_depth_may_prompt_visual_mask_but_does_not_produce_points():
+    f = frame()
+    xyz, _, _ = masked_cloud(f, np.ones((8, 10), bool), erosion=0)
+    f.depth_m[:] = np.nan
+    assert len(project_visible(xyz, f)) == 0
+    assert len(project_visible(xyz, f, allow_missing_depth=True)) == 80
+    assert len(masked_cloud(f, np.ones((8, 10), bool))[0]) == 0
+
+
+def test_mask_only_view_never_contributes_to_fusion(tmp_path):
+    p = Pipeline(Camera(), Segmenter(), tmp_path/'record')
+    p.initial_capture()
+    p.masks = {'hand': np.ones((8, 10), bool)}
+    p.views = {'hand': dict(contributes_to_cloud=False)}
+    p.fuse()
+    assert len(p.cloud) == 0
+
+
+def test_preview_with_missing_depth_is_visible_but_cannot_seed_cloud(tmp_path):
+    p = Pipeline(Camera(), Segmenter(), tmp_path/'record')
+    p.initial_capture()
+    p.frames['hand'].depth_m[:] = np.nan
+    p.preview('hand', {'polygon': [[0, 0], [9, 0], [9, 7], [0, 7]]}, p.sequence)
+    assert p.pending['mask'].any()
+    with pytest.raises(ValueError, match='initial 3D anchor'):
+        p.accept()
+    assert len(p.cloud) == 0

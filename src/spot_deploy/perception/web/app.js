@@ -1,31 +1,256 @@
 import * as THREE from '/three/three.module.min.js';
-const $=id=>document.getElementById(id);
-let stateReceived=performance.now();
-let state,active='hand',busy=false,prompts={},images={},canvases={},down=null;
-const labels={frontleft:'Front left',frontright:'Front right',hand:'Gripper'};
-for(const [view,label] of Object.entries(labels)){
- const card=document.createElement('article');card.className='view';card.id='card-'+view;
- card.innerHTML=`<h2>${label}<span id="size-${view}"></span></h2><canvas id="canvas-${view}"></canvas><div class="quality" id="quality-${view}">Waiting for capture</div>`;
- $('views').append(card); const c=$('canvas-'+view);canvases[view]=c;
- c.addEventListener('pointerdown',e=>{if(busy||!state.images[view])return;$('live').checked=false;active=view;down=coords(e,c);c.setPointerCapture(e.pointerId);paint();});
- c.addEventListener('pointerup',e=>{if(!down||busy)return;const p=coords(e,c),a=down;down=null;const prompt=prompts[view]??={points:[],labels:[]};const mode=$('mode').value;
- if(mode==='box'){prompt.box=[Math.min(a[0],p[0]),Math.min(a[1],p[1]),Math.max(a[0],p[0]),Math.max(a[1],p[1])];delete prompt.polygon;}
- else if(mode==='polygon'){prompt.polygon??=[];prompt.polygon.push(p);}
- else{prompt.points.push(p);prompt.labels.push(mode==='positive'?1:0);}paint();});
+const $ = id => document.getElementById(id);
+let stateReceived = performance.now();
+let state, active = 'hand',
+    busy = false,
+    prompts = {},
+    images = {},
+    canvases = {},
+    down = null;
+const labels = {
+    frontleft: 'Front left',
+    frontright: 'Front right',
+    hand: 'Gripper'
+};
+for (const [view, label] of Object.entries(labels)) {
+    const card = document.createElement('article');
+    card.className = 'view';
+    card.id = 'card-' + view;
+    card.innerHTML = `<h2>${label}<span id="size-${view}"></span></h2><canvas id="canvas-${view}"></canvas><div class="quality" id="quality-${view}">Waiting for capture</div>`;
+    $('views').append(card);
+    const c = $('canvas-' + view);
+    canvases[view] = c;
+    c.addEventListener('pointerdown', e => {
+        if (busy || !state.images[view]) return;
+        $('live').checked = false;
+        active = view;
+        down = coords(e, c);
+        c.setPointerCapture(e.pointerId);
+        paint();
+    });
+    c.addEventListener('pointerup', e => {
+        if (!down || busy) return;
+        const p = coords(e, c),
+            a = down;
+        down = null;
+        const prompt = prompts[view] ??= {
+            points: [],
+            labels: []
+        };
+        const mode = $('mode').value;
+        if (mode === 'box') {
+            prompt.box = [Math.min(a[0], p[0]), Math.min(a[1], p[1]), Math.max(a[0], p[0]), Math.max(a[1], p[1])];
+            delete prompt.polygon;
+        } else if (mode === 'polygon') {
+            prompt.polygon ??= [];
+            prompt.polygon.push(p);
+        } else {
+            prompt.points.push(p);
+            prompt.labels.push(mode === 'positive' ? 1 : 0);
+        }
+        paint();
+    });
 }
-function coords(e,c){const r=c.getBoundingClientRect(),s=Math.min(r.width/c.width,r.height/c.height),ox=(r.width-c.width*s)/2,oy=(r.height-c.height*s)/2;return [Math.max(0,Math.min(c.width-1,(e.clientX-r.left-ox)/s)),Math.max(0,Math.min(c.height-1,(e.clientY-r.top-oy)/s))];}
-function paint(){for(const [v,c] of Object.entries(canvases)){const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(images[v])ctx.drawImage(images[v],0,0);$('card-'+v).classList.toggle('active',v===active);const p=prompts[v];if(!p)continue;ctx.strokeStyle='#5dffee';ctx.lineWidth=3;if(p.box)ctx.strokeRect(p.box[0],p.box[1],p.box[2]-p.box[0],p.box[3]-p.box[1]);if(p.polygon?.length){ctx.beginPath();p.polygon.forEach((q,i)=>i?ctx.lineTo(...q):ctx.moveTo(...q));ctx.closePath();ctx.stroke();}p.points.forEach((q,i)=>{ctx.fillStyle=p.labels[i]?'#00ffb0':'#ff6b70';ctx.beginPath();ctx.arc(...q,5,0,7);ctx.fill();});}}
-function message(t,error=false){$('message').textContent=t;$('message').classList.toggle('error',error);}
-async function api(path,body){const r=await fetch(path,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json','X-Session-Token':window.sessionToken},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw Error(j.error||r.statusText);return j;}
-async function display(s){state=s;stateReceived=performance.now();await Promise.all(Object.entries(s.images).map(async([v,x])=>{canvases[v].width=x.width;canvases[v].height=x.height;$('size-'+v).textContent=`${x.width} × ${x.height}`;const im=new Image();im.src=`/image/${v}?rev=${s.revision}`;await im.decode();images[v]=im;}));for(const v of Object.keys(labels)){if(!s.images[v])delete images[v];const q=s.views[v];$('quality-'+v).textContent=q?`${q.status.replaceAll('_',' ')}${q.valid_depth_fraction!==undefined?' · '+Math.round(q.valid_depth_fraction*100)+'% depth':''}`:'Not selected / not visible';}paint();const stats=[['State',s.status.replaceAll('_',' ')],['Measured cloud',`${s.points.toLocaleString()} points`],['Voxel size',`${s.voxel_m*1000} mm`],['Last capture + processing',`${s.inference_and_capture_s.toFixed(3)} s`],['Snapshot age',s.snapshot_age_s===null?'unavailable':s.snapshot_age_s.toFixed(1)+' s'],['Bundle',s.sequence],['Coordinate frame','Odometry · metres']];$('stats').replaceChildren(...stats.map(([a,b])=>{const d=document.createElement('div');d.className='stat';const l=document.createElement('span'),r=document.createElement('span');l.textContent=a;r.textContent=b;if(a==='Snapshot age')r.id='snapshot-age';d.append(l,r);return d;}));await updateCloud();}
-async function action(path,body={}){if(busy)return;busy=true;document.querySelectorAll('button').forEach(b=>b.disabled=true);try{message('Processing…');await display(await api(path,body));message(state.pending?'Inspect the green mask. Add foreground/background points, or choose Use this chair.':state.status==='lost_select_again'?'Tracking lost. Select the chair again; no old points are published.':'Capture saved. Inspect masks in each view; unseen surfaces remain absent.');}catch(e){$('live').checked=false;message(e.message,true);await display(await api('/api/state'));}finally{busy=false;document.querySelectorAll('button').forEach(b=>b.disabled=false);}}
-$('clear').onclick=()=>{prompts[active]={points:[],labels:[]};paint();};
-$('preview').onclick=()=>action('/api/preview',{view:active,prompt:prompts[active]||{},sequence:state.sequence});
-$('accept').onclick=()=>action('/api/accept');
-$('refresh').onclick=()=>{prompts={};action('/api/step');};
-setInterval(()=>{if(state?.snapshot_age_s!==null&&$('snapshot-age'))$('snapshot-age').textContent=(state.snapshot_age_s+(performance.now()-stateReceived)/1000).toFixed(1)+' s';if($('live').checked&&!busy){prompts={};action('/api/step');}},500);
-const canvas=$('cloud'),renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(devicePixelRatio);renderer.setClearColor('#111b24');const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(50,1,.01,100);camera.up.set(0,0,1);let points,yaw=.7,pitch=.35,distance=2.5,center=new THREE.Vector3(),drag;
-const axes=new THREE.AxesHelper(.25);scene.add(axes);
-canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId);};canvas.onpointerup=()=>drag=null;canvas.onpointermove=e=>{if(drag){yaw-=(e.clientX-drag[0])*.01;pitch=Math.max(-1.4,Math.min(1.4,pitch+(e.clientY-drag[1])*.01));drag=[e.clientX,e.clientY];}};canvas.onwheel=e=>{e.preventDefault();distance=Math.max(.15,Math.min(20,distance*Math.exp(e.deltaY*.001)));};
-async function updateCloud(){const data=await api('/api/cloud');if(points){scene.remove(points);points.geometry.dispose();points.material.dispose();}if(!data.xyz.length){points=null;return;}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(data.xyz.flat(),3));g.setAttribute('color',new THREE.Float32BufferAttribute(data.rgb.flat().map(x=>x/255),3));g.computeBoundingSphere();center.copy(g.boundingSphere.center);axes.position.copy(center);points=new THREE.Points(g,new THREE.PointsMaterial({size:.009,vertexColors:true}));scene.add(points);}
-function render(){const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();camera.position.set(center.x+distance*Math.cos(pitch)*Math.cos(yaw),center.y+distance*Math.cos(pitch)*Math.sin(yaw),center.z+distance*Math.sin(pitch));camera.lookAt(center);renderer.render(scene,camera);requestAnimationFrame(render);}render();display(await api('/api/state')).catch(e=>message(e.message,true));
+
+function coords(e, c) {
+    const r = c.getBoundingClientRect(),
+        s = Math.min(r.width / c.width, r.height / c.height),
+        ox = (r.width - c.width * s) / 2,
+        oy = (r.height - c.height * s) / 2;
+    return [Math.max(0, Math.min(c.width - 1, (e.clientX - r.left - ox) / s)), Math.max(0, Math.min(c.height - 1, (e.clientY - r.top - oy) / s))];
+}
+
+function paint() {
+    for (const [v, c] of Object.entries(canvases)) {
+        const ctx = c.getContext('2d');
+        ctx.clearRect(0, 0, c.width, c.height);
+        if (images[v]) ctx.drawImage(images[v], 0, 0);
+        $('card-' + v).classList.toggle('active', v === active);
+        const p = prompts[v];
+        if (!p) continue;
+        ctx.strokeStyle = '#5dffee';
+        ctx.lineWidth = 3;
+        if (p.box) ctx.strokeRect(p.box[0], p.box[1], p.box[2] - p.box[0], p.box[3] - p.box[1]);
+        if (p.polygon?.length) {
+            ctx.beginPath();
+            p.polygon.forEach((q, i) => i ? ctx.lineTo(...q) : ctx.moveTo(...q));
+            ctx.closePath();
+            ctx.stroke();
+        }
+        p.points.forEach((q, i) => {
+            ctx.fillStyle = p.labels[i] ? '#00ffb0' : '#ff6b70';
+            ctx.beginPath();
+            ctx.arc(...q, 5, 0, 7);
+            ctx.fill();
+        });
+    }
+}
+
+function message(t, error = false) {
+    $('message').textContent = t;
+    $('message').classList.toggle('error', error);
+}
+async function api(path, body) {
+    const r = await fetch(path, body === undefined ? {} : {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Session-Token': window.sessionToken
+        },
+        body: JSON.stringify(body)
+    });
+    const j = await r.json();
+    if (!r.ok) throw Error(j.error || r.statusText);
+    return j;
+}
+async function display(s) {
+    state = s;
+    stateReceived = performance.now();
+    await Promise.all(Object.entries(s.images).map(async ([v, x]) => {
+        canvases[v].width = x.width;
+        canvases[v].height = x.height;
+        $('size-' + v).textContent = `${x.width} × ${x.height}`;
+        const im = new Image();
+        im.src = `/image/${v}?rev=${s.revision}`;
+        await im.decode();
+        images[v] = im;
+    }));
+    for (const v of Object.keys(labels)) {
+        if (!s.images[v]) delete images[v];
+        const q = s.views[v];
+        $('quality-' + v).textContent = q ? `${q.status.replaceAll('_',' ')}${q.valid_depth_fraction!==undefined?' · '+Math.round(q.valid_depth_fraction*100)+'% depth':''}` : 'Not selected / not visible';
+    }
+    paint();
+    const stats = [
+        ['State', s.status.replaceAll('_', ' ')],
+        ['Measured cloud', `${s.points.toLocaleString()} points`],
+        ['Voxel size', `${s.voxel_m*1000} mm`],
+        ['Last capture + processing', `${s.inference_and_capture_s.toFixed(3)} s`],
+        ['Snapshot age', s.snapshot_age_s === null ? 'unavailable' : s.snapshot_age_s.toFixed(1) + ' s'],
+        ['Bundle', s.sequence],
+        ['Coordinate frame', 'Odometry · metres']
+    ];
+    $('stats').replaceChildren(...stats.map(([a, b]) => {
+        const d = document.createElement('div');
+        d.className = 'stat';
+        const l = document.createElement('span'),
+            r = document.createElement('span');
+        l.textContent = a;
+        r.textContent = b;
+        if (a === 'Snapshot age') r.id = 'snapshot-age';
+        d.append(l, r);
+        return d;
+    }));
+    await updateCloud();
+}
+async function action(path, body = {}) {
+    if (busy) return;
+    busy = true;
+    document.querySelectorAll('button').forEach(b => b.disabled = true);
+    try {
+        message('Processing…');
+        await display(await api(path, body));
+        message(state.pending ? 'Inspect the green mask. Add foreground/background points, or choose Use this chair.' : state.status === 'lost_select_again' ? 'Tracking lost. Select the chair again; no old points are published.' : 'Capture saved. Inspect masks in each view; unseen surfaces remain absent.');
+    } catch (e) {
+        $('live').checked = false;
+        message(e.message, true);
+        await display(await api('/api/state'));
+    } finally {
+        busy = false;
+        document.querySelectorAll('button').forEach(b => b.disabled = false);
+    }
+}
+$('clear').onclick = () => {
+    prompts[active] = {
+        points: [],
+        labels: []
+    };
+    paint();
+};
+$('preview').onclick = () => action('/api/preview', {
+    view: active,
+    prompt: prompts[active] || {},
+    sequence: state.sequence
+});
+$('accept').onclick = () => action('/api/accept');
+$('refresh').onclick = () => {
+    prompts = {};
+    action('/api/step');
+};
+setInterval(() => {
+    if (state?.snapshot_age_s !== null && $('snapshot-age')) $('snapshot-age').textContent = (state.snapshot_age_s + (performance.now() - stateReceived) / 1000).toFixed(1) + ' s';
+    if ($('live').checked && !busy) {
+        prompts = {};
+        action('/api/step');
+    }
+}, 500);
+const canvas = $('cloud'),
+    renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true
+    });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setClearColor('#111b24');
+const scene = new THREE.Scene(),
+    camera = new THREE.PerspectiveCamera(50, 1, .01, 100);
+camera.up.set(0, 0, 1);
+let points, yaw = .7,
+    pitch = .35,
+    distance = 2.5,
+    center = new THREE.Vector3(),
+    drag;
+const axes = new THREE.AxesHelper(.25);
+scene.add(axes);
+canvas.onpointerdown = e => {
+    drag = [e.clientX, e.clientY];
+    canvas.setPointerCapture(e.pointerId);
+};
+canvas.onpointerup = () => drag = null;
+canvas.onpointermove = e => {
+    if (drag) {
+        yaw -= (e.clientX - drag[0]) * .01;
+        pitch = Math.max(-1.4, Math.min(1.4, pitch + (e.clientY - drag[1]) * .01));
+        drag = [e.clientX, e.clientY];
+    }
+};
+canvas.onwheel = e => {
+    e.preventDefault();
+    distance = Math.max(.15, Math.min(20, distance * Math.exp(e.deltaY * .001)));
+};
+async function updateCloud() {
+    const data = await api('/api/cloud');
+    if (points) {
+        scene.remove(points);
+        points.geometry.dispose();
+        points.material.dispose();
+    }
+    if (!data.xyz.length) {
+        points = null;
+        return;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(data.xyz.flat(), 3));
+    g.setAttribute('color', new THREE.Float32BufferAttribute(data.rgb.flat().map(x => x / 255), 3));
+    g.computeBoundingSphere();
+    center.copy(g.boundingSphere.center);
+    axes.position.copy(center);
+    points = new THREE.Points(g, new THREE.PointsMaterial({
+        size: .009,
+        vertexColors: true
+    }));
+    scene.add(points);
+}
+
+function render() {
+    const w = canvas.clientWidth,
+        h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    camera.position.set(center.x + distance * Math.cos(pitch) * Math.cos(yaw), center.y + distance * Math.cos(pitch) * Math.sin(yaw), center.z + distance * Math.sin(pitch));
+    camera.lookAt(center);
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+}
+render();
+display(await api('/api/state')).catch(e => message(e.message, true));

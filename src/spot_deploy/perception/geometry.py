@@ -67,8 +67,12 @@ def masked_cloud(frame, mask, min_depth=.2, max_depth=4., erosion=1):
                                     valid_depth_fraction=float(valid.sum()/max(mask.sum(), 1)))
 
 
-def project_visible(xyz_odom, frame, tolerance_m=.05):
-    """Project only points consistent with current measured depth (z-buffer occlusion)."""
+def project_visible(xyz_odom, frame, tolerance_m=.05, allow_missing_depth=False):
+    """Depth-tested projection; optionally use unknown-depth pixels as 2D-only prompts.
+
+    Missing depth cannot establish visibility. It can propose a visual mask but
+    must never manufacture measurements or bypass the cloud's geometry gates.
+    """
     frame.validate()
     t = frame.odom_T_camera
     p = (np.asarray(xyz_odom)-t[:3, 3]) @ t[:3, :3]
@@ -80,6 +84,8 @@ def project_visible(xyz_odom, frame, tolerance_m=.05):
     uv, p = uv[inside], p[inside]
     z = frame.depth_m[uv[:, 1], uv[:, 0]]
     good = np.isfinite(z) & (z > 0) & (abs(z-p[:, 2]) <= tolerance_m)
+    if allow_missing_depth:
+        good |= ~np.isfinite(z) | (z <= 0)
     return np.unique(uv[good], axis=0)
 
 

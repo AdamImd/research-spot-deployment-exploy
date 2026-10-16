@@ -56,7 +56,8 @@ until the user checks its box. Use a new output directory each launch.
    prompt, then preview again. **Clear prompts** starts over. The green overlay
    must represent the intended chair, not the desk, floor or neighbouring chair.
 3. Click **Use this chair**. It selects that object and attempts mask propagation
-   into the other cameras using only depth-consistent projected points.
+   into the other cameras using calibrated projected points. Pixels with missing
+   depth may seed a visual-only mask, but cannot contribute 3D measurements.
 4. Inspect each proposed mask and the 3D cloud. If a view is ambiguous, select in
    that view to replace the object anchor. This is single-object selection.
 5. Use **Capture / track once**, or **Continuous capture**. Selecting a new prompt
@@ -106,10 +107,15 @@ no old points survive a failed capture or lost association. Per-voxel camera
 provenance uses bits 1=front-left, 2=front-right, 4=hand. RGB from front cameras
 is repeated grayscale. Axes in the viewer are odometry X red/Y green/Z blue.
 
-Reprojection uses only current depth within 5 cm of projected surface depth.
+Reprojection verifies available current depth within 5 cm of projected surface
+depth. Missing-depth pixels may additionally seed a 2D mask proposal. Such pixels
+do not establish visibility, so those masks require visual inspection. A view
+contributes to the cloud only with at least 20 depth-verified projected pixels
+and 20 actual measured masked depths; otherwise its status is
+`mask_only_no_reliable_depth` and its 3D contribution is zero.
 Require 20 support pixels, SAM score ≥0.6, ≥60% seed coverage and ≥80% candidate
 points within the preceding cloud's axis-aligned region expanded by 25 cm.
-Missing/occluded views remain absent. These gates reduce identity drift but do not
+Out-of-view or known depth-occluded regions remain absent. These gates reduce identity drift but do not
 prove that a mask is the right chair. The object must be static or slowly moving;
 fast manipulation needs a proper temporal tracker and motion compensation.
 Normal tracking gaps may not exceed 5 seconds. Immediately after explicit manual
