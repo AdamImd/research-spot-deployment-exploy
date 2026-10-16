@@ -240,3 +240,18 @@ device replacement and polling timeout remain stops. Launcher now prints failure
 reasons and blocking robot faults; native power cancellation preserves the first
 health-worker error. The earlier operator run145858 reported CPU over-temperature
 and clean motors-off/lease shutdown; that fault is never bypassed by this fix.
+
+## Chair perception (2026-10-15)
+
+`spot_deploy.perception` is an independent read-only camera pipeline; see
+`docs/CHAIR_PERCEPTION.md`. No lease, motors, arm/gripper commands or E-stop writes
+belong in its camera adapter or HTTP server. User/agent selection explicitly
+identifies one chair; propagated masks are proposals, not semantic ground truth.
+Use registered depth with each source's depth_scale and capture-time odom transforms.
+Keep image rotation consistent with K; reject unsupported camera models, stale
+frames, mismatched geometry and excessive exposure motion. Never fill missing
+chair geometry or retain a stale cloud on failure. SAM2 plus depth reprojection is
+not the paper's AOT tracker and is not yet qualified for fast object manipulation.
+Torch/SAM2 live only in the separately locked `perception/` UV environment. Camera
+records/weights remain private under ignored runs/local. Perception results do not
+authorize policy control or invalidate/rebind existing hardware bundles automatically.

@@ -25,3 +25,8 @@ restrictions or grant rights to third-party dependencies.
 Sources:
 [ReLIC](https://github.com/rai-opensource/relic/tree/27f8033c5064d32f049a17accb71cd1091422878),
 [Exploy](https://github.com/rai-opensource/exploy/tree/05f9dc3b2e589abdae8de942e8c6749e7a123c88).
+
+The optional chair-perception environment uses Meta SAM 2 source and SAM2.1 tiny
+weights under Apache-2.0, downloaded separately (not bundled). Pinned revision,
+checkpoint URL and SHA256 are documented in [CHAIR_PERCEPTION](docs/CHAIR_PERCEPTION.md).
+[Upstream license](https://github.com/facebookresearch/sam2/blob/2b90b9f5ceec907a1c18123530e92e794ad901a4/LICENSE).

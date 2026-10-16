@@ -1,0 +1,18 @@
+{
+  "source_commit": "ed17e6d",
+  "test_count": 560,
+  "static_tracking_frames": 10,
+  "all_static_steps_tracked": true,
+  "points_min": 1710,
+  "points_max": 1931,
+  "api_latency_mean_s": 0.3563334334641695,
+  "api_latency_min_s": 0.33580561401322484,
+  "api_latency_max_s": 0.379040549043566,
+  "api_throughput_hz": 2.8063602965298324,
+  "near_chair_initial_points": 7780,
+  "physical_commands_issued": 0,
+  "raw_data_location": "runs/chair-perception-live-20261015-004",
+  "validation_location": "runs/chair-perception-validation-20261015-002",
+  "seed": "not applicable: pretrained image inference without sampling",
+  "environment": "isolated perception UV lock; Torch 2.7.0+cu126; Python 3.12.3; RTX A5500 GPU1"
+}
