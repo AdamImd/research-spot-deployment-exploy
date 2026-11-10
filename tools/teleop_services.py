@@ -5,6 +5,7 @@ import errno
 import json
 from pathlib import Path
 import select
+import sys
 import subprocess
 from urllib.error import URLError
 from urllib.request import urlopen
@@ -20,23 +21,43 @@ def connection(bundle, fd):
 
     config = load(bundle / "robot.json", RobotConfig)
     wired_route(config)
-    reader = ReadOnlySpot(config)
-    try:
-        reader.connect(streaming=False)
-        snapshot = reader.snapshot()
-        if not all(snapshot[k] for k in ("identity_matches", "joint_layout_matches", "has_arm")):
-            raise ValueError("Spot identity, arm or joint layout mismatch")
-        while True:
-            health = reader.health()
-            print(
-                "Connected · tablet stop "
-                + ("ready" if health["estop_ready"] else "engaged or unavailable"),
-                flush=True,
-            )
-            if select.select([fd], [], [], 1)[0]:
-                return
-    finally:
-        reader.close()
+    from bosdyn.client.exceptions import RetryableRpcError
+    from bosdyn.client.time_sync import TimedOutError as SyncTimeout
+
+    failures = 0
+    while not select.select([fd], [], [], 0)[0]:
+        reader = ReadOnlySpot(config)
+        stage = "connect"
+        try:
+            reader.connect(streaming=False)
+            stage = "identity and model"
+            snapshot = reader.snapshot()
+            if not all(
+                snapshot[k] for k in ("identity_matches", "joint_layout_matches", "has_arm")
+            ):
+                raise ValueError("Spot identity, arm or joint layout mismatch")
+            stage = "state and tablet stop"
+            while True:
+                health = reader.health()
+                failures = 0
+                print(
+                    "Connected · tablet stop "
+                    + ("ready" if health["estop_ready"] else "engaged or unavailable"),
+                    flush=True,
+                )
+                if select.select([fd], [], [], 1)[0]:
+                    return
+        except (RetryableRpcError, SyncTimeout) as exc:
+            failures += 1
+            where = reader.connection_stage if stage == "connect" else stage
+            reason = f"Spot {where} · {type(exc).__name__} over {config.wired_interface}"
+            if failures >= 3:
+                raise RuntimeError(reason + " · three read-only attempts failed") from exc
+            print(reason + f" · reconnecting ({failures}/3)", flush=True)
+        finally:
+            reader.close()
+        if select.select([fd], [], [], failures)[0]:
+            return
 
 
 def fleet(url, repo, fd):
@@ -63,6 +84,7 @@ def fleet(url, repo, fd):
                 [
                     str(repo / "scripts/fleet-track"),
                     "run",
+                    "--preserve-host-network",
                     "--cameras",
                     "all",
                     "--config",
@@ -78,7 +100,10 @@ def fleet(url, repo, fd):
                 stdout=stream,
                 stderr=subprocess.STDOUT,
             )
-        print(f"Starting camera streams · log {log}", flush=True)
+        print(
+            f"Starting cameras · waiting for FLIR synchronization and camera servers · log {log}",
+            flush=True,
+        )
     try:
         while not select.select([fd], [], [], 0.25)[0]:
             if proc is not None and proc.poll() is not None:
@@ -99,7 +124,11 @@ if __name__ == "__main__":
     parser.add_argument("--fleet-url")
     parser.add_argument("--fleet-repo", type=Path)
     args = parser.parse_args()
-    if args.service == "connect":
-        connection(args.bundle, args.finish_fd)
-    else:
-        fleet(args.fleet_url, args.fleet_repo.resolve(), args.finish_fd)
+    try:
+        if args.service == "connect":
+            connection(args.bundle, args.finish_fd)
+        else:
+            fleet(args.fleet_url, args.fleet_repo.resolve(), args.finish_fd)
+    except Exception as exc:
+        print(f"{type(exc).__name__} · {exc}", file=sys.stderr, flush=True)
+        sys.exit(1)

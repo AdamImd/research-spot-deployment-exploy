@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 import json
 import math
 import time
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from room_array import NAMES
@@ -49,6 +50,8 @@ class CameraPanel:
         self.deadlines = {}
         self.focus = -1
         self.source = None
+        self.started_at = 0.0
+        self.seen = set()
         self.last_request = 0.0
         for i, name in enumerate(NAMES):
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
@@ -69,6 +72,8 @@ class CameraPanel:
         if source == self.source:
             return
         self.source = source
+        self.started_at = time.monotonic()
+        self.seen.clear()
         for f in self.pending.values():
             f.cancel()
         self.pending.clear()
@@ -128,11 +133,27 @@ class CameraPanel:
                         if expires <= now:
                             raise ValueError("expired")
                         self.image(n, jpeg, rotation)
+                        self.seen.add(n)
                         self.tokens[n] = token
                         self.deadlines[n] = expires
                         self.labels[n].set_text(f"{n} · live · ROI {roi}")
+                except HTTPError as exc:
+                    waiting = not (n in self.seen) and exc.code in (404, 503)
+                    self.clear(
+                        n,
+                        f"waiting for first frame · {int(now - self.started_at)} s"
+                        if waiting
+                        else f"frame unavailable · HTTP {exc.code}",
+                    )
+                except (URLError, TimeoutError):
+                    self.clear(
+                        n, "waiting for camera server" if n not in self.seen else "connection lost"
+                    )
+                except ValueError as exc:
+                    self.clear(n, str(exc))
                 except Exception:
-                    self.clear(n, "unavailable")
+                    self.clear(n, "invalid preview")
+
             if n in self.deadlines and self.deadlines[n] <= now:
                 self.clear(n, "stale")
             if n not in self.pending and now - self.last_request >= 0.24:

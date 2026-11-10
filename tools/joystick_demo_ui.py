@@ -88,7 +88,14 @@ def main():
         "--fleet-url", default="http://10.0.0.20:8790", help="Fleet read-only preview service"
     )
     p.add_argument("--fleet-repo", type=Path, default=Path.home() / "repos/flir-apriltag")
+    p.add_argument(
+        "--live-monitor",
+        action="store_true",
+        help="Open the read-only Spot connection and camera streams on launch",
+    )
     args = p.parse_args()
+    if args.live_monitor and (not args.bundle or args.sim):
+        p.error("--live-monitor needs a physical --bundle and cannot be combined with --sim")
     from room_camera_panel import CameraPanel, NAMES
     import gi
 
@@ -141,7 +148,7 @@ def main():
     mode.append("sim", "MuJoCo — drive simulated Spot")
     if bundle:
         mode.append("live", "Physical Spot — record states, actions and commands")
-    mode.set_active_id("sim" if args.sim else "usb")
+    mode.set_active_id("live" if args.live_monitor else "sim" if args.sim else "usb")
     panel.pack_start(mode, False, False, 0)
     fields = Gtk.Box(spacing=6)
     panel.pack_start(fields, False, False, 0)
@@ -603,6 +610,9 @@ def main():
     GLib.timeout_add(200, update)
     win.show_all()
     controls()
+    if args.live_monitor:
+        connect_pressed()
+        set_cameras(True)
     Gtk.main()
     cameras.close()
 

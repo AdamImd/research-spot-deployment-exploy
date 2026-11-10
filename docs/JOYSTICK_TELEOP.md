@@ -250,7 +250,14 @@ controls; the assignments above belong to this recorder.
 In MuJoCo it enables the calibrated renderer as soon as the simulator is connected.
 In physical mode it works independently of the Spot connection or motion session.
 On RPM it attaches to an existing fleet service or starts a bounded 20-minute
-acquisition using the fleet repository and its saved calibration. Stop streams or
+acquisition using the fleet repository and its saved calibration. The fleet
+checkout must support `fleet-track run --preserve-host-network`. This leaves
+the shared Ethernet MTU, receive ring, interrupt coalescing and system receive
+buffer unchanged. FLIR synchronization and remote camera startup can take over
+a minute. The panel shows the time waiting for the first frame for each view.
+For read-only monitoring on startup, pass `--live-monitor --bundle PATH`.
+Transient SDK timeouts disconnect the read-only display and permit up to three
+consecutive attempts. Physical control retains its existing deadlines. Stop streams or
 close the UI to finish an acquisition started here. When attached to someone
 else’s service, Stop only detaches this viewer. Freshness is checked per frame
 and frames over one second old are cleared. Cameras provide monitoring only.
