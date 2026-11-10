@@ -490,6 +490,9 @@ def main():
             msg = session.messages.get()
             if isinstance(msg, int):
                 session.reap()
+                if msg and out and not live and (out / "result.json").exists():
+                    result = json.loads((out / "result.json").read_text())
+                    diagnostic = result.get("error") or result.get("renderer_error") or diagnostic
                 phase = token = pending = None
                 if mode.get_active_id() == "sim":
                     camera_on = False

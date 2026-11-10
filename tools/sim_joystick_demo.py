@@ -160,8 +160,11 @@ def run(args):
                 if core is None:
                     core = ReLICRollout(actor, env, log, source)
                     state, _ = sdk_state(b, t - 0.005, key)
-                    core.initialize(state, height, 9.995 + t, 999.995 + t)
-                    key = core.command(state, 9.995 + t, 999.995 + t).key
+                    # The ideal-clock fixture stamps this exact tick. Reassociating
+                    # floating-point additions can make the sample appear in the future.
+                    received, robot_time = state.received_monotonic_s, state.robot_time_s
+                    core.initialize(state, height, received, robot_time)
+                    key = core.command(state, received, robot_time).key
                     core.activate(10 + t)
                     if modes:
                         modes.publish("relic")
