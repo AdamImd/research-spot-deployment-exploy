@@ -149,10 +149,13 @@ def require_live(
     execute,
     duration,
 ):
-    if not execute or not operator.strip() or not safety_operator.strip():
-        raise ContractError("live control requires explicit execution and two named operators")
-    if operator.strip().casefold() == safety_operator.strip().casefold():
-        raise ContractError("robot operator and E-stop operator must be distinct")
+    if not execute:
+        raise ContractError("live control requires explicit execution")
+    if getattr(manifest, "task", None) != "joystick-arm":
+        if not operator.strip() or not safety_operator.strip():
+            raise ContractError("live control requires explicit execution and two named operators")
+        if operator.strip().casefold() == safety_operator.strip().casefold():
+            raise ContractError("robot operator and E-stop operator must be distinct")
     if manifest.purpose != "candidate":
         raise ContractError("fixture policies cannot control hardware")
     if envelope.scope != "hardware":

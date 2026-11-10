@@ -115,7 +115,7 @@ def main():
     phase = token = pending = None
     camera_on = False
     win = Gtk.Window(
-        title="ReLIC · simulated joystick demo" if args.sim else "ReLIC · joystick demo recorder"
+        title="ReLIC · simulated joystick demo" if args.sim else "ReLIC · Spot operator"
     )
     win.set_default_size(590, 360)
     panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -147,15 +147,10 @@ def main():
     mode.append("usb", "USB only — record commands without Spot")
     mode.append("sim", "MuJoCo — drive simulated Spot")
     if bundle:
-        mode.append("live", "Physical Spot — record states, actions and commands")
-    mode.set_active_id("live" if args.live_monitor else "sim" if args.sim else "usb")
+        mode.append("stock", "Physical Spot — native stand and sit")
+        mode.append("live", "Physical Spot — reviewed ReLIC joystick session")
+    mode.set_active_id("stock" if args.live_monitor else "sim" if args.sim else "usb")
     panel.pack_start(mode, False, False, 0)
-    fields = Gtk.Box(spacing=6)
-    panel.pack_start(fields, False, False, 0)
-    operator = Gtk.Entry(placeholder_text="Robot operator")
-    safety = Gtk.Entry(placeholder_text="Tablet E-stop operator")
-    for w in [operator, safety]:
-        fields.pack_start(w, True, True, 0)
     physical_info = label(
         "Stand up powers Spot and waits for native standing. Enable ReLIC hands control to the joystick. Release sits Spot, powers off and returns the lease. The tablet is the emergency stop."
     )
@@ -182,15 +177,18 @@ def main():
 
     def controls():
         kind = mode.get_active_id()
-        physical = kind == "live"
+        physical = kind in ("stock", "live")
         usb = kind == "usb"
         sim = kind == "sim"
         running = session.process is not None
-        staged = not usb and not (physical and family)
+        staged = not usb and not (kind == "live" and family)
         linked = (running and phase is not None) if sim else connected
-        fields.set_visible(physical)
-        fields.set_sensitive(not running)
-        physical_info.set_visible(physical and not family)
+        physical_info.set_visible(physical)
+        physical_info.set_text(
+            "Stand up uses Spot’s native controller. Release sits Spot and powers off. The tablet is the E-stop."
+            if kind == "stock"
+            else "Stand up starts the reviewed ReLIC session. Enable ReLIC hands control to the joystick. The tablet is the E-stop."
+        )
         connect.set_visible(not usb)
         streams.set_visible(True)
         connection_label.set_visible(not usb)
@@ -223,7 +221,7 @@ def main():
             )
             and not closing
         )
-        toggle.set_visible(staged)
+        toggle.set_visible(staged and kind != "stock")
         toggle.set_label("Disable ReLIC · native stand" if phase == "relic" else "Enable ReLIC")
         toggle.set_sensitive(
             running
@@ -268,34 +266,32 @@ def main():
             if mode.get_active_id() == "sim" and phase == "seated":
                 change_mode()
             return
-        live = mode.get_active_id() == "live"
+        stock = mode.get_active_id() == "stock"
+        live = stock or mode.get_active_id() == "live"
         dev = profile["device"]["joystick_device"]
-        if not Path(dev).exists():
+        if not stock and not Path(dev).exists():
             status.set_text("USB joystick missing: " + dev)
             return
-        names = [w.get_text().strip() for w in [operator, safety]]
         if live:
-            if not all(names) or names[0].casefold() == names[1].casefold():
-                status.set_text("Enter two distinct operator names.")
-                return
             d = Gtk.MessageDialog(
                 transient_for=win,
                 modal=True,
                 message_type=Gtk.MessageType.QUESTION,
                 buttons=Gtk.ButtonsType.NONE,
                 text="Start a registered physical trial?"
-                if family
+                if family and not stock
                 else "Power on and stand Spot now?",
             )
+            hold = min(300.0, profile["duration_s"])
+            details = (
+                f"Stand under Spot’s native controller for up to {hold:g} seconds. "
+                "Release sits Spot and powers off."
+                if stock
+                else f"Run the reviewed {family or 'joystick'} session for up to {profile['duration_s']:g} seconds."
+            )
             d.format_secondary_text(
-                (
-                    f"Replay registered {family} commands with held enable. "
-                    if family
-                    else "Spot will wait in native stand until you choose Enable ReLIC. "
-                )
-                + f"{names[0]} operating; {names[1]} holding the functioning tablet E-stop. "
-                f"Confirm rig, floor path and stowed arm clear. Native stand, then joystick control for up to "
-                f"{profile['duration_s']:g} s. Recording and shutdown are automatic. No retries."
+                details
+                + " Confirm the tablet E-stop is ready and the rig, floor and arm are clear."
             )
             d.add_button("Cancel", Gtk.ResponseType.CANCEL)
             d.add_button("Confirm and start Spot", Gtk.ResponseType.OK)
@@ -315,7 +311,13 @@ def main():
             ROOT
             / "runs"
             / (
-                ("joystick-sim-" if mode.get_active_id() == "sim" else "joystick-stick-")
+                (
+                    "native-stand-"
+                    if stock
+                    else "joystick-sim-"
+                    if mode.get_active_id() == "sim"
+                    else "joystick-stick-"
+                )
                 + time.strftime("%Y%m%d-%H%M%S")
                 + "-"
                 + uuid.uuid4().hex[:8]
@@ -324,6 +326,25 @@ def main():
 
         def command(fd, mode_fd=None):
             mode_args = ["--mode-fd", str(mode_fd)] if mode_fd is not None else []
+            if stock:
+                return [
+                    python,
+                    "-u",
+                    "tools/rehearse_stock.py",
+                    "--robot",
+                    str(bundle / "robot.json"),
+                    "--manifest",
+                    str(bundle / "policy/manifest.json"),
+                    "--envelope",
+                    str(bundle / "envelope.json"),
+                    "--output",
+                    str(dest),
+                    "--standing-seconds",
+                    str(hold),
+                    "--finish-fd",
+                    str(fd),
+                    "--execute",
+                ]
             if live:
                 return [
                     python,
@@ -334,10 +355,6 @@ def main():
                     *mode_args,
                     "--demo-finish-fd",
                     str(fd),
-                    "--operator",
-                    names[0],
-                    "--safety-operator",
-                    names[1],
                     "--execute",
                 ]
             if mode.get_active_id() == "sim":
@@ -370,7 +387,9 @@ def main():
             ]
 
         try:
-            session.start(command, staged=mode.get_active_id() == "sim" or (live and not family))
+            session.start(
+                command, staged=mode.get_active_id() == "sim" or (live and not stock and not family)
+            )
         except OSError as e:
             status.set_text(str(e))
             return
@@ -520,6 +539,17 @@ def main():
                 monitor_changed()
             elif msg.startswith("Monitor: "):
                 show_input(json.loads(msg[9:]))
+            elif msg.startswith("Native: "):
+                status.set_text(
+                    {
+                        "power_on": "Powering motors on…",
+                        "stand": "Standing up…",
+                        "standing_observation": "Standing · native control",
+                        "sit": "Sitting down…",
+                        "sitting_observation": "Seated",
+                        "power_off": "Powering motors off…",
+                    }.get(msg[8:], msg)
+                )
             elif msg.startswith("Velocity: "):
                 velocity(json.loads(msg[10:]))
             else:

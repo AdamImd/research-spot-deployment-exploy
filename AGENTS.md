@@ -16,7 +16,10 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
 - There is no qualified hardware policy here. Do not fabricate evidence, relabel a
   simulation envelope or remove a guard to get a test to pass.
 - Physical work needs an explicit operator request and the existing standing gate,
-  bound evidence, inspected rig and two distinct named operators. See OPERATIONS.
+  bound evidence, inspected rig and two distinct named operators. For the joystick
+  UI and native standing routine, Adam removed the operator-name check. Use the
+  physical confirmation and tablet E-stop. Native-only camera standing uses
+  the stock preflight. ReLIC still requires its bound evidence. See OPERATIONS.
 - Default scope is four-foot standing, stowed arm, zero base velocity. Explicit
   operator-requested walking requires task=walking, a bound WalkingPlan, and the
   walking_distance/walking_clearance evidence gates. See docs/WALKING.md. No

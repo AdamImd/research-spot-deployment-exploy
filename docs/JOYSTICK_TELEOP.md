@@ -184,9 +184,15 @@ during demo collection and enabled trigger presses mark the recording.
 
 To also offer physical collection, pass the directory of a reviewed joystick
 bundle with `--bundle PATH`. Opening the window still selects USB-only. Choose
-**Physical Spot** and click **Connect** for a read-only identity and tablet-status
-connection. Enter the two operators and confirm **Stand up** to begin a bounded
-manual session under Spot’s native standing controller. **Enable ReLIC** activates
+**Physical Spot — native stand and sit** for camera work. Click **Connect**, then
+**Stand up** and confirm at the desk. The stock routine checks Spot and the tablet,
+stands for up to five minutes, and sits and powers off on Release or timeout.
+This mode requires neither a joystick nor ReLIC evidence. The physical UI
+opens in this mode with `--live-monitor`. Operator names are optional metadata
+for the command-line tools and are never requested in this UI.
+
+For policy collection select **Physical Spot — reviewed ReLIC joystick session**,
+connect, then confirm **Stand up**. The reviewed bundle and joystick checks apply here. **Enable ReLIC** activates
 joint control. **Disable ReLIC · native stand** requests a stock stand, then
 waits for standing feedback. Enable again for a new ReLIC segment starting
 with zero previous actions and a freshly armed joystick. **Release · sit down**

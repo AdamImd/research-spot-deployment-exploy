@@ -65,8 +65,8 @@ def parser():
             )
         if name in ('stand', 'walk', 'three-leg', 'joystick'):
             cmd.add_argument("--execute", action="store_true")
-            cmd.add_argument("--operator", required=True)
-            cmd.add_argument("--safety-operator", required=True)
+            cmd.add_argument("--operator", required=name != "joystick", default="")
+            cmd.add_argument("--safety-operator", required=name != "joystick", default="")
     return result
 
 

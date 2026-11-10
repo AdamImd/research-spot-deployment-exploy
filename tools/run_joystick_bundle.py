@@ -48,8 +48,8 @@ def failure_reason(directory):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bundle', type=Path, required=True)
-    parser.add_argument('--operator', default='Adam')
-    parser.add_argument('--safety-operator', default='Minghao')
+    parser.add_argument('--operator', default='')
+    parser.add_argument('--safety-operator', default='')
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--demo-finish-fd', type=int, help='UI-owned pipe; stowed arm only')
     parser.add_argument('--mode-fd', type=int, help='Optional staged controller UI pipe')
@@ -71,16 +71,13 @@ def main(argv=None):
     source = source_identity()
     if source['dirty']:
         raise ValueError('requires clean committed source')
-    if not args.operator.strip() or not args.safety_operator.strip() or (
-            args.operator.strip().casefold() == args.safety_operator.strip().casefold()):
-        raise ValueError('two distinct named operators required')
     out = ROOT/'runs'/('joystick-operator-'+time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8])
     out.mkdir(parents=True)
     atomic_json(out/'RUN.json', dict(source=source, bundle=str(bundle),
         manifest_sha256=sha256(manifest), envelope_sha256=sha256(bundle/'envelope.json'),
         evidence_sha256=sha256(bundle/'evidence.json'), operator=args.operator,
         safety_operator=args.safety_operator, explicit_operator_execute=True,
-        setup_attestation='Named operators/tablet/rig/travel and arm/shutdown workspace ready',
+        setup_attestation='Tablet/rig/travel and arm/shutdown workspace ready',
         duration_s=plan.teleop.duration_s, automatic_retries=0))
     print(f'Recording: {out}', flush=True)
     child = None
