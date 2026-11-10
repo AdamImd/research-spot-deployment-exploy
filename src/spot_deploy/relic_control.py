@@ -17,7 +17,7 @@ from .sdk_read import classify_faults
 def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None, modes=None):
     feedback_lock = threading.Lock()
     stop, emitted, lock = threading.Event(), threading.Event(), threading.Lock()
-    shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False)
+    shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False, native_id=None)
     gaps, acknowledgements = [], []
     worker = None
 
@@ -58,13 +58,14 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     raise ContractError("battery below operating envelope")
                 with lock:
                     shared["health_at"] = health["time"]
-                    active = shared["active"]
-                if active:
-                    with feedback_lock:
-                        if shared["active"]:
-                            control.check_stream()
-                            if not control.active():
-                                raise ContractError("joint controller unexpectedly inactive")
+                with feedback_lock:
+                    if shared["active"]:
+                        control.check_stream()
+                        if not control.active():
+                            raise ContractError("joint controller unexpectedly inactive")
+                    elif shared["native_id"] is not None:
+                        if not control.is_standing(shared["native_id"]):
+                            raise ContractError("native standing feedback lost")
                 stop.wait(min(.1, envelope.max_full_state_age_s / 3))
         except BaseException as exc:
             fail(exc)
@@ -168,7 +169,11 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             raise ContractError("command stream startup timeout")
         check_error()
         check_startup_cancel()
-        control.activate()
+        with feedback_lock:
+            if modes and not control.is_standing(shared["native_id"]):
+                raise ContractError("native stand lost before ReLIC handover")
+            shared["native_id"] = None
+            control.activate()
         deadline = time.monotonic() + reader.config.rpc_timeout_s
         while not control.active():
             check_error()
@@ -223,6 +228,8 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     return stop.is_set() or finish_requested()
 
             control.wait_standing(native_id, HandoffCancellation())
+            with feedback_lock:
+                shared["native_id"] = native_id
             check_error()
         return core, core.guard.key - first.last_command_key, active_duration, handback
 
@@ -235,7 +242,10 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         worker = threading.Thread(target=health_monitor, name="relic-health", daemon=True)
         worker.start()
         try:
-            control.native_stand(stop)
+            native_id = control.native_stand(stop)
+            if modes:
+                with feedback_lock:
+                    shared["native_id"] = native_id
         except BaseException:
             # A health failure can cancel power/stand. Preserve its original
             # cause instead of replacing it with generic cancellation text.

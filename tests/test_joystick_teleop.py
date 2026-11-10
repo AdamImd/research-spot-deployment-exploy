@@ -390,12 +390,14 @@ def test_demo_stowed_and_gui_pipe_close(plan):
         link.axes[5]=-1.
         src.poll(.014)
         assert src.monitor["view"] == -1
-        os.close(w);w=None
+        os.close(w)
+        w = None
         sample=src.poll(.015)
         assert sample.finish and not sample.enabled and sample.velocity==(0.,0.,0.)
     finally:
         os.close(r)
-        if w is not None:os.close(w)
+        if w is not None:
+            os.close(w)
 
 
 def test_recorded_profile_requires_enable_and_ends_on_release(mobile):

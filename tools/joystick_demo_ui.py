@@ -185,14 +185,18 @@ def main():
         fields.set_sensitive(not running)
         physical_info.set_visible(physical and not family)
         connect.set_visible(not usb)
-        streams.set_visible(not usb)
+        streams.set_visible(True)
         connection_label.set_visible(not usb)
-        camera_label.set_visible(not usb)
+        camera_label.set_visible(True)
         connect.set_label("Disconnect" if (running if sim else connection.process) else "Connect")
         connect.set_sensitive(
             (not running or (sim and phase == "seated" and pending is None)) and not closing
         )
-        streams.set_label("Stop camera streams" if camera_on else "Start camera streams")
+        streams.set_label(
+            "Stop camera streams"
+            if camera_on
+            else ("Start room cameras" if usb else "Start camera streams")
+        )
         streams.set_sensitive(
             not closing
             and (camera_on or camera_service.process is None)

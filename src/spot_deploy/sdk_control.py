@@ -67,7 +67,9 @@ class ControlSpot:
         self.robot.power_on(timeout_sec=20, timeout=self.timeout)
         if cancelled.is_set():
             raise ContractError("health failure during power-on")
-        self.wait_standing(self.request_stand(), cancelled)
+        command_id = self.request_stand()
+        self.wait_standing(command_id, cancelled)
+        return command_id
 
     def request_stand(self):
         from bosdyn.client.robot_command import RobotCommandBuilder
@@ -77,24 +79,24 @@ class ControlSpot:
         )
 
     def wait_standing(self, command_id, cancelled):
-        from bosdyn.api import basic_command_pb2
-
         deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
             if cancelled.is_set():
                 raise ContractError("health failure during native standing")
             self.heartbeat()
-            feedback = self.command.robot_command_feedback(command_id, timeout=self.timeout)
-            mobility = feedback.feedback.synchronized_feedback.mobility_command_feedback
-            if mobility.status != basic_command_pb2.RobotCommandFeedbackStatus.STATUS_PROCESSING:
-                raise ContractError("native standing command rejected or interrupted")
-            if (
-                mobility.stand_feedback.status
-                == basic_command_pb2.StandCommand.Feedback.STATUS_IS_STANDING
-            ):
+            if self.is_standing(command_id):
                 return
             time.sleep(0.1)
         raise ContractError("native standing timeout")
+
+    def is_standing(self, command_id):
+        from bosdyn.api import basic_command_pb2
+
+        feedback = self.command.robot_command_feedback(command_id, timeout=self.timeout)
+        mobility = feedback.feedback.synchronized_feedback.mobility_command_feedback
+        if mobility.status != basic_command_pb2.RobotCommandFeedbackStatus.STATUS_PROCESSING:
+            raise ContractError("native standing command rejected or interrupted")
+        return mobility.stand_feedback.status == basic_command_pb2.StandCommand.Feedback.STATUS_IS_STANDING
 
     def start(self, commands, duration):
         self.future = self.streaming._stub.JointControlStream.future(
