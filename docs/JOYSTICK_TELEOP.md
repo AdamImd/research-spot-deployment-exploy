@@ -164,3 +164,39 @@ terminal, followed by the motors-off confirmation when available.
 Evidence must match the frozen source/configuration and remain within its reviewed
 validity; source changes require a new bundle. Preparation and the default display
 do not authorize agent-initiated physical motion.
+
+## Joystick demonstration recorder
+
+On the control desktop, from the repository root, open the recorder with:
+
+```bash
+tools/joystick_demo_ui.py
+```
+
+USB-only mode starts by default. **Start recording** captures body-frame forward,
+lateral and yaw commands. Center the Logitech Extreme 3D, release and then hold
+printed button **2**, and drive after the initial three-second hold. Release button
+2 to zero all three commands. For a calibration trace, leave the stick released
+for at least a few ticks before **Stop and save**. Printed button **4** also finishes.
+The window displays the effective command and the recording directory. The USB
+recording contains timestamped commands and a summary. The arm stays stowed
+during demo collection and trigger presses are ignored.
+
+To also offer physical collection, pass the directory of a reviewed joystick
+bundle with `--bundle PATH`. Opening the window still selects USB-only. Choose
+**Physical Spot**, enter the two operators, and confirm **Start recording** for
+one trial. The runtime checks the bundle, device identity, tablet and preflight.
+Native stand precedes joystick control. Stop or window close requests native
+shutdown, waits for the motors-off check and saves the recording. The tablet is
+the emergency stop. The physical run directory includes full trial events,
+50 Hz decisions, 200 Hz streamed commands, acknowledgement and fault records,
+compact data and shutdown outcome. A partial or failed run retains its status.
+The UI uses system Python with GTK 3 on Linux and the checkout's UV environment
+for workers. Launch it on the computer with the joystick and the reviewed robot
+connection. The normal arm-toggle launcher remains available for other tasks.
+
+For repeated calibration sessions use a separately reviewed bundle prepared with
+a registered family profile. The confirmation identifies that family. Its frozen
+base commands run in order at policy decisions, with button 2 held. Releasing
+enable during movement ends the repeat. USB-only mode always records manual input.
+See [the frozen ReLIC calibration record](../records/relic-sysid/README.md).

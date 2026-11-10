@@ -362,3 +362,66 @@ def test_five_minute_cli_reaches_gates_without_robot_io(mobile, tmp_path, monkey
         values += ['--operator', 'Adam', '--safety-operator', 'Minghao']
     with pytest.raises(ContractError, match=expected):
         cli.execute(cli.parser().parse_args(values), SimpleNamespace())
+
+
+def test_demo_stowed_and_gui_pipe_close(plan):
+    import os
+    from spot_deploy.joystick_teleop import DemoJoystick
+    r,w=os.pipe()
+    link=FakeLink()
+    try:
+        src=DemoJoystick(plan,r,link)
+        link.events=[ButtonEvent(i,False,True) for i in range(12)]
+        src.poll(0.)
+        link.events=[ButtonEvent(1,True)]
+        assert src.poll(.005).enabled
+        link.axes[1]=-.5
+        link.events=[ButtonEvent(0,True)]
+        sample=src.poll(.01)
+        assert sample.enabled and not sample.toggle and sample.velocity[0]>0
+        os.close(w);w=None
+        sample=src.poll(.015)
+        assert sample.finish and not sample.enabled and sample.velocity==(0.,0.,0.)
+    finally:
+        os.close(r)
+        if w is not None:os.close(w)
+
+
+def test_recorded_profile_requires_enable_and_ends_on_release(mobile):
+    row = [0., 0., 0.]
+    plan = JoystickTeleopPlan.model_validate(mobile.teleop.model_dump() | dict(
+        study_family='forward', study_commands=[row] * 150 + [[.002, 0., 0.], row]))
+    sample = JoystickSample(3., (0., 0., 0.), False, True, False)
+    motion = TeleopMotion(mobile.model_copy(update={'teleop': plan}),
+                          SimpleNamespace(poll=lambda _: sample))
+    motion.update(3., 0.)
+    with pytest.raises(ContractError, match='enable released'):
+        motion.study_velocity(150)
+    sample = JoystickSample(3.005, (0., 0., 0.), True, True, False)
+    motion.update(3.005, 0.)
+    assert motion.study_velocity(150) == [.002, 0., 0.]
+    assert not motion.arm.deployed
+    sample = JoystickSample(3.01, (0., 0., 0.), False, False, False)
+    motion.update(3.01, 0.)
+    assert motion.completed
+    assert motion.study_velocity(150) == row
+
+
+def test_ui_stops_child_without_robot():
+    import os
+    import runpy
+    import sys
+
+    session = runpy.run_path(str(ROOT / "tools/joystick_demo_ui.py"))["Session"]()
+    session.start(lambda fd: [sys.executable, "-c",
+                              f"import os; assert os.read({fd}, 1) == b''"])
+    try:
+        with pytest.raises(RuntimeError):
+            session.start(lambda _: [])
+        session.stop()
+        assert session.messages.get(timeout=4) == 0
+    finally:
+        session.stop()
+        if session.process.poll() is None:
+            os.kill(session.process.pid, 15)
+            session.process.wait()

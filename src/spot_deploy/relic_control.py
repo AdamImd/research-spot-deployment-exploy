@@ -34,9 +34,17 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         if error is not None:
             raise error
 
+    finish_requested = getattr(teleop_source, "finish_requested", lambda: False)
+
+    def check_startup_cancel():
+        if finish_requested():
+            raise ContractError("operator cancelled before joystick policy activation")
+
     def health_monitor():
         try:
             while not stop.is_set():
+                if not shared["active"]:
+                    check_startup_cancel()
                 control.heartbeat()
                 health = reader.health()
                 health.update(classify_faults(health.get('fault_details', []),
@@ -63,6 +71,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
     try:
         if interlock:
             interlock.check(reader.health())
+        check_startup_cancel()
         control.acquire()
         worker = threading.Thread(target=health_monitor, name="relic-health", daemon=True)
         worker.start()
@@ -159,6 +168,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         if not emitted.wait(reader.config.rpc_timeout_s):
             raise ContractError("command stream startup timeout")
         check_error()
+        check_startup_cancel()
         control.activate()
         deadline = time.monotonic() + reader.config.rpc_timeout_s
         while not control.active():
@@ -182,6 +192,9 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         check_error()
         if core.phase != "policy" or core.policy_samples < 1:
             raise ContractError("standing trial ended before ReLIC handover")
+        if (core.teleop and core.teleop.plan.study_commands is not None and
+                (core.policy_samples != len(core.teleop.plan.study_commands) or core.pending is not None)):
+            raise ContractError("registered trace ended early or final acknowledgement missing")
         if core.motion and not core.motion.completed:
             raise ContractError('walking distance not reached and settled before timeout')
         active_duration = time.monotonic() - start

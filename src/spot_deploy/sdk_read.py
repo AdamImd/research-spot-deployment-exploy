@@ -289,6 +289,8 @@ class ReadOnlySpot:
         return {
             "time": time.monotonic(),
             **estop_observation(self.config, state, estop),
+            "foot_contacts": [int(foot.contact) for foot in state.foot_state],
+            "foot_state_robot_s": seconds(state.kinematic_state.acquisition_timestamp),
             "fault_count": len(state.system_fault_state.faults)
             + len(state.behavior_fault_state.faults)
             + len(state.service_fault_state.faults),

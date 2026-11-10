@@ -185,6 +185,18 @@ wheels = [
 ]
 
 [[package]]
+name = "cmaes"
+version = "0.11.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8f/29/86dc7d673dee33bb67b6d40d9809a6804658a2764ecd30bba201782c59d6/cmaes-0.11.1.tar.gz", hash = "sha256:cf71fa3679814723be771f2c9edd85f465b1bc1e409e1ad6d8a9e481efcd5160", size = 31439, upload-time = "2024-08-13T06:46:34.728Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/c9/124823c5391ad69cf336fe482cd920fe485d96841ca43089c7316682fffc/cmaes-0.11.1-py3-none-any.whl", hash = "sha256:1de77d2175045389680619c1e9b6d59d90e7888524d9e440e1704ba001de9fcc", size = 35549, upload-time = "2024-08-13T06:46:33.169Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -986,6 +998,9 @@ firmware = [
 simulation = [
     { name = "mujoco" },
 ]
+sysid = [
+    { name = "cmaes" },
+]
 visualization = [
     { name = "matplotlib" },
     { name = "pillow" },
@@ -1011,6 +1026,7 @@ dev = [
 ]
 firmware = [{ name = "platformio", specifier = "==6.1.18" }]
 simulation = [{ name = "mujoco", specifier = "==3.3.7" }]
+sysid = [{ name = "cmaes", specifier = "==0.11.1" }]
 visualization = [
     { name = "matplotlib", specifier = "==3.11.2" },
     { name = "pillow", specifier = "==12.3.0" },

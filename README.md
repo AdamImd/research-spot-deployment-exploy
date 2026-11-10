@@ -195,3 +195,7 @@ USB preview. Stick X/Y and twist drive ReLIC's body-frame velocity inputs; hold
 thumb button 2 to enable and use trigger button 1 (index 0) to toggle the arm to
 a default front pose. The tablet remains the E-stop. See
 [controls, preparation and commissioning](docs/JOYSTICK_TELEOP.md).
+The [joystick demo recorder](docs/JOYSTICK_TELEOP.md#joystick-demonstration-recorder)
+provides desktop Start/Stop controls for stowed-arm data collection. The
+[frozen ReLIC calibration experiment](records/relic-sysid/README.md) includes
+command-matched simulation replay, actuator readbacks and the forward-walk comparison.

@@ -27,6 +27,9 @@ class JoystickTeleopPlan(StrictModel):
     input_timeout_s: float = Field(gt=.02, le=.25)
     initial_hold_s: float = Field(ge=2, le=10)
     duration_s: float = Field(gt=5, le=300)
+    # Optional policy-tick commands embedded in the reviewed manifest for repeated captures.
+    study_family: Literal["forward", "six", "random", "joystick"] | None = None
+    study_commands: list[tuple[float, float, float]] | None = Field(default=None, max_length=15000)
     # Intermediate clearance poses, then deployed pose, in SDK arm joint order.
     arm_waypoints: list[Vector7] = Field(min_length=1, max_length=5)
     arm_speed_rad_s: float = Field(gt=0, le=.5)
@@ -40,6 +43,20 @@ class JoystickTeleopPlan(StrictModel):
             raise ValueError('three distinct joystick axes required')
         if self.duration_s <= self.initial_hold_s:
             raise ValueError('duration must include the initial hold')
+        if (self.study_family is None) != (self.study_commands is None):
+            raise ValueError("register the command family and its samples together")
+        if self.study_commands is not None:
+            rows = np.asarray(self.study_commands)
+            if len(rows) < 2 or len(rows) > self.duration_s * 50:
+                raise ValueError("registered trace does not fit trial duration")
+            if (not np.isfinite(rows).all() or np.any(abs(rows) > [a.maximum for a in self.axes])
+                    or np.any(rows[:int(np.ceil(self.initial_hold_s * 50))]) or np.any(rows[-1])):
+                raise ValueError("registered trace must respect velocity limits and start/end at rest")
+            # Releasing the manual enable may have zeroed all three axes in a single tick.
+            steps = abs(np.diff(rows, axis=0))
+            moving = np.any(rows[1:] != 0, axis=1)
+            if np.any(steps[moving] > np.array([a.acceleration for a in self.axes]) * .02 + 1e-6):
+                raise ValueError("registered acceleration exceeds the bound joystick profile")
         return self
 
 
@@ -175,6 +192,7 @@ class TeleopMotion:
         self.velocity = np.zeros(3)
         self.active_at = self.last_at = None
         self.completed = False
+        self.study_started = False
         self.status = {}
 
     def update(self, now, active_at):
@@ -192,18 +210,34 @@ class TeleopMotion:
         maximum = np.asarray([a.maximum for a in self.plan.axes])
         if demand.shape != (3,) or not np.isfinite(demand).all() or np.any(np.abs(demand)>maximum+1e-7):
             raise ContractError('joystick velocity outside the bound plan')
-        if enabled:
+        if enabled and self.plan.study_commands is None:
             delta = np.asarray([a.acceleration for a in self.plan.axes])*dt
             self.velocity += np.clip(demand-self.velocity, -delta, delta)
         else:
             self.velocity[:] = 0  # Releasing enable requests zero immediately.
-        self.arm.advance(dt, enabled, enabled and sample.toggle)
-        self.completed = bool(sample.finish)
+        if self.study_started and not sample.enabled:
+            self.completed = True  # Deadman release ends the repeat.
+        self.arm.advance(dt, enabled, enabled and sample.toggle and self.plan.study_commands is None)
+        self.completed = self.completed or bool(sample.finish)
         self.status = dict(enabled=enabled, ready=ready, finish=sample.finish,
             requested_velocity=demand.tolist(), velocity_command=self.velocity.tolist(),
             arm_deployed_requested=self.arm.deployed, arm_path_progress_s=self.arm.progress,
             arm_command=self.arm.reference.tolist(), input_at=sample.at)
         return self.velocity.tolist(), self.arm.reference
+
+
+    def study_velocity(self, tick):
+        rows = self.plan.study_commands
+        if self.completed or tick >= len(rows):
+            self.completed = True
+            return [0., 0., 0.]
+        command = list(rows[tick])
+        if any(command):
+            if not self.status["enabled"]:
+                raise ContractError("registered command due with joystick enable released")
+            self.study_started = True
+        self.status["velocity_command"] = command
+        return command
 
 
 class ScriptRow(StrictModel):
@@ -233,3 +267,24 @@ class ScriptedJoystick:
             return JoystickSample(now, (0., 0., 0.), False, False, False)
         row = self.rows[self.index]
         return JoystickSample(now, tuple(row.velocity), row.enabled, toggle, finish)
+
+
+class DemoJoystick(JoystickInput):
+    """Stowed-arm recording input. A private inherited pipe requests a normal finish."""
+    def __init__(self, plan, finish_fd, link=None):
+        import os
+        import stat
+        if not stat.S_ISFIFO(os.fstat(finish_fd).st_mode):
+            raise ContractError("demo control requires a pipe")
+        self.finish_fd = finish_fd
+        super().__init__(plan, link)
+
+    def finish_requested(self):
+        import select
+        return bool(select.select([self.finish_fd], [], [], 0)[0])
+
+    def poll(self, now):
+        sample = super().poll(now)
+        if sample.finish or self.finish_requested():
+            return JoystickSample(now, (0., 0., 0.), False, False, True)
+        return JoystickSample(now, sample.velocity, sample.enabled, False, False)

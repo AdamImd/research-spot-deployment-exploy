@@ -55,6 +55,8 @@ def parser():
             cmd.add_argument(
                 "--duration", type=float, required=True, help="Bounded duration in seconds"
             )
+        if name == "joystick":
+            cmd.add_argument("--demo-finish-fd", type=int, help="Local operator UI pipe; stow arm and finish on EOF")
         if name == "watch":
             cmd.add_argument(
                 "--state-source", choices=("stream", "poll"), default="stream",
@@ -170,7 +172,17 @@ def execute(args, record):
     if args.mode == 'joystick':
         from .joystick_teleop import JoystickInput
         import time
-        teleop_source = JoystickInput(manifest.teleop)
+        fd = getattr(args, "demo_finish_fd", None)
+        if fd is None and manifest.teleop.study_commands is not None:
+            raise ContractError("registered traces require the collection UI and held joystick enable")
+        if fd is not None and config.estop_authority != "tablet":
+            raise ContractError("joystick demo collection requires the manufacturer tablet E-stop")
+        if fd is None:
+            teleop_source = JoystickInput(manifest.teleop)
+        else:
+            from .joystick_teleop import DemoJoystick
+            teleop_source = DemoJoystick(manifest.teleop, fd)
+            record.event("demo_collection", arm="stowed", tablet_estop=True)
         try:
             teleop_source.poll(time.monotonic())
             if any(teleop_source.link.buttons.values()) or any(

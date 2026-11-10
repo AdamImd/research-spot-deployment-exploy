@@ -168,7 +168,13 @@ class ReLICRollout:
                     <= self.spec.handover_joint_speed_rad_s, "ReLIC handover velocity gate failed")
                 self.next_policy_at = now
             new_action = None
-            if now + 1e-10 >= self.next_policy_at and self.pending is None:
+            study = self.teleop is not None and self.teleop.plan.study_commands is not None
+            if study and self.pending is None and self.policy_samples >= len(self.teleop.plan.study_commands):
+                self.teleop.completed = True
+            if (now + 1e-10 >= self.next_policy_at and self.pending is None
+                    and not (study and self.teleop.completed and self.policy_samples > 0)):
+                if study:
+                    self.velocity_command = self.teleop.study_velocity(self.policy_samples)
                 if self.motion or self.teleop:
                     target, inference_s, obs, action = self.policy.evaluate(
                         state, self.previous, velocity_command=self.velocity_command)
