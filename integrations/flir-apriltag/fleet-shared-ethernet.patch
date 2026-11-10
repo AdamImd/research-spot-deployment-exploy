@@ -57,7 +57,13 @@
 +            self.state['socket_receive_request_bytes']=socket_bytes
 +            env=dict(os.environ,LD_LIBRARY_PATH=build['sdk_library_path'],LD_PRELOAD=build['socket_helper']+':'+build['interface_filter'],FLIR_UDP_RCVBUF_BYTES=str(socket_bytes))
              pairs=max(1,math.ceil(self.seconds*(30 if self.live_roi else self.fps)));self.state['requested_pairs']=pairs
-@@ -359,3 +372,6 @@
+@@ -272,3 +285,4 @@
+                 if f'pid={self.proc.pid},' in line and re.search(r':'+str(port)+r'\s',line):
+-                    found=bool(re.search(r'\brb16777216\b','\n'.join(lines[i:i+2])))
++                    effective_bytes=2*self.state['socket_receive_request_bytes']
++                    found=bool(re.search(rf'\brb{effective_bytes}\b','\n'.join(lines[i:i+2])))
+             if not found:raise RuntimeError('Stream socket buffer not verified for '+serial)
+@@ -359,3 +373,6 @@
                          errors.append(str(exc))
 -                if self.defer_host_restore:
 +                if self.preserve_host_network:

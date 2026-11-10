@@ -60,6 +60,24 @@ def connection(bundle, fd):
             return
 
 
+def camera_failure(out, code):
+    native = out / "hosts/rpm/flir-native"
+    for file, field in [
+        (native / "native/result.json", "error"),
+        (native / "lifecycle.json", "startup_error"),
+        (out / "completion.json", "errors"),
+    ]:
+        try:
+            reason = json.loads(file.read_text()).get(field)
+        except (OSError, ValueError):
+            continue
+        if isinstance(reason, list):
+            reason = next(iter(reason), None)
+        if isinstance(reason, str) and reason and reason != "Stopped by signal":
+            return reason.splitlines()[0][:240]
+    return f"Camera service exited {code}"
+
+
 def fleet(url, repo, fd):
     proc = None
     try:
@@ -108,7 +126,7 @@ def fleet(url, repo, fd):
         while not select.select([fd], [], [], 0.25)[0]:
             if proc is not None and proc.poll() is not None:
                 if proc.returncode:
-                    raise RuntimeError(f"Camera service exited {proc.returncode}; see {log}")
+                    raise RuntimeError(f"{camera_failure(out, proc.returncode)} · {log}")
                 return
     finally:
         if proc is not None and proc.poll() is None:
