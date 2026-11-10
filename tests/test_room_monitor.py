@@ -85,3 +85,53 @@ def test_snapshot_preserves_identity_rotation_and_roi():
     assert token == ("session-3", ["epoch", 42])
     assert 0 < expires - __import__("time").monotonic() <= 0.88
     assert jpeg.startswith(b"\xff\xd8") and rotation == 180 and roi == meta["roi"]
+
+
+@pytest.mark.parametrize("failures", [1, 3])
+def test_readonly_connection_closes_and_rechecks_after_timeouts(
+    tmp_path, monkeypatch, capsys, failures
+):
+    from types import SimpleNamespace
+    from bosdyn.client.exceptions import TimedOutError
+    from spot_deploy import contracts, network, sdk_read
+    import teleop_services
+
+    readers = []
+    verified = []
+    monkeypatch.setattr(contracts, "load", lambda *a: SimpleNamespace(wired_interface="test"))
+    monkeypatch.setattr(network, "wired_route", lambda cfg: None)
+
+    class Reader:
+        connection_stage = "authentication"
+        closed = False
+
+        def __init__(self, config):
+            readers.append(self)
+
+        def connect(self, streaming):
+            assert streaming is False
+            if len(readers) <= failures:
+                raise TimedOutError(None, "timed out")
+
+        def snapshot(self):
+            verified.append(True)
+            return dict(identity_matches=True, joint_layout_matches=True, has_arm=True)
+
+        def health(self):
+            assert verified
+            return dict(estop_ready=True)
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(sdk_read, "ReadOnlySpot", Reader)
+    monkeypatch.setattr(teleop_services.select, "select", lambda *a: (verified, [], []))
+    if failures == 3:
+        with pytest.raises(RuntimeError, match="authentication.*three read-only attempts"):
+            teleop_services.connection(tmp_path, 0)
+        assert not verified
+    else:
+        teleop_services.connection(tmp_path, 0)
+        assert len(readers) == 2 and verified
+    assert all(r.closed for r in readers)
+    assert "reconnecting" in capsys.readouterr().out
