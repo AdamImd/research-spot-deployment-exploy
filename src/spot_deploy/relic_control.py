@@ -15,6 +15,8 @@ from .sdk_read import classify_faults
 
 
 def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None, modes=None):
+    # Construct and validate the first rollout before acquiring the lease or powering Spot.
+    initial_core = ReLICRollout(policy, envelope, record, teleop_source)
     feedback_lock = threading.Lock()
     stop, emitted, lock = threading.Event(), threading.Event(), threading.Lock()
     shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False, native_id=None)
@@ -72,7 +74,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
 
     def run_segment():
         nonlocal stream_started
-        core = ReLICRollout(policy, envelope, record, teleop_source)
+        core = ReLICRollout(policy, envelope, record, teleop_source) if stream_started else initial_core
         segment_stop, producer_done = threading.Event(), threading.Event()
         emitted.clear()
         with lock:
