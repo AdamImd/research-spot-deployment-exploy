@@ -47,7 +47,17 @@
 +                self.state['effective_host']=self._host()
 +                if self.state['effective_host']!=self.profile:raise RuntimeError('Host tuning readback mismatch')
              if self.stop_event.is_set():raise CaptureStopped('Capture stopped before power on')
-@@ -359,3 +367,6 @@
+@@ -226,3 +234,8 @@
+             native=self.out/'native';native.mkdir()
+-            env=dict(os.environ,LD_LIBRARY_PATH=build['sdk_library_path'],LD_PRELOAD=build['socket_helper']+':'+build['interface_filter'],FLIR_UDP_RCVBUF_BYTES='8388608')
++            socket_bytes=8*1024*1024
++            if self.preserve_host_network:
++                socket_bytes=min(socket_bytes,self.original['rmem_max'])
++                if socket_bytes<65536:raise RuntimeError('Existing UDP receive limit too small for FLIR capture')
++            self.state['socket_receive_request_bytes']=socket_bytes
++            env=dict(os.environ,LD_LIBRARY_PATH=build['sdk_library_path'],LD_PRELOAD=build['socket_helper']+':'+build['interface_filter'],FLIR_UDP_RCVBUF_BYTES=str(socket_bytes))
+             pairs=max(1,math.ceil(self.seconds*(30 if self.live_roi else self.fps)));self.state['requested_pairs']=pairs
+@@ -359,3 +372,6 @@
                          errors.append(str(exc))
 -                if self.defer_host_restore:
 +                if self.preserve_host_network:
