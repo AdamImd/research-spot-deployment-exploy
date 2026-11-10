@@ -138,7 +138,7 @@ class CameraPanel:
                         self.deadlines[n] = expires
                         self.labels[n].set_text(f"{n} · live · ROI {roi}")
                 except HTTPError as exc:
-                    waiting = not (n in self.seen) and exc.code in (404, 503)
+                    waiting = n not in self.seen and exc.code in (404, 503)
                     self.clear(
                         n,
                         f"waiting for first frame · {int(now - self.started_at)} s"
