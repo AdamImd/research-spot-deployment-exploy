@@ -93,9 +93,11 @@ def main():
         action="store_true",
         help="Open the read-only Spot connection and camera streams on launch",
     )
+    p.add_argument("--live-connect", action="store_true", help="Open the Spot connection with cameras off")
     args = p.parse_args()
-    if args.live_monitor and (not args.bundle or args.sim):
-        p.error("--live-monitor needs a physical --bundle and cannot be combined with --sim")
+    physical_start = args.live_monitor or args.live_connect
+    if physical_start and (not args.bundle or args.sim):
+        p.error("Live monitoring needs a physical --bundle and cannot be combined with --sim")
     from room_camera_panel import CameraPanel, NAMES
     import gi
 
@@ -109,13 +111,22 @@ def main():
     if bundle:
         profile = profile["teleop"]
     family = profile.get("study_family")
+    review_hint = ""
+    if bundle:
+        try:
+            reviewed = json.loads((bundle / "evidence.json").read_text()).get("evidence")
+        except (OSError, ValueError):
+            reviewed = None
+        if not reviewed:
+            review_hint = " This bundle has no hardware review records. Native stand is available; ReLIC activation is blocked."
+
     python = str(ROOT / ".venv/bin/python")
     session, connection, camera_service = Session(), Session(), Session()
     connected = False
     phase = token = pending = None
     camera_on = False
     win = Gtk.Window(
-        title="ReLIC · simulated joystick demo" if args.sim else "ReLIC · Spot operator"
+        title="ReLIC · simulated joystick demo" if args.sim else "ReLIC · Spot teleoperation"
     )
     win.set_default_size(590, 360)
     panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -147,9 +158,10 @@ def main():
     mode.append("usb", "USB only — record commands without Spot")
     mode.append("sim", "MuJoCo — drive simulated Spot")
     if bundle:
-        mode.append("stock", "Physical Spot — native stand and sit")
-        mode.append("live", "Physical Spot — reviewed ReLIC joystick session")
-    mode.set_active_id("stock" if args.live_monitor else "sim" if args.sim else "usb")
+        if family:
+            mode.append("stock", "Physical Spot — native stand and sit")
+        mode.append("live", "Physical Spot — registered repeat" if family else "Physical Spot — stand and joystick")
+    mode.set_active_id(("stock" if family else "live") if physical_start else "sim" if args.sim else "usb")
     panel.pack_start(mode, False, False, 0)
     physical_info = label(
         "Stand up powers Spot and waits for native standing. Enable ReLIC hands control to the joystick. Release sits Spot, powers off and returns the lease. The tablet is the emergency stop."
@@ -187,7 +199,8 @@ def main():
         physical_info.set_text(
             "Stand up uses Spot’s native controller. Release sits Spot and powers off. The tablet is the E-stop."
             if kind == "stock"
-            else "Stand up starts the reviewed ReLIC session. Enable ReLIC hands control to the joystick. The tablet is the E-stop."
+            else "Start recording runs the registered physical repeat. The tablet is the E-stop."
+            if family else "Stand on native control. Enable ReLIC to drive from this stance. Disable ReLIC to stand again. Release sits Spot. The tablet is the E-stop." + review_hint
         )
         connect.set_visible(not usb)
         streams.set_visible(True)
@@ -269,7 +282,7 @@ def main():
         stock = mode.get_active_id() == "stock"
         live = stock or mode.get_active_id() == "live"
         dev = profile["device"]["joystick_device"]
-        if not stock and not Path(dev).exists():
+        if (not live or (family and not stock)) and not Path(dev).exists():
             status.set_text("USB joystick missing: " + dev)
             return
         if live:
@@ -286,8 +299,9 @@ def main():
             details = (
                 f"Stand under Spot’s native controller for up to {hold:g} seconds. "
                 "Release sits Spot and powers off."
-                if stock
-                else f"Run the reviewed {family or 'joystick'} session for up to {profile['duration_s']:g} seconds."
+                if stock else
+                f"Stand on native control. You can enable joystick driving from this stance. Release sits Spot. Session limit {hold:g} seconds."
+                if not family else f"Run the reviewed {family or 'joystick'} session for up to {profile['duration_s']:g} seconds."
             )
             d.format_secondary_text(
                 details
@@ -602,7 +616,8 @@ def main():
                     status.set_text(
                         {
                             "seated": "Seated",
-                            "native": "Standing · Spot native control",
+                            "native": "Standing · Spot native control" + (" · " + state["reason"] if state.get("reason") else ""),
+                            "checking": "Standing · checking ReLIC readiness and joystick…",
                             "relic": "Standing · ReLIC joystick control",
                             "returning": "Returning to native stand…",
                             "released": "Released · seated",
@@ -640,8 +655,9 @@ def main():
     GLib.timeout_add(200, update)
     win.show_all()
     controls()
-    if args.live_monitor:
+    if physical_start:
         connect_pressed()
+    if args.live_monitor:
         set_cameras(True)
     Gtk.main()
     cameras.close()

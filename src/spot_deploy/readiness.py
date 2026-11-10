@@ -149,6 +149,14 @@ def require_live(
     execute,
     duration,
 ):
+    require_live_configuration(manifest, envelope, robot_config, operator, safety_operator, execute, duration)
+    result = report(manifest_path, envelope_path, robot_path, index_path)
+    if not result["evidence_ready"]:
+        raise ContractError("live readiness evidence is incomplete, failed or expired")
+    return result
+
+
+def require_live_configuration(manifest, envelope, robot_config, operator, safety_operator, execute, duration):
     if not execute:
         raise ContractError("live control requires explicit execution")
     if getattr(manifest, "task", None) != "joystick-arm":
@@ -181,10 +189,6 @@ def require_live(
             raise ContractError('joystick requires tablet authority and reviewed duration/speed margins')
     if source_identity()["dirty"]:
         raise ContractError("live control requires a clean committed source tree")
-    result = report(manifest_path, envelope_path, robot_path, index_path)
-    if not result["evidence_ready"]:
-        raise ContractError("live readiness evidence is incomplete, failed or expired")
-    return result
 
 
 def markdown_report(result):

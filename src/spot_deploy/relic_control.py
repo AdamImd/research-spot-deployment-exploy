@@ -14,9 +14,11 @@ from .safety import Schedule, bounded_join, percentiles
 from .sdk_read import classify_faults
 
 
-def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None, modes=None):
+def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None, modes=None, verify_enable=None):
     # Construct and validate the first rollout before acquiring the lease or powering Spot.
     initial_core = ReLICRollout(policy, envelope, record, teleop_source)
+    if verify_enable and modes is None:
+        raise ContractError("a deferred policy handoff requires operator mode requests")
     feedback_lock = threading.Lock()
     stop, emitted, lock = threading.Event(), threading.Event(), threading.Lock()
     shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False, native_id=None)
@@ -56,6 +58,14 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     interlock.check(health)
                 if not health["estop_ready"] or not health['fault_policy_ready']:
                     raise ContractError("E-stop or robot fault stopped ReLIC")
+                if verify_enable and not shared["active"]:
+                    if health["fault_count"] or not health["arm_stowed"]:
+                        raise ContractError("native standing requires a stowed arm and no active faults")
+                    measured = reader.mailbox.get(reader.config.rpc_timeout_s)
+                    age = reader.robot_now() - measured.robot_time_s
+                    if not -.01 <= age <= .1 or time.monotonic() - measured.received_monotonic_s > .1:
+                        raise ContractError("native standing observation stream stale")
+                    record.event("state", phase="native", state=measured.model_dump(), age_s=age)
                 if health["battery_percent"] < envelope.min_battery_percent:
                     raise ContractError("battery below operating envelope")
                 with lock:
@@ -74,7 +84,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
 
     def run_segment():
         nonlocal stream_started
-        core = ReLICRollout(policy, envelope, record, teleop_source) if stream_started else initial_core
+        core = initial_core if not samples else ReLICRollout(policy, envelope, record, teleop_source)
         segment_stop, producer_done = threading.Event(), threading.Event()
         emitted.clear()
         with lock:
@@ -241,6 +251,10 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             interlock.check(reader.health())
         check_startup_cancel()
         control.acquire()
+        stream_started = False
+        if verify_enable:
+            reader.start_stream(duration + 145)
+            stream_started = True
         worker = threading.Thread(target=health_monitor, name="relic-health", daemon=True)
         worker.start()
         try:
@@ -259,17 +273,32 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         commands_sent = samples = 0
         active_duration = 0.
         core = None
-        stream_started = False
         while True:
             if modes:
                 modes.publish("native")
-                teleop_source.reset_after_native_stand()
+                if verify_enable:
+                    teleop_source.close()
+                else:
+                    teleop_source.reset_after_native_stand()
                 enable_requested = False
                 while time.monotonic() < session_end:
                     check_error()
                     if teleop_source.poll(time.monotonic()).finish:
                         break
                     if modes.requested():
+                        if verify_enable:
+                            modes.publish("checking")
+                            try:
+                                verify_enable()
+                            except (ContractError, OSError, ValueError) as exc:
+                                check_error()
+                                teleop_source.close()
+                                reason = str(exc) if isinstance(exc, ContractError) else f"ReLIC input unavailable ({type(exc).__name__})"
+                                modes.publish("native", reason=reason)
+                                continue
+                            check_error()
+                            if finish_requested() or time.monotonic() >= session_end:
+                                break
                         enable_requested = True
                         break
                     stop.wait(.01)

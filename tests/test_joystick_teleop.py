@@ -438,3 +438,30 @@ def test_ui_stops_child_without_robot():
         if session.process.poll() is None:
             os.kill(session.process.pid, 15)
             session.process.wait()
+
+
+def test_standing_joystick_neutral_handoff_and_native_release(plan, monkeypatch):
+    import os
+    import spot_deploy.joystick_teleop as teleop
+    read_fd, write_fd = os.pipe()
+    try:
+        source = teleop.StandingJoystick(plan, read_fd)
+        assert source.device is None and not source.poll(0).finish
+        demo = teleop.DemoJoystick
+        links = [FakeLink(), FakeLink()]
+        links[0].axes[0] = .8
+        devices = iter(links)
+        monkeypatch.setattr(teleop, "DemoJoystick", lambda p, fd: demo(p, fd, next(devices)))
+        with pytest.raises(ContractError, match="center"):
+            source.open_neutral()
+        assert links[0].closed and source.device is None
+        source.open_neutral()
+        assert not source.poll(teleop.time.monotonic()).enabled
+        source.close()
+        assert links[1].closed
+    finally:
+        os.close(write_fd)
+        try:
+            assert source.poll(1).finish
+        finally:
+            os.close(read_fd)

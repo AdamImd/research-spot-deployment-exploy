@@ -287,6 +287,7 @@ class ReadOnlySpot:
             timeout=self.config.rpc_timeout_s
         )
         return {
+            "arm_stowed": state.manipulator_state.stow_state == state.manipulator_state.STOWSTATE_STOWED,
             "time": time.monotonic(),
             **estop_observation(self.config, state, estop),
             "foot_contacts": [int(foot.contact) for foot in state.foot_state],

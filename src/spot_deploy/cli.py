@@ -56,6 +56,7 @@ def parser():
                 "--duration", type=float, required=True, help="Bounded duration in seconds"
             )
         if name == "joystick":
+            cmd.add_argument("--standing-preflight", type=Path, help="Bound read-only preflight for in-place manual handoffs")
             cmd.add_argument("--mode-fd", type=int, help="Manual staged operator control")
             cmd.add_argument("--demo-finish-fd", type=int, help="Local operator UI pipe; stow arm and finish on EOF")
         if name == "watch":
@@ -131,6 +132,10 @@ def execute(args, record):
                  else 300 if args.mode == 'joystick' else 60)
         if not 0 < args.duration <= limit:
             raise ContractError(f"duration must be finite and in (0, {limit}] seconds")
+    standing_preflight = getattr(args, "standing_preflight", None)
+    if standing_preflight is not None and (args.mode != "joystick" or args.mode_fd is None or
+            args.demo_finish_fd is None or manifest.teleop.study_commands is not None):
+        raise ContractError("standing handoff requires the manual joystick UI")
     if args.mode in ('stand', 'walk', 'three-leg', 'joystick'):
         if args.mode == 'walk':
             if not isinstance(manifest, ReLICManifest) or manifest.task != 'walking':
@@ -147,20 +152,33 @@ def execute(args, record):
                 raise ContractError('three-leg duration must equal full sequence plus one-second margin')
         elif manifest.task != 'standing':
             raise ContractError('stand requires a standing candidate')
-        result = require_live(
-            manifest,
-            envelope,
-            config,
-            args.manifest,
-            args.envelope,
-            args.robot,
-            args.evidence,
-            args.operator,
-            args.safety_operator,
-            args.execute,
-            args.duration,
-        )
-        atomic_json(record.directory / "evidence-check.json", result)
+        if standing_preflight is not None:
+            from .readiness import require_live_configuration
+            from .deployment import preflight_check
+
+            bundle = args.robot.resolve().parent
+            if any(path is None or path.resolve() != bundle / rel for path, rel in (
+                    (args.manifest, "policy/manifest.json"), (args.robot, "robot.json"),
+                    (args.envelope, "envelope.json"), (args.evidence, "evidence.json"))):
+                raise ContractError("standing handoff inputs must come from the same bundle")
+            require_live_configuration(manifest, envelope, config, args.operator,
+                                       args.safety_operator, args.execute, args.duration)
+            preflight_check(standing_preflight, args.robot, args.manifest, 300)
+        else:
+            result = require_live(
+                manifest,
+                envelope,
+                config,
+                args.manifest,
+                args.envelope,
+                args.robot,
+                args.evidence,
+                args.operator,
+                args.safety_operator,
+                args.execute,
+                args.duration,
+            )
+            atomic_json(record.directory / "evidence-check.json", result)
         record.event("operators", operator=args.operator, safety_operator=args.safety_operator)
 
     # These imports and construction occur only after all offline gates above.
@@ -184,23 +202,28 @@ def execute(args, record):
             raise ContractError("registered traces require the collection UI and held joystick enable")
         if fd is not None and config.estop_authority != "tablet":
             raise ContractError("joystick demo collection requires the manufacturer tablet E-stop")
-        if fd is None:
-            teleop_source = JoystickInput(manifest.teleop)
-        else:
-            from .joystick_teleop import DemoJoystick
-            teleop_source = DemoJoystick(manifest.teleop, fd)
+        if standing_preflight is not None:
+            from .joystick_teleop import StandingJoystick
+            teleop_source = StandingJoystick(manifest.teleop, fd)
             record.event("demo_collection", arm="stowed", tablet_estop=True)
-        try:
-            teleop_source.poll(time.monotonic())
-            if any(teleop_source.link.buttons.values()) or any(
-                    abs(teleop_source.link.axes[a.index]) > manifest.teleop.deadzone
-                    for a in manifest.teleop.axes):
-                raise ContractError('center stick and release all buttons before startup')
-            teleop_source.last_at = None  # Native stand precedes the first control tick.
-        except BaseException:
-            teleop_source.close()
-            raise
-        record.event('joystick_device', **teleop_source.link.metadata)
+        else:
+            if fd is None:
+                teleop_source = JoystickInput(manifest.teleop)
+            else:
+                from .joystick_teleop import DemoJoystick
+                teleop_source = DemoJoystick(manifest.teleop, fd)
+                record.event("demo_collection", arm="stowed", tablet_estop=True)
+            try:
+                teleop_source.poll(time.monotonic())
+                if any(teleop_source.link.buttons.values()) or any(
+                        abs(teleop_source.link.axes[a.index]) > manifest.teleop.deadzone
+                        for a in manifest.teleop.axes):
+                    raise ContractError('center stick and release all buttons before startup')
+                teleop_source.last_at = None  # Native stand precedes the first control tick.
+            except BaseException:
+                teleop_source.close()
+                raise
+            record.event('joystick_device', **teleop_source.link.metadata)
     reader = ReadOnlySpot(config)
     primary_error = None
     try:
@@ -210,6 +233,9 @@ def execute(args, record):
             reader.connect()
         snapshot = reader.snapshot()
         checks = validate_snapshot(snapshot, config, manifest, envelope, args.mode in ('stand', 'walk', 'three-leg', 'joystick'))
+        if standing_preflight is not None:
+            checks["native_arm_stowed"] = snapshot["arm_stowed"]
+            checks["native_no_faults"] = snapshot["active_fault_count"] == 0
         atomic_json(record.directory / "robot-snapshot.json", snapshot)
         if getattr(reader, "robot_urdf", None):
             (record.directory / "robot.urdf").write_text(reader.robot_urdf)
@@ -254,6 +280,27 @@ def execute(args, record):
         teleop_kwargs = {'teleop_source': teleop_source} if teleop_source else {}
         if modes:
             teleop_kwargs["modes"] = modes
+        if standing_preflight is not None:
+            from .deployment import check as check_bundle
+            # Bind the loaded inputs even if another process prepares a new
+            # bundle in place while the robot stands. Only evidence may change.
+            from .contracts import sha256
+            bound_paths = (args.manifest, args.robot, args.envelope, bundle / "bundle.json")
+            bound_hashes = [sha256(path) for path in bound_paths]
+
+            def verify_enable():
+                if [sha256(path) for path in bound_paths] != bound_hashes:
+                    raise ContractError("session configuration changed; release and start a new session")
+                review = check_bundle(bundle, standing_preflight, 300, False)
+                atomic_json(record.directory / "enable-readiness.json", review)
+                blocked = [row["check"] for row in review["checks"] if row["status"] != "passed"]
+                if blocked:
+                    raise ContractError("ReLIC blocked: " + ", ".join(blocked))
+                require_live(manifest, envelope, config, args.manifest, args.envelope, args.robot,
+                             args.evidence, args.operator, args.safety_operator, args.execute, args.duration)
+                record.event("joystick_device", **teleop_source.open_neutral())
+
+            teleop_kwargs["verify_enable"] = verify_enable
         return stand(
             reader,
             ControlSpot(reader, envelope),

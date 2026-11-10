@@ -182,22 +182,21 @@ The window displays the effective command and the recording directory. The USB
 recording contains timestamped commands and a summary. The arm stays stowed
 during demo collection and enabled trigger presses mark the recording.
 
-To also offer physical collection, pass the directory of a reviewed joystick
-bundle with `--bundle PATH`. Opening the window still selects USB-only. Choose
-**Physical Spot — native stand and sit** for camera work. Click **Connect**, then
-**Stand up** and confirm at the desk. The stock routine checks Spot and the tablet,
-stands for up to five minutes, and sits and powers off on Release or timeout.
-This mode requires neither a joystick nor ReLIC evidence. The physical UI
-opens in this mode with `--live-monitor`. Operator names are optional metadata
-for the command-line tools and are never requested in this UI.
+With a manual joystick bundle, choose **Physical Spot — stand and joystick**.
+Click **Connect**, then **Stand up**, and confirm at the desk. Spot powers on and
+stands under native control. You can start camera streams in the same window.
+The joystick can be connected after standing. Operator names are optional.
 
-For policy collection select **Physical Spot — reviewed ReLIC joystick session**,
-connect, then confirm **Stand up**. The reviewed bundle and joystick checks apply here. **Enable ReLIC** activates
-joint control. **Disable ReLIC · native stand** requests a stock stand, then
-waits for standing feedback. Enable again for a new ReLIC segment starting
-with zero previous actions and a freshly armed joystick. **Release · sit down**
-requests safe sit/power-off and lease return from either mode. The duration
-limit starts at the initial stand and includes time in native stand. The runtime checks the bundle, device identity, tablet and preflight.
+Center the stick, release its buttons and click **Enable ReLIC**. The worker
+checks the bundle evidence and joystick before handing over the standing robot.
+A failed readiness check displays the reason and keeps Spot on native stand.
+After the initial three-second hold, hold printed button **2** to drive.
+**Disable ReLIC · native stand** hands back to Spot and waits for standing
+feedback. You can enable again with fresh action history and joystick input.
+These changes use one lease and one recording. **Release · sit down** ends
+the session from either controller. The five-minute session budget includes
+native standing and every ReLIC segment. Registered repeat bundles keep their
+separate stock stand and frozen-trace modes.
 Window close also requests native
 shutdown, waits for the motors-off check and saves the recording. The tablet is
 the emergency stop. The physical run directory includes full trial events,
@@ -261,7 +260,7 @@ checkout must support `fleet-track run --preserve-host-network`. For a matching 
 the shared Ethernet MTU, receive ring, interrupt coalescing and system receive
 buffer unchanged. FLIR synchronization and remote camera startup can take over
 a minute. The panel shows the time waiting for the first frame for each view.
-For read-only monitoring on startup, pass `--live-monitor --bundle PATH`.
+To connect without starting cameras, pass `--live-connect --bundle PATH`. For read-only monitoring with cameras on startup, pass `--live-monitor --bundle PATH`.
 Transient SDK timeouts disconnect the read-only display and permit up to three
 consecutive attempts. Physical control retains its existing deadlines. Stop streams or
 close the UI to finish an acquisition started here. When attached to someone

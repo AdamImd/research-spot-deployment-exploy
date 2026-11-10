@@ -307,3 +307,45 @@ class DemoJoystick(JoystickInput):
         if sample.finish or self.finish_requested():
             return JoystickSample(now, (0., 0., 0.), False, False, True)
         return JoystickSample(now, sample.velocity, sample.enabled, False, False)
+
+
+class StandingJoystick:
+    """A native stand can start without USB. Open the bound device on each handoff."""
+    def __init__(self, plan, finish_fd):
+        import os
+        import stat
+        if not stat.S_ISFIFO(os.fstat(finish_fd).st_mode):
+            raise ContractError("operator release requires an inherited pipe")
+        self.plan, self.finish_fd = plan, finish_fd
+        self.device = None
+        self.monitor = {"view": -1, "markers": 0}
+
+    def finish_requested(self):
+        import select
+        return bool(select.select([self.finish_fd], [], [], 0)[0])
+
+    def open_neutral(self):
+        self.close()
+        try:
+            self.device = DemoJoystick(self.plan, self.finish_fd)
+            self.device.poll(time.monotonic())
+            if any(self.device.link.buttons.values()) or any(
+                abs(self.device.link.axes[a.index]) > self.plan.deadzone for a in self.plan.axes
+            ):
+                raise ContractError("center the joystick and release all buttons, then enable again")
+            self.device.monitor = self.monitor
+            self.device.last_at = None
+            return self.device.link.metadata
+        except BaseException:
+            self.close()
+            raise
+
+    def poll(self, now):
+        if self.device is None:
+            return JoystickSample(now, (0., 0., 0.), False, False, self.finish_requested())
+        return self.device.poll(now)
+
+    def close(self):
+        if self.device is not None:
+            self.device.close()
+            self.device = None

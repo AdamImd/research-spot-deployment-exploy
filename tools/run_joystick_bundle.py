@@ -1,6 +1,6 @@
 """Operator-started, recorded session from a frozen reviewed joystick bundle.
 
---execute attests the named operators, functioning tablet and reviewed travelling
+--execute attests the operators, functioning tablet and reviewed travelling
 rig/arm workspace are ready now. Without it, this prints the profile and exits.
 One invocation, no retries; every invocation creates a fresh recording directory.
 """
@@ -120,7 +120,7 @@ def main(argv=None):
     prefix = [sys.executable, '-m', 'spot_deploy.cli']
     demo_args = [] if args.demo_finish_fd is None else ['--demo-finish-fd', str(args.demo_finish_fd)]
     if args.mode_fd is not None:
-        demo_args += ['--mode-fd', str(args.mode_fd)]
+        demo_args += ['--mode-fd', str(args.mode_fd), '--standing-preflight', str(out/'preflight')]
     preflight = prefix+['preflight', '--manifest', str(manifest), '--robot', str(bundle/'robot.json')]
     try:
         (out/'STATUS').write_text('preflight\n')
@@ -133,10 +133,12 @@ def main(argv=None):
             from spot_deploy.deployment import check
             gates = check(bundle, out/'preflight', 300, False)
             atomic_json(out/'demo-readiness.json', gates)
-            if not gates['passed']:
+            native_checks = {"policy_bundle", "runtime", "robot_profile", "hardware_envelope", "fresh_preflight", "local_estop_status"}
+            blocked = [r['check'] for r in gates['checks'] if r['status'] != 'passed'
+                       and (args.mode_fd is None or r['check'] in native_checks)]
+            if blocked:
                 (out/'STATUS').write_text('review_required\n')
-                print('Not started: '+', '.join(row['check'] for row in gates['checks']
-                      if row['status'] != 'passed'), flush=True)
+                print('Not started: '+', '.join(blocked), flush=True)
                 return 1
         (out/'STATUS').write_text('trial_running\n')
         code = call('trial', prefix+['joystick', '--manifest', str(manifest),

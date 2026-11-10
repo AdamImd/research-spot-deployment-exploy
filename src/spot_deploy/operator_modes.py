@@ -18,9 +18,11 @@ class OperatorModes:
         self.record = record
         self.token = None
 
-    def publish(self, phase):
+    def publish(self, phase, reason=None):
         self.token = uuid.uuid4().hex
         state = dict(phase=phase, token=self.token)
+        if reason:
+            state["reason"] = reason
         atomic_json(self.path, state)
         self.record.event("operator_state", **state)
 
