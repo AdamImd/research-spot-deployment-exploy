@@ -199,3 +199,5 @@ The [joystick demo recorder](docs/JOYSTICK_TELEOP.md#joystick-demonstration-reco
 provides desktop Start/Stop controls for stowed-arm data collection. The
 [frozen ReLIC calibration experiment](records/relic-sysid/README.md) includes
 command-matched simulation replay, actuator readbacks and the forward-walk comparison.
+
+On RPM, open the [MuJoCo joystick demo and seven-camera room monitor](docs/JOYSTICK_TELEOP.md#drive-the-simulator-with-the-usb-stick) with `tools/joystick_demo_ui.py --sim`.

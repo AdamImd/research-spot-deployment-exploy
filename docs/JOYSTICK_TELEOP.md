@@ -180,7 +180,7 @@ printed button **2**, and drive after the initial three-second hold. Release but
 for at least a few ticks before **Stop and save**. Printed button **4** also finishes.
 The window displays the effective command and the recording directory. The USB
 recording contains timestamped commands and a summary. The arm stays stowed
-during demo collection and trigger presses are ignored.
+during demo collection and enabled trigger presses mark the recording.
 
 To also offer physical collection, pass the directory of a reviewed joystick
 bundle with `--bundle PATH`. Opening the window still selects USB-only. Choose
@@ -200,3 +200,74 @@ a registered family profile. The confirmation identifies that family. Its frozen
 base commands run in order at policy decisions, with button 2 held. Releasing
 enable during movement ends the repeat. USB-only mode always records manual input.
 See [the frozen ReLIC calibration record](../records/relic-sysid/README.md).
+
+## Drive the simulator with the USB stick
+
+On the RPM desktop:
+
+```bash
+/home/adam/repos/research/research-spot-exploy-public/tools/joystick_demo_ui.py --sim
+```
+
+Click **Start recording**, center the stick, release then hold the thumb button.
+The first three seconds request zero velocity. **Stop and save**, button 4, and
+closing the window all end the session. The default simulation lasts up to 60 s.
+It uses the actual USB device, the frozen ReLIC actor at 50 Hz, the guarded
+rollout and 200 Hz MuJoCo PD commands. It starts from the standing fixture,
+with captured body orientation and zero velocity. Control acknowledgements are
+idealized with one tick of delay. Events, the sampled room geometry, latest
+camera frames and result are saved in the displayed run directory.
+
+| Physical input | Demo recording and simulator |
+| --- | --- |
+| Thumb button 2 | Hold to enable. Release immediately requests zero velocity. |
+| Push/pull stick | Forward/back, up to ±0.30 m/s |
+| Move stick sideways | Strafe, up to ±0.20 m/s |
+| Twist handle | Turn, up to ±0.50 rad/s |
+| Trigger (1) with enable held | Increment the recording marker. The arm stays stowed. |
+| Hat left/right | Previous/next camera. Center the hat between clicks. |
+| Hat up/down | Return to the seven-camera grid. |
+| Button 4 | Finish and save. The physical tablet retains emergency-stop authority. |
+| Throttle lever | Unassigned in the demo so the registered speed scale is repeatable. |
+
+The recorder checks the manufacturer's USB identity and Linux joystick axis map.
+RPM reported 046d:c215, six axes (X, Y, Rz, throttle, hat X/Y) and twelve buttons.
+Linux indices start at zero, printed labels at one. The manual describes the
+controls; the assignments above belong to this recorder.
+[Joystick manual](https://manuals.plus/asin/B00009OY9U.pdf) ·
+[Logitech controls](https://www.logitechg.com/en-us/shop/p/extreme-3d-pro-joystick)
+
+## Room-camera monitoring
+
+**Show room cameras** displays both FLIRs, both Kinects, both D415s and the L515
+RGB stream. Choose a single camera with the dropdown or the hat during recording.
+In physical mode the panel makes read-only GET requests to the existing fleet
+service at `http://10.0.0.20:8790/frame-snapshot/CAMERA`. USB-only mode also
+permits monitoring before a robot trial. Each response pairs JPEG bytes with its
+camera ID, frame key, receiver session, crop, rotation and capture/preview ages.
+Views can arrive independently. Frames older than one second are cleared.
+The panel owns no camera, starts no acquisition and has no input to the actor.
+On another receiver use `--fleet-url http://HOST:PORT`. The fleet session must be
+running for real images. On RPM the acquisition instructions and bounded launch
+are in `/home/adam/repos/flir-apriltag/docs/fleet-tracking.md`.
+
+The simulation renders separate, fixed cameras from the seven-camera November 3
+calibration used by the November 10 room twin. It uses the saved floor transform,
+the archived fitted Spot XY/heading as a placement assumption, the RGB intrinsics,
+native image aspect ratios, lens distortion and display orientations. The
+renderer models full-field RGB; a physical feed may advertise a cropped ROI.
+The simulated floor and Spot are the walking scene. The FOVs do not imply current
+Spot localization, synchronized exposures, reconstructed room clutter or verified
+absolute accuracy. At the archived spawn the 5 MP FLIR cuts off part of Spot.
+
+To prepare another checkout, install the project's simulation/visualization
+groups with UV, then import the geometry from the FLIR owner's saved datasets:
+
+```bash
+uv sync --locked --inexact --group simulation --group visualization
+uv run --no-sync python tools/room_array.py --fleet-repo /home/adam/repos/flir-apriltag
+```
+
+This writes a new `local/room-cameras/array.json` with hashes of the source
+calibration, floor, archived Spot pose and display settings. Each simulated run
+snapshots it. `RELIC_ROOM_ARRAY` can point to another exported snapshot.

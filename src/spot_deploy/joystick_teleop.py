@@ -223,6 +223,8 @@ class TeleopMotion:
             requested_velocity=demand.tolist(), velocity_command=self.velocity.tolist(),
             arm_deployed_requested=self.arm.deployed, arm_path_progress_s=self.arm.progress,
             arm_command=self.arm.reference.tolist(), input_at=sample.at)
+        if hasattr(self.source, "monitor"):
+            self.status["monitor"] = self.source.monitor.copy()
         return self.velocity.tolist(), self.arm.reference
 
 
@@ -276,8 +278,15 @@ class DemoJoystick(JoystickInput):
         import stat
         if not stat.S_ISFIFO(os.fstat(finish_fd).st_mode):
             raise ContractError("demo control requires a pipe")
+        self.monitor = {"view": -1, "markers": 0}
+        self._hat = None
         self.finish_fd = finish_fd
         super().__init__(plan, link)
+        # Linux ABS_X, ABS_Y, ABS_RZ, ABS_THROTTLE, ABS_HAT0X, ABS_HAT0Y.
+        if (isinstance(self.link, JoystickLink) and
+                self.link.metadata["axis_codes"] != [0,1,5,6,16,17]):
+            self.close()
+            raise ContractError("unexpected Logitech axis map for demo recording")
 
     def finish_requested(self):
         import select
@@ -285,6 +294,16 @@ class DemoJoystick(JoystickInput):
 
     def poll(self, now):
         sample = super().poll(now)
+        if sample.toggle:
+            self.monitor["markers"] += 1
+        hat = tuple(round(self.link.axes.get(i, 0.)) for i in (4,5))
+        if self._hat == (0,0) and hat != (0,0):
+            if hat[1]:
+                self.monitor["view"] = -1
+            else:
+                i = self.monitor["view"]
+                self.monitor["view"] = (i + hat[0]) % 7 if i >= 0 or hat[0] > 0 else 6
+        self._hat = hat
         if sample.finish or self.finish_requested():
             return JoystickSample(now, (0., 0., 0.), False, False, True)
         return JoystickSample(now, sample.velocity, sample.enabled, False, False)

@@ -59,7 +59,7 @@ def main(argv=None):
     plan = load_manifest(manifest)
     if plan.task != 'joystick-arm':
         raise ValueError('requires a reviewed joystick-arm bundle')
-    arm_mode = "trigger ignored; arm stowed" if args.demo_finish_fd is not None else "trigger toggles arm"
+    arm_mode = "enabled trigger marks recording; arm stowed" if args.demo_finish_fd is not None else "trigger toggles arm"
     print(f"{plan.teleop.duration_s:g}s; hold button {plan.teleop.enable_button+1} enables; {arm_mode}; "
           f"button {plan.teleop.finish_button+1} finishes; tablet sole E-stop.", flush=True)
     if not args.execute:

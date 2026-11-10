@@ -37,7 +37,7 @@ def run(plan, stow, finish_fd, output):
                 cmd, _ = motion.update(now, start)
                 if now >= next_save or motion.completed:
                     row = dict(
-                        time_s=now - start, velocity_command=cmd, enabled=motion.status["enabled"]
+                        time_s=now - start, velocity_command=cmd, enabled=motion.status["enabled"], monitor=source.monitor.copy()
                     )
                     stream.write(json.dumps(row) + "\n")
                     count += 1
@@ -45,6 +45,7 @@ def run(plan, stow, finish_fd, output):
                     if next_save <= now:
                         next_save = now + 0.02
                     if count % 5 == 1:
+                        print("Monitor: " + json.dumps(source.monitor), flush=True)
                         print("Velocity: " + json.dumps(cmd), flush=True)
                 if motion.completed or now - start >= plan.duration_s:
                     break

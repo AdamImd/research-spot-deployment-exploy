@@ -105,3 +105,34 @@ The manifest, input log and source digests are in result.json and RUN.md.
 The full fit needs the physical repeats. This pilot supports neither a fitted
 model selection nor a hardware deployment decision. The scientific reference is
 [Miller et al., sections III-B–C and Table I](https://arxiv.org/html/2504.17857v1#S3.SS2).
+
+## Joystick and camera commissioning on RPM, November 10
+
+The desktop driving session uses the guarded ReLIC controller in CPU MuJoCo
+and a separate EGL renderer. Goal of this check was to verify the operator
+inputs and room perspectives before collecting another demo. The linked FLIR
+project supplied the seven-camera calibration, saved floor transform and fitted
+Spot start XY/heading. Source paths and SHA-256 digests are written by the
+room-array importer. Camera rotation and lens warping apply only to display.
+
+- `runs/joystick-room-smoke-002` used the connected Logitech at neutral for
+  6 simulated seconds, seed 101 and the standing fixture. It completed 300
+  policy updates and 1,200 command ticks in 6.07 wall seconds. All seven JPEGs
+  decoded. The 5 MP FLIR partially clips Spot in this placement. The earlier
+  001 launcher failed before the simulator started.
+- `runs/joystick-room-scripted-003` injected a repeatable joydev sequence with
+  the same adapter and frozen policy. Maximum forward/lateral/yaw requests were
+  0.110/0.052/0.159 in m/s, m/s and rad/s respectively. The trigger added one
+  marker, the hat selected a camera and returned to the grid, and the arm stayed
+  stowed. Button 4 ended the run. The run record includes the synthetic wrapper.
+- `runs/joystick-room-ui-004` exercised the GTK Start and Stop controls with the
+  actual neutral stick. The GUI received seven image buffers, the run saved
+  191 policy samples and reported operator finish. The suite run in that directory
+  passed 587 tests with one skip. Independent pixel round trips for 121 sample
+  locations on each lens agreed within 0.06 preview pixels. This checks projection
+  conventions; the commissioning did not measure physical calibration accuracy.
+- The operator can now confirm physical directions by moving the stick in sim.
+  The real camera receiver on port 8790 was offline during verification. Real
+  frames remain unverified for this UI revision. No acquisition or robot motion
+  was started. The live monitor clears expired frames and operates independently
+  of controller timing.

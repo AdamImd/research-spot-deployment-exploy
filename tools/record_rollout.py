@@ -30,7 +30,7 @@ FIELDS = {
     'arm_tracking_observation': ('reference_indices', 'measured_tracking_indices',
                                  'command_tracking_indices', 'positions', 'reference'),
     'joystick': ('enabled', 'ready', 'finish', 'requested_velocity', 'velocity_command',
-                 'arm_deployed_requested', 'arm_path_progress_s', 'arm_command'),
+                 'arm_deployed_requested', 'arm_path_progress_s', 'arm_command', 'monitor'),
     "relic_handover": ("torque_step_Nm", "previous_actions"),
     "preparation": ("phase", "reference", "feedforward"),
     "health": ("estop_ready", "battery_percent", "fault_count", "arm_stowed",

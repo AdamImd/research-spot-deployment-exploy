@@ -65,7 +65,12 @@ def main():
         "--bundle", type=Path, help="Explicit reviewed physical joystick bundle; otherwise USB-only"
     )
     p.add_argument("--profile", type=Path, default=ROOT / "examples/joystick-relic-arm.json")
+    p.add_argument("--sim", action="store_true", help="Select MuJoCo at startup")
+    p.add_argument(
+        "--fleet-url", default="http://10.0.0.20:8790", help="Fleet read-only preview service"
+    )
     args = p.parse_args()
+    from room_camera_panel import CameraPanel, NAMES
     import gi
 
     gi.require_version("Gtk", "3.0")
@@ -80,14 +85,21 @@ def main():
     family = profile.get("study_family")
     python = str(ROOT / ".venv/bin/python")
     session = Session()
-    win = Gtk.Window(title="ReLIC · joystick demo recorder")
+    win = Gtk.Window(
+        title="ReLIC · simulated joystick demo" if args.sim else "ReLIC · joystick demo recorder"
+    )
     win.set_default_size(590, 360)
     panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
     panel.set_border_width(20)
-    win.add(panel)
+    layout = Gtk.Box(spacing=8)
+    layout.pack_start(panel, False, False, 0)
+    win.add(layout)
+    cameras = CameraPanel(Gtk, args.fleet_url)
+    layout.pack_start(cameras.grid, True, True, 0)
 
     def label(text):
         w = Gtk.Label(label=text, xalign=0, selectable=True, wrap=True)
+        w.set_max_width_chars(65)
         panel.pack_start(w, False, False, 0)
         return w
 
@@ -95,7 +107,7 @@ def main():
     label("Stowed arm · Forward / lateral / yaw · Release enable for zero velocity")
     label(
         f"Center stick, release then hold printed {profile['enable_button'] + 1} to drive. "
-        f"Printed {profile['finish_button'] + 1} finishes. Trigger does not deploy the arm."
+        f"Printed {profile['finish_button'] + 1} finishes. While enabled, trigger marks the recording. Hat left/right selects a camera; up/down shows all."
     )
     if family:
         label(
@@ -103,10 +115,11 @@ def main():
             "USB-only mode records manual stick input."
         )
     mode = Gtk.ComboBoxText()
-    mode.append_text("USB only — record commands without Spot")
+    mode.append("usb", "USB only — record commands without Spot")
+    mode.append("sim", "MuJoCo — drive simulated Spot")
     if bundle:
-        mode.append_text("Physical Spot — record states, actions and commands")
-    mode.set_active(0)
+        mode.append("live", "Physical Spot — record states, actions and commands")
+    mode.set_active_id("sim" if args.sim else "usb")
     panel.pack_start(mode, False, False, 0)
     fields = Gtk.Box(spacing=6)
     panel.pack_start(fields, False, False, 0)
@@ -118,12 +131,31 @@ def main():
         "Physical Start performs preflight, native stand and ReLIC motion. Stop requests normal shutdown; use the tablet for emergency stop."
     )
 
+    monitor = Gtk.CheckButton(label="Show room cameras")
+    panel.pack_start(monitor, False, False, 0)
+    selector = Gtk.ComboBoxText()
+    for selection in ["All cameras", *NAMES]:
+        selector.append_text(selection)
+    selector.set_active(0)
+    selector.connect("changed", lambda box: cameras.select(box.get_active() - 1))
+    panel.pack_start(selector, False, False, 0)
+
+    def monitor_changed(*_):
+        visible = monitor.get_active()
+        selector.set_visible(visible)
+        cameras.grid.set_visible(visible)
+        source = (out if mode.get_active_id() == "sim" else "live") if visible else None
+        cameras.reset(source)
+
     def show_mode(*_):
-        physical = mode.get_active() == 1
+        physical = mode.get_active_id() == "live"
         fields.set_visible(physical)
         physical_info.set_visible(physical)
+        monitor.set_active(mode.get_active_id() != "usb")
+        monitor_changed()
 
     mode.connect("changed", show_mode)
+    monitor.connect("toggled", monitor_changed)
     limits = profile["axes"]
     label(
         f"Stick limits   ±{limits[0]['maximum']:g} m/s forward     "
@@ -132,6 +164,8 @@ def main():
     status = label("Idle")
     axes = label("Forward —     Lateral —     Yaw —")
     where = label("No recording yet")
+    markers = label("Markers   0")
+    last_hat_view = None
     buttons = Gtk.Box(spacing=8)
     panel.pack_end(buttons, False, False, 0)
     start = Gtk.Button(label="Start recording")
@@ -146,10 +180,10 @@ def main():
     diagnostic = ""
 
     def pressed(*_):
-        nonlocal out, live, stage, diagnostic
+        nonlocal out, live, stage, diagnostic, last_hat_view
         if session.process:
             return
-        live = mode.get_active() == 1
+        live = mode.get_active_id() == "live"
         dev = profile["device"]["joystick_device"]
         if not Path(dev).exists():
             status.set_text("USB joystick missing: " + dev)
@@ -184,12 +218,20 @@ def main():
             if answer != Gtk.ResponseType.OK:
                 return
         out = None
+        last_hat_view = None
+        markers.set_text("Markers   0")
+        monitor_changed()
         diagnostic = ""
         stage = None
         dest = (
             ROOT
             / "runs"
-            / ("joystick-stick-" + time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:8])
+            / (
+                ("joystick-sim-" if mode.get_active_id() == "sim" else "joystick-stick-")
+                + time.strftime("%Y%m%d-%H%M%S")
+                + "-"
+                + uuid.uuid4().hex[:8]
+            )
         )
 
         def command(fd):
@@ -207,6 +249,21 @@ def main():
                     "--safety-operator",
                     names[1],
                     "--execute",
+                ]
+            if mode.get_active_id() == "sim":
+                return [
+                    python,
+                    "-u",
+                    "tools/sim_joystick_demo.py",
+                    *(["--manifest", str(bundle / "policy/manifest.json")] if bundle else []),
+                    "--duration",
+                    str(min(60.0, profile["duration_s"])),
+                    "--profile",
+                    str(args.profile.resolve()),
+                    "--finish-fd",
+                    str(fd),
+                    "--output",
+                    str(dest),
                 ]
             return [
                 python,
@@ -226,7 +283,7 @@ def main():
         except OSError as e:
             status.set_text(str(e))
             return
-        status.set_text("Checking readiness…" if live else "Recording USB commands…")
+        status.set_text("Checking readiness…" if live else "Starting session…")
         where.set_text("")
         axes.set_text("")
         for w in [start, mode, fields]:
@@ -250,6 +307,13 @@ def main():
         axes.set_text(
             f"Forward {v[0]:+.2f} m/s      Lateral {v[1]:+.2f} m/s      Yaw {v[2]:+.2f} rad/s"
         )
+
+    def show_input(m):
+        nonlocal last_hat_view
+        markers.set_text(f"Markers   {m['markers']}")
+        if m["view"] != last_hat_view:
+            selector.set_active(m["view"] + 1)
+            last_hat_view = m["view"]
 
     def update():
         nonlocal out, stage, diagnostic
@@ -276,6 +340,9 @@ def main():
             elif msg.startswith("Recording: "):
                 out = Path(msg[11:])
                 where.set_text(str(out))
+                monitor_changed()
+            elif msg.startswith("Monitor: "):
+                show_input(json.loads(msg[9:]))
             elif msg.startswith("Velocity: "):
                 velocity(json.loads(msg[10:]))
             else:
@@ -307,10 +374,19 @@ def main():
                         if b'"event": "joystick"' not in line:
                             continue
                         try:
-                            velocity(json.loads(line)["velocity_command"])
+                            data = json.loads(line)
+                            velocity(data["velocity_command"])
+                            if "monitor" in data:
+                                show_input(data["monitor"])
                             break
                         except (ValueError, KeyError):
                             continue
+        if not session.process and status.get_text().startswith("Idle"):
+            present = Path(profile["device"]["joystick_device"]).exists()
+            status.set_text(
+                "Idle · joystick connected" if present else "Idle · joystick disconnected"
+            )
+        cameras.refresh()
         return True
 
     start.connect("clicked", pressed)
@@ -323,6 +399,7 @@ def main():
     win.show_all()
     show_mode()
     Gtk.main()
+    cameras.close()
 
 
 if __name__ == "__main__":

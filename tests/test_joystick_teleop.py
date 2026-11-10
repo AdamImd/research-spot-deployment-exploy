@@ -379,6 +379,17 @@ def test_demo_stowed_and_gui_pipe_close(plan):
         link.events=[ButtonEvent(0,True)]
         sample=src.poll(.01)
         assert sample.enabled and not sample.toggle and sample.velocity[0]>0
+        assert src.monitor["markers"] == 1
+        link.axes[4]=1.
+        src.poll(.011)
+        assert src.monitor["view"] == 0
+        src.poll(.012)
+        assert src.monitor["view"] == 0
+        link.axes[4]=0.
+        src.poll(.013)
+        link.axes[5]=-1.
+        src.poll(.014)
+        assert src.monitor["view"] == -1
         os.close(w);w=None
         sample=src.poll(.015)
         assert sample.finish and not sample.enabled and sample.velocity==(0.,0.,0.)
