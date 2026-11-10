@@ -62,17 +62,23 @@ class ControlSpot:
         self.lease_client.retain_lease(self.lease, timeout=self.timeout)
 
     def native_stand(self, cancelled):
-        from bosdyn.api import basic_command_pb2
-        from bosdyn.client.robot_command import RobotCommandBuilder
-
         # Set before calling: a timed-out response can still have powered the motors.
         self.power_owned = True
         self.robot.power_on(timeout_sec=20, timeout=self.timeout)
         if cancelled.is_set():
             raise ContractError("health failure during power-on")
-        command_id = self.command.robot_command(
+        self.wait_standing(self.request_stand(), cancelled)
+
+    def request_stand(self):
+        from bosdyn.client.robot_command import RobotCommandBuilder
+
+        return self.command.robot_command(
             RobotCommandBuilder.synchro_stand_command(), timeout=self.timeout
         )
+
+    def wait_standing(self, command_id, cancelled):
+        from bosdyn.api import basic_command_pb2
+
         deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
             if cancelled.is_set():

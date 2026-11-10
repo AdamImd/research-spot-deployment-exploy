@@ -23,6 +23,7 @@ FIELDS = {
                 "guard_monotonic_s"),
     "policy_ack": ("command_key", "state_key", "raw_actions"),
     "relic_initialized": ("height", "requested_height_m", "previous_actions", "endpoint"),
+    "operator_state": ("phase",),
     "relic_phase": ("phase",), "stock_phase": ("phase",),
     "leg_position_mode": ("mode", "reason", "torque_profile", "command_bounds_enforced"),
     "leg_position_observation": ("indices", "positions", "reference_min", "reference_max"),

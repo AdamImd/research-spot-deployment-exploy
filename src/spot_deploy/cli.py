@@ -56,6 +56,7 @@ def parser():
                 "--duration", type=float, required=True, help="Bounded duration in seconds"
             )
         if name == "joystick":
+            cmd.add_argument("--mode-fd", type=int, help="Manual staged operator control")
             cmd.add_argument("--demo-finish-fd", type=int, help="Local operator UI pipe; stow arm and finish on EOF")
         if name == "watch":
             cmd.add_argument(
@@ -168,11 +169,17 @@ def execute(args, record):
 
     route = wired_route(config)
     record.event("route", **route)
+    modes = None
     teleop_source = None
     if args.mode == 'joystick':
         from .joystick_teleop import JoystickInput
         import time
         fd = getattr(args, "demo_finish_fd", None)
+        if getattr(args, "mode_fd", None) is not None:
+            from .operator_modes import OperatorModes
+            if fd is None or manifest.teleop.study_commands is not None or args.mode_fd == fd:
+                raise ContractError("staged control requires separate manual demo pipes")
+            modes = OperatorModes(args.mode_fd, record.directory, record)
         if fd is None and manifest.teleop.study_commands is not None:
             raise ContractError("registered traces require the collection UI and held joystick enable")
         if fd is not None and config.estop_authority != "tablet":
@@ -245,6 +252,8 @@ def execute(args, record):
         from .estop_interlock import HardwareInterlock
 
         teleop_kwargs = {'teleop_source': teleop_source} if teleop_source else {}
+        if modes:
+            teleop_kwargs["modes"] = modes
         return stand(
             reader,
             ControlSpot(reader, envelope),

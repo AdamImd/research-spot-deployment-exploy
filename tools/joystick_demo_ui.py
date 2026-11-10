@@ -19,18 +19,20 @@ class Session:
 
     def __init__(self):
         self.process = None
-        self.writer = None
+        self.writer = self.mode_writer = None
         self.messages = queue.Queue()
 
-    def start(self, command):
+    def start(self, command, staged=False):
         if self.process is not None:
             raise RuntimeError("session still running or cleaning up")
         rd, wr = os.pipe()
+        mr, mw = os.pipe() if staged else (None, None)
+        reads = (rd, mr) if staged else (rd,)
         try:
             self.process = subprocess.Popen(
-                command(rd),
+                command(*reads),
                 cwd=ROOT,
-                pass_fds=(rd,),
+                pass_fds=reads,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
@@ -39,9 +41,13 @@ class Session:
             )
         except BaseException:
             os.close(wr)
+            if staged:
+                os.close(mw)
             raise
         finally:
-            os.close(rd)
+            for read_fd in reads:
+                os.close(read_fd)
+        self.mode_writer = mw
         self.writer = wr
         proc = self.process
 
@@ -52,6 +58,18 @@ class Session:
             self.messages.put(proc.wait())
 
         threading.Thread(target=collect, daemon=True).start()
+
+    def request_mode(self, token):
+        if self.mode_writer is None or self.writer is None:
+            raise RuntimeError("session has ended")
+        os.write(self.mode_writer, (token + "\n").encode("ascii"))
+
+    def reap(self):
+        self.stop()
+        if self.mode_writer is not None:
+            os.close(self.mode_writer)
+            self.mode_writer = None
+        self.process = None
 
     def stop(self):
         if self.writer is not None:
@@ -69,6 +87,7 @@ def main():
     p.add_argument(
         "--fleet-url", default="http://10.0.0.20:8790", help="Fleet read-only preview service"
     )
+    p.add_argument("--fleet-repo", type=Path, default=Path.home() / "repos/flir-apriltag")
     args = p.parse_args()
     from room_camera_panel import CameraPanel, NAMES
     import gi
@@ -84,7 +103,10 @@ def main():
         profile = profile["teleop"]
     family = profile.get("study_family")
     python = str(ROOT / ".venv/bin/python")
-    session = Session()
+    session, connection, camera_service = Session(), Session(), Session()
+    connected = False
+    phase = token = pending = None
+    camera_on = False
     win = Gtk.Window(
         title="ReLIC · simulated joystick demo" if args.sim else "ReLIC · joystick demo recorder"
     )
@@ -128,11 +150,17 @@ def main():
     for w in [operator, safety]:
         fields.pack_start(w, True, True, 0)
     physical_info = label(
-        "Physical Start performs preflight, native stand and ReLIC motion. Stop requests normal shutdown; use the tablet for emergency stop."
+        "Stand up powers Spot and waits for native standing. Enable ReLIC hands control to the joystick. Release sits Spot, powers off and returns the lease. The tablet is the emergency stop."
     )
 
-    monitor = Gtk.CheckButton(label="Show room cameras")
-    panel.pack_start(monitor, False, False, 0)
+    connections = Gtk.Box(spacing=6)
+    panel.pack_start(connections, False, False, 0)
+    connect = Gtk.Button(label="Connect")
+    streams = Gtk.Button(label="Start camera streams")
+    for widget in [connect, streams]:
+        connections.pack_start(widget, True, True, 0)
+    connection_label = label("Disconnected")
+    camera_label = label("Camera streams off")
     selector = Gtk.ComboBoxText()
     for selection in ["All cameras", *NAMES]:
         selector.append_text(selection)
@@ -140,22 +168,65 @@ def main():
     selector.connect("changed", lambda box: cameras.select(box.get_active() - 1))
     panel.pack_start(selector, False, False, 0)
 
-    def monitor_changed(*_):
-        visible = monitor.get_active()
-        selector.set_visible(visible)
-        cameras.grid.set_visible(visible)
-        source = (out if mode.get_active_id() == "sim" else "live") if visible else None
-        cameras.reset(source)
+    def monitor_changed():
+        selector.set_visible(camera_on)
+        cameras.grid.set_visible(camera_on)
+        cameras.reset((out if mode.get_active_id() == "sim" else "live") if camera_on else None)
 
-    def show_mode(*_):
-        physical = mode.get_active_id() == "live"
+    def controls():
+        kind = mode.get_active_id()
+        physical = kind == "live"
+        usb = kind == "usb"
+        sim = kind == "sim"
+        running = session.process is not None
+        staged = not usb and not (physical and family)
+        linked = (running and phase is not None) if sim else connected
         fields.set_visible(physical)
-        physical_info.set_visible(physical)
-        monitor.set_active(mode.get_active_id() != "usb")
+        fields.set_sensitive(not running)
+        physical_info.set_visible(physical and not family)
+        connect.set_visible(not usb)
+        streams.set_visible(not usb)
+        connection_label.set_visible(not usb)
+        camera_label.set_visible(not usb)
+        connect.set_label("Disconnect" if (running if sim else connection.process) else "Connect")
+        connect.set_sensitive(
+            (not running or (sim and phase == "seated" and pending is None)) and not closing
+        )
+        streams.set_label("Stop camera streams" if camera_on else "Start camera streams")
+        streams.set_sensitive(
+            not closing
+            and (camera_on or camera_service.process is None)
+            and (not sim or (linked and session.writer is not None))
+        )
+        mode.set_sensitive(
+            not running
+            and connection.process is None
+            and camera_service.process is None
+            and not camera_on
+        )
+        start.set_label("Stand up" if staged else "Start recording")
+        start.set_sensitive(
+            (
+                (sim and phase == "seated" and pending is None and session.writer is not None)
+                or (not sim and not running and (usb or linked))
+            )
+            and not closing
+        )
+        toggle.set_visible(staged)
+        toggle.set_label("Disable ReLIC · native stand" if phase == "relic" else "Enable ReLIC")
+        toggle.set_sensitive(
+            running
+            and phase in ("native", "relic")
+            and pending is None
+            and session.writer is not None
+        )
+        stop.set_label("Release · sit down" if staged else "Stop and save")
+        stop.set_sensitive(
+            running and session.writer is not None and not (sim and phase == "seated")
+        )
         monitor_changed()
 
-    mode.connect("changed", show_mode)
-    monitor.connect("toggled", monitor_changed)
+    mode.connect("changed", lambda *_: controls())
     limits = profile["axes"]
     label(
         f"Stick limits   ±{limits[0]['maximum']:g} m/s forward     "
@@ -170,7 +241,8 @@ def main():
     panel.pack_end(buttons, False, False, 0)
     start = Gtk.Button(label="Start recording")
     stop = Gtk.Button(label="Stop and save")
-    for w in [start, stop]:
+    toggle = Gtk.Button(label="Enable ReLIC")
+    for w in [start, toggle, stop]:
         buttons.pack_start(w, True, True, 0)
     stop.set_sensitive(False)
     out = None
@@ -180,8 +252,10 @@ def main():
     diagnostic = ""
 
     def pressed(*_):
-        nonlocal out, live, stage, diagnostic, last_hat_view
+        nonlocal out, live, stage, diagnostic, last_hat_view, token, phase, pending
         if session.process:
+            if mode.get_active_id() == "sim" and phase == "seated":
+                change_mode()
             return
         live = mode.get_active_id() == "live"
         dev = profile["device"]["joystick_device"]
@@ -198,13 +272,15 @@ def main():
                 modal=True,
                 message_type=Gtk.MessageType.QUESTION,
                 buttons=Gtk.ButtonsType.NONE,
-                text="Start one physical ReLIC trial now?",
+                text="Start a registered physical trial?"
+                if family
+                else "Power on and stand Spot now?",
             )
             d.format_secondary_text(
                 (
                     f"Replay registered {family} commands with held enable. "
                     if family
-                    else "Drive with the stick. "
+                    else "Spot will wait in native stand until you choose Enable ReLIC. "
                 )
                 + f"{names[0]} operating; {names[1]} holding the functioning tablet E-stop. "
                 f"Confirm rig, floor path and stowed arm clear. Native stand, then joystick control for up to "
@@ -217,6 +293,7 @@ def main():
             d.destroy()
             if answer != Gtk.ResponseType.OK:
                 return
+        token = phase = pending = None
         out = None
         last_hat_view = None
         markers.set_text("Markers   0")
@@ -234,7 +311,8 @@ def main():
             )
         )
 
-        def command(fd):
+        def command(fd, mode_fd=None):
+            mode_args = ["--mode-fd", str(mode_fd)] if mode_fd is not None else []
             if live:
                 return [
                     python,
@@ -242,6 +320,7 @@ def main():
                     "tools/run_joystick_bundle.py",
                     "--bundle",
                     str(bundle),
+                    *mode_args,
                     "--demo-finish-fd",
                     str(fd),
                     "--operator",
@@ -255,6 +334,7 @@ def main():
                     python,
                     "-u",
                     "tools/sim_joystick_demo.py",
+                    *mode_args,
                     *(["--manifest", str(bundle / "policy/manifest.json")] if bundle else []),
                     "--duration",
                     str(min(60.0, profile["duration_s"])),
@@ -279,29 +359,94 @@ def main():
             ]
 
         try:
-            session.start(command)
+            session.start(command, staged=mode.get_active_id() == "sim" or (live and not family))
         except OSError as e:
             status.set_text(str(e))
             return
         status.set_text("Checking readiness…" if live else "Starting session…")
         where.set_text("")
         axes.set_text("")
-        for w in [start, mode, fields]:
-            w.set_sensitive(False)
-        stop.set_sensitive(True)
+        controls()
+
+    def change_mode(*_):
+        nonlocal pending
+        if token is None or pending is not None:
+            return
+        try:
+            session.request_mode(token)
+            pending = token
+            status.set_text("Waiting for controller acknowledgement…")
+        except (OSError, RuntimeError) as exc:
+            status.set_text(str(exc))
+        controls()
+
+    def connect_pressed(*_):
+        if mode.get_active_id() == "sim":
+            if session.process:
+                finish()
+            else:
+                pressed()
+            return
+        if connection.process:
+            connection.stop()
+        else:
+            connection.start(
+                lambda fd: [
+                    python,
+                    "-u",
+                    "tools/teleop_services.py",
+                    "connect",
+                    "--bundle",
+                    str(bundle),
+                    "--finish-fd",
+                    str(fd),
+                ]
+            )
+            connection_label.set_text("Connecting to Spot…")
+        controls()
+
+    def set_cameras(enabled):
+        nonlocal camera_on
+        if mode.get_active_id() == "sim" and out:
+            flag = out / "camera-enabled"
+            if enabled:
+                flag.touch()
+            else:
+                flag.unlink(missing_ok=True)
+        elif enabled:
+            camera_service.start(
+                lambda fd: [
+                    python,
+                    "-u",
+                    "tools/teleop_services.py",
+                    "cameras",
+                    "--fleet-url",
+                    args.fleet_url,
+                    "--fleet-repo",
+                    str(args.fleet_repo),
+                    "--finish-fd",
+                    str(fd),
+                ]
+            )
+        else:
+            camera_service.stop()
+        camera_on = enabled
+        camera_label.set_text("Waiting for camera frames…" if enabled else "Camera streams off")
+        controls()
 
     def finish(*_):
         session.stop()
-        stop.set_sensitive(False)
-        status.set_text("Stop requested · waiting for cleanup and files")
+        status.set_text("Release requested · waiting for shutdown and recording")
+        controls()
 
     def close(*_):
         nonlocal closing
-        if session.process:
-            closing = True
-            finish()
-            return True
-        return False
+        closing = True
+        camera_service.stop()
+        connection.stop()
+        session.stop()
+        controls()
+        return any(x.process is not None for x in (camera_service, connection, session))
 
     def velocity(v):
         axes.set_text(
@@ -316,12 +461,36 @@ def main():
             last_hat_view = m["view"]
 
     def update():
-        nonlocal out, stage, diagnostic
+        nonlocal out, stage, diagnostic, connected, camera_on, phase, token, pending
+        for service, widget, is_connection in [
+            (connection, connection_label, True),
+            (camera_service, camera_label, False),
+        ]:
+            while not service.messages.empty():
+                msg = service.messages.get()
+                if isinstance(msg, int):
+                    service.reap()
+                    if is_connection:
+                        connected = False
+                    else:
+                        camera_on = False
+                    if msg == 0:
+                        widget.set_text("Disconnected" if is_connection else "Camera streams off")
+                    else:
+                        widget.set_text("Failed · " + widget.get_text())
+                else:
+                    widget.set_text(msg)
+                    if is_connection:
+                        connected = msg.startswith("Connected ·")
         while not session.messages.empty():
             msg = session.messages.get()
             if isinstance(msg, int):
-                session.stop()
-                session.process = None
+                session.reap()
+                phase = token = pending = None
+                if mode.get_active_id() == "sim":
+                    camera_on = False
+                    camera_label.set_text("Camera streams off")
+                    connection_label.set_text("Disconnected")
                 status.set_text(
                     ("Completed" if msg == 0 else "Stopped / failed")
                     + (
@@ -331,12 +500,6 @@ def main():
                     )
                     + (" · " + diagnostic if msg != 0 and diagnostic else "")
                 )
-                for w in [start, mode, fields]:
-                    w.set_sensitive(True)
-                stop.set_sensitive(False)
-                if closing:
-                    win.destroy()
-                    return False
             elif msg.startswith("Recording: "):
                 out = Path(msg[11:])
                 where.set_text(str(out))
@@ -386,9 +549,44 @@ def main():
             status.set_text(
                 "Idle · joystick connected" if present else "Idle · joystick disconnected"
             )
+        if session.process and out:
+            state_file = (out / "trial" if live else out) / "operator-state.json"
+            if state_file.is_file():
+                state = json.loads(state_file.read_text())
+                if state["token"] != token:
+                    phase, token, pending = state["phase"], state["token"], None
+                    status.set_text(
+                        {
+                            "seated": "Seated",
+                            "native": "Standing · Spot native control",
+                            "relic": "Standing · ReLIC joystick control",
+                            "returning": "Returning to native stand…",
+                            "released": "Released · seated",
+                            "enabling": "Enabling ReLIC…",
+                            "releasing": "Sitting and releasing…",
+                        }.get(phase, phase)
+                    )
+                    if not live:
+                        connection_label.set_text("Connected to MuJoCo · native poses simulated")
+        if closing and not any(x.process for x in (camera_service, connection, session)):
+            win.destroy()
+            return False
+        controls()
         cameras.refresh()
+        if camera_on and cameras.source is not None:
+            if cameras.source == "live" and cameras.deadlines:
+                camera_label.set_text(f"{len(cameras.deadlines)} fresh camera views")
+            elif cameras.source == "live" and camera_label.get_text().endswith(
+                "fresh camera views"
+            ):
+                camera_label.set_text("Waiting for fresh camera frames…")
+            elif cameras.source != "live" and cameras.tokens:
+                camera_label.set_text("Simulated room camera streams")
         return True
 
+    connect.connect("clicked", connect_pressed)
+    streams.connect("clicked", lambda *_: set_cameras(not camera_on))
+    toggle.connect("clicked", change_mode)
     start.connect("clicked", pressed)
     stop.connect("clicked", finish)
     win.connect("delete-event", close)
@@ -397,7 +595,7 @@ def main():
         status.set_text("Idle · USB joystick not connected")
     GLib.timeout_add(200, update)
     win.show_all()
-    show_mode()
+    controls()
     Gtk.main()
     cameras.close()
 

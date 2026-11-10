@@ -52,7 +52,10 @@ def main(argv=None):
     parser.add_argument('--safety-operator', default='Minghao')
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--demo-finish-fd', type=int, help='UI-owned pipe; stowed arm only')
+    parser.add_argument('--mode-fd', type=int, help='Optional staged controller UI pipe')
     args = parser.parse_args(argv)
+    if args.mode_fd is not None and args.demo_finish_fd is None:
+        parser.error('--mode-fd requires --demo-finish-fd')
     os.chdir(ROOT)
     bundle = args.bundle.resolve()
     manifest = bundle/'policy/manifest.json'
@@ -94,7 +97,7 @@ def main(argv=None):
 
     def call(name, command, timeout):
         nonlocal child
-        pass_fds = (args.demo_finish_fd,) if name == 'trial' and args.demo_finish_fd is not None else ()
+        pass_fds = tuple(f for f in (args.demo_finish_fd, args.mode_fd) if f is not None) if name == 'trial' else ()
         if name in ('preflight', 'trial') and (interrupted or (args.demo_finish_fd is not None and
                 select.select([args.demo_finish_fd], [], [], 0)[0])):
             return 130
@@ -119,6 +122,8 @@ def main(argv=None):
 
     prefix = [sys.executable, '-m', 'spot_deploy.cli']
     demo_args = [] if args.demo_finish_fd is None else ['--demo-finish-fd', str(args.demo_finish_fd)]
+    if args.mode_fd is not None:
+        demo_args += ['--mode-fd', str(args.mode_fd)]
     preflight = prefix+['preflight', '--manifest', str(manifest), '--robot', str(bundle/'robot.json')]
     try:
         (out/'STATUS').write_text('preflight\n')

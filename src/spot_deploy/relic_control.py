@@ -14,8 +14,8 @@ from .safety import Schedule, bounded_join, percentiles
 from .sdk_read import classify_faults
 
 
-def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None):
-    core = ReLICRollout(policy, envelope, record, teleop_source)
+def stand(reader, control, policy, envelope, duration, record, encode, interlock=None, teleop_source=None, modes=None):
+    feedback_lock = threading.Lock()
     stop, emitted, lock = threading.Event(), threading.Event(), threading.Lock()
     shared = dict(error=None, health_at=None, active=False, last_emit=None, motion_done=False)
     gaps, acknowledgements = [], []
@@ -43,7 +43,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
     def health_monitor():
         try:
             while not stop.is_set():
-                if not shared["active"]:
+                if not shared["active"] and (modes is None or not shared.get("standing")):
                     check_startup_cancel()
                 control.heartbeat()
                 health = reader.health()
@@ -60,36 +60,33 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     shared["health_at"] = health["time"]
                     active = shared["active"]
                 if active:
-                    control.check_stream()
-                    if not control.active():
-                        raise ContractError("joint controller unexpectedly inactive")
+                    with feedback_lock:
+                        if shared["active"]:
+                            control.check_stream()
+                            if not control.active():
+                                raise ContractError("joint controller unexpectedly inactive")
                 stop.wait(min(.1, envelope.max_full_state_age_s / 3))
         except BaseException as exc:
             fail(exc)
 
-    primary_error = None
-    try:
-        if interlock:
-            interlock.check(reader.health())
-        check_startup_cancel()
-        control.acquire()
-        worker = threading.Thread(target=health_monitor, name="relic-health", daemon=True)
-        worker.start()
-        try:
-            control.native_stand(stop)
-        except BaseException:
-            # A health failure can cancel power/stand. Preserve its original
-            # cause instead of replacing it with generic cancellation text.
-            check_error()
-            raise
-        check_error()
+    def run_segment():
+        nonlocal stream_started
+        core = ReLICRollout(policy, envelope, record, teleop_source)
+        segment_stop, producer_done = threading.Event(), threading.Event()
+        emitted.clear()
+        with lock:
+            shared.update(last_emit=None, motion_done=False)
         reset_input = getattr(teleop_source, 'reset_after_native_stand', None)
         if reset_input is not None:
             reset_input()
             record.event('joystick_startup_reset', pre_policy_events_discarded=True,
                          fresh_neutral_enable_required=True)
         height = reader.read_body_height()
-        first = reader.start_stream(duration + reader.config.rpc_timeout_s + 5)
+        if not stream_started:
+            first = reader.start_stream(duration + reader.config.rpc_timeout_s + 5)
+            stream_started = True
+        else:
+            first = reader.mailbox.get(reader.config.rpc_timeout_s)
         core.initialize(first, height, time.monotonic(), reader.robot_now())
         deadline = time.monotonic() + reader.config.rpc_timeout_s
         while shared["health_at"] is None:
@@ -105,7 +102,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             schedule = Schedule(policy.manifest.stream_hz)
             previous_send = None
             try:
-                while not stop.is_set():
+                while not stop.is_set() and not segment_stop.is_set():
                     now = time.monotonic()
                     with lock:
                         health_at = shared["health_at"]
@@ -133,7 +130,7 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                     finished = time.monotonic()
                     if finished - now > envelope.max_inference_s:
                         raise ContractError("ReLIC command computation deadline exceeded")
-                    if stop.is_set():
+                    if stop.is_set() or segment_stop.is_set():
                         break
                     if previous_send is not None:
                         gap = finished - previous_send
@@ -156,13 +153,15 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
                             shared['motion_done'] = True
                     stop.wait(schedule.advance(time.monotonic()))
             except BaseException as exc:
-                if not isinstance(exc, GeneratorExit):
+                if not isinstance(exc, GeneratorExit) and not segment_stop.is_set():
                     if isinstance(exc, ContractError) and 'state' in locals():
                         try:
                             record.event('guard_failure', reason=str(exc), state=state.model_dump())
                         except BaseException:
                             pass  # Preserve the first error; cleanup still runs.
                     fail(exc)
+            finally:
+                producer_done.set()
 
         control.start(commands(), duration + 2 * reader.config.rpc_timeout_s)
         if not emitted.wait(reader.config.rpc_timeout_s):
@@ -173,24 +172,33 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         deadline = time.monotonic() + reader.config.rpc_timeout_s
         while not control.active():
             check_error()
+            check_startup_cancel()
             if time.monotonic() > deadline:
                 raise ContractError("joint-control activation timeout")
             stop.wait(.005)
         start = time.monotonic()
         with lock:
             shared["active"] = True
-        while time.monotonic() - start < duration:
+        if modes:
+            modes.publish("relic")
+        handback = False
+        while time.monotonic() - start < duration and (not modes or time.monotonic() < session_end):
             check_error()
             with lock:
                 last_emit = shared["last_emit"]
                 motion_done = shared['motion_done']
+            if modes and finish_requested():
+                break
+            if modes and modes.requested():
+                handback = True
+                break
             if motion_done:
                 break
             if last_emit is None or time.monotonic() - last_emit > envelope.max_command_gap_s:
                 raise ContractError("ReLIC command producer stalled")
             stop.wait(min(.005, envelope.max_command_gap_s / 3))
         check_error()
-        if core.phase != "policy" or core.policy_samples < 1:
+        if not modes and (core.phase != "policy" or core.policy_samples < 1):
             raise ContractError("standing trial ended before ReLIC handover")
         if (core.teleop and core.teleop.plan.study_commands is not None and
                 (core.policy_samples != len(core.teleop.plan.study_commands) or core.pending is not None)):
@@ -198,6 +206,73 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
         if core.motion and not core.motion.completed:
             raise ContractError('walking distance not reached and settled before timeout')
         active_duration = time.monotonic() - start
+        if handback:
+            modes.publish("returning")
+            # Continue feeding supported targets until the native command has
+            # been accepted. Serialize the expected override with feedback polling.
+            with feedback_lock:
+                check_error()
+                native_id = control.request_stand()
+                shared["active"] = False
+                segment_stop.set()
+                control.future.cancel()
+            if not producer_done.wait(reader.config.rpc_timeout_s):
+                raise ContractError("previous joint command producer did not stop")
+            class HandoffCancellation:
+                def is_set(self):
+                    return stop.is_set() or finish_requested()
+
+            control.wait_standing(native_id, HandoffCancellation())
+            check_error()
+        return core, core.guard.key - first.last_command_key, active_duration, handback
+
+    primary_error = None
+    try:
+        if interlock:
+            interlock.check(reader.health())
+        check_startup_cancel()
+        control.acquire()
+        worker = threading.Thread(target=health_monitor, name="relic-health", daemon=True)
+        worker.start()
+        try:
+            control.native_stand(stop)
+        except BaseException:
+            # A health failure can cancel power/stand. Preserve its original
+            # cause instead of replacing it with generic cancellation text.
+            check_error()
+            raise
+        check_error()
+        shared["standing"] = True
+        session_end = time.monotonic() + duration
+        commands_sent = samples = 0
+        active_duration = 0.
+        core = None
+        stream_started = False
+        while True:
+            if modes:
+                modes.publish("native")
+                teleop_source.reset_after_native_stand()
+                enable_requested = False
+                while time.monotonic() < session_end:
+                    check_error()
+                    if teleop_source.poll(time.monotonic()).finish:
+                        break
+                    if modes.requested():
+                        enable_requested = True
+                        break
+                    stop.wait(.01)
+                else:
+                    break
+                if not enable_requested or finish_requested():
+                    break
+                modes.publish("enabling")
+            core, count, elapsed, handback = run_segment()
+            commands_sent += count
+            samples += core.policy_samples
+            active_duration += elapsed
+            if not handback:
+                break
+        check_error()
     except BaseException as exc:
         primary_error = exc
         record.event("first_failure", error_type=type(exc).__name__,
@@ -206,6 +281,11 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
     finally:
         stop.set()
         errors = []
+        if modes:
+            try:
+                modes.publish("releasing")
+            except Exception as exc:
+                errors.append(exc)
         try:
             control.close()
         except BaseException as exc:
@@ -227,10 +307,10 @@ def stand(reader, control, policy, envelope, duration, record, encode, interlock
             if primary_error is None:
                 raise ContractError("ReLIC cleanup incomplete; independent E-stop operator required")
     record.event("relic_phase", phase="stopped")
-    return dict(commands=core.guard.key - first.last_command_key,
-                policy_samples=core.policy_samples, command_gap_s=percentiles(gaps),
+    return dict(commands=commands_sent,
+                policy_samples=samples, command_gap_s=percentiles(gaps),
                 command_ack_s=percentiles(acknowledgements), shutdown_confirmed=True,
                 shutdown=shutdown,
-                phase="stopped", duration_s=active_duration if (core.motion or core.teleop) else duration,
-                joystick=core.teleop.status if core.teleop else None,
-                walking=core.motion.progress if core.motion else None)
+                phase="stopped", duration_s=active_duration if modes or (core.motion or core.teleop) else duration,
+                joystick=core.teleop.status if core and core.teleop else None,
+                walking=core.motion.progress if core and core.motion else None)

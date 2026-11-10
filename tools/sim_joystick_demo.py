@@ -15,6 +15,7 @@ from room_array import load_array
 from simulate_relic import Log, sdk_state
 from spot_deploy.contracts import JOINTS, Envelope, check_artifacts, load, sha256
 from spot_deploy.joystick_teleop import DemoJoystick, JoystickTeleopPlan
+from spot_deploy.operator_modes import OperatorModes
 from spot_deploy.records import atomic_json, verify_run
 from spot_deploy.relic_contract import load_manifest, make_policy
 from spot_deploy.relic_rollout import ReLICRollout
@@ -79,6 +80,9 @@ def run(args):
         startup="captured standing fixture, zero simulated velocity, ideal ACK",
         duration_s=args.duration,
     )
+    modes = None
+    if getattr(args, "mode_fd", None) is not None:
+        (out / "staged").touch()
     try:
         renderer = subprocess.Popen(
             [sys.executable, str(ROOT / "tools/room_cameras.py"), str(out)],
@@ -88,31 +92,95 @@ def run(args):
         )
         source = DemoJoystick(plan, args.finish_fd)
         result["usb_device"] = source.link.metadata
-        core = ReLICRollout(actor, env, log, source)
-        state, _ = sdk_state(b, -0.005, 0)
-        core.initialize(state, height, 9.995, 999.995)
-        key = core.command(state, 9.995, 999.995).key
-        core.activate(10.0)
+        modes = (
+            OperatorModes(args.mode_fd, out, log)
+            if getattr(args, "mode_fd", None) is not None
+            else None
+        )
+        native = "seated" if modes else "relic"
+        import mujoco
+
+        stand_pose = np.array(start_pose)
+        seated = stand_pose.copy()
+        seated[2] = 0.17
+        for name, idx in zip(b.contract.names, b.qids):
+            if name.endswith("_hy"):
+                seated[idx] = 1.65
+            elif name.endswith("_kn"):
+                seated[idx] = -2.75
+
+        def set_pose(q):
+            b.data.qpos[:] = q
+            b.data.qvel[:] = 0
+            b.data.qfrc_applied[:] = 0
+            mujoco.mj_forward(b.model, b.data)
+
+        if modes:
+            set_pose(seated)
+            modes.publish(native)
+        core = None
+        samples = 0
+        key = 0
         start = previous = time.monotonic()
+        end = None if modes else start + args.duration
         deadline = start
-        for tick in range(round(args.duration * 200)):
+        finished = False
+        tick = -1
+        while True:
+            tick += 1
             now = time.monotonic()
-            if now - previous > plan.input_timeout_s:
+            if now - previous > plan.input_timeout_s and native == "relic" and core is not None:
                 raise ValueError("wall-clock USB polling gap exceeded")
             previous = now
             t = tick / 200
-            state, s = sdk_state(b, t, key)
-            command = core.command(state, 10 + t, 1000 + t)
-            demand = np.asarray(command.positions) + np.asarray(command.feedforward) / m.gains.kp
-            b.step(demand[order])
-            key = command.key
-            if (
-                not np.isfinite(b.data.qpos).all()
-                or s["position"][2] < 0.25
-                or -s["gravity"][2] < np.cos(0.9)
-            ):
-                raise ValueError("invalid state or simulated fall")
-            if tick % 20 == 0 or core.teleop.completed:
+            if source.finish_requested() or (end is not None and now >= end):
+                break
+            if modes and modes.requested():
+                if native == "seated":
+                    native = "native"
+                    set_pose(stand_pose)
+                    end = now + args.duration
+                elif native == "native":
+                    native = "relic"
+                elif native == "relic":
+                    native = "native"
+                    samples += core.policy_samples
+                    core = None
+                    # Proxy for stock standing at the current XY and heading.
+                    pose = stand_pose.copy()
+                    pose[:2] = b.data.qpos[:2]
+                    rot = b.data.xmat[b.root].reshape(3, 3)
+                    yaw = np.arctan2(rot[1, 0], rot[0, 0])
+                    pose[3:7] = [np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)]
+                    set_pose(pose)
+                source.reset_after_native_stand()
+                if native != "relic":
+                    modes.publish(native)
+            if native == "relic":
+                if core is None:
+                    core = ReLICRollout(actor, env, log, source)
+                    state, _ = sdk_state(b, t - 0.005, key)
+                    core.initialize(state, height, 9.995 + t, 999.995 + t)
+                    key = core.command(state, 9.995 + t, 999.995 + t).key
+                    core.activate(10 + t)
+                    if modes:
+                        modes.publish("relic")
+                state, s = sdk_state(b, t, key)
+                command = core.command(state, 10 + t, 1000 + t)
+                demand = (
+                    np.asarray(command.positions) + np.asarray(command.feedforward) / m.gains.kp
+                )
+                b.step(demand[order])
+                key = command.key
+                if (
+                    not np.isfinite(b.data.qpos).all()
+                    or s["position"][2] < 0.25
+                    or -s["gravity"][2] < np.cos(0.9)
+                ):
+                    raise ValueError("invalid state or simulated fall")
+            else:
+                finished = source.poll(now).finish
+            if tick % 20 == 0 or (core and core.teleop.completed):
                 atomic_json(
                     out / "view-state.json",
                     dict(
@@ -123,18 +191,39 @@ def run(args):
                         start_qpos=start_pose,
                     ),
                 )
-                print("Velocity: " + json.dumps(core.velocity_command), flush=True)
+                print(
+                    "Velocity: " + json.dumps(core.velocity_command if core else [0, 0, 0]),
+                    flush=True,
+                )
                 print("Monitor: " + json.dumps(source.monitor), flush=True)
                 if renderer.poll() is not None:
                     raise RuntimeError("room renderer exited; see renderer.log")
-            if core.teleop.completed:
+            if finished or (core and core.teleop.completed):
+                finished = True
                 break
             deadline = max(now, deadline) + 0.005
             time.sleep(max(0, deadline - time.monotonic()))
+        if modes:
+            modes.publish("releasing")
+            pose = seated.copy()
+            pose[:2] = b.data.qpos[:2]
+            pose[3:7] = b.data.qpos[3:7]
+            set_pose(pose)
+            atomic_json(
+                out / "view-state.json",
+                dict(
+                    tick=tick + 1,
+                    seconds=t,
+                    sampled_at=time.monotonic(),
+                    qpos=pose.tolist(),
+                    start_qpos=start_pose,
+                ),
+            )
+            modes.publish("released")
         result.update(
             success=True,
-            finish="operator" if core.teleop.completed else "duration",
-            policy_samples=core.policy_samples,
+            finish="operator" if finished or source.finish_requested() else "duration",
+            policy_samples=samples + (core.policy_samples if core else 0),
             elapsed_wall_s=time.monotonic() - start,
         )
     except BaseException as exc:
@@ -152,7 +241,7 @@ def run(args):
             except subprocess.TimeoutExpired:
                 renderer.kill()
                 renderer.wait()
-            if renderer.returncode or not (out / "views/frame.json").is_file():
+            if renderer.returncode or (not modes and not (out / "views/frame.json").is_file()):
                 result.update(success=False, renderer_error="see renderer.log")
         render_log.close()
         atomic_json(out / "result.json", dict(**result, ticks=tick + 1))
@@ -163,6 +252,7 @@ def run(args):
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--manifest", type=Path, help="Optional frozen manual joystick actor/profile")
+    p.add_argument("--mode-fd", type=int)
     p.add_argument("--finish-fd", required=True, type=int)
     p.add_argument("--output", required=True, type=Path)
     p.add_argument("--profile", type=Path, default=ROOT / "examples/joystick-relic-arm.json")

@@ -184,9 +184,15 @@ during demo collection and enabled trigger presses mark the recording.
 
 To also offer physical collection, pass the directory of a reviewed joystick
 bundle with `--bundle PATH`. Opening the window still selects USB-only. Choose
-**Physical Spot**, enter the two operators, and confirm **Start recording** for
-one trial. The runtime checks the bundle, device identity, tablet and preflight.
-Native stand precedes joystick control. Stop or window close requests native
+**Physical Spot** and click **Connect** for a read-only identity and tablet-status
+connection. Enter the two operators and confirm **Stand up** to begin a bounded
+manual session under Spot’s native standing controller. **Enable ReLIC** activates
+joint control. **Disable ReLIC · native stand** requests a stock stand, then
+waits for standing feedback. Enable again for a new ReLIC segment starting
+with zero previous actions and a freshly armed joystick. **Release · sit down**
+requests safe sit/power-off and lease return from either mode. The duration
+limit starts at the initial stand and includes time in native stand. The runtime checks the bundle, device identity, tablet and preflight.
+Window close also requests native
 shutdown, waits for the motors-off check and saves the recording. The tablet is
 the emergency stop. The physical run directory includes full trial events,
 50 Hz decisions, 200 Hz streamed commands, acknowledgement and fault records,
@@ -196,7 +202,7 @@ for workers. Launch it on the computer with the joystick and the reviewed robot
 connection. The normal arm-toggle launcher remains available for other tasks.
 
 For repeated calibration sessions use a separately reviewed bundle prepared with
-a registered family profile. The confirmation identifies that family. Its frozen
+a registered family profile. Use **Start recording** for its uninterrupted run. The confirmation identifies that family. Its frozen
 base commands run in order at policy decisions, with button 2 held. Releasing
 enable during movement ends the repeat. USB-only mode always records manual input.
 See [the frozen ReLIC calibration record](../records/relic-sysid/README.md).
@@ -209,12 +215,13 @@ On the RPM desktop:
 /home/adam/repos/research/research-spot-exploy-public/tools/joystick_demo_ui.py --sim
 ```
 
-Click **Start recording**, center the stick, release then hold the thumb button.
-The first three seconds request zero velocity. **Stop and save**, button 4, and
-closing the window all end the session. The default simulation lasts up to 60 s.
+Click **Connect**, optionally **Start camera streams**, then **Stand up** and **Enable ReLIC**.
+Center the stick, release then hold the thumb button. The first three seconds of each
+segment request zero velocity. **Release · sit down**, button 4 and closing the window end the session. The default simulation lasts up to 60 s.
 It uses the actual USB device, the frozen ReLIC actor at 50 Hz, the guarded
-rollout and 200 Hz MuJoCo PD commands. It starts from the standing fixture,
-with captured body orientation and zero velocity. Control acknowledgements are
+rollout and 200 Hz MuJoCo PD commands. Native stand and sit are kinematic poses in MuJoCo. Handback preserves planar
+location and heading. Each ReLIC segment runs the policy and contact dynamics.
+The initial standing fixture uses captured body orientation and zero velocity. Control acknowledgements are
 idealized with one tick of delay. Events, the sampled room geometry, latest
 camera frames and result are saved in the displayed run directory.
 
@@ -239,17 +246,16 @@ controls; the assignments above belong to this recorder.
 
 ## Room-camera monitoring
 
-**Show room cameras** displays both FLIRs, both Kinects, both D415s and the L515
-RGB stream. Choose a single camera with the dropdown or the hat during recording.
-In physical mode the panel makes read-only GET requests to the existing fleet
-service at `http://10.0.0.20:8790/frame-snapshot/CAMERA`. USB-only mode also
-permits monitoring before a robot trial. Each response pairs JPEG bytes with its
-camera ID, frame key, receiver session, crop, rotation and capture/preview ages.
-Views can arrive independently. Frames older than one second are cleared.
-The panel owns no camera, starts no acquisition and has no input to the actor.
-On another receiver use `--fleet-url http://HOST:PORT`. The fleet session must be
-running for real images. On RPM the acquisition instructions and bounded launch
-are in `/home/adam/repos/flir-apriltag/docs/fleet-tracking.md`.
+**Start camera streams** shows both FLIRs, both Kinects, both D415s and the L515.
+In MuJoCo it enables the calibrated renderer as soon as the simulator is connected.
+In physical mode it works independently of the Spot connection or motion session.
+On RPM it attaches to an existing fleet service or starts a bounded 20-minute
+acquisition using the fleet repository and its saved calibration. Stop streams or
+close the UI to finish an acquisition started here. When attached to someone
+else’s service, Stop only detaches this viewer. Freshness is checked per frame
+and frames over one second old are cleared. Cameras provide monitoring only.
+Use `--fleet-url` to view an existing receiver or `--fleet-repo` to locate the fleet
+checkout. The acquisition logs are in the fleet repository’s `data/fleet-tracking`.
 
 The simulation renders separate, fixed cameras from the seven-camera November 3
 calibration used by the November 10 room twin. It uses the saved floor transform,

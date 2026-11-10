@@ -79,6 +79,13 @@ def render(run):
         if time.monotonic() > deadline or (run / "view-done").exists():
             raise ValueError("no simulated pose available")
         time.sleep(0.03)
+    staged = (run / "staged").exists()
+    def enabled():
+        return not staged or (run / "camera-enabled").is_file()
+    while not enabled():
+        if (run / "view-done").exists():
+            return
+        time.sleep(.05)
     first = json.loads(state_file.read_text())
     xml, maps = add_cameras(run / "model/spot.xml", cfg, first["start_qpos"])
     model = mujoco.MjModel.from_xml_path(str(xml))
@@ -95,7 +102,7 @@ def render(run):
     with mujoco.Renderer(model, height=SIDE, width=SIDE) as renderer:
         while True:
             state = json.loads(state_file.read_text())
-            if state["tick"] != last:
+            if enabled() and state["tick"] != last:
                 data.qpos[:] = state["qpos"]
                 mujoco.mj_forward(model, data)
                 for name, coords in maps.items():
@@ -117,7 +124,7 @@ def render(run):
                     )
                 )
                 tmp.replace(folder / "frame.json")
-            if (run / "view-done").is_file() and last == json.loads(state_file.read_text())["tick"]:
+            if (run / "view-done").is_file() and (not enabled() or last == json.loads(state_file.read_text())["tick"]):
                 break
             time.sleep(0.05)
 
