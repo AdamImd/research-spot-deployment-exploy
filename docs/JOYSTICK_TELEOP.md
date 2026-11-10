@@ -251,7 +251,7 @@ In MuJoCo it enables the calibrated renderer as soon as the simulator is connect
 In physical mode it works independently of the Spot connection or motion session.
 On RPM it attaches to an existing fleet service or starts a bounded 20-minute
 acquisition using the fleet repository and its saved calibration. The fleet
-checkout must support `fleet-track run --preserve-host-network`. This leaves
+checkout must support `fleet-track run --preserve-host-network`. For a matching older camera checkout, run `git apply --check` and `git apply` there with the [fleet patch](../integrations/flir-apriltag/fleet-shared-ethernet.patch). This leaves
 the shared Ethernet MTU, receive ring, interrupt coalescing and system receive
 buffer unchanged. FLIR synchronization and remote camera startup can take over
 a minute. The panel shows the time waiting for the first frame for each view.
