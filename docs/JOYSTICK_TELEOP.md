@@ -164,3 +164,133 @@ terminal, followed by the motors-off confirmation when available.
 Evidence must match the frozen source/configuration and remain within its reviewed
 validity; source changes require a new bundle. Preparation and the default display
 do not authorize agent-initiated physical motion.
+
+## Joystick demonstration recorder
+
+On the control desktop, from the repository root, open the recorder with:
+
+```bash
+tools/joystick_demo_ui.py
+```
+
+USB-only mode starts by default. **Start recording** captures body-frame forward,
+lateral and yaw commands. Center the Logitech Extreme 3D, release and then hold
+printed button **2**, and drive after the initial three-second hold. Release button
+2 to zero all three commands. For a calibration trace, leave the stick released
+for at least a few ticks before **Stop and save**. Printed button **4** also finishes.
+The window displays the effective command and the recording directory. The USB
+recording contains timestamped commands and a summary. The arm stays stowed
+during demo collection and enabled trigger presses mark the recording.
+
+With a manual joystick bundle, choose **Physical Spot — stand and joystick**.
+Click **Connect**, then **Stand up**, and confirm at the desk. Spot powers on and
+stands under native control. You can start camera streams in the same window.
+The joystick can be connected after standing. Operator names are optional.
+
+Center the stick, release its buttons and click **Enable ReLIC**. The worker
+checks the frozen policy, runtime, robot profile, hardware envelope, fresh preflight
+and neutral USB input before handing over the standing robot. For manual stowed-arm
+joystick control, historical hardware review records are advisory. Each Enable saves
+their actual status and the required checks in `trial/enable-readiness.json`.
+A failed readiness check displays the reason and keeps Spot on native stand.
+After the initial three-second hold, hold printed button **2** to drive.
+**Disable ReLIC · native stand** hands back to Spot and waits for standing
+feedback. You can enable again with fresh action history and joystick input.
+These changes use one lease and one recording. **Release · sit down** ends
+the session from either controller. The five-minute session budget includes
+native standing and every ReLIC segment. Registered repeat bundles keep their
+separate stock stand and frozen-trace modes.
+Window close also requests native
+shutdown, waits for the motors-off check and saves the recording. The tablet is
+the emergency stop. The physical run directory includes full trial events,
+50 Hz decisions, 200 Hz streamed commands, acknowledgement and fault records,
+compact data and shutdown outcome. A partial or failed run retains its status.
+The UI uses system Python with GTK 3 on Linux and the checkout's UV environment
+for workers. Launch it on the computer with the joystick and the reviewed robot
+connection. The normal arm-toggle launcher remains available for other tasks.
+
+For repeated calibration sessions use a separately reviewed bundle prepared with
+a registered family profile. Use **Start recording** for its uninterrupted run. The confirmation identifies that family. Its frozen
+base commands run in order at policy decisions, with button 2 held. Releasing
+enable during movement ends the repeat. USB-only mode always records manual input.
+See [the frozen ReLIC calibration record](../records/relic-sysid/README.md).
+
+## Drive the simulator with the USB stick
+
+On the RPM desktop:
+
+```bash
+/home/adam/repos/research/research-spot-exploy-public/tools/joystick_demo_ui.py --sim
+```
+
+Click **Connect**, optionally **Start camera streams**, then **Stand up** and **Enable ReLIC**.
+Center the stick, release then hold the thumb button. The first three seconds of each
+segment request zero velocity. **Release · sit down**, button 4 and closing the window end the session. The default simulation lasts up to 60 s.
+It uses the actual USB device, the frozen ReLIC actor at 50 Hz, the guarded
+rollout and 200 Hz MuJoCo PD commands. Native stand and sit are kinematic poses in MuJoCo. Handback preserves planar
+location and heading. Each ReLIC segment runs the policy and contact dynamics.
+The initial standing fixture uses captured body orientation and zero velocity. Control acknowledgements are
+idealized with one tick of delay. Events, the sampled room geometry, latest
+camera frames and result are saved in the displayed run directory.
+
+| Physical input | Demo recording and simulator |
+| --- | --- |
+| Thumb button 2 | Hold to enable. Release immediately requests zero velocity. |
+| Push/pull stick | Forward/back, up to ±0.30 m/s |
+| Move stick sideways | Strafe, up to ±0.20 m/s |
+| Twist handle | Turn, up to ±0.50 rad/s |
+| Trigger (1) with enable held | Increment the recording marker. The arm stays stowed. |
+| Hat left/right | Previous/next camera. Center the hat between clicks. |
+| Hat up/down | Return to the seven-camera grid. |
+| Button 4 | Finish and save. The physical tablet retains emergency-stop authority. |
+| Throttle lever | Unassigned in the demo so the registered speed scale is repeatable. |
+
+The recorder checks the manufacturer's USB identity and Linux joystick axis map.
+RPM reported 046d:c215, six axes (X, Y, Rz, throttle, hat X/Y) and twelve buttons.
+Linux indices start at zero, printed labels at one. The manual describes the
+controls; the assignments above belong to this recorder.
+[Joystick manual](https://manuals.plus/asin/B00009OY9U.pdf) ·
+[Logitech controls](https://www.logitechg.com/en-us/shop/p/extreme-3d-pro-joystick)
+
+## Room-camera monitoring
+
+**Start camera streams** shows both FLIRs, both Kinects, both D415s and the L515.
+In MuJoCo it enables the calibrated renderer as soon as the simulator is connected.
+In physical mode it works independently of the Spot connection or motion session.
+On RPM it attaches to an existing fleet service or starts a bounded 20-minute
+acquisition using the fleet repository and its saved calibration. The fleet
+checkout must support `fleet-track run --preserve-host-network`. For a matching older camera checkout, run `git apply --check` and `git apply` there with the [fleet patch](../integrations/flir-apriltag/fleet-shared-ethernet.patch). This leaves
+the shared Ethernet MTU, receive ring, interrupt coalescing and system receive
+buffer unchanged. FLIR synchronization and remote camera startup can take over
+a minute. The panel shows the time waiting for the first frame for each view.
+To connect without starting cameras, pass `--live-connect --bundle PATH`. For read-only monitoring with cameras on startup, pass `--live-monitor --bundle PATH`.
+Transient SDK timeouts disconnect the read-only display and permit up to three
+consecutive attempts. Physical control retains its existing deadlines. Stop streams or
+close the UI to finish an acquisition started here. When attached to someone
+else’s service, Stop only detaches this viewer. Freshness is checked per frame
+and the window keeps the last good image during a gap. After one second its label
+shows the image age and the fresh-view count excludes it. The next fresh frame
+replaces it directly. Stopping the streams clears the images. Cameras provide monitoring only.
+Use `--fleet-url` to view an existing receiver or `--fleet-repo` to locate the fleet
+checkout. The acquisition logs are in the fleet repository’s `data/fleet-tracking`.
+
+The simulation renders separate, fixed cameras from the seven-camera November 3
+calibration used by the November 10 room twin. It uses the saved floor transform,
+the archived fitted Spot XY/heading as a placement assumption, the RGB intrinsics,
+native image aspect ratios, lens distortion and display orientations. The
+renderer models full-field RGB; a physical feed may advertise a cropped ROI.
+The simulated floor and Spot are the walking scene. The FOVs do not imply current
+Spot localization, synchronized exposures, reconstructed room clutter or verified
+absolute accuracy. At the archived spawn the 5 MP FLIR cuts off part of Spot.
+
+To prepare another checkout, install the project's simulation/visualization
+groups with UV, then import the geometry from the FLIR owner's saved datasets:
+
+```bash
+uv sync --locked --inexact --group simulation --group visualization
+uv run --no-sync python tools/room_array.py --fleet-repo /home/adam/repos/flir-apriltag
+```
+
+This writes a new `local/room-cameras/array.json` with hashes of the source
+calibration, floor, archived Spot pose and display settings. Each simulated run
+snapshots it. `RELIC_ROOM_ARRAY` can point to another exported snapshot.

@@ -108,6 +108,8 @@ class JoystickLink:
             count, axes = bytearray(1), bytearray(1)
             fcntl.ioctl(self.fd, 0x80016A12, count)  # JSIOCGBUTTONS
             fcntl.ioctl(self.fd, 0x80016A11, axes)  # JSIOCGAXES
+            axis_mapping = bytearray(64)
+            fcntl.ioctl(self.fd, 0x80406A32, axis_mapping)  # JSIOCGAXMAP
             mapping = array.array("H", [0] * 512)
             fcntl.ioctl(self.fd, 0x84006A34, mapping)  # JSIOCGBTNMAP
             sysfs = Path("/sys/class/input") / self.node.name / "device"
@@ -123,7 +125,7 @@ class JoystickLink:
                 raise ContractError("joystick STOP mapping must match BTN_TRIGGER/BTN_THUMB; rearm must exist")
             self.metadata = dict(name=name, vendor_id=vendor, product_id=product,
                                  device=str(self.path), button_count=count[0], axis_count=axes[0],
-                                 button_codes=list(mapping[:count[0]]))
+                                 button_codes=list(mapping[:count[0]]), axis_codes=list(axis_mapping[:axes[0]]))
             self.poller = select.poll()
             self.poller.register(self.fd, select.POLLIN | select.POLLERR | select.POLLHUP)
         except BaseException:

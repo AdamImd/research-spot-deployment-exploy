@@ -28,10 +28,14 @@ firmware = ["platformio==6.1.18"]
 audit = ["spatialmath-python==1.1.15"]
 simulation = [
     "mujoco==3.3.7",
+    "opencv-python-headless==4.12.0.88",
 ]
 visualization = [
     "matplotlib==3.11.2",
     "pillow==12.3.0",
+]
+sysid = [
+    "cmaes==0.11.1",
 ]
 
 [tool.pytest.ini_options]

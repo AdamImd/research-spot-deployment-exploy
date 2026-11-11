@@ -165,3 +165,18 @@ def test_preflight_must_be_fresh_bound_and_from_preflight(bundle, tmp_path, chan
         complete["artifacts"]["run.json"] = sha256(path)
         (preflight / "COMPLETE.json").write_text(json.dumps(complete))
     assert statuses(deployment.check(bundle, preflight))["fresh_preflight"] == "blocked"
+
+
+def test_manual_joystick_logs_historical_evidence_and_enforces_live_checks(monkeypatch):
+    checks = [{"check": name, "status": "unverified"} for name in (
+        "rig_inspection", "hardware_estop", "arm_deployment", "joystick_control")]
+    checks.append({"check": "fresh_preflight", "status": "passed"})
+    monkeypatch.setattr(deployment, "check", lambda *args: {"passed": False, "checks": checks})
+    result = deployment.manual_joystick_review(None, None)
+    assert not result["passed"] and result["manual_enable_blockers"] == []
+    assert statuses(result)["hardware_estop"] == "unverified"
+    checks.extend({"check": name, "status": "blocked"} for name in (
+        "hardware_envelope", "policy_bundle", "local_estop_status", "unknown_check"))
+    checks[4]["status"] = "blocked"
+    assert deployment.manual_joystick_review(None, None)["manual_enable_blockers"] == [
+        "fresh_preflight", "hardware_envelope", "policy_bundle", "local_estop_status", "unknown_check"]

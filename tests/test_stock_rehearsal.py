@@ -25,10 +25,25 @@ def test_exact_stock_sequence(initially_on):
                               ("power_off", "power_off")]
 
 
-@pytest.mark.parametrize("operator,safety", [("Adam", "adam"), ("Adam", ""), ("", "Minghao")])
-def test_distinct_named_operators(operator, safety):
-    with pytest.raises(ContractError):
-        stock.require_operators(operator, safety)
+def test_name_free_native_inspection_cli(tmp_path, monkeypatch):
+    import sys
+    args = ["rehearse_stock", "--manifest", "manifest", "--robot", "robot", "--envelope", "envelope",
+            "--output", str(tmp_path / "result")]
+    monkeypatch.setattr(sys, "argv", args)
+    def inspect(options, record):
+        assert options.operator is None and options.safety_operator is None
+        assert not options.execute
+        return {"inspection_only": True}
+    monkeypatch.setattr(stock, "run", inspect)
+    assert stock.main() == 0
+
+
+def test_ui_release_ends_native_hold_without_sleep(monkeypatch):
+    phases = []
+    io = stock.StockIO(None, None, None, lambda: None, phases.append, lambda: True)
+    monkeypatch.setattr(stock.time, "sleep", lambda _: pytest.fail("release ignored"))
+    io.hold("standing_observation", 300)
+    assert phases == ["standing_observation"]
 
 
 @pytest.mark.parametrize("change", [{"severity": "SEVERITY_WARN"}, {"code": 10},
@@ -67,3 +82,18 @@ def test_timed_out_power_on_still_requires_safe_cleanup():
     with pytest.raises(TimeoutError):
         io.power_on()
     assert io.power_managed
+
+
+def test_bounded_camera_standing_observation():
+    from types import SimpleNamespace
+    calls = []
+    io = SimpleNamespace(**{name: (lambda *args, name=name: calls.append((name, *args)))
+                            for name in ('sit', 'power_off', 'power_on', 'stand', 'hold')})
+    stock.stock_sequence(io, initially_on=False, standing_seconds=300.)
+    assert ('hold', 'standing_observation', 300.) in calls
+    assert calls[-1] == ('power_off', 'power_off')
+    calls.clear()
+    for duration in (0, 601, float('nan'), float('inf')):
+        with pytest.raises(stock.ContractError):
+            stock.stock_sequence(io, False, duration)
+    assert not calls

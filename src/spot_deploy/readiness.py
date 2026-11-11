@@ -149,10 +149,21 @@ def require_live(
     execute,
     duration,
 ):
-    if not execute or not operator.strip() or not safety_operator.strip():
-        raise ContractError("live control requires explicit execution and two named operators")
-    if operator.strip().casefold() == safety_operator.strip().casefold():
-        raise ContractError("robot operator and E-stop operator must be distinct")
+    require_live_configuration(manifest, envelope, robot_config, operator, safety_operator, execute, duration)
+    result = report(manifest_path, envelope_path, robot_path, index_path)
+    if not result["evidence_ready"]:
+        raise ContractError("live readiness evidence is incomplete, failed or expired")
+    return result
+
+
+def require_live_configuration(manifest, envelope, robot_config, operator, safety_operator, execute, duration):
+    if not execute:
+        raise ContractError("live control requires explicit execution")
+    if getattr(manifest, "task", None) != "joystick-arm":
+        if not operator.strip() or not safety_operator.strip():
+            raise ContractError("live control requires explicit execution and two named operators")
+        if operator.strip().casefold() == safety_operator.strip().casefold():
+            raise ContractError("robot operator and E-stop operator must be distinct")
     if manifest.purpose != "candidate":
         raise ContractError("fixture policies cannot control hardware")
     if envelope.scope != "hardware":
@@ -178,10 +189,6 @@ def require_live(
             raise ContractError('joystick requires tablet authority and reviewed duration/speed margins')
     if source_identity()["dirty"]:
         raise ContractError("live control requires a clean committed source tree")
-    result = report(manifest_path, envelope_path, robot_path, index_path)
-    if not result["evidence_ready"]:
-        raise ContractError("live readiness evidence is incomplete, failed or expired")
-    return result
 
 
 def markdown_report(result):

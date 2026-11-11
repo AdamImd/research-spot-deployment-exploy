@@ -62,33 +62,41 @@ class ControlSpot:
         self.lease_client.retain_lease(self.lease, timeout=self.timeout)
 
     def native_stand(self, cancelled):
-        from bosdyn.api import basic_command_pb2
-        from bosdyn.client.robot_command import RobotCommandBuilder
-
         # Set before calling: a timed-out response can still have powered the motors.
         self.power_owned = True
         self.robot.power_on(timeout_sec=20, timeout=self.timeout)
         if cancelled.is_set():
             raise ContractError("health failure during power-on")
-        command_id = self.command.robot_command(
+        command_id = self.request_stand()
+        self.wait_standing(command_id, cancelled)
+        return command_id
+
+    def request_stand(self):
+        from bosdyn.client.robot_command import RobotCommandBuilder
+
+        return self.command.robot_command(
             RobotCommandBuilder.synchro_stand_command(), timeout=self.timeout
         )
+
+    def wait_standing(self, command_id, cancelled):
         deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
             if cancelled.is_set():
                 raise ContractError("health failure during native standing")
             self.heartbeat()
-            feedback = self.command.robot_command_feedback(command_id, timeout=self.timeout)
-            mobility = feedback.feedback.synchronized_feedback.mobility_command_feedback
-            if mobility.status != basic_command_pb2.RobotCommandFeedbackStatus.STATUS_PROCESSING:
-                raise ContractError("native standing command rejected or interrupted")
-            if (
-                mobility.stand_feedback.status
-                == basic_command_pb2.StandCommand.Feedback.STATUS_IS_STANDING
-            ):
+            if self.is_standing(command_id):
                 return
             time.sleep(0.1)
         raise ContractError("native standing timeout")
+
+    def is_standing(self, command_id):
+        from bosdyn.api import basic_command_pb2
+
+        feedback = self.command.robot_command_feedback(command_id, timeout=self.timeout)
+        mobility = feedback.feedback.synchronized_feedback.mobility_command_feedback
+        if mobility.status != basic_command_pb2.RobotCommandFeedbackStatus.STATUS_PROCESSING:
+            raise ContractError("native standing command rejected or interrupted")
+        return mobility.stand_feedback.status == basic_command_pb2.StandCommand.Feedback.STATUS_IS_STANDING
 
     def start(self, commands, duration):
         self.future = self.streaming._stub.JointControlStream.future(

@@ -323,3 +323,18 @@ def check(directory, preflight_path=None, max_age_s=300, check_estop=False):
             "live_ready": False, "hardware_access": False, "motion_commands": 0,
             "binding_sha256": evidence["binding_sha256"] if evidence else None,
             "note": "Offline preparation checks only. Stand rechecks evidence, operators, preflight and interlocks."}
+
+def manual_joystick_review(directory, preflight_path):
+    """Record historical evidence separately from the checks required at handoff."""
+    review = check(directory, preflight_path)
+    advisory = {
+        "post_repair_stock_check", "rig_inspection", "arm_hold", "operating_envelope",
+        "simulator_standing", "transition_and_shutdown", "wired_timing", "shadow_parity",
+        "joystick_control", "arm_deployment", "teleop_clearance", "hardware_estop",
+    }
+    blocked = []
+    for row in review["checks"]:
+        row["required_for_manual_enable"] = row["check"] not in advisory
+        if row["required_for_manual_enable"] and row["status"] != "passed":
+            blocked.append(row["check"])
+    return {**review, "manual_enable_blockers": blocked}

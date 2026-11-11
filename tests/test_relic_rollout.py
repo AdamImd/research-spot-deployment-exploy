@@ -437,3 +437,77 @@ def test_activation_enables_persistence_but_startup_is_immediate(relic_manifest,
     core.activate(10.)
     assert core.guard.physical_limits.enabled
     assert any(event[0]=='physical_limit_persistence' for event in log.events)
+
+
+@pytest.mark.parametrize("reject_handback, deferred", [(False, False), (True, False), (False, True)])
+def test_operator_handoffs_keep_one_lease_and_wait_for_native_feedback(
+    state, relic_manifest, relic_envelope, monkeypatch, reject_handback, deferred
+):
+    # Exercise orchestration, scheduling and ACKs with the standing test actor.
+    # The separate MuJoCo GUI run exercises the real manual joystick actor.
+    from spot_deploy import relic_control
+
+    original = relic_control.ReLICRollout
+    monkeypatch.setattr(relic_control, "ReLICRollout",
+                        lambda p, e, log, source: original(p, e, log))
+    state.positions = DEFAULT_Q.astype(float).tolist()
+    reader = FakeReader(state)
+    reader.read_body_height = lambda: {"height_m": .52, "foot_contacts": [1] * 4}
+    reader.mailbox = SimpleNamespace(get=lambda *args: reader.get())
+    control = FakeControl(reader)
+    control.native_stand = lambda stop: control.calls.append("native_stand") or 10
+    control.is_standing = lambda command_id: command_id in (10, 17)
+    control.future = SimpleNamespace(cancel=lambda: control.calls.append("cancel_stream"))
+    control.request_stand = lambda: control.calls.append("request_stand") or 17
+
+    def wait_standing(command_id, _):
+        assert command_id == 17 and not control.worker.is_alive()
+        if reject_handback:
+            raise ContractError("native handoff rejected")
+        control.calls.append("native_confirmed")
+    control.wait_standing = wait_standing
+    phases = []
+    entered = 0.
+
+    def publish(phase, reason=None):
+        nonlocal entered
+        if phase == "native":
+            if reason:
+                assert reason == "missing review" and not control.commands
+                assert control.calls == ["acquire", "native_stand"]
+            elif phases:
+                assert control.calls[-1] == "native_confirmed"
+            else:
+                assert control.calls == ["acquire", "native_stand"] and not control.commands
+        phases.append(phase)
+        entered = time.monotonic()
+
+    def requested():
+        return phases[-1] == "native" or (phases.count("relic") == 1 and time.monotonic() - entered > .09)
+
+    modes = SimpleNamespace(publish=publish, requested=requested)
+    source = SimpleNamespace(
+        reset_after_native_stand=lambda: None, poll=lambda _: SimpleNamespace(finish=False),
+        finish_requested=lambda: phases.count("relic") == 2 and time.monotonic() - entered > .09)
+    verify = None
+    if deferred:
+        old_health = reader.health
+        reader.health = lambda: {**old_health(), "arm_stowed": True}
+        source.close = lambda: None
+        def verify():
+            if phases.count("checking") == 1:
+                raise ContractError("missing review")
+    args = (reader, control, FakeReLIC(relic_manifest), relic_envelope, 2., Log(), lambda c, *unused: c)
+    if reject_handback:
+        with pytest.raises(ContractError, match="native handoff rejected"):
+            stand(*args, modes=modes, teleop_source=source)
+        assert phases.count("native") == phases.count("relic") == 1
+    else:
+        result = stand(*args, modes=modes, teleop_source=source, verify_enable=verify)
+        expected = ["native", "enabling", "relic", "returning", "native", "enabling", "relic", "releasing"]
+        if deferred:
+            expected[1:1] = ["checking", "native", "checking"]
+            expected.insert(expected.index("returning") + 2, "checking")
+        assert phases == expected
+        assert control.calls.count("activate") == 2 and result["policy_samples"] >= 2
+    assert control.calls.count("acquire") == 1 and control.calls[-1] == "close"

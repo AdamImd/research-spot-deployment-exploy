@@ -3,7 +3,10 @@
 import argparse
 import json
 from pathlib import Path
+import os
+import select
 import signal
+import stat
 import threading
 import time
 
@@ -33,30 +36,26 @@ def require_stock_faults(faults, allow_payload_info):
                 raise ContractError("stock rehearsal blocked by active fault")
 
 
-def require_operators(operator, safety_operator):
-    if not operator.strip() or not safety_operator.strip():
-        raise ContractError("two named operators are required")
-    if operator.strip().casefold() == safety_operator.strip().casefold():
-        raise ContractError("robot and tablet-stop operators must be distinct")
-
-
-def stock_sequence(io, initially_on):
+def stock_sequence(io, initially_on, standing_seconds=10.):
     """Exact bounded motion sequence; io owns observation, cancellation and timeouts."""
+    if not 1 <= standing_seconds <= 600:
+        raise ContractError('standing observation must be 1..600 seconds')
     if initially_on:
         io.sit("initial_sit")
         io.power_off("initial_power_off")
     io.power_on()
     io.stand()
-    io.hold("standing_observation", 10.)
+    io.hold("standing_observation", standing_seconds)
     io.sit("sit")
     io.hold("sitting_observation", 2.)
     io.power_off("power_off")
 
 
 class StockIO:
-    def __init__(self, reader, command, record, check, set_phase):
+    def __init__(self, reader, command, record, check, set_phase, release_requested=lambda: False):
         self.reader, self.command, self.record = reader, command, record
         self.check, self.set_phase = check, set_phase
+        self.release_requested = release_requested
         self.durations = {}
         self.power_managed = False
 
@@ -122,6 +121,8 @@ class StockIO:
         end = time.monotonic() + duration
         while time.monotonic() < end:
             self.check()
+            if phase == "standing_observation" and self.release_requested():
+                return
             time.sleep(.02)
 
 
@@ -142,26 +143,40 @@ def run(args, record):
     manifest, envelope = load_manifest(args.manifest), load(args.envelope, Envelope)
     if config.estop_authority != "tablet" or config.hardware_estop is not None:
         raise ContractError("stock rehearsal requires the selected tablet authority")
-    require_operators(args.operator, args.safety_operator)
+    fd = getattr(args, "finish_fd", None)
+    if fd is not None and not stat.S_ISFIFO(os.fstat(fd).st_mode):
+        raise ContractError("UI release requires an inherited pipe")
+
+    def release_requested():
+        return fd is not None and bool(select.select([fd], [], [], 0)[0])
     reader = ReadOnlySpot(config)
-    record.event("operators", operator=args.operator, safety_operator=args.safety_operator)
+    if args.operator or args.safety_operator:
+        record.event("operators", operator=args.operator, safety_operator=args.safety_operator)
     record.event("route", **wired_route(config))
     stop, cancelled = threading.Event(), threading.Event()
     errors, phase, summaries = [], ["preflight"], []
     lease, lease_client, monitor, io = None, None, None, None
     result = {"completed": False, "joint_control_activated": False,
               "policy_inference": False, "estop_writes": 0, "fault_clear_requests": 0}
-    deadline = time.monotonic() + 120
+    standing_seconds = getattr(args, 'standing_seconds', 10.)
+    if not 1 <= standing_seconds <= 600:
+        raise ContractError('standing observation must be 1..600 seconds')
+    deadline = time.monotonic() + 120 + standing_seconds
+    result['standing_seconds'] = standing_seconds
 
     def check():
         if errors:
             raise ContractError(errors[0])
+        if release_requested() and phase[0] not in ("standing_observation", "sit", "sitting_observation", "power_off"):
+            raise ContractError("operator released before standing was confirmed")
         if cancelled.is_set() or time.monotonic() > deadline:
             raise ContractError("stock rehearsal cancelled or deadline reached")
 
     def set_phase(name):
         check()
         phase[0] = name
+        if fd is not None:
+            print("Native: " + name, flush=True)
         record.event("stock_phase", phase=name, monotonic_s=time.monotonic())
 
     previous_handlers = {sig: signal.signal(sig, lambda *_: cancelled.set())
@@ -176,13 +191,15 @@ def run(args, record):
         checks = validate_snapshot(snapshot, config, manifest, envelope)
         checks["no_unaccepted_stock_faults"] = True
         # Only the recorded diagnostic exception above applies to stock motion.
-        checks.pop("no_active_faults")
+        checks.pop("no_active_faults", None)
         record.event("stock_preflight", checks=checks, faults=faults)
         if not all(checks.values()):
-            raise ContractError("stock preflight failed")
+            raise ContractError("stock preflight failed: " + ", ".join(k for k,v in checks.items() if not v))
         power = state.power_state.motor_power_state
         if power not in (PowerState.STATE_OFF, PowerState.STATE_ON):
             raise ContractError("motor power is not in a stable ON/OFF state")
+        if fd is not None and power != PowerState.STATE_OFF:
+            raise ContractError("native Stand up requires motors initially off")
         lease_client = reader.robot.ensure_client(LeaseClient.default_service_name)
         resources = lease_client.list_leases(timeout=config.rpc_timeout_s)
         record.event("lease_observation", resources=[
@@ -193,14 +210,15 @@ def run(args, record):
             result["inspection_only"] = True
             return result
 
-        # Explicit execution, two operators and stock health checks precede all writes.
+        # Explicit execution and stock health checks precede all writes.
         from bosdyn.client.robot_command import RobotCommandClient
 
+        check()
         lease = lease_client.acquire(timeout=config.rpc_timeout_s)  # Never take/steal a lease.
         record.event("lease_acquired")
         command = reader.robot.ensure_client(RobotCommandClient.default_service_name)
         estop_client = reader.robot.ensure_client(EstopClient.default_service_name)
-        reader.start_stream(145)
+        reader.start_stream(145 + standing_seconds)
 
         def observe():
             next_health, next_lease, last_stamp = 0., 0., None
@@ -245,7 +263,7 @@ def run(args, record):
 
         monitor = threading.Thread(target=observe, name="stock-observer", daemon=True)
         monitor.start()
-        io = StockIO(reader, command, record, check, set_phase)
+        io = StockIO(reader, command, record, check, set_phase, release_requested)
         # Get at least one monitored sample/health check before the first motion.
         start = time.monotonic()
         while not summaries:
@@ -253,7 +271,8 @@ def run(args, record):
             if time.monotonic() - start > config.rpc_timeout_s * 3:
                 raise ContractError("stock observer failed to start")
             time.sleep(.01)
-        stock_sequence(io, initially_on=power == PowerState.STATE_ON)
+        stock_sequence(io, initially_on=power == PowerState.STATE_ON,
+                       standing_seconds=standing_seconds)
         require_power_off(reader)
         check()
         result.update(completed=True, final_motors_off=True, durations_s=io.durations,
@@ -298,13 +317,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("robot", "manifest", "envelope", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--operator", required=True)
-    parser.add_argument("--safety-operator", required=True)
+    parser.add_argument("--operator", help="Optional run annotation")
+    parser.add_argument("--safety-operator", help="Optional run annotation")
+    parser.add_argument("--finish-fd", type=int, help="UI-owned normal release pipe")
     parser.add_argument("--allow-known-payload-info", action="store_true")
+    parser.add_argument("--standing-seconds", type=float, default=10.,
+                        help="native standing observation duration, 1..600 s (default 10)")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
     record = RunRecord(args.output, "stock-rehearsal", [
         args.robot, args.manifest, args.envelope, Path(__file__)])
+    if args.finish_fd is not None:
+        print(f"Recording: {args.output.resolve()}", flush=True)
     try:
         result = run(args, record)
     except Exception as exc:
@@ -313,6 +337,10 @@ def main():
         key in result for key in ("error", "reader_shutdown_error", "observer_error",
                                   "observer_shutdown_unconfirmed", "lease_return_error"))
     record.finish("passed" if passed else "failed", result)
+    if args.finish_fd is not None and not passed:
+        print("Trial stopped: " + str(result.get("error") or result.get("observer_error") or "shutdown or cleanup incomplete"), flush=True)
+        if result.get("cleanup_motors_off") is False:
+            print("Trial stopped: motors-off unconfirmed; use the tablet E-stop", flush=True)
     print(json.dumps({"passed": bool(passed), "output": str(args.output),
                       "completed": result.get("completed"), "error": result.get("error"),
                       "motors_off": result.get("final_motors_off", result.get("cleanup_motors_off"))}))

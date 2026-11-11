@@ -1,6 +1,6 @@
 """Operator-started, recorded session from a frozen reviewed joystick bundle.
 
---execute attests the named operators, functioning tablet and reviewed travelling
+--execute attests the operators, functioning tablet and reviewed travelling
 rig/arm workspace are ready now. Without it, this prints the profile and exits.
 One invocation, no retries; every invocation creates a fresh recording directory.
 """
@@ -8,7 +8,9 @@ import argparse
 import json
 import os
 from pathlib import Path
+import select
 import signal
+import sys
 import subprocess
 import time
 import uuid
@@ -46,34 +48,36 @@ def failure_reason(directory):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bundle', type=Path, required=True)
-    parser.add_argument('--operator', default='Adam')
-    parser.add_argument('--safety-operator', default='Minghao')
+    parser.add_argument('--operator', default='')
+    parser.add_argument('--safety-operator', default='')
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--demo-finish-fd', type=int, help='UI-owned pipe; stowed arm only')
+    parser.add_argument('--mode-fd', type=int, help='Optional staged controller UI pipe')
     args = parser.parse_args(argv)
+    if args.mode_fd is not None and args.demo_finish_fd is None:
+        parser.error('--mode-fd requires --demo-finish-fd')
     os.chdir(ROOT)
     bundle = args.bundle.resolve()
     manifest = bundle/'policy/manifest.json'
     plan = load_manifest(manifest)
     if plan.task != 'joystick-arm':
         raise ValueError('requires a reviewed joystick-arm bundle')
-    print(f'{plan.teleop.duration_s:g}s; hold printed2 enables, trigger1 toggles arm, '
-          'printed4 finishes; tablet sole E-stop.', flush=True)
+    arm_mode = "enabled trigger marks recording; arm stowed" if args.demo_finish_fd is not None else "trigger toggles arm"
+    print(f"{plan.teleop.duration_s:g}s; hold button {plan.teleop.enable_button+1} enables; {arm_mode}; "
+          f"button {plan.teleop.finish_button+1} finishes; tablet sole E-stop.", flush=True)
     if not args.execute:
         print('Prepared only. --execute confirms operators/tablet/rig/workspace ready and starts motors.')
         return 0
     source = source_identity()
     if source['dirty']:
         raise ValueError('requires clean committed source')
-    if not args.operator.strip() or not args.safety_operator.strip() or (
-            args.operator.strip().casefold() == args.safety_operator.strip().casefold()):
-        raise ValueError('two distinct named operators required')
     out = ROOT/'runs'/('joystick-operator-'+time.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8])
     out.mkdir(parents=True)
     atomic_json(out/'RUN.json', dict(source=source, bundle=str(bundle),
         manifest_sha256=sha256(manifest), envelope_sha256=sha256(bundle/'envelope.json'),
         evidence_sha256=sha256(bundle/'evidence.json'), operator=args.operator,
         safety_operator=args.safety_operator, explicit_operator_execute=True,
-        setup_attestation='Named operators/tablet/rig/travel and arm/shutdown workspace ready',
+        setup_attestation='Tablet/rig/travel and arm/shutdown workspace ready',
         duration_s=plan.teleop.duration_s, automatic_retries=0))
     print(f'Recording: {out}', flush=True)
     child = None
@@ -90,9 +94,13 @@ def main(argv=None):
 
     def call(name, command, timeout):
         nonlocal child
+        pass_fds = tuple(f for f in (args.demo_finish_fd, args.mode_fd) if f is not None) if name == 'trial' else ()
+        if name in ('preflight', 'trial') and (interrupted or (args.demo_finish_fd is not None and
+                select.select([args.demo_finish_fd], [], [], 0)[0])):
+            return 130
         with (out/(name+'.log')).open('x') as log:
             child = subprocess.Popen(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT,
-                                     start_new_session=True)
+                                     start_new_session=True, pass_fds=pass_fds)
             try:
                 code = child.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
@@ -109,7 +117,10 @@ def main(argv=None):
         (out/(name+'.exit')).write_text(str(code)+'\n')
         return code
 
-    prefix = ['uv', 'run', '--no-sync', 'spot-deploy']
+    prefix = [sys.executable, '-m', 'spot_deploy.cli']
+    demo_args = [] if args.demo_finish_fd is None else ['--demo-finish-fd', str(args.demo_finish_fd)]
+    if args.mode_fd is not None:
+        demo_args += ['--mode-fd', str(args.mode_fd), '--standing-preflight', str(out/'preflight')]
     preflight = prefix+['preflight', '--manifest', str(manifest), '--robot', str(bundle/'robot.json')]
     try:
         (out/'STATUS').write_text('preflight\n')
@@ -118,12 +129,23 @@ def main(argv=None):
             (out/'STATUS').write_text('preflight_failed_or_cancelled\n')
             print('Preflight failed: '+failure_reason(out/'preflight'), flush=True)
             return code or 1
+        if args.demo_finish_fd is not None:
+            from spot_deploy.deployment import check
+            gates = check(bundle, out/'preflight', 300, False)
+            atomic_json(out/'demo-readiness.json', gates)
+            native_checks = {"policy_bundle", "runtime", "robot_profile", "hardware_envelope", "fresh_preflight", "local_estop_status"}
+            blocked = [r['check'] for r in gates['checks'] if r['status'] != 'passed'
+                       and (args.mode_fd is None or r['check'] in native_checks)]
+            if blocked:
+                (out/'STATUS').write_text('review_required\n')
+                print('Not started: '+', '.join(blocked), flush=True)
+                return 1
         (out/'STATUS').write_text('trial_running\n')
         code = call('trial', prefix+['joystick', '--manifest', str(manifest),
             '--envelope', str(bundle/'envelope.json'), '--robot', str(bundle/'robot.json'),
             '--evidence', str(bundle/'evidence.json'), '--duration', str(plan.teleop.duration_s),
             '--operator', args.operator, '--safety-operator', args.safety_operator,
-            '--output', str(out/'trial'), '--execute'], plan.teleop.duration_s+90)
+            '--output', str(out/'trial'), '--execute', *demo_args], plan.teleop.duration_s+90)
         if code:
             print('Trial stopped: '+failure_reason(out/'trial'), flush=True)
         post = call('postcheck', preflight+['--output', str(out/'postcheck')], 25)
@@ -132,7 +154,7 @@ def main(argv=None):
             'snapshot', {}).get('motors_off') is True
         compact = None
         if (out/'trial/COMPLETE.json').exists():
-            compact = call('compact', ['uv', 'run', '--no-sync', 'python', 'tools/record_rollout.py',
+            compact = call('compact', [sys.executable, 'tools/record_rollout.py',
                 '--run', str(out/'trial'), '--output', str(out/'compact'), '--state-hz', '50',
                 '--manifest', str(manifest)], 60)
             if compact == 0 and not verify_run(out/'compact', status='completed'):

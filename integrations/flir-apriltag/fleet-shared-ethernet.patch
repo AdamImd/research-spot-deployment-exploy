@@ -1,0 +1,73 @@
+--- a/flir_apriltag/fleet/cli.py
++++ b/flir_apriltag/fleet/cli.py
+@@ -24,3 +24,5 @@
+     p.add_argument('--allow-provisional',action='store_true');p.add_argument('--calibration',type=Path);p.add_argument('--image',type=Path);p.add_argument('--camera',default='flir-12mp');p.add_argument('--mode',choices=['local','offload','compare']);p.add_argument('--format',choices=['native','gray8'])
++    p.add_argument('--preserve-host-network', action='store_true', help='Leave the shared robot NIC and host buffers untouched')
+     a=p.parse_args(argv);cfg=load(a.config)
++    if a.preserve_host_network:cfg['preserve_host_network']=True
+     if a.calibration:
+--- a/flir_apriltag/fleet/source.py
++++ b/flir_apriltag/fleet/source.py
+@@ -482,2 +482,3 @@
+         gain5_db=settings['flir-5mp'].get('gain',0),gain12_db=settings['flir-12mp'].get('gain',0),live_gain=bool(cfg.get('_normalize_exposure') or cfg.get('motion_photometry')),
++        preserve_host_network=cfg.get('preserve_host_network',False),
+         defer_host_restore=bool(cfg.get('_fleet_controller_host_restore')),live_roi=bool(cfg.get('crop_follow',{}).get('hardware_verified') or cfg.get('crop_follow',{}).get('hardware_commissioning')))
+--- a/flir_apriltag/stereo_ptp.py
++++ b/flir_apriltag/stereo_ptp.py
+@@ -106,3 +106,3 @@
+ class NativeStereoCapture:
+-    def __init__(self,root,out,seconds,stop_event,*,exposure_us=20000,gain5_db=0,gain12_db=0,test_pattern=False,fps=8,regions=None,live_gain=False,defer_host_restore=False,live_roi=False,packet_bytes=9000):
++    def __init__(self,root,out,seconds,stop_event,*,exposure_us=20000,gain5_db=0,gain12_db=0,test_pattern=False,fps=8,regions=None,live_gain=False,defer_host_restore=False,live_roi=False,packet_bytes=9000,preserve_host_network=False):
+         if not 0<seconds<=3600 or not 0<exposure_us<120000 or not all(math.isfinite(v) and v>=0 for v in (gain5_db,gain12_db)):raise ValueError('Invalid capture settings')
+@@ -110,2 +110,3 @@
+         if type(packet_bytes)!=int or not 576<=packet_bytes<=9000:raise ValueError('Packet size must be 576..9000 bytes')
++        self.preserve_host_network=preserve_host_network
+         self.packet_bytes=packet_bytes;self.profile=dict(PROFILE,mtu=1500 if packet_bytes<=1500 else 9000)
+@@ -215,9 +216,16 @@
+             for name,args in [('nic-before',['ethtool','-S','enp3s0']),('kernel-udp-before',['cat','/proc/net/snmp'])]:self._call(name,args)
+-            changes=[('mtu',['sudo','-n','ip','link','set','dev','enp3s0','mtu',str(self.profile['mtu'])]),('rx',['sudo','-n','ethtool','-G','enp3s0','rx',str(self.profile['rx'])]),('rx_usecs',['sudo','-n','ethtool','-C','enp3s0','rx-usecs',str(self.profile['rx_usecs'])]),('rmem_max',['sudo','-n','sysctl','-w','net.core.rmem_max='+str(self.profile['rmem_max'])])]
+-            for key,args in changes:
+-                if self.stop_event.is_set():raise CaptureStopped('Capture stopped before network changes')
+-                if self.original[key]!=self.profile[key]:self._call('set-'+key,args)
+-            if any(self.original[k]!=self.profile[k] for k in ['mtu','rx']):self._settle(True)
+-            self.state['effective_host']=self._host()
+-            if self.state['effective_host']!=self.profile:raise RuntimeError('Host tuning readback mismatch')
++            self.state['preserve_host_network']=self.preserve_host_network
++            if self.preserve_host_network:
++                # The robot shares the NIC. Size camera datagrams for the existing
++                # link and leave NIC, interrupt and kernel settings under its owner.
++                self.packet_bytes=min(self.packet_bytes,self.original['mtu'])
++                self.state['effective_host']=self.original.copy()
++            else:
++                changes=[('mtu',['sudo','-n','ip','link','set','dev','enp3s0','mtu',str(self.profile['mtu'])]),('rx',['sudo','-n','ethtool','-G','enp3s0','rx',str(self.profile['rx'])]),('rx_usecs',['sudo','-n','ethtool','-C','enp3s0','rx-usecs',str(self.profile['rx_usecs'])]),('rmem_max',['sudo','-n','sysctl','-w','net.core.rmem_max='+str(self.profile['rmem_max'])])]
++                for key,args in changes:
++                    if self.stop_event.is_set():raise CaptureStopped('Capture stopped before network changes')
++                    if self.original[key]!=self.profile[key]:self._call('set-'+key,args)
++                if any(self.original[k]!=self.profile[k] for k in ['mtu','rx']):self._settle(True)
++                self.state['effective_host']=self._host()
++                if self.state['effective_host']!=self.profile:raise RuntimeError('Host tuning readback mismatch')
+             if self.stop_event.is_set():raise CaptureStopped('Capture stopped before power on')
+@@ -226,3 +234,8 @@
+             native=self.out/'native';native.mkdir()
+-            env=dict(os.environ,LD_LIBRARY_PATH=build['sdk_library_path'],LD_PRELOAD=build['socket_helper']+':'+build['interface_filter'],FLIR_UDP_RCVBUF_BYTES='8388608')
++            socket_bytes=8*1024*1024
++            if self.preserve_host_network:
++                socket_bytes=min(socket_bytes,self.original['rmem_max'])
++                if socket_bytes<65536:raise RuntimeError('Existing UDP receive limit too small for FLIR capture')
++            self.state['socket_receive_request_bytes']=socket_bytes
++            env=dict(os.environ,LD_LIBRARY_PATH=build['sdk_library_path'],LD_PRELOAD=build['socket_helper']+':'+build['interface_filter'],FLIR_UDP_RCVBUF_BYTES=str(socket_bytes))
+             pairs=max(1,math.ceil(self.seconds*(30 if self.live_roi else self.fps)));self.state['requested_pairs']=pairs
+@@ -272,3 +285,4 @@
+                 if f'pid={self.proc.pid},' in line and re.search(r':'+str(port)+r'\s',line):
+-                    found=bool(re.search(r'\brb16777216\b','\n'.join(lines[i:i+2])))
++                    effective_bytes=2*self.state['socket_receive_request_bytes']
++                    found=bool(re.search(rf'\brb{effective_bytes}\b','\n'.join(lines[i:i+2])))
+             if not found:raise RuntimeError('Stream socket buffer not verified for '+serial)
+@@ -359,3 +373,6 @@
+                         errors.append(str(exc))
+-                if self.defer_host_restore:
++                if self.preserve_host_network:
++                    self.state['host_restore_pending']=False
++                    self.state['final_host']=self._host()
++                elif self.defer_host_restore:
+                     # Fleet remotes still use this NIC even after a native
