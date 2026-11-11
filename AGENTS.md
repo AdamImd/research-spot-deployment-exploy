@@ -19,7 +19,8 @@ separate from frozen candidate artifacts. Null hardware limits are intentional.
   bound evidence, inspected rig and two distinct named operators. For the joystick
   UI and native standing routine, Adam removed the operator-name check. Use the
   physical confirmation and tablet E-stop. Manual joystick sessions keep native stand and ReLIC on one lease. Check
-  the motors-off preflight before standing and bound policy evidence on each Enable. See OPERATIONS.
+  the motors-off preflight before standing. In the manual stowed-arm joystick UI, historical
+  evidence is advisory. Enable checks the frozen runtime, live preflight, tablet and joystick. See OPERATIONS.
 - Default scope is four-foot standing, stowed arm, zero base velocity. Explicit
   operator-requested walking requires task=walking, a bound WalkingPlan, and the
   walking_distance/walking_clearance evidence gates. See docs/WALKING.md. No

@@ -281,7 +281,7 @@ def execute(args, record):
         if modes:
             teleop_kwargs["modes"] = modes
         if standing_preflight is not None:
-            from .deployment import check as check_bundle
+            from .deployment import manual_joystick_review
             # Bind the loaded inputs even if another process prepares a new
             # bundle in place while the robot stands. Only evidence may change.
             from .contracts import sha256
@@ -291,13 +291,13 @@ def execute(args, record):
             def verify_enable():
                 if [sha256(path) for path in bound_paths] != bound_hashes:
                     raise ContractError("session configuration changed; release and start a new session")
-                review = check_bundle(bundle, standing_preflight, 300, False)
+                review = manual_joystick_review(bundle, standing_preflight)
                 atomic_json(record.directory / "enable-readiness.json", review)
-                blocked = [row["check"] for row in review["checks"] if row["status"] != "passed"]
+                blocked = review["manual_enable_blockers"]
                 if blocked:
                     raise ContractError("ReLIC blocked: " + ", ".join(blocked))
-                require_live(manifest, envelope, config, args.manifest, args.envelope, args.robot,
-                             args.evidence, args.operator, args.safety_operator, args.execute, args.duration)
+                require_live_configuration(manifest, envelope, config, args.operator,
+                                           args.safety_operator, args.execute, args.duration)
                 record.event("joystick_device", **teleop_source.open_neutral())
 
             teleop_kwargs["verify_enable"] = verify_enable

@@ -135,3 +135,41 @@ def test_readonly_connection_closes_and_rechecks_after_timeouts(
         assert len(readers) == 2 and verified
     assert all(r.closed for r in readers)
     assert "reconnecting" in capsys.readouterr().out
+
+
+def test_late_snapshot_keeps_image_until_replacement(monkeypatch):
+    from concurrent.futures import Future
+    from unittest.mock import Mock
+    import room_camera_panel as camera
+
+    n = camera.NAMES[0]
+    panel = camera.CameraPanel.__new__(camera.CameraPanel)
+    panel.source, panel.focus = "live", 0
+    panel.started_at, panel.last_request = 0, 99
+    panel.images = {n: Mock()}
+    panel.labels = {n: Mock()}
+    panel.image = Mock()
+    panel.tokens, panel.deadlines, panel.pending = {}, {}, {}
+
+    def tick(at, response):
+        monkeypatch.setattr(camera.time, "monotonic", lambda: at)
+        f = Future()
+        if isinstance(response, Exception):
+            f.set_exception(response)
+        else:
+            f.set_result(response)
+        panel.pending[n] = f
+        panel.refresh()
+
+    first = ("key1", 1.5, b"first", 0, [0, 0, 4, 3])
+    tick(1, first)
+    tick(1.3, TimeoutError())
+    assert panel.fresh_count() == 1
+    tick(2, TimeoutError())
+    assert panel.fresh_count() == 0
+    panel.labels[n].set_text.assert_called_with(n + " · last frame · 1 s old")
+    tick(2.1, first)
+    assert panel.image.call_count == 1 and panel.fresh_count() == 0
+    tick(2.2, ("key2", 3, b"next", 0, [0, 0, 4, 3]))
+    assert panel.fresh_count() == 1 and panel.image.call_count == 2
+    panel.images[n].clear.assert_not_called()

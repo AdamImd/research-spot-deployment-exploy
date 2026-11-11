@@ -51,7 +51,6 @@ class CameraPanel:
         self.focus = -1
         self.source = None
         self.started_at = 0.0
-        self.seen = set()
         self.last_request = 0.0
         for i, name in enumerate(NAMES):
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
@@ -73,19 +72,34 @@ class CameraPanel:
             return
         self.source = source
         self.started_at = time.monotonic()
-        self.seen.clear()
         for f in self.pending.values():
             f.cancel()
         self.pending.clear()
         self.tokens.clear()
         self.deadlines.clear()
         for n in NAMES:
-            self.clear(n, "waiting")
+            self.images[n].clear()
+            self.labels[n].set_text(n + " · waiting")
 
-    def clear(self, n, why):
-        self.images[n].clear()
-        self.labels[n].set_text(n + " · " + why)
-        self.deadlines.pop(n, None)
+    def fresh_count(self):
+        now = time.monotonic()
+        return sum(now < expires for expires in self.deadlines.values())
+
+    def frame_status(self, n, now, reason=None):
+        expires = self.deadlines.get(n)
+        if expires is None:
+            if reason is None:
+                return
+            message = reason
+        elif now >= expires:
+            age = int(AGE_LIMIT + now - expires)
+            message = f"last frame · {age} s old"
+        else:
+            # A failed fetch does not invalidate the frame already on screen.
+            return
+        text = f"{n} · {message}"
+        if self.labels[n].get_text() != text:
+            self.labels[n].set_text(text)
 
     def image(self, n, data, rotation):
         loader = self.pix.PixbufLoader.new_with_type("jpeg")
@@ -133,29 +147,27 @@ class CameraPanel:
                         if expires <= now:
                             raise ValueError("expired")
                         self.image(n, jpeg, rotation)
-                        self.seen.add(n)
                         self.tokens[n] = token
                         self.deadlines[n] = expires
                         self.labels[n].set_text(f"{n} · live · ROI {roi}")
                 except HTTPError as exc:
-                    waiting = n not in self.seen and exc.code in (404, 503)
-                    self.clear(
-                        n,
+                    waiting = n not in self.deadlines and exc.code in (404, 503)
+                    self.frame_status(
+                        n, now,
                         f"waiting for first frame · {int(now - self.started_at)} s"
                         if waiting
                         else f"frame unavailable · HTTP {exc.code}",
                     )
                 except (URLError, TimeoutError):
-                    self.clear(
-                        n, "waiting for camera server" if n not in self.seen else "connection lost"
+                    self.frame_status(
+                        n, now, "waiting for camera server" if n not in self.deadlines else "connection lost"
                     )
                 except ValueError as exc:
-                    self.clear(n, str(exc))
+                    self.frame_status(n, now, str(exc))
                 except Exception:
-                    self.clear(n, "invalid preview")
+                    self.frame_status(n, now, "invalid preview")
 
-            if n in self.deadlines and self.deadlines[n] <= now:
-                self.clear(n, "stale")
+            self.frame_status(n, now)
             if n not in self.pending and now - self.last_request >= 0.24:
                 self.pending[n] = self.pool.submit(live_frame, self.base, n)
         if now - self.last_request >= 0.24:

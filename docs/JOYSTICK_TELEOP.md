@@ -188,7 +188,10 @@ stands under native control. You can start camera streams in the same window.
 The joystick can be connected after standing. Operator names are optional.
 
 Center the stick, release its buttons and click **Enable ReLIC**. The worker
-checks the bundle evidence and joystick before handing over the standing robot.
+checks the frozen policy, runtime, robot profile, hardware envelope, fresh preflight
+and neutral USB input before handing over the standing robot. For manual stowed-arm
+joystick control, historical hardware review records are advisory. Each Enable saves
+their actual status and the required checks in `trial/enable-readiness.json`.
 A failed readiness check displays the reason and keeps Spot on native stand.
 After the initial three-second hold, hold printed button **2** to drive.
 **Disable ReLIC · native stand** hands back to Spot and waits for standing
@@ -265,7 +268,9 @@ Transient SDK timeouts disconnect the read-only display and permit up to three
 consecutive attempts. Physical control retains its existing deadlines. Stop streams or
 close the UI to finish an acquisition started here. When attached to someone
 else’s service, Stop only detaches this viewer. Freshness is checked per frame
-and frames over one second old are cleared. Cameras provide monitoring only.
+and the window keeps the last good image during a gap. After one second its label
+shows the image age and the fresh-view count excludes it. The next fresh frame
+replaces it directly. Stopping the streams clears the images. Cameras provide monitoring only.
 Use `--fleet-url` to view an existing receiver or `--fleet-repo` to locate the fleet
 checkout. The acquisition logs are in the fleet repository’s `data/fleet-tracking`.
 

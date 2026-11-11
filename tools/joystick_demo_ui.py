@@ -111,15 +111,6 @@ def main():
     if bundle:
         profile = profile["teleop"]
     family = profile.get("study_family")
-    review_hint = ""
-    if bundle:
-        try:
-            reviewed = json.loads((bundle / "evidence.json").read_text()).get("evidence")
-        except (OSError, ValueError):
-            reviewed = None
-        if not reviewed:
-            review_hint = " This bundle has no hardware review records. Native stand is available; ReLIC activation is blocked."
-
     python = str(ROOT / ".venv/bin/python")
     session, connection, camera_service = Session(), Session(), Session()
     connected = False
@@ -200,7 +191,7 @@ def main():
             "Stand up uses Spot’s native controller. Release sits Spot and powers off. The tablet is the E-stop."
             if kind == "stock"
             else "Start recording runs the registered physical repeat. The tablet is the E-stop."
-            if family else "Stand on native control. Enable ReLIC to drive from this stance. Disable ReLIC to stand again. Release sits Spot. The tablet is the E-stop." + review_hint
+            if family else "Stand on native control. Enable ReLIC to drive from this stance. Disable ReLIC to stand again. Release sits Spot. The tablet is the E-stop."
         )
         connect.set_visible(not usb)
         streams.set_visible(True)
@@ -634,11 +625,8 @@ def main():
         cameras.refresh()
         if camera_on and cameras.source is not None:
             if cameras.source == "live" and cameras.deadlines:
-                camera_label.set_text(f"{len(cameras.deadlines)} fresh camera views")
-            elif cameras.source == "live" and camera_label.get_text().endswith(
-                "fresh camera views"
-            ):
-                camera_label.set_text("Waiting for fresh camera frames…")
+                count = cameras.fresh_count()
+                camera_label.set_text(f"{count} fresh camera views" if count else "Showing last camera frames · waiting for updates")
             elif cameras.source != "live" and cameras.tokens:
                 camera_label.set_text("Simulated room camera streams")
         return True
